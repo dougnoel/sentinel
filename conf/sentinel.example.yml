@@ -1,0 +1,15 @@
+---
+configurations:
+  dev:
+    os: "OS X"
+    browser: chrome
+    pageObjectPackages: "pages"
+  stage:
+    os: "Windows 10"
+    browser: firefox
+    pageObjectPackages: "pages.stage"
+  qa:
+    saucelabs: "username:password"
+  prod:
+    os: Linux
+...
