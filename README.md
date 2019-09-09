@@ -23,11 +23,27 @@ Clone the project from git.
 git clone https://github.com/dougnoel/sentinel.git
 ```
 
-Install Traprange to your local Maven Repo
+Install Traprange to your local Maven Repo either from the commandline, or from inside Eclipse.
+
+On the commandline:
 
 ```
 cd [your project dir]/sentinel
 mvn install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
+```
+
+In Eclipse:
+
+1. From the Run menu select Run Configurations...
+2. On the left-hand side select Maven Build.
+3. Click the New Configuration button in the upper left-hand corner of the dialog. It looks like a piece of paper with a yellow plus sign on top of it.
+4. Name the new configuration "Install Traprange".
+5. Under the Base Directory textbox, click the Workspace button.
+6. Copy and paste the code below into the Goals text box.
+7. Click the Run button.
+
+```
+install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
 ```
 
 Open the project in Eclipse.
