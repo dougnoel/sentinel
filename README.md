@@ -17,22 +17,42 @@ What things you need to install the software and how to install them:
 
 ### 1.2 Installation
 
+#### 1.2.1 Install the Project 
+First you need to install the project and open it.
+
+#####On the command line:
 Clone the project from git.
 
 ```
 git clone https://github.com/dougnoel/sentinel.git
 ```
+1. Open Eclipse
+2. File -> Open Projects from File system...
+3. Next to Import Source click the Directory button and browse to the installed location.
+4. Click the Finish button.
 
-Install Traprange to your local Maven Repo either from the commandline, or from inside Eclipse.
+#####In Eclipse:
 
-On the commandline:
+1. File -> Import...
+2. Expand the **Git** folder
+3. Select **Projects from Git** and press the **Next** button
+4. Select **Clone URI** from the list and press the **Next** button
+5. Paste `https://github.com/dougnoel/sentinel.git` into the URI box and press the **Next** button.
+6. Wait for the repo to load and ensure the master branch is selected and press the **Next** button.
+7. Use the default working directory and press **Next**.
+8. Wait for the download to complete and then press the **Finish** button.
+
+#### 1.2.2 Install Traprange into your Local Maven Repo
+Install Traprange to your local Maven Repo either from the command line, or from inside Eclipse.
+
+#####On the command line:
 
 ```
 cd [your project dir]/sentinel
 mvn install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
 ```
 
-In Eclipse:
+#####In Eclipse:
 
 1. From the Run menu select Run Configurations...
 2. On the left-hand side select Maven Build.
@@ -46,11 +66,12 @@ In Eclipse:
 install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
 ```
 
-Open the project in Eclipse.
+#### 1.2.3 Build the Project in Eclipse
+After installing Traprange successfully, you need to build the Maven project to make sure all the repositories are included.
 
-```
-File -> Open Projects from Filesystem...
-```
+1. Right-Click on the project in the Project Explorer.
+2. Maven -> Update Project...
+3. Wait for the status bar in the lower right-hand corner to finish before continuing.
 
 ## 2.0 Creating Tests
 
