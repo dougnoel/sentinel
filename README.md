@@ -20,7 +20,7 @@ What things you need to install the software and how to install them:
 #### 1.2.1 Install the Project 
 First you need to install the project and open it.
 
-#####On the command line:
+**On the command line:**
 Clone the project from git.
 
 ```
@@ -31,7 +31,7 @@ git clone https://github.com/dougnoel/sentinel.git
 3. Next to Import Source click the Directory button and browse to the installed location.
 4. Click the Finish button.
 
-#####In Eclipse:
+**In Eclipse:**
 
 1. File -> Import...
 2. Expand the **Git** folder
@@ -45,14 +45,14 @@ git clone https://github.com/dougnoel/sentinel.git
 #### 1.2.2 Install Traprange into your Local Maven Repo
 Install Traprange to your local Maven Repo either from the command line, or from inside Eclipse.
 
-#####On the command line:
+**On the command line:**
 
 ```
 cd [your project dir]/sentinel
 mvn install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
 ```
 
-#####In Eclipse:
+**In Eclipse:**
 
 1. From the Run menu select Run Configurations...
 2. On the left-hand side select Maven Build.
