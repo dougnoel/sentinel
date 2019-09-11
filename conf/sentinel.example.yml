@@ -3,7 +3,7 @@ configurations:
   dev:
     os: "OS X"
     browser: chrome
-    pageObjectPackages: "pages"
+    pageObjectPackages: "pages,apis"
   stage:
     os: "Windows 10"
     browser: firefox

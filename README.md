@@ -33,14 +33,35 @@ git clone https://github.com/dougnoel/sentinel.git
 
 **In Eclipse:**
 
+*Install Git connector*
+1. Help -> Install New Software...
+2. In the **Work with:** text box, paste the following url: `http://download.eclipse.org/egit/updates` and press the **ENTER key**.
+3. Select **Git Integration for Eclipse** and press the **Next** button.
+4. Press the **Next** button.
+5. Accept the license agreement and press the **Finish** button.
+6. Press the **Select All** button and then press the **Accept Selected** button.
+7. Press the **Restart Now** button.
+
+*Install Eclipse Maven plugin*
+1. Help -> Install New Software...
+2. In the **Work with:** text box, paste the following url: `http://download.eclipse.org/technology/m2e/releases` and press the **ENTER key**.
+3. Select **Maven Integration for Eclipse** and press the **Next** button.
+4. Press the **Next** button.
+5. Accept the license agreement and press the **Finish** button.
+6. Press the **Restart Now** button.
+
+*Install Maven SCM Handler for Git*
 1. File -> Import...
-2. Expand the **Git** folder
-3. Select **Projects from Git** and press the **Next** button
+2. Expand the **Maven** folder
+3. Select **Check out Maven project from SCM** and press the **Next** button
+4. Click the m2e Marketplace link in the lower right-hand corner.
+5. Wait for the m2e marketplace to load. Select **m2e-egit** and press the **Finish** button.
+
 4. Select **Clone URI** from the list and press the **Next** button
 5. Paste `https://github.com/dougnoel/sentinel.git` into the URI box and press the **Next** button.
 6. Wait for the repo to load and ensure the master branch is selected and press the **Next** button.
-7. Use the default working directory and press **Next**.
-8. Wait for the download to complete and then press the **Finish** button.
+7. Use the default working directory and press **Next**. Wait for the download to complete.
+8.  and then press the **Finish** button.
 
 #### 1.2.2 Install Traprange into your Local Maven Repo
 Install Traprange to your local Maven Repo either from the command line, or from inside Eclipse.
@@ -58,7 +79,8 @@ mvn install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.
 2. On the left-hand side select Maven Build.
 3. Click the New Configuration button in the upper left-hand corner of the dialog. It looks like a piece of paper with a yellow plus sign on top of it.
 4. Name the new configuration "Install Traprange".
-5. Under the Base Directory textbox, click the Workspace button.
+5. Under the Base Directory textbox, click the **Workspace** button.
+6. Select the Sentinel project and click the **Ok** button.
 6. Copy and paste the code below into the Goals text box.
 7. Click the Run button.
 
@@ -110,8 +132,8 @@ Create a file in the directory with the same name (including case) as your page 
 
 ```
 urls:
-  base: http://bkcmember.lho{env}.lho-npe.net/Default.aspx
-  prod: https://www.mybluekcma.com/Default.aspx
+  base: http://{env}.google.com
+  prod: https://www.google.com
 dev:
   username: devuser
   password: Test1234
@@ -269,10 +291,10 @@ configurations:
     os: "OS X"
     browser: chrome
     ssltrust: none
-    pageObjectPackages: "pages.,pages.UserAdminTool,pages.BayCare,pages.BKC,pages.BLA,pages.COX,pages.EHI,pages.MutualOfOmaha"
+    pageObjectPackages: "pages"
   stage:
     ssltrust: none
-    pageObjectPackages: "pages.NewComponent,pages.UnitedHealth,pages.BLA,pages.Test"
+    pageObjectPackages: "pages,pages.Test"
   qa:
     browser: firefox
     saucelabs: "test1:1j14h-141h-11j3-1h31j3"
@@ -284,7 +306,7 @@ configurations:
     os: Linux
 ...
 ```
-Here are all the properities you can set in the sentinel.yml file:
+Here are all the properties you can set in the sentinel.yml file:
 
 | Property Name     |Possible Values                                                   |
 | ------------------|------------------------------------------------------------------|
@@ -344,7 +366,7 @@ the config file, you can set on the command line. If you find yourself testing m
 
 ## 5.0 Deployment
 
-Add additional notes about how to deploy this on a live system in Bamboo.
+Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
 
 ### 5.1 Building a Jar File
 
@@ -398,9 +420,7 @@ Every method should have a Javadoc comment describing what it does, its paramete
 
 ### 6.3 Web Drivers
 
-The web drivers used by Sentinel are stored in drivers/os to make sure there is only one place to fix driver compatibility issues.
-Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also
-reduces the learning curve for using Sentinel.
+The web drivers used by Sentinel are stored in drivers/os to make sure there is only one place to fix driver compatibility issues. Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also reduces the learning curve for using Sentinel.
 
 * [Chromedriver](http://chromedriver.chromium.org/) 2.42 - Driver for automating Google Chrome.
 * [Geckodriver](https://github.com/mozilla/geckodriver/releases) - Driver for automating Mozilla Firefox.
@@ -414,10 +434,6 @@ We use [Semantic Versioning](http://semver.org/) for versioning. For the version
 ## 8.0 Authors
 
 * **Doug Noël** - *Architect* - Initial work.
-* **Sirajuddin Shaik** - *Contributor* - Browser back, forward and refresh buttons.
-* **Mahamad Gouse Shaik** - *Contributor* - iFrame handling.
-* **Rama Neralla** - *Contributor* - Advanced click handling and rollover functionality. 
-* **Will Warren** - *Contributor* - Using a yml file to set test system configurations, dynamic wait for page load, documentation, improved error handling.
 
 ## 9.0 License
 
