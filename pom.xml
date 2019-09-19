@@ -1,170 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <name>sentinel</name>
+  <url>https://github.com/dougnoel/${project.artifactId}</url>
 
-  <name>Sentinel</name>
-  <url>https://github.com/dougnoel/sentinel</url>
+  <organization>
+    <name>Doug Noel</name>
+    <url>https://github.com/dougnoel/${project.artifactId}</url>
+  </organization>
+
+  <scm>
+    <connection>scm:git:git://github.com/dougnoel/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:git@github.com:dougnoel/${project.artifactId}.git</developerConnection>
+    <url>git://github.com/dougnoel/${project.artifactId}.git</url>
+  </scm>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.source>1.8</maven-compiler-plugin.source>
+    <maven-compiler-plugin.target>1.8</maven-compiler-plugin.target>
+    <maven-compiler-plugin.verbose>true</maven-compiler-plugin.verbose>
+    <maven-compiler-plugin.debug>true</maven-compiler-plugin.debug>
+    <maven-compiler-plugin.parameters>true</maven-compiler-plugin.parameters>
+    <maven-compiler-plugin.showWarnings>true</maven-compiler-plugin.showWarnings>
+    <maven-compiler-plugin.showDeprecation>true</maven-compiler-plugin.showDeprecation>
+
+    <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+    <maven-dependency-plugin.verbose>true</maven-dependency-plugin.verbose>
+    <maven-dependency-plugin.outputXML>true</maven-dependency-plugin.outputXML>
+
+    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+    <extra-enforcer-rules.version>1.2</extra-enforcer-rules.version>
+    <maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>true</maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>
+    <maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>true</maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>
+
+    <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
+
+    <maven-help-plugin.version>3.2.0</maven-help-plugin.version>
+    <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+    <!-- <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version> see https://stackoverflow.com/questions/56212981/eclipse-showing-maven-configuration-problem-unknown -->
+
+
+    <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
+    <maven-javadoc-plugin.nohelp>true</maven-javadoc-plugin.nohelp>
+
+    <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+    <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+    <maven-surefire-report-plugin.version>3.0.0-M3</maven-surefire-report-plugin.version>
+
+    <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
+
+    <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+
+    <commons-lang3.version>3.9</commons-lang3.version>
+    <cucumber-extentsreport.version>3.1.0</cucumber-extentsreport.version>
+    <extentreports.version>3.1.5</extentreports.version>
+    <gson.version>2.8.5</gson.version>
+    <httpcore.version>4.4.12</httpcore.version>
+    <httpclient.version>4.5.10</httpclient.version>
+    <info.cukes.version>1.2.5</info.cukes.version>
+    <jackson2.version>2.9.9</jackson2.version>
+    <junit.version>5.5.1</junit.version>
+    <log4j2.version>2.12.1</log4j2.version>
+    <lombok.version>1.18.8</lombok.version>
+    <mashape.unirest.version>1.4.9</mashape.unirest.version>
+    <pdfbox.version>2.0.16</pdfbox.version>
+    <sauce_junit.version>2.1.21</sauce_junit.version>
+    <selenium-java.version>3.141.59</selenium-java.version>
+    <swagger-parser.version>2.0.14</swagger-parser.version>
+    <traprange.version>1.1.1</traprange.version>
   </properties>
 
-<distributionManagement>
-	<snapshotRepository>
-	</snapshotRepository>
-</distributionManagement>
+  <!-- Trying to make this project run with Bamboo -->
+  <build>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <configuration>
+            <source>${maven-compiler-plugin.source}</source>
+            <target>${maven-compiler-plugin.target}</target>
+            <verbose>${maven-compiler-plugin.verbose}</verbose>
+            <debug>${maven-compiler-plugin.debug}</debug>
+            <parameters>${maven-compiler-plugin.parameters}</parameters>
+            <showWarnings>${maven-compiler-plugin.showWarnings}</showWarnings>
+            <showDeprecation>${maven-compiler-plugin.showDeprecation}</showDeprecation>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven-dependency-plugin.version}</version>
+          <configuration>
+            <verbose>${maven-dependency-plugin.verbose}</verbose>
+            <outputXML>${maven-dependency-plugin.outputXML}</outputXML>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${maven-javadoc-plugin.version}</version>
+          <configuration>
+            <show>${maven-javadoc-plugin.show}</show>
+            <nohelp>${maven-javadoc-plugin.nohelp}</nohelp>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven-enforcer-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>extra-enforcer-rules</artifactId>
+              <version>${extra-enforcer-rules.version}</version>
+            </dependency>
+          </dependencies>
+
+          <configuration>
+            <fail>${maven-enforcer-plugin.fail}</fail>
+            <rules>
+              <banDuplicateClasses>
+                <findAllDuplicates>${maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates}</findAllDuplicates>
+                <ignoreWhenIdentical>${maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical}</ignoreWhenIdentical>
+                <scopes>
+                  <scope>compile</scope>
+                  <scope>system</scope>
+                  <scope>runtime</scope>
+                  <scope>test</scope>
+                </scopes>
+                <ignoreClasses>
+                  <ignoreClass>org.aspectj.runtime</ignoreClass>
+                  <ignoreClass>org.aspectj.lang</ignoreClass>
+                  <ignoreClass>org.aspectj.internal</ignoreClass>
+                </ignoreClasses>
+              </banDuplicateClasses>
+            </rules>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe-plugin.version}</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>classpath-integrity</id>
+      <properties>
+        <classpath-integrity.defaultGoal>dependency:analyze enforcer:enforce</classpath-integrity.defaultGoal>
+      </properties>
+      <build>
+        <defaultGoal>${classpath-integrity.defaultGoal}</defaultGoal>
+      </build>
+    </profile>
+  </profiles>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-bom</artifactId>
+        <version>${log4j2.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>${httpcore.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson2.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-core</artifactId>
+        <version>${info.cukes.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>${info.cukes.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>info.cukes</groupId>
+        <artifactId>cucumber-junit</artifactId>
+        <version>${info.cukes.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.aventstack</groupId>
+        <artifactId>extentreports</artifactId>
+        <version>${extentreports.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.vimalselvam</groupId>
+        <artifactId>cucumber-extentsreport</artifactId>
+        <version>${cucumber-extentsreport.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.pdfbox</groupId>
+        <artifactId>pdfbox</artifactId>
+        <version>${pdfbox.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-api</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-support</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-chrome-driver</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-firefox-driver</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-ie-driver</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-remote-driver</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-safari-driver</artifactId>
+        <version>${selenium-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.saucelabs</groupId>
+        <artifactId>sauce_junit</artifactId>
+        <version>${sauce_junit.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.mashape.unirest</groupId>
+        <artifactId>unirest-java</artifactId>
+        <version>${mashape.unirest.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.swagger.parser.v3</groupId>
+        <artifactId>swagger-parser</artifactId>
+        <version>${swagger-parser.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.giaybac</groupId>
+        <artifactId>traprange</artifactId>
+        <version>${traprange.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
-	<!-- Cucumber Jars -->
-	<!-- https://mvnrepository.com/artifact/net.sourceforge.cobertura/cobertura -->
-	<!-- https://mvnrepository.com/artifact/info.cukes/cucumber-core -->
-	<!-- https://mvnrepository.com/artifact/info.cukes/cucumber-java -->
-	<dependency>
-	    <groupId>info.cukes</groupId>
-	    <artifactId>cucumber-java</artifactId>
-	    <version>1.2.5</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/info.cukes/cucumber-junit -->
-	<dependency>
-	    <groupId>info.cukes</groupId>
-	    <artifactId>cucumber-junit</artifactId>
-	    <version>1.2.5</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/info.cukes/cucumber-jvm-deps -->
-	<!-- https://mvnrepository.com/artifact/net.masterthought/cucumber-reporting -->
-	<!-- https://mvnrepository.com/artifact/info.cukes/gherkin -->
-	<!-- http://extentreports.com/docs/versions/3/java/ -->
-	<dependency>
-		<groupId>com.aventstack</groupId>
-		<artifactId>extentreports</artifactId>
-		<version>3.1.5</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/com.vimalselvam/cucumber-extentsreport -->
-	<dependency>
-		<groupId>com.vimalselvam</groupId>
-		<artifactId>cucumber-extentsreport</artifactId>
-		<version>3.0.2</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/junit/junit -->
-	<dependency>
-		<groupId>junit</groupId>
-		<artifactId>junit</artifactId>
-		<version>4.12</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml -->
-	<dependency>
-		<groupId>com.fasterxml.jackson.dataformat</groupId>
-		<artifactId>jackson-dataformat-yaml</artifactId>
-		<version>2.9.7</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
-	<dependency>
-		<groupId>com.fasterxml.jackson.core</groupId>
-		<artifactId>jackson-databind</artifactId>
-		<version>2.9.9.2</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
-	<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/fontbox -->
-	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-	<dependency>
-		<groupId>org.apache.commons</groupId>
-		<artifactId>commons-lang3</artifactId>
-		<version>3.7</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
-	<dependency>
-		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>httpclient</artifactId>
-		<version>4.5.7</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-	<dependency>
-		<groupId>org.apache.logging.log4j</groupId>
-		<artifactId>log4j-core</artifactId>
-		<version>2.11.0</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-	<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
-	<dependency>
-		<groupId>org.apache.pdfbox</groupId>
-		<artifactId>pdfbox</artifactId>
-		<version>2.0.15</version>
-	</dependency>
-	<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
-	<dependency>
-		<groupId>org.seleniumhq.selenium</groupId>
-		<artifactId>selenium-java</artifactId>
-		<version>3.13.0</version>
-		<exclusions>
-			<exclusion>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-	<!-- TestNG -->
-	<!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
-	<!-- https://mvnrepository.com/artifact/org.testng/testng -->
-	<dependency>
-		<groupId>com.google.code.gson</groupId>
-		<artifactId>gson</artifactId>
-		<version>2.8.5</version>
-		<scope>provided</scope>
-	</dependency>
-	<!-- Saucelabs -->
-	<dependency>
-		<groupId>com.saucelabs</groupId>
-		<artifactId>sauce_junit</artifactId>
-		<version>2.1.21</version>
-	</dependency>
-	<!-- Traprange -->
-	<dependency>
-		<groupId>com.giaybac</groupId>
-		<artifactId>traprange</artifactId>
-		<version>1.1.1</version>
-	</dependency>
-	<!-- Unirest -->
-	<dependency>
-		<groupId>com.mashape.unirest</groupId>
-		<artifactId>unirest-java</artifactId>
-		<version>1.4.9</version>
-	</dependency>
-	<dependency>
-		<groupId>io.swagger.parser.v3</groupId>
-		<artifactId>swagger-parser</artifactId>
-		<version>2.0.9</version>
-	</dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-java</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vimalselvam</groupId>
+      <artifactId>cucumber-extentsreport</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-support</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-chrome-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-firefox-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-ie-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-remote-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-safari-driver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger.parser.v3</groupId>
+      <artifactId>swagger-parser</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.aventstack</groupId>
+      <artifactId>extentreports</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.mashape.unirest</groupId>
+      <artifactId>unirest-java</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.giaybac</groupId>
+      <artifactId>traprange</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <!-- <scope>test</scope> -->
+      <!-- junit should usually be test scope unless this is a dedicated test library -->
+    </dependency>
+
+    <dependency>
+      <groupId>info.cukes</groupId>
+      <artifactId>cucumber-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.saucelabs</groupId>
+      <artifactId>sauce_junit</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-  <!-- Trying to make this project run with Bamboo -->
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-javadoc-plugin</artifactId>
-		<version>3.0.1</version>
-		<configuration>
-			<show>private</show>
-			<nohelp>true</nohelp>
-		</configuration>
-	</plugin>
-		</plugins>
-	</build>
-  <organization>
-  	<name>Doug Noel</name>
-  	<url>https://github.com/dougnoel/sentinel</url>
-  </organization>
 </project>
