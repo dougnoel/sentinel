@@ -70,7 +70,7 @@ Install Traprange to your local Maven Repo either from the command line, or from
 
 ```
 cd [your project dir]/sentinel
-mvn install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=src/main/resources/lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DpomFile=src/main/resources/lib/traprange/pom.xml
 ```
 
 **In Eclipse:**
@@ -85,7 +85,7 @@ mvn install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.
 7. Click the Run button.
 
 ```
-install:install-file -Dfile=lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
+install:install-file -Dfile=src/main/resources/lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DpomFile=src/main/resources/lib/traprange/pom.xml
 ```
 
 #### 1.2.3 Build the Project in Eclipse

@@ -10,22 +10,22 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.cucumber.listener.Reporter;
+import com.dougnoel.sentinel.constants.K;
+import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
+import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.FileNotFoundException;
+import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
+import com.dougnoel.sentinel.exceptions.SentinelException;
+import com.dougnoel.sentinel.exceptions.WebDriverException;
+import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
-import sentinel.exceptions.ConfigurationMappingException;
-import sentinel.exceptions.ConfigurationParseException;
-import sentinel.exceptions.FileNotFoundException;
-import sentinel.exceptions.MissingConfigurationException;
-import sentinel.exceptions.SentinelException;
-import sentinel.exceptions.WebDriverException;
-import sentinel.pages.PageManager;
-import sentinel.utils.K;
-import sentinel.utils.WebDriverFactory;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true, features = "src/test/java/features", glue = { "stepdefinitions",
-        "sentinel.steps" }, plugin = {
+        "com.dougnoel.sentinel.steps" }, plugin = {
                 "com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
          , tags = { "@example" }
 )
@@ -39,14 +39,14 @@ public class TestRun {
         // System.setProperty("cucumber.options", "@example");
         System.setProperty(K.ENV, K.DEV); // Set the environment (dev/qa/stage/prod/etc)
         System.setProperty("pageObjectPackages", "pages,apis");
-        System.setProperty("os", "Windows");
-        System.setProperty("browser", "ie");
+        System.setProperty("os", "OS X");
+        System.setProperty("browser", "chrome");
 //        System.setProperty("saucelabs", "username:saucelabs_key");
         WebDriverFactory.instantiateWebDriver(); 
     }
 
     @AfterClass
-    public static void tearDownAfterClass() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, WebDriverException, IOException, sentinel.exceptions.IOException, FileNotFoundException {
+    public static void tearDownAfterClass() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, WebDriverException, IOException, com.dougnoel.sentinel.exceptions.IOException, FileNotFoundException {
         log.debug("Driver: {}", WebDriverFactory.getWebDriver());
         PageManager.quit();
         Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
