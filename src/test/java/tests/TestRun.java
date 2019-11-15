@@ -35,13 +35,8 @@ public class TestRun {
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException, SentinelException {
-    	log.debug("Start");
-        // System.setProperty("cucumber.options", "@example");
+//         System.setProperty("cucumber.options", "@example");
         System.setProperty(K.ENV, K.DEV); // Set the environment (dev/qa/stage/prod/etc)
-        System.setProperty("pageObjectPackages", "pages,apis");
-        System.setProperty("os", "OS X");
-        System.setProperty("browser", "chrome");
-//        System.setProperty("saucelabs", "username:saucelabs_key");
         WebDriverFactory.instantiateWebDriver(); 
     }
 

@@ -1,4 +1,4 @@
 /**
- * Methods for manipulating specific strings.
+ * Methods for manipulating strings.
  */
 package com.dougnoel.sentinel.strings;

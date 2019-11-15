@@ -3,7 +3,9 @@ package com.dougnoel.sentinel.elements;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +18,8 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
@@ -86,6 +90,22 @@ public class PageElement {
 		this.driver = WebDriverFactory.getWebDriverAndHandleErrors();
 	}
 
+	private WebElement getElementWithWait(final By locator) {
+		Duration timeout =  Duration.ofSeconds(10); //TODO: Move to configuration file
+		Duration interval =  Duration.ofMillis(10); //TODO: Move to configuration file
+		Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+			       .withTimeout(timeout)
+			       .pollingEvery(interval)
+			       .ignoring(NoSuchElementException.class);
+		
+		WebElement element = wait.until(new Function<WebDriver, WebElement>() {
+			public WebElement apply(WebDriver driver) {
+				return driver.findElement(locator);
+			}
+		});
+		return element;
+	}
+	
 	/**
 	 * Returns the Selenium WebElement if it can be found on the current page.
 	 * Provides late binding for elements so that the driver does not look for them
@@ -102,23 +122,25 @@ public class PageElement {
 		try {
 			switch (selectorType) {
 			case CLASS:
-				element = driver.findElement(By.className(selectorValue));
+				element = getElementWithWait(By.className(selectorValue));
+				break;
 			case CSS:
-				element = driver.findElement(By.cssSelector(selectorValue));
+				element = getElementWithWait(By.cssSelector(selectorValue));
+				break;
 			case ID:
-				element = driver.findElement(By.id(selectorValue));
+				element = getElementWithWait(By.id(selectorValue));
 				break;
 			case NAME:
-				element = driver.findElement(By.name(selectorValue));
+				element = getElementWithWait(By.name(selectorValue));
 				break;
 			case PARTIALTEXT:
-				element = driver.findElement(By.partialLinkText(selectorValue));
+				element = getElementWithWait(By.partialLinkText(selectorValue));
 				break;
 			case TEXT:
-				element = driver.findElement(By.linkText(selectorValue));
+				element = getElementWithWait(By.linkText(selectorValue));
 				break;
 			case XPATH:
-				element = driver.findElement(By.xpath(selectorValue));
+				element = getElementWithWait(By.xpath(selectorValue));
 				break;
 			default:
 				// This is here in case a new type is added to SelectorType and has not been
@@ -134,7 +156,12 @@ public class PageElement {
 					this.getClass().getSimpleName(), selectorType, selectorValue);
 			throw new NoSuchElementException(errorMessage, e);
 		}
-
+		if (element == null) {
+			String errorMessage = StringUtils.format(
+					"{} element does not exist or is not visible using the {} value \"{}\". Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
+					this.getClass().getSimpleName(), selectorType, selectorValue);
+			throw new NoSuchElementException(errorMessage);
+		}
 		return element;
 	}
 
