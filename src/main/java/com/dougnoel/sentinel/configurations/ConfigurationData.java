@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
+import com.dougnoel.sentinel.strings.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,7 @@ public class ConfigurationData extends File {
 	 * a specific setting by passing in a command line arg or using System.getProperty() in the setup method in the Test java file.
 	 */
 	private static final long serialVersionUID = 3930207641065895241L;
+	private static final Logger log = LogManager.getLogger(ConfigurationData.class); // Create a logger.
 	
 	@JsonProperty("configurations")
 	public Map<String, Map<String, String>> configurations;
@@ -26,16 +29,46 @@ public class ConfigurationData extends File {
     }
 	
 	/**
-	 * Returns the default configuration value for the given key 
+	 * Returns the default configuration value for the given key.
 	 * 
-	 * @param environment String the environment in which sentinel is running (e.g. dev, qa, sit)
 	 * @param configurationKey String the name of the setting to retrieve
 	 * @return String the configuration value
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public String getConfigurationValue(String environment, String configurationKey) {
-		if(environment == null) {
+	public String getDefaultConfigurationValue(String configurationKey) throws ConfigurationNotFound {
+		return getConfigurationValue(null, configurationKey);
+	}
+	
+	/**
+	 * Returns the configuration value for the given environment and key .
+	 * 
+	 * @param environment String the environment in which the test is running (e.g. dev, qa, sit)
+	 * @param configurationKey String the name of the setting to retrieve
+	 * @return String the configuration value
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 */
+	public String getConfigurationValue(String environment, String configurationKey) throws ConfigurationNotFound {
+		String configurationValue = null;
+		boolean defaultChecked = false;
+		if (environment == null) {
 			environment = "default";
 		}
-		return configurations.get(environment).get(configurationKey);
-	}	
+		try {
+			if (configurations.containsKey(environment)) {
+				configurationValue = configurations.get(environment).get(configurationKey);
+			} else if (configurationValue == null && environment != "default") {
+				defaultChecked = true;
+				configurationValue = configurations.get("default").get(configurationKey);
+			}
+		} catch (NullPointerException e){
+			String errorMessage = StringUtils.format(
+					"A configuration value for {} was not found for the {} environment{}.", configurationKey,
+					environment, defaultChecked == true ? " or the default environment" : "");
+			log.error(errorMessage);
+			throw new ConfigurationNotFound(errorMessage);
+			
+		}
+
+		return configurationValue;
+	}
 }

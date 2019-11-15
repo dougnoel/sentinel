@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
@@ -28,8 +29,9 @@ public class APIManager {
 	 * @throws IOException if other error occurs when mapping yml file into sentinel
 	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 * @throws PageNotFoundException if API could not be built
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public static API setAPI(String uid, String apiName) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, IOException, FileNotFoundException, PageNotFoundException {
+	public static API setAPI(String uid, String apiName) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, IOException, FileNotFoundException, PageNotFoundException, ConfigurationNotFound {
 		API api = APIFactory.buildAPI(apiName);
 		apis.put(uid, api);
 		return api;

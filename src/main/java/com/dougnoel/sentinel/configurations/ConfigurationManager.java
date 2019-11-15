@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.AccessDeniedException;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
@@ -43,17 +44,6 @@ public class ConfigurationManager {
 	private static long timeout = 10L;
 	
 	private static ConfigurationData sentinelConfigurations = null;
-	
-	/**
-	 * Name of the package where page objects are stored. If you change the name,
-	 * you need to change this value. To search in additional locations, you can set
-	 * a system property.
-	 *
-	 * <b>Example:</b>
-	 * <p>
-	 * <code>System.setProperty("pageObjectPackages", "pages.SharedComponent,pages.UserAdminTool");</code>
-	 */
-	private static String defaultPackageName = "pages,apis";
 
 	protected ConfigurationManager() {
 		// Exists only to defeat instantiation.
@@ -96,9 +86,10 @@ public class ConfigurationManager {
 	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
 	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
 	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public static String getOrCreateConfigurationData(String configurationKey) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException {	
+	private static String getOrCreateConfigurationData(String configurationKey) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException, ConfigurationNotFound {	
 		//First we see if the property is set on the maven commandline or in code.
 		String data = System.getProperty(configurationKey);
 		if (data != null) {
@@ -133,6 +124,28 @@ public class ConfigurationManager {
 	
 	/**
 	 * Returns the configuration property for the given key from the helper function which interfaces with the
+	 * ConfigurationData object if it exists. If it does not exist, it is created by the helper function. If
+	 * the value is not found anywhere, the ConfigurationNotFound error is suppressed and a null is returned
+	 * instead of halting the progress of the program.
+	 * 
+	 * @param property String the requested configuration property key
+	 * @return String the requested configuration property key
+	 * @throws ConfigurationParseException if an exception occurs when parsing configuration to data object
+	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
+	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
+	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 */
+	public static String getOptionalProperty(String property) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
+		try {
+			return getProperty(property);
+		} catch (ConfigurationNotFound e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the configuration property for the given key from the helper function which interfaces with the
 	 * ConfigurationData object if it exists. If it does not exist, it is created by the helper function.
 	 * 
 	 * @see ConfigurationManager#getOrCreateConfigurationData(String)
@@ -142,9 +155,10 @@ public class ConfigurationManager {
 	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
 	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
 	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public static String getProperty(String property) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
+	public static String getProperty(String property) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, ConfigurationNotFound {
 		String systemProperty = System.getProperty(property);
 		if(systemProperty == null) {
 			systemProperty = getOrCreateConfigurationData(property);
@@ -160,12 +174,12 @@ public class ConfigurationManager {
 	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
 	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
 	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public static String[] getPageObjectPackageList() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-		String pageObjectPackages = getOrCreateConfigurationData("pageObjectPackages");
-		pageObjectPackages = (pageObjectPackages == null) ? defaultPackageName
-				: pageObjectPackages + "," + defaultPackageName;
+	public static String[] getPageObjectPackageList() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, ConfigurationNotFound {
+		String pageObjectPackages = getProperty("pageObjectPackages");
+
 		log.trace("pageObjectPackages: {}", pageObjectPackages);
 		return StringUtils.split(pageObjectPackages, ',');
 	}
@@ -182,39 +196,6 @@ public class ConfigurationManager {
 			throw new MissingConfigurationException("Enviroment is not set, please restart your test and pass -Denv=\"<your environment>\"");
 		return env;
 	}
-
-	/**
-	 * Returns and Sets the trust level for SSL certificates based on the "ssltrust" system
-	 * property, and defaults to none if no value is set.
-	 * 
-	 * @return String the SSL trust level set
-	 * @throws ConfigurationParseException if an exception occurs when parsing configuration to data object
-	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
-	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
-	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
-	 */
-//	public static String setSSLTrustLevel() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-//		String trustLevel = getOrCreateConfigurationData("ssltrust");
-//		if (trustLevel == null) {
-//			trustLevel = "none";
-//		}
-//		switch (trustLevel) {
-//		case K.ALL:
-//			SSLUtilities.trustAllHttpsCertificates();
-//			SSLUtilities.trustAllHostnames();
-//			break;
-//		case K.CERTS:
-//			SSLUtilities.trustAllHttpsCertificates();
-//			break;
-//		case K.HOSTS:
-//			SSLUtilities.trustAllHostnames();
-//			break;
-//		default:
-//			break;
-//		}
-//		return trustLevel;
-//	}
 
 	/**
 	 * Returns the YAML config file path in the project for a given page object.
@@ -547,10 +528,10 @@ public class ConfigurationManager {
      * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
      * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
      * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 */
 	public static long getDefaultTimeout() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-		String timeoutProp = getOrCreateConfigurationData("timeout");
+		String timeoutProp = getOptionalProperty("timeout");
 		long timeout;
 		if(timeoutProp == null) {
 			timeout = ConfigurationManager.timeout;
@@ -571,10 +552,10 @@ public class ConfigurationManager {
      * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
      * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
      * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 */
 	public static TimeUnit getDefaultTimeUnit() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-		String unit = StringUtils.capitalize(getOrCreateConfigurationData("timeunit"));
+		String unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
 		if(unit == null) {
 			return TimeUnit.SECONDS;
 		}

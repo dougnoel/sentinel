@@ -1,15 +1,14 @@
 ---
 configurations:
-  dev:
-    os: "OS X"
-    browser: chrome
+  default:
     pageObjectPackages: "pages,apis"
+    os: "OS X"
+    browser: "chrome"
   stage:
     os: "Windows 10"
-    browser: firefox
-    pageObjectPackages: "pages.stage"
+    browser: "firefox"
   qa:
     saucelabs: "username:password"
   prod:
-    os: Linux
+    os: "Linux"
 ...

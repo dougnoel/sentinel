@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
@@ -73,8 +74,9 @@ public class APIFactory {
      * @throws IOException if other error occurs when mapping yml file into sentinel 
 	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
 	 * @throws PageNotFoundException if API could not be built
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public static API buildAPI(String apiName) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException, PageNotFoundException {
+	public static API buildAPI(String apiName) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException, PageNotFoundException, ConfigurationNotFound {
 		API api = null;
 		String[] pageObjectPackagesList = ConfigurationManager.getPageObjectPackageList();
 

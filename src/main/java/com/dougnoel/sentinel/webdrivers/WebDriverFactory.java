@@ -11,7 +11,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
@@ -85,10 +84,16 @@ public class WebDriverFactory {
      * @throws FileNotFoundException if the sentinel configuration file does not exist.
      */
     public static WebDriver instantiateWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException {
-        String browser = ConfigurationManager.getProperty("browser");
-        String operatingSystem = ConfigurationManager.getProperty("os");
-        String saucelabsUserNameAndKey = ConfigurationManager.getProperty("saucelabs");
-
+//        System.out.println("browser");
+    	String browser = ConfigurationManager.getOptionalProperty("browser");
+//    	System.out.println(browser);
+//    	System.out.println("os");
+        String operatingSystem = ConfigurationManager.getOptionalProperty("os");
+//        System.out.println(operatingSystem);
+//        System.out.println("sauce");
+        String saucelabsUserNameAndKey = ConfigurationManager.getOptionalProperty("saucelabs");
+//        System.out.println(saucelabsUserNameAndKey);
+        
         if (saucelabsUserNameAndKey == null) {
             if (browser == null) {
                 throw new MissingConfigurationException(StringUtils.format("Browser system property set as {}. Browser property must be set in sentinel.yml or via the command line. See project README for details.", browser));
@@ -134,7 +139,7 @@ public class WebDriverFactory {
 //        ConfigurationManager.setSSLTrustLevel();
         
         //Driver setup
-        String saucelabsUserNameAndKey = ConfigurationManager.getProperty("saucelabs");
+        String saucelabsUserNameAndKey = ConfigurationManager.getOptionalProperty("saucelabs");
         if (saucelabsUserNameAndKey != null) {
             String URL = "https://" + saucelabsUserNameAndKey + "@ondemand.saucelabs.com:443/wd/hub";
             log.debug("URL: {}", URL);
@@ -156,7 +161,7 @@ public class WebDriverFactory {
             String driverPath;
 
             // Set a Download Directory if one was specified on the command line
-            String downloadDirectory = ConfigurationManager.getProperty("download");
+            String downloadDirectory = ConfigurationManager.getOptionalProperty("download");
             if (downloadDirectory != null)
                 DownloadManager.setDownloadDirectory(downloadDirectory);
 

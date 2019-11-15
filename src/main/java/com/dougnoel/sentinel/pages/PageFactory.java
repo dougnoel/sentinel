@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
@@ -68,10 +69,11 @@ public class PageFactory {
      * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
      * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
      * @throws IOException if other error occurs when mapping yml file into sentinel 
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 * @throws PageNotFoundException if page could not be built or retrieved.
+	 * @throws ConfigurationNotFound if the value is not found in the configuration file
 	 */
-	public static Page buildOrRetrievePage(String pageName) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, PageNotFoundException {
+	public static Page buildOrRetrievePage(String pageName) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, PageNotFoundException, ConfigurationNotFound {
 		Page page = pages.get(pageName);
 		if (page != null) {
 			return page;
