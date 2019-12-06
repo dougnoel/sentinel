@@ -287,39 +287,44 @@ Create a file in the conf directory called 'sentinel.yml'. Here you will need to
 ```
 ---
 configurations:
-  dev:
-    os: "OS X"
-    browser: chrome
-    ssltrust: none
-    pageObjectPackages: "pages"
-  stage:
-    ssltrust: none
-    pageObjectPackages: "pages,pages.Test"
-  qa:
-    browser: firefox
-    saucelabs: "test1:1j14h-141h-11j3-1h31j3"
-  sit:
-    browser: firefox
+  default:
+    pageObjectPackages: "pages,apis"
     os: "Windows 10"
+    browser: "chrome"
+    saucelabsUserName: "username"
+    saucelabsAccessKey: "apikey"
+    parenttunnel: "tunnelname"
+    tunnelIdentifier: "tunnelID"
+  stage:
+    os: "Windows 10"
+    browser: "firefox"
+  qa:
+    os: "Linux"
   prod:
-    ssltrust: all
-    os: Linux
+    saucelabsUserName: "username"
+    saucelabsAccessKey: "apikey"
 ...
 ```
 Here are all the properties you can set in the sentinel.yml file:
 
-| Property Name     |Possible Values                                                   |
-| ------------------|------------------------------------------------------------------|
-| env               |any environment name                                              |
-| browser           |Chrome, Firefox, IE, Safari                                       |
-| os                |"OS X", Windows, Mac, Linux, Win                                  |  
-| ssltrust          |all, none                                                         |
-| pageObjectPackages|a comma separated list of page oject packages defined in sentinel |
-| saucelabs         |"username:passwordKey"                                            |  
-| timeout           |any number, defaults to 10                                        |
-| timeunit          |any unit of time, defaults to seconds                             |
-| user.name         |The person running the test, NOT a test user                      |  
-| download          |The download directory                                            |
+```
+| Property Name     |Possible Values                                                    |
+| ------------------|-------------------------------------------------------------------|
+| env               |any environment name                                               |
+| browser           |Chrome, Firefox, IE, Safari                                        |
+| browserVersion    |Version of the browser to use - used for Saucelabs testing only    |
+| os                |"OS X", Windows, Mac, Linux, Win                                   |  
+| ssltrust          |all, none                                                          |
+| pageObjectPackages|a comma separated list of page object packages defined in sentinel |
+| parenttunnel      |Saucelabs parent tunnel ID                                         |
+| saucelabsUserName |Your Saucelabs Username                                            |
+| suacelabsAccessKey|Your Saucelabs apikey                                              |
+| timeout           |any number, defaults to 10                                         |
+| timeunit          |any unit of time, defaults to seconds                              |
+| tunnelIdentifier  |Saucelabs tunnel identifier                                        |
+| user.name         |The person running the test, NOT a test user                       |  
+| download          |The download directory                                             |
+```
 
 #### 4.1.2 Set Tags in Test Package
 

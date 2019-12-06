@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -73,7 +74,7 @@ public class WebDriverFactory {
     }
     
     /**
-     * Creates and Returns the usable WebDriver instance. 
+     * Creates and Returns a usable WebDriver instance. 
      * 
      * @return WebDriver
      * @throws MissingConfigurationException if the requested configuration property has not been set
@@ -84,15 +85,9 @@ public class WebDriverFactory {
      * @throws FileNotFoundException if the sentinel configuration file does not exist.
      */
     public static WebDriver instantiateWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException {
-//        System.out.println("browser");
     	String browser = ConfigurationManager.getOptionalProperty("browser");
-//    	System.out.println(browser);
-//    	System.out.println("os");
         String operatingSystem = ConfigurationManager.getOptionalProperty("os");
-//        System.out.println(operatingSystem);
-//        System.out.println("sauce");
         String saucelabsUserNameAndKey = ConfigurationManager.getOptionalProperty("saucelabs");
-//        System.out.println(saucelabsUserNameAndKey);
         
         if (saucelabsUserNameAndKey == null) {
             if (browser == null) {
@@ -106,6 +101,69 @@ public class WebDriverFactory {
     }
 
     /**
+     * Creates a single threaded Saucelabs WebDriver using the os, browser, and browser version set in the 
+     * configuration file or passed in on the command line.
+     * @return WebDriver
+     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
+     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
+     * @throws IOException if other error occurs when mapping yml file into sentinel
+     * @throws MissingConfigurationException if the requested configuration property has not been set
+     * @throws FileNotFoundException if the sentinel configuration file does not exist
+     */
+    private static WebDriver createSaucelabsDriver() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
+        String operatingSystem = ConfigurationManager.getOptionalProperty("os");
+        String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion");
+        String browser = ConfigurationManager.getOptionalProperty("browser");
+        
+    	return createSaucelabsDriver(operatingSystem, browser, browserVersion);
+    }
+    
+    /**
+     * Creates a single threaded Saucelabs WebDriver using the os, browser, and browser version passed to it.
+     * @return WebDriver
+     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
+     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
+     * @throws IOException if other error occurs when mapping yml file into sentinel
+     * @throws MissingConfigurationException if the requested configuration property has not been set
+     * @throws FileNotFoundException if the sentinel configuration file does not exist
+     */
+    private static WebDriver createSaucelabsDriver(String operatingSystem, String browser, String browserVersion) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
+        URL SAUCELABS_URL;
+		try {
+			SAUCELABS_URL = new URL("https://ondemand.saucelabs.com:443/wd/hub");
+		} catch (java.net.MalformedURLException e) {
+			throw new MalformedURLException(e);
+		}
+        
+        MutableCapabilities options = new MutableCapabilities();
+        options.setCapability("platform", operatingSystem);
+        options.setCapability("browserName", browser);
+        if (browserVersion != null) {
+        	options.setCapability("version", browserVersion);
+        } else {
+        	options.setCapability("version", "latest");
+        }
+        
+        options.setCapability("username", ConfigurationManager.getOptionalProperty("saucelabsUserName"));
+        options.setCapability("accesskey", ConfigurationManager.getOptionalProperty("saucelabsAccessKey"));
+        
+        String parentTunnel = ConfigurationManager.getOptionalProperty("parenttunnel");
+        String tunnelIdentifier = ConfigurationManager.getOptionalProperty("tunnelIdentifier");
+        
+        if (parentTunnel != null) {
+        	options.setCapability("parent-tunnel", parentTunnel);
+        }
+        
+        if (tunnelIdentifier != null) {
+        	options.setCapability("tunnelIdentifier", tunnelIdentifier);
+        }        
+        
+        RemoteWebDriver driver = new RemoteWebDriver(SAUCELABS_URL, options);
+        
+        return driver;
+    }
+    
+    /**
      * We use this factory method to handle keeping up with driver versions for all
      * browsers. All the browser drivers can be found in the root of the project
      * under the drivers/[os]/ paths.
@@ -114,10 +172,10 @@ public class WebDriverFactory {
      * like "FireFox", "chrome" and "Internet Explorer" are all valid.
      * 
      * @param browser
-     *            String. Valid options: chrome, firefox, internet explorer, safari
+     *            String Valid options: chrome, firefox, internet explorer, safari
      * @param operatingSystem
-     *            String. Valid options: linux, macintosh (mac, os x), windows (win)
-     * @return An initialized <a href="https://www.seleniumhq.org/">Selenium
+     *            String Valid options: linux, macintosh (mac, os x), windows (win)
+     * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
      * @throws MalformedURLException if the saucelabs URL is malformed
@@ -135,27 +193,11 @@ public class WebDriverFactory {
         if (instance == null) {
             instance = new WebDriverFactory();
         }
-        //SSL Certificates
-//        ConfigurationManager.setSSLTrustLevel();
         
         //Driver setup
-        String saucelabsUserNameAndKey = ConfigurationManager.getOptionalProperty("saucelabs");
-        if (saucelabsUserNameAndKey != null) {
-            String URL = "https://" + saucelabsUserNameAndKey + "@ondemand.saucelabs.com:443/wd/hub";
-            log.debug("URL: {}", URL);
-            // DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-            // capabilities.setCapability("platform", "Windows 10");
-            // capabilities.setCapability("version", "latest");
-            // driver = new RemoteWebDriver(new URL(URL), capabilities);
-            ChromeOptions options = new ChromeOptions();
-            options.setCapability("platform", "Windows 10");
-            options.setCapability("version", "70.0");
-            try {
-				driver = new RemoteWebDriver(new URL(URL), options);
-			} catch (java.net.MalformedURLException e) {
-				throw new MalformedURLException(e);
-			}
-            log.debug("Driver: " + driver);
+        String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
+        if (saucelabsUserName != null) {
+        	driver = createSaucelabsDriver();
         } else {
             // Declare a variable to store the filePath of the driver
             String driverPath;
