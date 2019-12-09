@@ -2,8 +2,12 @@
 configurations:
   default:
     pageObjectPackages: "pages,apis"
-    os: "OS X"
+    os: "Windows 10"
     browser: "chrome"
+    saucelabsUserName: "username"
+    saucelabsAccessKey: "apikey"
+    parenttunnel: "tunnelname"
+    tunnelIdentifier: "tunnelID"
   stage:
     os: "Windows 10"
     browser: "firefox"
