@@ -11,13 +11,30 @@ These instructions will get you a copy of the project up and running on your loc
 ### 1.1 Prerequisites
 
 What things you need to install the software and how to install them:
- * Eclipse (Optional)
- * Java
- * Maven
+ * Integrated Development Environment (Eclipse Suggested)
+ * Java (1.8 or later)
+ * Maven (2.5.4 or later)
+ * GitHub Account
 
 ### 1.2 Installation
 
-#### 1.2.1 Install the Project 
+#### 1.2.1 Generate a GitHub Personal Access Token
+Note: You must have Maven installed and have an account on [github.com](https://github.com) Instructions modified from: [Create a GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line).
+
+1. [Verify your email address](https://help.github.com/en/articles/verifying-your-email-address), if it hasn't been verified yet.
+2. In the upper-right corner of any page, click your profile photo, then click **Settings**.
+3. In the left sidebar, click **Developer settings**.
+4. In the left sidebar, click **Personal access tokens**.
+5. Click **Generate new token**.
+6. Name the token **Package Read/Write**
+7. Select the **write:packages** scope. This will auto-select the **read:packages** and **repo** scopes you need as well.
+8. Click **Generate token**.
+9. Click  to copy the token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.
+
+#### 1.2.2 Maven settings.xml file
+
+
+#### 1.2.2 Install the Project 
 First you need to install the project and open it.
 
 **On the command line:**
@@ -31,37 +48,6 @@ git clone https://github.com/dougnoel/sentinel.git
 3. Next to Import Source click the Directory button and browse to the installed location.
 4. Click the Finish button.
 
-**In Eclipse:**
-
-*Install Git connector*
-1. Help -> Install New Software...
-2. In the **Work with:** text box, paste the following url: `http://download.eclipse.org/egit/updates` and press the **ENTER key**.
-3. Select **Git Integration for Eclipse** and press the **Next** button.
-4. Press the **Next** button.
-5. Accept the license agreement and press the **Finish** button.
-6. Press the **Select All** button and then press the **Accept Selected** button.
-7. Press the **Restart Now** button.
-
-*Install Eclipse Maven plugin*
-1. Help -> Install New Software...
-2. In the **Work with:** text box, paste the following url: `http://download.eclipse.org/technology/m2e/releases` and press the **ENTER key**.
-3. Select **Maven Integration for Eclipse** and press the **Next** button.
-4. Press the **Next** button.
-5. Accept the license agreement and press the **Finish** button.
-6. Press the **Restart Now** button.
-
-*Install Maven SCM Handler for Git*
-1. File -> Import...
-2. Expand the **Maven** folder
-3. Select **Check out Maven project from SCM** and press the **Next** button
-4. Click the m2e Marketplace link in the lower right-hand corner.
-5. Wait for the m2e marketplace to load. Select **m2e-egit** and press the **Finish** button.
-
-4. Select **Clone URI** from the list and press the **Next** button
-5. Paste `https://github.com/dougnoel/sentinel.git` into the URI box and press the **Next** button.
-6. Wait for the repo to load and ensure the master branch is selected and press the **Next** button.
-7. Use the default working directory and press **Next**. Wait for the download to complete.
-8.  and then press the **Finish** button.
 
 #### 1.2.2 Install Traprange into your Local Maven Repo
 Install Traprange to your local Maven Repo either from the command line, or from inside Eclipse.
