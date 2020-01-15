@@ -120,6 +120,9 @@ public class WebDriverFactory {
     
     /**
      * Creates a single threaded Saucelabs WebDriver using the os, browser, and browser version passed to it.
+     * @param operatingSystem String the operating system you want Saucelabs to stand up
+     * @param browser String the browser you want Saucelabs to use
+     * @param browserVersion String the version of the browser you want Saucelabs to use
      * @return WebDriver
      * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
      * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel

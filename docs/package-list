@@ -1,0 +1,11 @@
+com.dougnoel.sentinel.apis
+com.dougnoel.sentinel.configurations
+com.dougnoel.sentinel.constants
+com.dougnoel.sentinel.elements
+com.dougnoel.sentinel.enums
+com.dougnoel.sentinel.exceptions
+com.dougnoel.sentinel.filemanagers
+com.dougnoel.sentinel.pages
+com.dougnoel.sentinel.steps
+com.dougnoel.sentinel.strings
+com.dougnoel.sentinel.webdrivers
