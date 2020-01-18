@@ -17,9 +17,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them:
  * Integrated Development Environment (Eclipse Suggested)
- * Java (1.8 or later)
+ * Java 8 (1.8) (Java 9 and later are NOT supported by Cucumber)
  * Maven (2.5.4 or later)
- * GitHub Account
 
 ### 1.2 Installation
 These instructions assume you are using Eclipse.
