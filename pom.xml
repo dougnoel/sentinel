@@ -187,11 +187,11 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <!-- Added this because the above wasn't working. Need to resolve. -->
     <plugins>
     <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.1</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -204,7 +204,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>

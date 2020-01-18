@@ -9,9 +9,9 @@ People wondering where they can write @Given, @When, and @Then steps should firs
 
 # Section 1: Using Sentinel
 
-## 1.0 Getting Started
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+## 1.0 Getting Started
 
 ### 1.1 Prerequisites
 
@@ -22,25 +22,7 @@ What things you need to install the software and how to install them:
  * GitHub Account
 
 ### 1.2 Installation
-
-#### 1.2.1 Generate a GitHub Personal Access Token
-Note: You must have Maven installed and have an account on [github.com](https://github.com) Instructions modified from: [Create a GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line).
-
-1. [Verify your email address](https://help.github.com/en/articles/verifying-your-email-address), if it hasn't been verified yet.
-2. In the upper-right corner of any page, click your profile photo, then click **Settings**.
-3. In the left sidebar, click **Developer settings**.
-4. In the left sidebar, click **Personal access tokens**.
-5. Click **Generate new token**.
-6. Name the token **Package Read/Write**
-7. Select the **write:packages** scope. This will auto-select the **read:packages** and **repo** scopes you need as well.
-8. Click **Generate token**.
-9. Click  to copy the token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.
-
-#### 1.2.2 Maven settings.xml file
-
-
-#### 1.2.2 Install the Project 
-First you need to install the project and open it.
+These instructions assume you are using Eclipse.
 
 **On the command line:**
 Clone the project from git.
@@ -52,36 +34,6 @@ git clone https://github.com/dougnoel/sentinel.git
 2. File -> Open Projects from File system...
 3. Next to Import Source click the Directory button and browse to the installed location.
 4. Click the Finish button.
-
-
-#### 1.2.2 Install Traprange into your Local Maven Repo
-Install Traprange to your local Maven Repo either from the command line, or from inside Eclipse.
-
-**On the command line:**
-
-```
-cd [your project dir]/sentinel
-mvn install:install-file -Dfile=src/main/resources/lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DpomFile=src/main/resources/lib/traprange/pom.xml
-```
-
-**In Eclipse:**
-
-1. From the Run menu select Run Configurations...
-2. On the left-hand side select Maven Build.
-3. Click the New Configuration button in the upper left-hand corner of the dialog. It looks like a piece of paper with a yellow plus sign on top of it.
-4. Name the new configuration "Install Traprange".
-5. Under the Base Directory textbox, click the **Workspace** button.
-6. Select the Sentinel project and click the **Ok** button.
-6. Copy and paste the code below into the Goals text box.
-7. Click the Run button.
-
-```
-install:install-file -Dfile=src/main/resources/lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DpomFile=src/main/resources/lib/traprange/pom.xml
-```
-
-#### 1.2.3 Build the Project in Eclipse
-After installing Traprange successfully, you need to build the Maven project to make sure all the repositories are included.
-
 1. Right-Click on the project in the Project Explorer.
 2. Maven -> Update Project...
 3. Wait for the status bar in the lower right-hand corner to finish before continuing.
@@ -108,6 +60,33 @@ To install it locally:
 
 ```
 mvn install:install-file -Dfile=sentinel-1.0.0-SNAPSHOT.jar -DgroupId=com.dougnoel -DartifactId=sentinel -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+```
+
+### 5.2 Deploy to Github
+Note this will only work if you have Admin rights to the Github repo.
+
+#### 5.2.1 Generate a GitHub Personal Access Token
+Note: You must have Maven installed and have an account on [github.com](https://github.com) Instructions modified from: [Create a GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line).
+
+1. [Verify your email address](https://help.github.com/en/articles/verifying-your-email-address), if it hasn't been verified yet.
+2. In the upper-right corner of any page, click your profile photo, then click **Settings**.
+3. In the left sidebar, click **Developer settings**.
+4. In the left sidebar, click **Personal access tokens**.
+5. Click **Generate new token**.
+6. Name the token **Package Read/Write**
+7. Select the **write:packages** scope. This will auto-select the **read:packages** and **repo** scopes you need as well.
+8. Click **Generate token**.
+9. Click  to copy the token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.
+
+#### 5.2.2 Maven settings.xml file
+1. Copy the settings-example.xml file to ~/.m2/settings.xml
+2. Replace the USERNAME and GITHUB key with your Github username and the key generated in the previous step.
+
+#### 5.2.3 Deploy the Package to Github
+Once you're set up, all you have to do is run this command:
+
+```
+mvn deploy
 ```
 
 ## 6.0 Additional Documentation & Resources
