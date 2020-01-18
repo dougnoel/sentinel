@@ -4,12 +4,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>sentinel</name>
   <url>https://github.com/dougnoel/${project.artifactId}</url>
 
   <organization>
-    <name>Doug Noel</name>
+    <name>Doug Noël</name>
     <url>https://github.com/dougnoel/${project.artifactId}</url>
   </organization>
 
@@ -19,6 +19,14 @@
     <url>git://github.com/dougnoel/${project.artifactId}.git</url>
   </scm>
 
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub dougnoel traprange Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/dougnoel/traprange</url>
+		</repository>
+	</repositories>
+      
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -49,9 +57,9 @@
 
     <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
     <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
-    <maven-javadoc-plugin.nohelp>true</maven-javadoc-plugin.nohelp>
+    <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
 
-    <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+    <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
     <maven-surefire-report-plugin.version>3.0.0-M3</maven-surefire-report-plugin.version>
 
@@ -78,7 +86,6 @@
     <traprange.version>1.1.1</traprange.version>
   </properties>
 
-  <!-- Trying to make this project run with Bamboo -->
   <build>
 
     <pluginManagement>
@@ -113,7 +120,28 @@
             <show>${maven-javadoc-plugin.show}</show>
             <nohelp>${maven-javadoc-plugin.nohelp}</nohelp>
           </configuration>
+          <executions>
+			<execution>
+			  <id>attach-javadocs</id>
+			  <goals>
+				<goal>jar</goal>
+			  </goals>
+			</execution>
+		  </executions>
         </plugin>
+	
+		<plugin>
+			<artifactId>maven-source-plugin</artifactId>
+			<version>${maven-source-plugin.version}</version>
+			<executions>
+				<execution>
+					<id>attach-sources</id>
+					<goals>
+						<goal>jar</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
 
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
@@ -159,8 +187,43 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <!-- Added this because the above wasn't working. Need to resolve. -->
+    <plugins>
+    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			</plugins>
   </build>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub dougnoel Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/dougnoel/sentinel</url>
+		</repository>
+	</distributionManagement>
+	
   <profiles>
     <profile>
       <id>classpath-integrity</id>

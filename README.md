@@ -2,40 +2,26 @@
 
 A Selenium framework that implements the [Page Object Model](http://cheezyworld.com/2010/11/09/ui-tests-not-brittle/) (POM) using [Object Oriented Programming](https://en.wikipedia.org/wiki/Object-oriented_programming) (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework.
 
+## Quickstart
+For those wanting to go crazy without reading lots of docs, get the [sentinel.example Project](https://github.com/dougnoel/sentinel.example), and checkout the [Sentinel Javadocs](https://dougnoel.github.io/sentinel/), especially the steps package. Sentinel is intended to be included in your test automation and used as a jar file. If you are writing tests, you should **NOT** be modifying the Sentinel code itself.
+
+People wondering where they can write @Given, @When, and @Then steps should first be asking what has been written and attempting to reuse that instead of writing their own. If you are writing your own more than 1% of the time then you are not using the framework as intended and wasting time (or working on something really weird).
+
 # Section 1: Using Sentinel
 
-## 1.0 Getting Started
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+## 1.0 Getting Started
 
 ### 1.1 Prerequisites
 
 What things you need to install the software and how to install them:
  * Integrated Development Environment (Eclipse Suggested)
- * Java (1.8 or later)
+ * Java 8 (1.8) (Java 9 and later are NOT supported by Cucumber)
  * Maven (2.5.4 or later)
- * GitHub Account
 
 ### 1.2 Installation
-
-#### 1.2.1 Generate a GitHub Personal Access Token
-Note: You must have Maven installed and have an account on [github.com](https://github.com) Instructions modified from: [Create a GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line).
-
-1. [Verify your email address](https://help.github.com/en/articles/verifying-your-email-address), if it hasn't been verified yet.
-2. In the upper-right corner of any page, click your profile photo, then click **Settings**.
-3. In the left sidebar, click **Developer settings**.
-4. In the left sidebar, click **Personal access tokens**.
-5. Click **Generate new token**.
-6. Name the token **Package Read/Write**
-7. Select the **write:packages** scope. This will auto-select the **read:packages** and **repo** scopes you need as well.
-8. Click **Generate token**.
-9. Click  to copy the token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.
-
-#### 1.2.2 Maven settings.xml file
-
-
-#### 1.2.2 Install the Project 
-First you need to install the project and open it.
+These instructions assume you are using Eclipse.
 
 **On the command line:**
 Clone the project from git.
@@ -47,313 +33,12 @@ git clone https://github.com/dougnoel/sentinel.git
 2. File -> Open Projects from File system...
 3. Next to Import Source click the Directory button and browse to the installed location.
 4. Click the Finish button.
-
-
-#### 1.2.2 Install Traprange into your Local Maven Repo
-Install Traprange to your local Maven Repo either from the command line, or from inside Eclipse.
-
-**On the command line:**
-
-```
-cd [your project dir]/sentinel
-mvn install:install-file -Dfile=src/main/resources/lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DpomFile=src/main/resources/lib/traprange/pom.xml
-```
-
-**In Eclipse:**
-
-1. From the Run menu select Run Configurations...
-2. On the left-hand side select Maven Build.
-3. Click the New Configuration button in the upper left-hand corner of the dialog. It looks like a piece of paper with a yellow plus sign on top of it.
-4. Name the new configuration "Install Traprange".
-5. Under the Base Directory textbox, click the **Workspace** button.
-6. Select the Sentinel project and click the **Ok** button.
-6. Copy and paste the code below into the Goals text box.
-7. Click the Run button.
-
-```
-install:install-file -Dfile=src/main/resources/lib/traprange/traprange-1.1.1.jar -DgroupId=com.giaybac -DartifactId=traprange -Dversion=1.1.1 -Dpackaging=jar -DpomFile=src/main/resources/lib/traprange/pom.xml
-```
-
-#### 1.2.3 Build the Project in Eclipse
-After installing Traprange successfully, you need to build the Maven project to make sure all the repositories are included.
-
 1. Right-Click on the project in the Project Explorer.
 2. Maven -> Update Project...
 3. Wait for the status bar in the lower right-hand corner to finish before continuing.
 
-## 2.0 Creating Tests
-
-Explain how to run the automated tests for this system
-
-### 2.1 Creating Page Objects
-
-A page object contains the location information for all the elements on the page. With a config file, you can configure URLs for environments, as well as user names and passwords per environment.
-
-#### 2.1.1 Creating Page Objects
-
-Page objects must be located in the pages package. Create one by inheriting the Page class. 
-
-```
-package pages;
-
-public class MyNewPage extends Page {
-}
-```
-
-#### 2.1.2 Add an element
-
-You add an element by creating a function that returns an element type. For example:
-
-```
-package pages;
-
-public class MyNewPage extends Page {
-	public Div google_map() { return new Div(ID, "map"); }
-}
-```
-
-### 2.2 Add a configuration file (YAML)
-
-Create a file in the directory with the same name (including case) as your page object with a .yml extension.
-
-```
-urls:
-  base: http://{env}.google.com
-  prod: https://www.google.com
-dev:
-  username: devuser
-  password: Test1234
-qa:
-  username: qauser
-  password: Test1234
-prod:
-  username: produser
-  password: Test1234
-```
-
-### 2.3 Create a feature file
-
-Create a feature file using the [Gherkin Syntax](https://docs.cucumber.io/gherkin/step-organization/). 
-
-```
-#Author: your.email@your.domain.com
-#Keywords Summary :
-#Feature: List of scenarios.
-#Scenario: Business rule through list of steps with arguments.
-#Given: Some precondition step
-#When: Some key actions
-#Then: To observe outcomes or validation
-#And,But: To enumerate more Given,When,Then steps
-#Scenario Outline: List of steps for data-driven as an Examples and <placeholder>
-#Examples: Container for s table
-#Background: List of steps run before each of the scenarios
-#""" (Doc Strings)
-#| (Data Tables)
-#@ (Tags/Labels):To group Scenarios
-#<> (placeholder)
-#""
-## (Comments)
-#Sample Feature Definition Template
-@tag
-Feature: Title of your feature
-  I want to use this template for my feature file
-
-  @tag1
-  Scenario: Title of your scenario
-    Given I want to write a step with precondition
-    And some other precondition
-    When I complete action
-    And some other action
-    And yet another action
-    Then I validate the outcomes
-    And check more outcomes
-
-  @tag2
-  Scenario Outline: Title of your scenario outline
-    Given I want to write a step with <name>
-    When I check for the <value> in step
-    Then I verify the <status> in step
-
-    Examples: 
-      | name  | value | status  |
-      | name1 |     5 | success |
-      | name2 |     7 | Fail    |
-
-```
-
-### 2.4 Create a step definition file
-
-If the generic steps in stepdefinitions/BaseSteps.java do not fit your needs, then you can create a new file in the stepdefinition package.
-
-```
-package stepdefinitions;
-
-public class MySteps {
-	private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
-
-	@When("^I do stuff like (.*)$")
-	public void i_do_stuff(String stuff) throws Throwable {
-	    //Operate on the variable stuff
-	}
-}
-```
-## 3.0 Creating API Tests
-Sentinel now supports API testing.
-
-### 3.1 Creating API Objects
-An API object contains all the information needed to connect to an API. In future versions, we will pull directly from a swagger file.
-
-#### 3.1.1 Creating an API Object
-API objects must be located in the pages package path. Create one by inheriting the API class. 
-
-```
-package pages;
-
-public class MyNewAPI extends API {
-}
-```
-
-#### 3.1.2 Add a URL
-You add a URL by creating a constructor for your API class:
-
-```
-package apis;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import sentinel.apis.API;
-
-public class TestAPI extends API {
-	
-	public TestAPI() throws MalformedURLException {
-		this.url = new URL("https://jsonplaceholder.typicode.com/");
-	}
-}
-```
-
-#### 3.1.3 Add an action
-You add an action by creating a function that returns an action type with a designated endpoint. There are three kinds: GET, POST and PUT. For example if I had an endpoint of "todos" that used a GET action to retrieve a list of items I would use the following:
-
-```
-package apis;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import sentinel.apis.API;
-import sentinel.apis.GET;
-
-public class TestAPI extends API {
-	public GET to_do_list () { return new GET("todos"); }
-	
-	public TestAPI() throws MalformedURLException {
-		this.url = new URL("https://jsonplaceholder.typicode.com/");
-	}
-}
-```
-
-## 4.0 Executing Tests
-Tests can be executed either in side an editor using JUnit, or on the commandline using maven. The first option is good for
-getting debug output while developing. The second is good for running in a CI/CD pipeline. Either way, you must setup a JUnit test to run.
-
-### 4.1 Executing tests using JUnit
-
-1. Create a package in src/test/java called "tests".
-2. Create a java file in the packages with the name "Test" in it. (E.G. TestRun.java)
-
-#### 4.1.1 Setting the Test Environment
-
-Create a file in the conf directory called 'sentinel.yml'. Here you will need to set values in order to run your tests. All configuration properties such as which browser and operating system to use during testing, saucelabs configuration, which page object packages you want to test, and other necessary values are to be set on an environment specific basis. 
-
-##### **You must set browser and operating system values in order to run a test**
-
- The below example is taken from the example configuration file in the conf directory called sentinel.example.yml.
-
-```
----
-configurations:
-  default:
-    pageObjectPackages: "pages,apis"
-    os: "Windows 10"
-    browser: "chrome"
-    saucelabsUserName: "username"
-    saucelabsAccessKey: "apikey"
-    parenttunnel: "tunnelname"
-    tunnelIdentifier: "tunnelID"
-  stage:
-    os: "Windows 10"
-    browser: "firefox"
-  qa:
-    os: "Linux"
-  prod:
-    saucelabsUserName: "username"
-    saucelabsAccessKey: "apikey"
-...
-```
-Here are all the properties you can set in the sentinel.yml file:
-
-```
-| Property Name     |Possible Values                                                    |
-| ------------------|-------------------------------------------------------------------|
-| env               |any environment name                                               |
-| browser           |Chrome, Firefox, IE, Safari                                        |
-| browserVersion    |Version of the browser to use - used for Saucelabs testing only    |
-| os                |"OS X", Windows, Mac, Linux, Win                                   |  
-| ssltrust          |all, none                                                          |
-| pageObjectPackages|a comma separated list of page object packages defined in sentinel |
-| parenttunnel      |Saucelabs parent tunnel ID                                         |
-| saucelabsUserName |Your Saucelabs Username                                            |
-| suacelabsAccessKey|Your Saucelabs apikey                                              |
-| timeout           |any number, defaults to 10                                         |
-| timeunit          |any unit of time, defaults to seconds                              |
-| tunnelIdentifier  |Saucelabs tunnel identifier                                        |
-| user.name         |The person running the test, NOT a test user                       |  
-| download          |The download directory                                             |
-```
-
-#### 4.1.2 Set Tags in Test Package
-
-In the test setup file, add the tags you want to test. These should match the tags in the feature file you have created.
-
-```
-tags = { "@ABCD-1234" }
-```
-
-#### 4.1.3 Closing the tests
-This is where you clean up. In the tearDownAfterClass() add code similar to the following:
-
-```
-WebDriver driver = WebDriverFactory.getWebDriverAndHandleErrors();
-log.debug("Driver: " + driver);
-driver.quit();
-```
-### 4.2 Executing Tests using Maven
-You can execute the tests in the dev environment on the command line.
-
-```
-mvn test
-```
-#### 4.2.1 Using command line parameters
-You can also set configuration properties from the command line. Simply enter:
-
-```
-mvn -Dproperty=value test
-```
-
-Note that only values with spaces require double quotes:
-
-```
-mvn -Dproperty="my value" test
-```
-If you want to use tags you can include them like so:
-
-```
-mvn -D"cucumber.options--tags @TAG-103,@TAG-449" test
-```
-
-You will only have to do this the first time you run a test with a certain set of configurations. Any property you can set in 
-the config file, you can set on the command line. If you find yourself testing multiple configurations, please refer to Section 3.1.1.
+## 2.0 - 4.0
+These sections have been moved to the [sentinel.example Project](https://github.com/dougnoel/sentinel.example). Please refer to that Readme for how to create and execute tests.
 
 ## 5.0 Deployment
 
@@ -376,11 +61,37 @@ To install it locally:
 mvn install:install-file -Dfile=sentinel-1.0.0-SNAPSHOT.jar -DgroupId=com.dougnoel -DartifactId=sentinel -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
 ```
 
+### 5.2 Deploy to Github
+Note this will only work if you have Admin rights to the Github repo.
+
+#### 5.2.1 Generate a GitHub Personal Access Token
+Note: You must have Maven installed and have an account on [github.com](https://github.com) Instructions modified from: [Create a GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line).
+
+1. [Verify your email address](https://help.github.com/en/articles/verifying-your-email-address), if it hasn't been verified yet.
+2. In the upper-right corner of any page, click your profile photo, then click **Settings**.
+3. In the left sidebar, click **Developer settings**.
+4. In the left sidebar, click **Personal access tokens**.
+5. Click **Generate new token**.
+6. Name the token **Package Read/Write**
+7. Select the **write:packages** scope. This will auto-select the **read:packages** and **repo** scopes you need as well.
+8. Click **Generate token**.
+9. Click  to copy the token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.
+
+#### 5.2.2 Maven settings.xml file
+1. Copy the settings-example.xml file to ~/.m2/settings.xml
+2. Replace the USERNAME and GITHUB key with your Github username and the key generated in the previous step.
+
+#### 5.2.3 Deploy the Package to Github
+Once you're set up, all you have to do is run this command:
+
+```
+mvn deploy
+```
+
 ## 6.0 Additional Documentation & Resources
 
 ### 6.1 Javadocs
-Sentinel comes with Javadocs which describe its classes in great detail. This includes examples of how you can use the
-generic Cucumber steps that are already included.
+Sentinel comes with Javadocs which describe its classes in great detail. This includes examples of how you can use the generic Cucumber steps that are already included. The [Sentinel Javadocs](https://dougnoel.github.io/sentinel/) are updated on github with every new version.
 
 The Javadocs can also be easily generated by running the following command.
 
