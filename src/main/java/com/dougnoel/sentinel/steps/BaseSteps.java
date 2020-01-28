@@ -31,7 +31,7 @@ public class BaseSteps {
     private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
 
     @Before
-    public void before(Scenario scenario) {
+    public static void before(Scenario scenario) {
         log.trace("Scenario ID: {} Scenario Name: {}", scenario.getId(), scenario.getName());
     }
     
@@ -290,7 +290,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public void i_am_on_the_page(String pageName, String hasArguments, String arguments) throws Throwable {
+    public static void i_am_on_the_page(String pageName, String hasArguments, String arguments) throws Throwable {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         log.trace(pageName);
         PageManager.setPage(pageName);
@@ -313,7 +313,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I close the browser (?:tab|window)$")
-    public void i_close_the_browser_tab() throws Throwable {
+    public static void i_close_the_browser_tab() throws Throwable {
         PageManager.closeChildWindow();
     }
     
@@ -338,7 +338,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I fill the account information( for account (.*?))? into the (.*?) and the (.*?)$")
-    public void i_fill_the_account_information_into_the_username_field_and_the_password_field(String usingAccountName, String account, String username_field, String password_field) throws Throwable {
+    public static void i_fill_the_account_information_into_the_username_field_and_the_password_field(String usingAccountName, String account, String username_field, String password_field) throws Throwable {
         if (usingAccountName == null) {
             i_enter_text_in_the_textbox_named(ConfigurationManager.getUsername(), username_field);
             i_enter_text_in_the_textbox_named(ConfigurationManager.getPassword(), password_field);            
@@ -362,7 +362,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I fill the test data for (.*?) of the (.*?) into the (.*?)$")
-    public void i_fill_the_test_data_into_the_key_field(String testData, String key, String key_field) throws Throwable {
+    public static void i_fill_the_test_data_into_the_key_field(String testData, String key, String key_field) throws Throwable {
     	
     	i_enter_text_in_the_textbox_named(ConfigurationManager.getTestData(testData, key), key_field);
     	
@@ -386,7 +386,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I fill the password( for account (.*?))? into the (.*?)$")
-    public void i_fill_the_password_into_the_password_field(String usingAccountName, String account, String password_field) throws Throwable {
+    public static void i_fill_the_password_into_the_password_field(String usingAccountName, String account, String password_field) throws Throwable {
         if (usingAccountName == null) {
             i_enter_text_in_the_textbox_named(ConfigurationManager.getPassword(), password_field);            
         } else {
@@ -412,7 +412,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I fill the username( for account (.*?))? into the (.*?)$")
-    public void i_fill_the_username_into_the_username_field(String usingAccountName, String account, String username_field) throws Throwable {
+    public static void i_fill_the_username_into_the_username_field(String usingAccountName, String account, String username_field) throws Throwable {
         if (usingAccountName == null) {
             i_enter_text_in_the_textbox_named(ConfigurationManager.getUsername(), username_field);
         } else {
@@ -439,7 +439,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I find the (.*?) link in the row of the the (.*) containing the (.*) value and click it$")
-    public void i_find_the_row_matching_the_text_stored_for_the_element_in_the_table_and_click_an_associated_link(
+    public static void i_find_the_row_matching_the_text_stored_for_the_element_in_the_table_and_click_an_associated_link(
             String elementName, String tableName, String key) throws Throwable {
         String text = ConfigurationManager.getValue(key);
         getElementAsTable(tableName).clickElementInRowThatContains(text, elementName);
@@ -458,7 +458,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I (?:navigate to|am on) the url ((https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])$")
-    public void i_navigate_to_the_url(String url, String protocol) throws Throwable {
+    public static void i_navigate_to_the_url(String url, String protocol) throws Throwable {
         log.debug("Loading {}", url);
         PageManager.openPage(url);
     }
@@ -509,7 +509,7 @@ public class BaseSteps {
      * @throws Throwable Passes through any errors to the executing code.
      */
     @When("^I press the browser (back|forward|refresh) button$")
-    public void i_press_the_browser(String option) throws Throwable {
+    public static void i_press_the_browser(String option) throws Throwable {
         switch (option) {
         case "back":
             PageManager.navigateBack();
@@ -555,7 +555,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I press the keys (.*) in the (.*)$")
-    public void i_press_the_keys_in_the_element(String text, String elementName) throws Throwable {
+    public static void i_press_the_keys_in_the_element(String text, String elementName) throws Throwable {
         getElementAsTextbox(elementName).pressKeys(text);
         ConfigurationManager.setValue(elementName, text);
     }
@@ -574,7 +574,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I view the (\\d+)(?:st|nd|rd|th) page of results from the (.*)$")
-    public void i_view_the_x_page_of_results(int pageNumber, String tableName) throws Throwable {
+    public static void i_view_the_x_page_of_results(int pageNumber, String tableName) throws Throwable {
         getElementAsTable(tableName).storeTable(pageNumber);
     }
     
@@ -584,7 +584,7 @@ public class BaseSteps {
      * 
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
-    public void waitForLoad() throws Throwable {
+    public static void waitForLoad() throws Throwable {
     	i_wait_x_seconds(5,0);
     }
 }

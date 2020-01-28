@@ -253,7 +253,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I am (?:redirected to|shown) the (.*) (?:(?:P|p)age|(?:O|o)verlay)$")
-    public void i_am_redirected_to_the_page(String pageName) throws Throwable {
+    public static void i_am_redirected_to_the_page(String pageName) throws Throwable {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         // TODO: Add code to verify the page has loaded.
@@ -273,7 +273,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I see a new tab open with the (.*) Page$")
-    public void i_see_a_new_tab_open_with_the_foo_Page(String pageName) throws Throwable {
+    public static void i_see_a_new_tab_open_with_the_foo_Page(String pageName) throws Throwable {
         PageManager.switchToNewWindow();
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
@@ -302,7 +302,7 @@ public class VerificationSteps {
      * @throws Throwable if any errors are raised they will fail the current test
      */
     @Then("^I see the text (.*) appears (?:on|between) the (\\d+)(?:st|nd|rd|th)(?: and )?(\\d+)?(?:st|nd|rd|th)? pages? of the pdf$")
-    public void i_see_the_text_appears_on_pages_of_the_pdf(String text_to_verify, int firstPageNumber, Integer lastPageNumber) throws Throwable {
+    public static void i_see_the_text_appears_on_pages_of_the_pdf(String text_to_verify, int firstPageNumber, Integer lastPageNumber) throws Throwable {
             URL url = new URL(PageManager.getCurrentUrl());
             assertTrue(url.toString().contains(".pdf"));
             if (lastPageNumber == null) {
@@ -327,7 +327,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I should be shown the (\\d+)(?:st|nd|rd|th) page of results from the (.*)$")
-    public void i_should_be_shown_the_x_page_of_results(int pageNumber, String tableName) throws Throwable {
+    public static void i_should_be_shown_the_x_page_of_results(int pageNumber, String tableName) throws Throwable {
         assert ((boolean) getElementAsTable(tableName).compareWithStoredTable(pageNumber) == false);
     }
     
@@ -346,7 +346,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) column(s)? in the (.*?) contains unique values$")
-	public void i_verify_the_column_in_the_table_contains_unique_text(String columnName, String isMultiCells,
+	public static void i_verify_the_column_in_the_table_contains_unique_text(String columnName, String isMultiCells,
 			String tableName) throws Throwable {
 		if (isMultiCells != null) {		
 			assertTrue(getElementAsTable(tableName).verifyRowCellsAreUnique(columnName));
@@ -382,7 +382,7 @@ public class VerificationSteps {
      * @throws Throwable Throws any errors passed to it.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public void i_verify_the_element_contains_the_text(String elementName, String assertion, String matchType,
+    public static void i_verify_the_element_contains_the_text(String elementName, String assertion, String matchType,
             String text)
             throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
@@ -426,7 +426,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
-    public void i_verify_the_row_column_in_the_table_contains_the_text_for_the_stored_value(String columnName,
+    public static void i_verify_the_row_column_in_the_table_contains_the_text_for_the_stored_value(String columnName,
             String tableName, String key) throws Throwable {
         String textToMatch = ConfigurationManager.getValue(key);
         assertTrue(getElementAsTable(tableName).verifyColumnCellsContain(columnName, textToMatch));
@@ -453,7 +453,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public void i_verify_the_selection_contains_the_text(String elementName, String assertion, String text) throws Throwable {
+    public static void i_verify_the_selection_contains_the_text(String elementName, String assertion, String text) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
         String expectedResult = StringUtils.format(
@@ -481,7 +481,7 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public void i_verify_the_table_contains_the_column(String tableName, String columnName) throws Throwable {
+    public static void i_verify_the_table_contains_the_column(String tableName, String columnName) throws Throwable {
         assertTrue(getElementAsTable(tableName).verifyColumnExists(columnName));
     }
     
@@ -492,7 +492,7 @@ public class VerificationSteps {
      * @param text String text to verify in the URL
      * @throws Throwable Throws any errors passed to it.
      */
-    private void i_verify_the_URL_contains_the_text(String text) throws Throwable {
+    private static void i_verify_the_URL_contains_the_text(String text) throws Throwable {
         String currentUrl = PageManager.getCurrentUrl();
         String expectedResult = StringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
@@ -512,7 +512,7 @@ public class VerificationSteps {
      * @throws Throwable Passes through any errors to the executing code.
      */
     @Then("^I open the (.*?) link in a new tab and verify the URL that loads is (.*?)$")
-    public void i_open_the_link_in_a_new_tab_and_verify_the_url(String linkName, String url) throws Throwable {
+    public static void i_open_the_link_in_a_new_tab_and_verify_the_url(String linkName, String url) throws Throwable {
             WebDriverFactory.getWebDriver().findElement(By.linkText(linkName)).sendKeys(Keys.RETURN);
             PageManager.switchToNewWindow();
             String newUrl = PageManager.getCurrentUrl();
@@ -534,7 +534,7 @@ public class VerificationSteps {
      * @throws Throwable Passes through any errors to the executing code.
      */
     @Then("^I should see the (.*) iframe$")
-    public void i_should_see_content_in_the_x_iframe(String iFrameName) throws Throwable {
+    public static void i_should_see_content_in_the_x_iframe(String iFrameName) throws Throwable {
 
         // Make sure the content is loaded in the i frame
         VerificationSteps.i_verify_an_element_exists(iFrameName, "");
