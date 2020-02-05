@@ -75,11 +75,15 @@ public class PageFactory {
 	 */
 	public static Page buildOrRetrievePage(String pageName) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, PageNotFoundException, ConfigurationNotFound {
 		Page page = pages.get(pageName);
+		final String errorMessage = "The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackage property to your conf/sentinel.yml configuration file and try again.";
 		if (page != null) {
 			return page;
 		} else {
 			if (pageObjectPackagesList == null) {
 				pageObjectPackagesList = ConfigurationManager.getPageObjectPackageList();
+				if(pageObjectPackagesList == null) {
+					throw new PageNotFoundException(errorMessage);
+				}
 			}
 
 			for (String pageObjectPackage : pageObjectPackagesList) {
@@ -91,7 +95,7 @@ public class PageFactory {
 			}
 		}
 		if(page == null) {
-			throw new PageNotFoundException("The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackage property to your conf/sentinel.yml configuration file and try again.");
+			throw new PageNotFoundException(errorMessage);
 		}
 		pages.put(pageName, page);
 		return page;

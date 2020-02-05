@@ -50,13 +50,17 @@ public class ConfigurationData extends File {
 	public String getConfigurationValue(String environment, String configurationKey) throws ConfigurationNotFound {
 		String configurationValue = null;
 		boolean defaultChecked = false;
+		// This is here in case something falls through, but there are checks when we get the environment to
+		// stop execution and throw an exception if no env is set.
 		if (environment == null) {
 			environment = "default";
 		}
 		try {
 			if (configurations.containsKey(environment)) {
 				configurationValue = configurations.get(environment).get(configurationKey);
-			} else if (configurationValue == null && environment != "default") {
+			}
+			// If we did not find a value for the set environment, then we check the default settings
+			if (configurationValue == null) {
 				defaultChecked = true;
 				configurationValue = configurations.get("default").get(configurationKey);
 			}
