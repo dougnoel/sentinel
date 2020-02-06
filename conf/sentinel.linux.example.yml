@@ -1,0 +1,7 @@
+---
+configurations:
+  default:
+    pageObjectPackages: "pages"
+    os: "Linux"
+    browser: "chrome"
+...
