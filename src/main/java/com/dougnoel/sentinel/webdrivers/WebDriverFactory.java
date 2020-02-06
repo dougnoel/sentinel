@@ -18,6 +18,7 @@ import org.openqa.selenium.safari.SafariDriver;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
@@ -83,8 +84,9 @@ public class WebDriverFactory {
      * @throws IOException if other error occurs when mapping yml file into sentinel
      * @throws WebDriverException if error thrown while creating WebDriver instance
      * @throws FileNotFoundException if the sentinel configuration file does not exist.
+     * @throws WebDriverNotExecutableException if the web driver being used does not have execute permissions set
      */
-    public static WebDriver instantiateWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException {
+    public static WebDriver instantiateWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException, WebDriverNotExecutableException {
     	String browser = ConfigurationManager.getOptionalProperty("browser");
         String operatingSystem = ConfigurationManager.getOptionalProperty("os");
         String saucelabsUserNameAndKey = ConfigurationManager.getOptionalProperty("saucelabs");
@@ -97,7 +99,7 @@ public class WebDriverFactory {
                 throw new MissingConfigurationException(StringUtils.format("OS system property set as {}. OS property must be set in sentinel.yml or via the command line. See project README for details.", operatingSystem));
             }
         }
-			return instantiateWebDriver(browser, operatingSystem);
+        	return instantiateWebDriver(browser, operatingSystem);
     }
 
     /**
@@ -245,7 +247,13 @@ public class WebDriverFactory {
                     }
                     System.setProperty("webdriver.chrome.driver", driverPath);
                     setChromeDownloadDirectory("downloads");
-                    driver = new ChromeDriver();
+                    try {
+                    	driver = new ChromeDriver();
+                    }
+            		catch (IllegalStateException e) {
+            			String errorMeessage = "The driver does not have execute permissions. On linux/mac run chmod +x on the driver.";
+            			throw new WebDriverNotExecutableException(errorMeessage, e);
+            		}
                     break;
                 case "firefox":
                     switch (operatingSystem) {
@@ -332,6 +340,7 @@ public class WebDriverFactory {
     	} catch (FileNotFoundException e) {
     		log.error(StringUtils.format(errorMessage, "FileNotFoundException", e.getMessage()));
     		return null;
+
 		}
     	return driver;
     }
@@ -345,8 +354,9 @@ public class WebDriverFactory {
      * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
      * @throws IOException if other error occurs when mapping yml file into sentinel
      * @throws FileNotFoundException if the sentinel configuration file does not exist.
+     * @throws WebDriverNotExecutableException if the web driver being used does not have execute permissions set
      */
-    public static WebDriver getWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException{
+    public static WebDriver getWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException, WebDriverNotExecutableException{
         if (instance == null) {
         	instantiateWebDriver();
         }

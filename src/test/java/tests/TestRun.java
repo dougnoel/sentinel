@@ -13,6 +13,7 @@ import com.cucumber.listener.Reporter;
 import com.dougnoel.sentinel.constants.K;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
@@ -41,7 +42,7 @@ public class TestRun {
     }
 
     @AfterClass
-    public static void tearDownAfterClass() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, WebDriverException, IOException, com.dougnoel.sentinel.exceptions.IOException, FileNotFoundException {
+    public static void tearDownAfterClass() throws SentinelException {
         log.debug("Driver: {}", WebDriverFactory.getWebDriver());
         PageManager.quit();
         Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
