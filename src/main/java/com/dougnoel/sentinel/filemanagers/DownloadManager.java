@@ -14,7 +14,6 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -28,10 +27,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.strings.StringUtils;
-import com.giaybac.traprange.PDFTableExtractor;
-import com.giaybac.traprange.entity.Table;
-import com.giaybac.traprange.entity.TableCell;
-import com.giaybac.traprange.entity.TableRow;
 
 /**
  * Manages Download actions and interactions, which handles CRUD and IO for Sentinel. This includes deleting files, getting/setting files, filenames, or file extensions,
@@ -260,37 +255,6 @@ public class DownloadManager {
 
         return flag;
     }
-
-    /**
-     * Returns the number of rows in a Find A Provider PDF Results file. 
-     * It will not work correctly for other files because it chops off a certain 
-     * number of rows at the beginning to get an accurate count.
-     * 
-     * @param pdfFile File file path to the PDF
-     * @return int a count of the number of rows
-     */
-    public static int getFindAProviderResultCount(File pdfFile) {
-        PDFTableExtractor extractor = new PDFTableExtractor();
-        List<Table> tables = extractor.setSource(pdfFile)
-                .exceptLine(new int[] { 0 }) // remove the first line on every page, which lists the provider type
-                .exceptLine(0, new int[] { 0, 1, 2, 3, 4 }) // Remove the search summary and the table row header - the
-                                                            // first 5 lines on the first page
-                .extract();
-
-        int count = 0;
-        for (Table table : tables) {
-            List<TableRow> rows = table.getRows();
-            for (TableRow row : rows) {
-                List<TableCell> cells = row.getCells();
-                if (cells.size() > 3) {
-                    count++;
-                }
-            }
-        }
-        log.debug("Number of rows: " + count);
-        return count;
-    }
-
     /**
      * Returns true if the given text exists in the given PDF within a specified page range.
      * 

@@ -61,6 +61,12 @@ To install it locally:
 mvn install:install-file -Dfile=sentinel-1.0.0-SNAPSHOT.jar -DgroupId=com.dougnoel -DartifactId=sentinel -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
 ```
 
+If you want to do this all in one step without generating a jar, just run:
+
+```
+mvn install
+```
+
 ### 5.2 Deploy to Github
 Note this will only work if you have Admin rights to the Github repo.
 
