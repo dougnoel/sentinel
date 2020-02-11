@@ -36,7 +36,7 @@ public class TestRun {
 
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
-        log.debug("Driver: {}", WebDriverFactory.getWebDriver());
+        log.info("Driver: {}", WebDriverFactory.getWebDriver());
         PageManager.quit();
         Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
         Reporter.setSystemInfo("user", System.getProperty("user.name"));

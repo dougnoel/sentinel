@@ -2,10 +2,11 @@
 <Configuration>
 	<Properties>
 		<Property name="basePath">./logs</Property>
+		<Property name="logName">sentinel</Property>
 	</Properties>
 	<Appenders>
-		<RollingFile name="File" fileName="${basePath}/app.log"
-			filePattern="${basePath}/app-%d{yyy-MM-dd}.log">
+		<RollingFile name="File" fileName="${basePath}/${logName}.log"
+			filePattern="${basePath}/${logName}-%d{yyy-MM-dd}.log">
 			<PatternLayout
 				pattern="%d{HH:mm:ss.SSS} %-5level %c{2} (%13F:%L) - %msg%n" />
 			<Policies>
@@ -20,11 +21,11 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Root level="warn">
+		<Root level="info">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="File" />
 		</Root>
-		<Logger name="pages" level="warn" additivity="false">
+		<Logger name="pages" level="info" additivity="false">
 			]
 			<AppenderRef ref="File" />
 		</Logger>
