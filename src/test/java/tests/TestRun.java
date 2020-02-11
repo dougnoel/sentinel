@@ -10,14 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.cucumber.listener.Reporter;
-import com.dougnoel.sentinel.constants.K;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
-import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -37,7 +30,7 @@ public class TestRun {
     @BeforeClass
     public static void setUpBeforeClass() throws IOException, SentinelException {
 //         System.setProperty("cucumber.options", "@example");
-        System.setProperty(K.ENV, K.DEV); // Set the environment (dev/qa/stage/prod/etc)
+        System.setProperty("env", "dev"); // Set the environment (dev/qa/stage/prod/etc)
         WebDriverFactory.instantiateWebDriver(); 
     }
 
