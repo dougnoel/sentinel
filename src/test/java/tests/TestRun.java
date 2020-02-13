@@ -30,10 +30,8 @@ public class TestRun {
     @BeforeClass
     public static void setUpBeforeClass() throws IOException, SentinelException {
 //         System.setProperty("cucumber.options", "@example");
+        System.setProperty("org.freemarker.loggerLibrary", "none");
         System.setProperty("env", "dev"); // Set the environment (dev/qa/stage/prod/etc)
-        System.setProperty("os", "Mac"); 
-        System.setProperty("browser", "chrome");
-        System.setProperty("pageObjectPackages", "pages");
         WebDriverFactory.instantiateWebDriver();
     }
 
@@ -45,6 +43,5 @@ public class TestRun {
         Reporter.setSystemInfo("user", System.getProperty("user.name"));
         Reporter.setSystemInfo("os", System.getProperty("os"));
         Reporter.setTestRunnerOutput("Sample test runner output message");
-      
     }
 }

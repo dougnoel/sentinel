@@ -95,17 +95,17 @@ public class WebDriverFactory {
         	options.setCapability("version", "latest");
         }
         
-        options.setCapability("username", ConfigurationManager.getOptionalProperty("saucelabsUserName"));
-        options.setCapability("accesskey", ConfigurationManager.getOptionalProperty("saucelabsAccessKey"));
+        options.setCapability("username", ConfigurationManager.getProperty("saucelabsUserName"));
+        options.setCapability("accesskey", ConfigurationManager.getProperty("saucelabsAccessKey"));
         
         String parentTunnel = ConfigurationManager.getOptionalProperty("parenttunnel");
         String tunnelIdentifier = ConfigurationManager.getOptionalProperty("tunnelIdentifier");
         
-        if (parentTunnel != null) {
+        if (StringUtils.isNotEmpty(parentTunnel)) {
         	options.setCapability("parent-tunnel", parentTunnel);
         }
         
-        if (tunnelIdentifier != null) {
+        if (StringUtils.isNotEmpty(tunnelIdentifier)) {
         	options.setCapability("tunnelIdentifier", tunnelIdentifier);
         }        
         

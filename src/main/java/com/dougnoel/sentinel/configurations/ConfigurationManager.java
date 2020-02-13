@@ -97,19 +97,15 @@ public class ConfigurationManager {
 				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
 			} catch (JsonParseException e) {
 				String errorMessage = StringUtils.format("Configuration file {} is not a valid YAML file. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", sentinelConfigurations.getAbsolutePath(), configurationKey, configurationKey);
-				log.error(errorMessage);
 				throw new ConfigurationParseException(errorMessage, e);
 			} catch (JsonMappingException e) {
 				String errorMessage = StringUtils.format("Configuration file {} has incorrect formatting and cannot be read. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", sentinelConfigurations.getAbsolutePath(), configurationKey, configurationKey);
-				log.error(errorMessage);
 				throw new ConfigurationMappingException(errorMessage, e);
 			} catch (java.io.FileNotFoundException e) {
 				String errorMessage = StringUtils.format("Configuration file {} cannot be found in the specified location. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", "conf/sentinel.yml", configurationKey, configurationKey);
-				log.error(errorMessage);
 				throw new FileNotFoundException(errorMessage, e);
 			} catch (java.io.IOException e) {
 				String errorMessage = StringUtils.format("Configuration file {} cannot be opened in the specified location. Could not load the {} property. Please fix the file read properties or pass the property in on the commandline using the -D{}= option.", "conf/sentinel.yml", configurationKey, configurationKey);
-				log.error(errorMessage);
 				throw new IOException(errorMessage, e);
 			}
 		}
@@ -126,12 +122,16 @@ public class ConfigurationManager {
 	 * 
 	 * @param property String the requested configuration property key
 	 * @return String the requested configuration property key or null if nothing is found
-	 * @throws ConfigurationNotFoundException if system environment is not set, will prompt user to set environment
 	 */
-	public static String getOptionalProperty(String property) throws ConfigurationNotFoundException {
+	public static String getOptionalProperty(String property) {
 		try {
-			return getProperty(property);
+			String systemProperty = System.getProperty(property);
+			if(systemProperty == null) {
+				systemProperty = getOrCreateConfigurationData(property);
+			}		
+			return systemProperty;
 		} catch (ConfigurationNotFoundException e) {
+			log.trace(e.getMessage(),e.getStackTrace().toString());
 			return null; //If the configuration value is not found, we do not need to throw an exception.
 		}
 	}
@@ -148,7 +148,12 @@ public class ConfigurationManager {
 	public static String getProperty(String property) throws ConfigurationNotFoundException {
 		String systemProperty = System.getProperty(property);
 		if(systemProperty == null) {
-			systemProperty = getOrCreateConfigurationData(property);
+			try {
+				systemProperty = getOrCreateConfigurationData(property);
+			} catch (ConfigurationNotFoundException e) {
+				log.error(e.getMessage(),e.getStackTrace().toString());
+				throw e;
+			}
 		}		
 		return systemProperty;
 	}
@@ -470,16 +475,12 @@ public class ConfigurationManager {
 	 */
 	public static long getDefaultTimeout() {
 		long timeout = ConfigurationManager.timeout;
-		try {
-			String timeoutProp = getOptionalProperty("timeout");
-			if(StringUtils.isNotEmpty(timeoutProp)) {
-				timeout = Long.parseLong(timeoutProp);
-			}
-		} catch (ConfigurationNotFoundException e) {
-			log.trace("No timeout property set, using the default timeout value of {}.", timeout);
+		String timeoutProp = getOptionalProperty("timeout");
+		if(StringUtils.isNotEmpty(timeoutProp)) {
+			timeout = Long.parseLong(timeoutProp);
+		} else {
+			log.debug("No timeout property set, using the default timeout value of {}.", timeout);
 		}
-		
-
 		return timeout;
 	}
 
@@ -492,12 +493,8 @@ public class ConfigurationManager {
 	 * @return java.util.concurrent.TimeUnit the default value
 	 */
 	public static TimeUnit getDefaultTimeUnit() {
-		String unit;
-		try {
-			unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
-		} catch (ConfigurationNotFoundException e) {
-			return TimeUnit.SECONDS;
-		}
+		String unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
+
 		if(unit == null) {
 			return TimeUnit.SECONDS;
 		}
