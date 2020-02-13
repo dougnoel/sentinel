@@ -43,9 +43,10 @@ public class Page {
      * base URL for the page.
      */
     public Page() {
-        driver = WebDriverFactory.getWebDriverAndHandleErrors();
+        driver = WebDriverFactory.getWebDriver();
         lastBrowserDimensions = originalBrowserDimensions = driver.manage().window().getSize();
         lastBrowserLocation = originalBrowserLocation = driver.manage().window().getPosition();
+        //TODO: Find this config value and read it.
         this.setImplicitWait(10); // Set a 10 second wait before erroring out on not finding elements.
     }
 

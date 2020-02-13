@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class AccessDeniedException extends SentinelException {
+public class AccessDeniedException extends FileNotFoundException {
 
     /**
      *  Allows us to pass in the stack trace and additional text to a AccessDeniedException.

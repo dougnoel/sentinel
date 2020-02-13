@@ -68,11 +68,14 @@ public abstract class API {
 		return token;
 	}
 	
+	/**
+	 * Creates an AuthToken
+	 */
 	public void setAuthToken() {
 		switch (authenticationType) {
 		case JWT:
 			String jsExpression = "return JSON.parse(window.sessionStorage[Object.keys(window.sessionStorage).filter(key => /^oidc.*$/.test(key)).shift()]).id_token";
-			authToken = ((JavascriptExecutor) WebDriverFactory.getWebDriverAndHandleErrors()).executeScript(jsExpression);
+			authToken = ((JavascriptExecutor) WebDriverFactory.getWebDriver()).executeScript(jsExpression);
 			break;
 		case AUTH_KEY:
 			//TODO: Implement Auth Token setting

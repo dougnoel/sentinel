@@ -31,7 +31,10 @@ public class TestRun {
     public static void setUpBeforeClass() throws IOException, SentinelException {
 //         System.setProperty("cucumber.options", "@example");
         System.setProperty("env", "dev"); // Set the environment (dev/qa/stage/prod/etc)
-        WebDriverFactory.instantiateWebDriver(); 
+        System.setProperty("os", "Mac"); 
+        System.setProperty("browser", "chrome");
+        System.setProperty("pageObjectPackages", "pages");
+        WebDriverFactory.instantiateWebDriver();
     }
 
     @AfterClass

@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class ConfigurationMappingException extends SentinelException {
+public class ConfigurationMappingException extends ConfigurationNotFoundException {
 
     /**
      * 

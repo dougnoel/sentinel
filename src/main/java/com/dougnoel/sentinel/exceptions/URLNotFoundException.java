@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class URLNotFoundException extends SentinelException {
+public class URLNotFoundException extends ConfigurationNotFoundException {
 
     /**
      *  SentinelException to catch error thrown if a URL is not found or some operation to get a URL fails

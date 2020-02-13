@@ -25,11 +25,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
-import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
@@ -87,7 +87,7 @@ public class PageElement {
 	public PageElement(SelectorType selectorType, String selectorValue) {
 		this.selectorType = selectorType;
 		this.selectorValue = selectorValue;
-		this.driver = WebDriverFactory.getWebDriverAndHandleErrors();
+		this.driver = WebDriverFactory.getWebDriver();
 	}
 
 	private WebElement getElementWithWait(final By locator) {
@@ -247,13 +247,9 @@ public class PageElement {
 	 * @throws NoSuchElementException if the element cannot be found
 	 * @throws NoSuchSelectorException if the selector type passed is invalid
 	 * @throws ElementNotVisibleException if the element is not visible and cannot be clicked
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
-	public PageElement click() throws NoSuchSelectorException, NoSuchElementException, ElementNotVisibleException, ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException {
+	public PageElement click() throws NoSuchSelectorException, NoSuchElementException, ElementNotVisibleException, ConfigurationNotFoundException  {
 		long waitTime = ConfigurationManager.getDefaultTimeout();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
@@ -418,7 +414,7 @@ public class PageElement {
      * @throws IOException if other error occurs when mapping yml file into sentinel
 	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
 	 */
-	public boolean doesNotExist() throws NoSuchSelectorException, ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, IOException, FileNotFoundException {
+	public boolean doesNotExist() throws NoSuchSelectorException {
 		// Reducing the time we have to wait for an expected failure.
 		PageManager.setTimeout(250, TimeUnit.MILLISECONDS);
 		WebElement element = null;

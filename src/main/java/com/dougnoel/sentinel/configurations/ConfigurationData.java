@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.strings.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,9 +33,9 @@ public class ConfigurationData extends File {
 	 * 
 	 * @param configurationKey String the name of the setting to retrieve
 	 * @return String the configuration value
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public String getDefaultConfigurationValue(String configurationKey) throws ConfigurationNotFound {
+	public String getDefaultConfigurationValue(String configurationKey) throws ConfigurationNotFoundException {
 		return getConfigurationValue(null, configurationKey);
 	}
 	
@@ -45,9 +45,9 @@ public class ConfigurationData extends File {
 	 * @param environment String the environment in which the test is running (e.g. dev, qa, sit)
 	 * @param configurationKey String the name of the setting to retrieve
 	 * @return String the configuration value
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public String getConfigurationValue(String environment, String configurationKey) throws ConfigurationNotFound {
+	public String getConfigurationValue(String environment, String configurationKey) throws ConfigurationNotFoundException {
 		String configurationValue = null;
 		boolean defaultChecked = false;
 		// This is here in case something falls through, but there are checks when we get the environment to
@@ -69,7 +69,7 @@ public class ConfigurationData extends File {
 					"A configuration value for {} was not found for the {} environment{}.", configurationKey,
 					environment, defaultChecked == true ? " or the default environment" : "");
 			log.error(errorMessage);
-			throw new ConfigurationNotFound(errorMessage);
+			throw new ConfigurationNotFoundException(errorMessage);
 			
 		}
 

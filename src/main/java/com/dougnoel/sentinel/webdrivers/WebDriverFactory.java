@@ -16,13 +16,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
-import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.filemanagers.DownloadManager;
 import com.dougnoel.sentinel.strings.StringUtils;
@@ -75,64 +71,14 @@ public class WebDriverFactory {
     }
     
     /**
-     * Creates and Returns a usable WebDriver instance. 
-     * 
-     * @return WebDriver
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-     * @throws WebDriverException if error thrown while creating WebDriver instance
-     * @throws FileNotFoundException if the sentinel configuration file does not exist.
-     * @throws WebDriverNotExecutableException if the web driver being used does not have execute permissions set
-     */
-    public static WebDriver instantiateWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException, WebDriverNotExecutableException {
-    	String browser = ConfigurationManager.getOptionalProperty("browser");
-        String operatingSystem = ConfigurationManager.getOptionalProperty("os");
-        String saucelabsUserNameAndKey = ConfigurationManager.getOptionalProperty("saucelabs");
-        
-        if (saucelabsUserNameAndKey == null) {
-            if (browser == null) {
-                throw new MissingConfigurationException(StringUtils.format("Browser system property set as {}. Browser property must be set in sentinel.yml or via the command line. See project README for details.", browser));
-            }
-            if (operatingSystem == null) {
-                throw new MissingConfigurationException(StringUtils.format("OS system property set as {}. OS property must be set in sentinel.yml or via the command line. See project README for details.", operatingSystem));
-            }
-        }
-        	return instantiateWebDriver(browser, operatingSystem);
-    }
-
-    /**
-     * Creates a single threaded Saucelabs WebDriver using the os, browser, and browser version set in the 
-     * configuration file or passed in on the command line.
-     * @return WebDriver
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws FileNotFoundException if the sentinel configuration file does not exist
-     */
-    private static WebDriver createSaucelabsDriver() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-        String operatingSystem = ConfigurationManager.getOptionalProperty("os");
-        String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion");
-        String browser = ConfigurationManager.getOptionalProperty("browser");
-        
-    	return createSaucelabsDriver(operatingSystem, browser, browserVersion);
-    }
-    
-    /**
      * Creates a single threaded Saucelabs WebDriver using the os, browser, and browser version passed to it.
      * @param operatingSystem String the operating system you want Saucelabs to stand up
      * @param browser String the browser you want Saucelabs to use
      * @param browserVersion String the version of the browser you want Saucelabs to use
      * @return WebDriver
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws FileNotFoundException if the sentinel configuration file does not exist
+     * @throws ConfigurationNotFoundException if a requested configuration property has not been set
      */
-    private static WebDriver createSaucelabsDriver(String operatingSystem, String browser, String browserVersion) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
+    private static WebDriver createSaucelabsDriver(String operatingSystem, String browser, String browserVersion) throws ConfigurationNotFoundException {
         URL SAUCELABS_URL;
 		try {
 			SAUCELABS_URL = new URL("https://ondemand.saucelabs.com:443/wd/hub");
@@ -168,7 +114,9 @@ public class WebDriverFactory {
         return driver;
     }
     
+    //TODO: Add all of the valid browser options and make them match saucelabs options
     /**
+     * Creates and returns a useable WebDriver.
      * We use this factory method to handle keeping up with driver versions for all
      * browsers. All the browser drivers can be found in the root of the project
      * under the drivers/[os]/ paths.
@@ -184,25 +132,24 @@ public class WebDriverFactory {
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
      * @throws MalformedURLException if the saucelabs URL is malformed
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
      * @throws WebDriverException if error thrown while creating WebDriver instance
-     * @throws FileNotFoundException if the sentinel configuration file does not exist.
+     * @throws ConfigurationNotFoundException if a needed configuration value cannot be found
      */
-    public static WebDriver instantiateWebDriver(String browser, String operatingSystem) throws WebDriverException, MalformedURLException, ConfigurationMappingException,
-    ConfigurationParseException, IOException, MissingConfigurationException, FileNotFoundException {
+    public static WebDriver instantiateWebDriver() throws WebDriverException, MalformedURLException, ConfigurationNotFoundException {
         // Ensure we only have one instance of this class, so that we always return the
         // same driver.
         if (instance == null) {
             instance = new WebDriverFactory();
         }
+    	
+        String operatingSystem = ConfigurationManager.getProperty("os");
+        String browser = ConfigurationManager.getProperty("browser");
         
         //Driver setup
         String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	driver = createSaucelabsDriver();
+        	String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion"); // If we do not specify a browser version, we use the latest
+        	driver = createSaucelabsDriver(operatingSystem, browser, browserVersion);
         } else {
             // Declare a variable to store the filePath of the driver
             String driverPath;
@@ -314,51 +261,14 @@ public class WebDriverFactory {
     }
 
     /**
-     * Wraps WebDriverFactory#getWebDriver() and handles errors
+     * Returns the WebDriver instance. This will silently log an error if the WebDriver has not been instantiated yet.
      * 
-     * @return WebDriver
+     * @return WebDriver the created Selenium WebDriver
      */
-    public static WebDriver getWebDriverAndHandleErrors() {
-    	String errorMessage = "Retrieval WebDriver instance failed with a '{}', {}"; 
-    	try {
-    		getWebDriver();
-    	} catch (MissingConfigurationException e) {
-    		log.error(StringUtils.format(errorMessage, "MissingConfigurationException", e.getMessage()));
-    		return null;
-    	} catch (ConfigurationParseException e) {
-    		log.error(StringUtils.format(errorMessage, "ConfigurationParseException", e.getMessage()));
-    		return null;
-    	} catch (ConfigurationMappingException e) {
-    		log.error(StringUtils.format(errorMessage, "ConfigurationMappingException", e.getMessage()));
-    		return null;
-    	} catch (IOException e) {
-    		log.error(StringUtils.format(errorMessage, "IOException", e.getMessage()));
-    		return null;
-    	} catch (WebDriverException e) {
-    		log.error(StringUtils.format(errorMessage, "WebDriverException", e.getMessage()));
-    		return null;
-    	} catch (FileNotFoundException e) {
-    		log.error(StringUtils.format(errorMessage, "FileNotFoundException", e.getMessage()));
-    		return null;
-
-		}
-    	return driver;
-    }
-    /**
-     * Returns the WebDriver instance
-     * 
-     * @return WebDriver
-     * @throws WebDriverException if an error occurs when instantiating the WebDriver instance
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-     * @throws FileNotFoundException if the sentinel configuration file does not exist.
-     * @throws WebDriverNotExecutableException if the web driver being used does not have execute permissions set
-     */
-    public static WebDriver getWebDriver() throws MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, IOException, WebDriverException, FileNotFoundException, WebDriverNotExecutableException{
+    public static WebDriver getWebDriver()  {
         if (instance == null) {
-        	instantiateWebDriver();
+        	String errorMessage = "WebDriver has not been created. Call WebDriver.instantiateWebDriver() before calling WebDriver.getWebDriver";
+        	log.error(errorMessage);
         }
         return driver;
     }
