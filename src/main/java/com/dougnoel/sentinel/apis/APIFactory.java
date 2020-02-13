@@ -4,13 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.IOException;
-import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
-import com.dougnoel.sentinel.exceptions.PageNotFoundException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 
 /**
  * An implementation of the factory design pattern based on the PageFactory. This factory object 
@@ -67,16 +61,10 @@ public class APIFactory {
 	 * <p>
 	 * <code>System.setProperty("pageObjectPackages", "pages.SharedComponent,pages.UserAdminTool");</code>
 	 * @param apiName String the name of the page in <a href="https://en.wikipedia.org/wiki/Camel_case">Pascal case</a>
-	 * @return Page the specific page object cast as a generic page object
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel 
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
-	 * @throws PageNotFoundException if API could not be built
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @return API the specific page object cast as a generic page object
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static API buildAPI(String apiName) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException, PageNotFoundException, ConfigurationNotFound {
+	public static API buildAPI(String apiName) throws ConfigurationNotFoundException {
 		API api = null;
 		String[] pageObjectPackagesList = ConfigurationManager.getPageObjectPackageList();
 
@@ -88,7 +76,7 @@ public class APIFactory {
 			}
 		}
 		if(api == null) {
-			throw new PageNotFoundException("The API you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackage property to your conf/sentinel.yml configuration file and try again.");
+			throw new ConfigurationNotFoundException("The API you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackage property to your conf/sentinel.yml configuration file and try again.");
 		}
 		return api;
 	}

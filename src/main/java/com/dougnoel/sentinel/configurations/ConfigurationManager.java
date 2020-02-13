@@ -9,12 +9,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.AccessDeniedException;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
-import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
+import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -82,14 +82,9 @@ public class ConfigurationManager {
 	 * 
 	 * @param configurationKey String the key for the requested configuration property
 	 * @return String the configuration value
-	 * @throws ConfigurationParseException if an exception occurs when parsing configuration to data object
-	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
-	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
-	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	private static String getOrCreateConfigurationData(String configurationKey) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, IOException, ConfigurationNotFound {	
+	private static String getOrCreateConfigurationData(String configurationKey) throws ConfigurationNotFoundException {	
 		//First we see if the property is set on the maven commandline or in code.
 		String data = System.getProperty(configurationKey);
 		if (data != null) {
@@ -101,19 +96,19 @@ public class ConfigurationManager {
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
 			} catch (JsonParseException e) {
-				String errorMessage = StringUtils.format("Configuration file {} is not a valid YAML file. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D option.", sentinelConfigurations.getAbsolutePath(), configurationKey);
+				String errorMessage = StringUtils.format("Configuration file {} is not a valid YAML file. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", sentinelConfigurations.getAbsolutePath(), configurationKey, configurationKey);
 				log.error(errorMessage);
 				throw new ConfigurationParseException(errorMessage, e);
 			} catch (JsonMappingException e) {
-				String errorMessage = StringUtils.format("Configuration file {} has incorrect formatting and cannot be read. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D option.", sentinelConfigurations.getAbsolutePath(), configurationKey);
+				String errorMessage = StringUtils.format("Configuration file {} has incorrect formatting and cannot be read. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", sentinelConfigurations.getAbsolutePath(), configurationKey, configurationKey);
 				log.error(errorMessage);
 				throw new ConfigurationMappingException(errorMessage, e);
 			} catch (java.io.FileNotFoundException e) {
-				String errorMessage = StringUtils.format("Configuration file {} cannot be found in the specified location. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D option.", "conf/sentinel.yml", configurationKey);
+				String errorMessage = StringUtils.format("Configuration file {} cannot be found in the specified location. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", "conf/sentinel.yml", configurationKey, configurationKey);
 				log.error(errorMessage);
 				throw new FileNotFoundException(errorMessage, e);
 			} catch (java.io.IOException e) {
-				String errorMessage = StringUtils.format("Configuration file {} cannot be opened in the specified location. Could not load the {} property. Please fix the file read properties or pass the property in on the commandline using the -D option.", "conf/sentinel.yml", configurationKey);
+				String errorMessage = StringUtils.format("Configuration file {} cannot be opened in the specified location. Could not load the {} property. Please fix the file read properties or pass the property in on the commandline using the -D{}= option.", "conf/sentinel.yml", configurationKey, configurationKey);
 				log.error(errorMessage);
 				throw new IOException(errorMessage, e);
 			}
@@ -126,21 +121,18 @@ public class ConfigurationManager {
 	 * Returns the configuration property for the given key from the helper function which interfaces with the
 	 * ConfigurationData object if it exists. If it does not exist, it is created by the helper function. If
 	 * the value is not found anywhere, the ConfigurationNotFound error is suppressed and a null is returned
-	 * instead of halting the progress of the program.
+	 * instead of halting the progress of the program. If the configuration file is not found, we likewise
+	 * suppress the FileNotFoundException and return null.
 	 * 
 	 * @param property String the requested configuration property key
-	 * @return String the requested configuration property key
-	 * @throws ConfigurationParseException if an exception occurs when parsing configuration to data object
-	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
-	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
-	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 * @return String the requested configuration property key or null if nothing is found
+	 * @throws ConfigurationNotFoundException if system environment is not set, will prompt user to set environment
 	 */
-	public static String getOptionalProperty(String property) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
+	public static String getOptionalProperty(String property) throws ConfigurationNotFoundException {
 		try {
 			return getProperty(property);
-		} catch (ConfigurationNotFound e) {
-			return null;
+		} catch (ConfigurationNotFoundException e) {
+			return null; //If the configuration value is not found, we do not need to throw an exception.
 		}
 	}
 	
@@ -151,14 +143,9 @@ public class ConfigurationManager {
 	 * @see ConfigurationManager#getOrCreateConfigurationData(String)
 	 * @param property String the requested configuration property key
 	 * @return String the configuration property value
-	 * @throws ConfigurationParseException if an exception occurs when parsing configuration to data object
-	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
-	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
-	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static String getProperty(String property) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, ConfigurationNotFound {
+	public static String getProperty(String property) throws ConfigurationNotFoundException {
 		String systemProperty = System.getProperty(property);
 		if(systemProperty == null) {
 			systemProperty = getOrCreateConfigurationData(property);
@@ -175,9 +162,9 @@ public class ConfigurationManager {
 	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
 	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
 	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static String[] getPageObjectPackageList() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, ConfigurationNotFound {
+	public static String[] getPageObjectPackageList() throws ConfigurationNotFoundException {
 		String pageObjectPackages = getProperty("pageObjectPackages");
 
 		log.trace("pageObjectPackages: {}", pageObjectPackages);
@@ -188,12 +175,12 @@ public class ConfigurationManager {
 	 * Returns the system environment, returns an exception if no env if found, forcing the user to set the env.
 	 * 
 	 * @return String text of system env info
-	 * @throws MissingConfigurationException if no env variable has been set
+	 * @throws ConfigurationNotFound if no environment variable has been set
 	 */
-	public static String getEnvironment() throws MissingConfigurationException {
+	public static String getEnvironment() throws ConfigurationNotFoundException {
 		String env = System.getProperty("env");
 		if (env == null)
-			throw new MissingConfigurationException("Enviroment is not set, please restart your test and pass -Denv=\"<your environment>\"");
+			throw new ConfigurationNotFoundException("Enviroment is not set, please restart your test and pass -Denv=\"<your environment>\"");
 		return env;
 	}
 
@@ -202,10 +189,9 @@ public class ConfigurationManager {
 	 * 
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
-	 * @throws FileNotFoundException if the config file is not found in the project
-	 * @throws AccessDeniedException if the project is not readable
+	 * @throws FileNotFoundException if the config file is not found in the project or the file is not readable.
 	 */
-	public static File getPageObjectConfigPath(String pageName) throws FileNotFoundException, AccessDeniedException {
+	public static File getPageObjectConfigPath(String pageName) throws ConfigurationNotFoundException {
 		String filename = pageName + ".yml";
 		File result = searchDirectory(new File("src/"), filename);
 
@@ -254,27 +240,26 @@ public class ConfigurationManager {
 	 * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPageObjectConfigPath(String)
 	 * @param pageName String the name of the page for which the data is retrieved
 	 * @return PageData the class for the data on desired page
-	 * @throws IOException if no data is returned
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
+	 * @throws ConfigurationNotFoundException if a configuration option cannot be loaded
+	 * @throws PageObjectNotFoundException if the page object file could not be read
 	 */
-	protected static PageData loadPageData(String pageName) throws ConfigurationParseException, ConfigurationMappingException, FileNotFoundException, IOException, AccessDeniedException {
+	protected static PageData loadPageData(String pageName) throws PageObjectNotFoundException, ConfigurationNotFoundException {
 		PageData pageData = null;
 		try {
 			pageData = PageData.loadYaml(getPageObjectConfigPath(pageName));
 		} catch (java.nio.file.AccessDeniedException e) {
 			String errorMessage = StringUtils.format("Could not access the file {}.yml. Please ensure the file can be read by the current user and is not password protected.", pageName);
 			log.error(errorMessage);
-			throw new AccessDeniedException(errorMessage, e);
+			throw new PageObjectNotFoundException(errorMessage, e);
 		} catch (java.io.IOException e) {
 			String errorMessage = StringUtils.format("Could not access the file {}.yml. Please ensure the file exists and the the pageObjectPackages value is set to include its package.", pageName);
 			log.error(errorMessage);
-			throw new IOException(errorMessage, e);
+			throw new PageObjectNotFoundException(errorMessage, e);
 		}
 		if (pageData == null) {
-			throw new IOException("No data was loaded.");
+			String errorMessage = StringUtils.format("The file {}.yml appears to contain no data. Please ensure the file is properly formatted", pageName);
+			log.error(errorMessage);
+			throw new PageObjectNotFoundException(errorMessage);
 		}
 		log.trace("Page data loaded: {}", pageName);
 		return pageData;
@@ -286,16 +271,13 @@ public class ConfigurationManager {
 	 * @see com.dougnoel.sentinel.pages.PageManager#getPage()
 	 * @see com.dougnoel.sentinel.pages.Page#getName()
 	 * @return String the desired URL
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
 	 * @throws PageNotFoundException if page is not found
 	 * @throws URLNotFoundException if url is not found for the page
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
+	 * @throws PageObjectNotFoundException if page object cannot be read from file
+	 * @throws PageNotFoundException if the if the page was not successfully created
 	 */
-	public static String getUrl() throws IOException, ConfigurationParseException, ConfigurationMappingException, FileNotFoundException, AccessDeniedException, URLNotFoundException, PageNotFoundException, MissingConfigurationException {
+	public static String getUrl() throws ConfigurationNotFoundException, PageObjectNotFoundException, PageNotFoundException {
 		return getUrl(PageManager.getPage().getName());
 	}
 	
@@ -304,15 +286,10 @@ public class ConfigurationManager {
 	 
 	 * @param pageName String the name of the page from which the url is retrieved
 	 * @return String baseUrl the url for the given page and current environment
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws URLNotFoundException if page config yml file does not have a url map
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
+	 * @throws PageObjectNotFoundException if the page object file cannot be read
+	 * @throws ConfigurationNotFound if the requested configuration property has not been set
 	 */
-	public static String getUrl(String pageName) throws IOException, ConfigurationParseException, ConfigurationMappingException, FileNotFoundException, AccessDeniedException, URLNotFoundException, MissingConfigurationException {
+	public static String getUrl(String pageName) throws ConfigurationNotFoundException, PageObjectNotFoundException {
 		String baseURL = null;
 		PageData pageData = loadPageData(pageName);
 		// Get the test environment. If none is passed, it defaults to dev. See the
@@ -368,15 +345,11 @@ public class ConfigurationManager {
 	 * 
 	 * @param key String the needed item, either username or password
 	 * @return String the given item value
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws MissingConfigurationException if env is not set
-	 * @throws PageNotFoundException if no page is found
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 * @throws PageNotFoundException if the page cannot be created
+	 * @throws ConfigurationNotFoundException if the username and passwqord cannot be found
+	 * @throws PageObjectNotFoundException if the page object file cannot be loaded or found
 	 */
-	public static String getUsernameOrPassword(String key) throws IOException, MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, PageNotFoundException, FileNotFoundException, AccessDeniedException {
+	public static String getUsernameOrPassword(String key) throws ConfigurationNotFoundException, PageNotFoundException, PageObjectNotFoundException {
 		String env = getEnvironment();
 		return getUsernameOrPassword(PageManager.getPage().getName(), env, key);
 	}
@@ -388,13 +361,10 @@ public class ConfigurationManager {
 	 * @param env String user environment
 	 * @param key String user name or password
 	 * @return String requested username or password
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
+	 * @throws ConfigurationNotFoundException if the username and password cannot be read from the page object
+	 * @throws PageObjectNotFoundException if the page object file cannot be found
 	 */
-	public static String getUsernameOrPassword(String pageName, String env, String key) throws IOException, ConfigurationParseException, ConfigurationMappingException, FileNotFoundException, AccessDeniedException{
+	public static String getUsernameOrPassword(String pageName, String env, String key) throws PageObjectNotFoundException, ConfigurationNotFoundException{
 		PageData pageData = loadPageData(pageName);
 		log.debug(pageData.getAccount(env).get(key));
 		String data = pageData.getAccount(env).get(key);
@@ -406,15 +376,10 @@ public class ConfigurationManager {
 	 * Returns the username for the given account and the currently set environment.
 	 * @param account String the name of the account as stored in the configuration file for the current envrionment
 	 * @return String requested username value
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws PageNotFoundException if no page is found
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
+	 * @throws PageNotFoundException if the page cannot be created
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
-	public static String getUsername(String account) throws IOException, ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, PageNotFoundException, FileNotFoundException, AccessDeniedException {
+	public static String getUsername(String account) throws PageNotFoundException, ConfigurationNotFoundException {
 		return getUsernameOrPassword(account, "username");
 	}
 	
@@ -422,15 +387,10 @@ public class ConfigurationManager {
 	 * Returns password for given account
 	 * @param account String user account
 	 * @return String requested password
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 * @throws PageNotFoundException if no page is found
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
-	public static String getPassword(String account) throws IOException, ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, PageNotFoundException, FileNotFoundException, AccessDeniedException {
+	public static String getPassword(String account) throws PageNotFoundException, ConfigurationNotFoundException {
 		return getUsernameOrPassword(account, "password");
 	}
 	
@@ -439,16 +399,11 @@ public class ConfigurationManager {
 	 * @param account String user account
 	 * @param key String username or password
 	 * @return String requested username or password
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws MissingConfigurationException if env is not set
-	 * @throws PageNotFoundException if no page is found
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws FileNotFoundException sentinel configuration file does not exist
+	 * @throws PageNotFoundException if the page object cannot be created
+	 * @throws ConfigurationNotFoundException if the username and password cannot be found
 	 */
 
-	public static String getUsernameOrPassword(String account, String key) throws IOException, MissingConfigurationException, ConfigurationParseException, ConfigurationMappingException, PageNotFoundException, FileNotFoundException, AccessDeniedException {
+	public static String getUsernameOrPassword(String account, String key) throws PageNotFoundException, ConfigurationNotFoundException {
 		String env = getEnvironment();
 		return getUsernameOrPassword(PageManager.getPage().getName(), env, account, key);
 	}
@@ -463,14 +418,11 @@ public class ConfigurationManager {
 	 * @param account String user account
 	 * @param key String username or password
 	 * @return String requested username or password
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
+	 * @throws PageObjectNotFoundException if the page cannot be created
 	 */
 	public static String getUsernameOrPassword(String pageName, String env, String account, String key)
-			throws IOException, ConfigurationParseException, ConfigurationMappingException, FileNotFoundException, AccessDeniedException {
+			throws PageObjectNotFoundException, ConfigurationNotFoundException {
 		PageData pageData = loadPageData(pageName);
 		log.debug(pageData.getAccount(env, account).get(key));
 		String data = pageData.getAccount(env, account).get(key);
@@ -483,15 +435,10 @@ public class ConfigurationManager {
 	 * @param testData String the test data name in the configuration file
 	 * @param key String the key under which the data is stored
 	 * @return String requested value
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
+	 * @throws ConfigurationNotFoundException if the configuration data is not found
 	 * @throws PageNotFoundException if no page is found
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
-	 * @throws MissingConfigurationException if env is not set
-	 * @throws IOException from sentinel.utils.ConfigurationManager#getTestData(String, String, String)
 	 */
-	public static String getTestData(String testData, String key) throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException, AccessDeniedException, PageNotFoundException {
+	public static String getTestData(String testData, String key) throws ConfigurationNotFoundException, PageNotFoundException {
 		
 		return getTestData(PageManager.getPage().getName(), testData, key);
 	}
@@ -502,15 +449,11 @@ public class ConfigurationManager {
 	 * @param testData String is test data from configuration
 	 * @param key String is a key of the test data from configuration
 	 * @return String requested key value
-	 * @throws IOException if the configuration file cannot be read
-     * @throws ConfigurationParseException if the configuration file cannot be parsed
-     * @throws ConfigurationMappingException if the configuration file is formatted incorrectly
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
-	 * @throws AccessDeniedException if the sentinel configuration file cannot be read.
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
+	 * @throws PageObjectNotFoundException if the page object file cannot be loaded
+
 	 */
-	public static String getTestData(String pageName, String testData, String key)
-			throws IOException, ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, FileNotFoundException, AccessDeniedException {
+	public static String getTestData(String pageName, String testData, String key) throws ConfigurationNotFoundException, PageObjectNotFoundException {
 		String env = getEnvironment();
 		PageData pageData = loadPageData(pageName);
 		log.debug(pageData.getTestData(env, testData).get(key));
@@ -524,20 +467,19 @@ public class ConfigurationManager {
 	 * The default if the property is not set is 10.
 	 * The method getDefaultTimeUnit is used to determine how the value is measured.
 	 * @return long the timeout 
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 */
-	public static long getDefaultTimeout() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-		String timeoutProp = getOptionalProperty("timeout");
-		long timeout;
-		if(timeoutProp == null) {
-			timeout = ConfigurationManager.timeout;
-		} else {
-			timeout = Long.parseLong(timeoutProp);
+	public static long getDefaultTimeout() {
+		long timeout = ConfigurationManager.timeout;
+		try {
+			String timeoutProp = getOptionalProperty("timeout");
+			if(StringUtils.isNotEmpty(timeoutProp)) {
+				timeout = Long.parseLong(timeoutProp);
+			}
+		} catch (ConfigurationNotFoundException e) {
+			log.trace("No timeout property set, using the default timeout value of {}.", timeout);
 		}
+		
+
 		return timeout;
 	}
 
@@ -548,14 +490,14 @@ public class ConfigurationManager {
 	 * The method getDefaultTimeout is used to determine the duration of the timeout.
 	 * 
 	 * @return java.util.concurrent.TimeUnit the default value
-	 * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 */
-	public static TimeUnit getDefaultTimeUnit() throws ConfigurationParseException, ConfigurationMappingException, IOException, MissingConfigurationException, FileNotFoundException {
-		String unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
+	public static TimeUnit getDefaultTimeUnit() {
+		String unit;
+		try {
+			unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
+		} catch (ConfigurationNotFoundException e) {
+			return TimeUnit.SECONDS;
+		}
 		if(unit == null) {
 			return TimeUnit.SECONDS;
 		}

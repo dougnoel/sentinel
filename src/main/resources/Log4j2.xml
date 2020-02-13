@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Properties>
+		<Property name="basePath">./logs</Property>
+		<Property name="logName">sentinel</Property>
+	</Properties>
+	<Appenders>
+		<RollingFile name="File" fileName="${basePath}/${logName}.log"
+			filePattern="${basePath}/${logName}-%d{yyy-MM-dd}.log">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} %-5level %c{2} (%13F:%L) - %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+				<SizeBasedTriggeringPolicy size="100 KB" />
+			</Policies>
+		</RollingFile>
+		<Console name="Console">
+			<PatternLayout
+				pattern="%d{HH:mm:ss.SSS} %-5level %c{2} (%13F:%L) - %msg%n" />
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Root>
+		<Logger name="pages" level="info" additivity="false">
+			]
+			<AppenderRef ref="File" />
+		</Logger>
+	</Loggers>
+</Configuration>

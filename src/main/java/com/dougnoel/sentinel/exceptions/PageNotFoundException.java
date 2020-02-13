@@ -7,6 +7,10 @@ public class PageNotFoundException extends SentinelException {
 	 */
 	private static final long serialVersionUID = 2756062561461612308L;
 	
+    public PageNotFoundException(Throwable cause) {
+        super(cause);
+    }
+    
 	public PageNotFoundException(String message) {
 	    super(message);
 	}

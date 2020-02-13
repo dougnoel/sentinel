@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class ConfigurationParseException extends SentinelException {
+public class ConfigurationParseException extends ConfigurationNotFoundException {
 
     /**
      * 

@@ -14,12 +14,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebDriver.Timeouts;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFound;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.IOException;
-import com.dougnoel.sentinel.exceptions.MissingConfigurationException;
+import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
 import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
@@ -60,15 +55,10 @@ public class PageManager {
 	 *                 Page Object name (e.g. BLAMarketingPortalPage).
 	 * @return Page Returns a reference to the page in case you want to use it
 	 *         immediately.
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 * @throws PageNotFoundException if page could not be set
-	 * @throws ConfigurationNotFound if the value is not found in the configuration file
+	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static Page setPage(String pageName) throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, IOException, FileNotFoundException, PageNotFoundException, ConfigurationNotFound {
+	public static Page setPage(String pageName) throws PageNotFoundException, ConfigurationNotFoundException {
 		// Ensure we only have one instance of this class, so that we always
 		// return the same driver.
 		if (instance == null)
@@ -79,6 +69,7 @@ public class PageManager {
 		return page;
 	}
 
+	//TODO: Update thrown exception to be a custom exception and not catch it
 	/**
 	 * This method returns the current Page Object stored in the Page Manager.
 	 * 
@@ -315,13 +306,9 @@ public class PageManager {
 	 * through a property. If not, 10 seconds will be set as the default.
 	 * 
 	 * @return Timeouts returns to allow object chaining for more complex calls
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel 
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
-	public static Timeouts setDefaultTimeout() throws ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, IOException, FileNotFoundException {
+	public static Timeouts setDefaultTimeout() {
 		return setTimeout(ConfigurationManager.getDefaultTimeout(), ConfigurationManager.getDefaultTimeUnit());
 	}
 
@@ -368,18 +355,15 @@ public class PageManager {
 	 * 
 	 * @return true if page loads, throws exception if an error occurs or page load
 	 *         times out
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
 	 * @throws TimeoutException if page load times out.
 	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
-	public static boolean waitForPageLoad() throws TimeoutException, InterruptedException, ConfigurationParseException, ConfigurationMappingException, MissingConfigurationException, IOException, FileNotFoundException {
+	public static boolean waitForPageLoad() throws TimeoutException, InterruptedException, ConfigurationNotFoundException {
 		return waitForPageLoad(ConfigurationManager.getDefaultTimeout());
 	}
 
+	//TODO: There should always be a default. This error should never make it this far up
 	/**
 	 * Overloads waitForPageLoad method with one parameters, passthrough to
 	 * waitForPageLoad with the given timeout and the default TimeUnit of seconds.
@@ -405,10 +389,8 @@ public class PageManager {
 	 * @param unit TimeUnit the unit of time to wait for the given time value
 	 * @return boolean always returns true, will throw exception if page does not
 	 *          load
-	 * @throws TimeoutException     if timeout occurs before the page has loaded
-	 *                              (default timeout: 10000 milliseconds)
-	 * @throws InterruptedException if exception if thrown during Thread.sleep()
-	 *                              action
+	 * @throws TimeoutException     if timeout occurs before the page has loaded (default timeout: 10000 milliseconds)
+	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
 	 */
 	public static boolean waitForPageLoad(long time, TimeUnit unit) throws TimeoutException, InterruptedException {
 		setPageLoadTimeout(time, unit);
