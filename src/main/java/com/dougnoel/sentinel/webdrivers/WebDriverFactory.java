@@ -97,21 +97,28 @@ public class WebDriverFactory {
         
         options.setCapability("username", ConfigurationManager.getProperty("saucelabsUserName"));
         options.setCapability("accesskey", ConfigurationManager.getProperty("saucelabsAccessKey"));
+        String testName = StringUtils.format("Name: {} Tags: {} User: {} Build: {}", ConfigurationManager.getOptionalProperty("name"), ConfigurationManager.getOptionalProperty("tags"), System.getProperty("user.name"), ConfigurationManager.getOptionalProperty("build"));
+        options.setCapability("name", testName);
         
-        String parentTunnel = ConfigurationManager.getOptionalProperty("parenttunnel");
-        String tunnelIdentifier = ConfigurationManager.getOptionalProperty("tunnelIdentifier");
-        
-        if (StringUtils.isNotEmpty(parentTunnel)) {
-        	options.setCapability("parent-tunnel", parentTunnel);
-        }
-        
-        if (StringUtils.isNotEmpty(tunnelIdentifier)) {
-        	options.setCapability("tunnelIdentifier", tunnelIdentifier);
-        }        
+        options = setOptionalSaucelabsProperty("parent-tunnel", options);
+        options = setOptionalSaucelabsProperty("tunnelIdentifier", options);
+//        options = setOptionalSaucelabsProperty("name", options);
+        options = setOptionalSaucelabsProperty("tags", options);
+        options = setOptionalSaucelabsProperty("build", options);
         
         RemoteWebDriver driver = new RemoteWebDriver(SAUCELABS_URL, options);
         
         return driver;
+    }
+    
+    private static MutableCapabilities setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
+        String saucelabsProperty = ConfigurationManager.getOptionalProperty(saucelabsPropertyName);
+        
+        if (StringUtils.isNotEmpty(saucelabsProperty)) {
+        	options.setCapability(saucelabsPropertyName, saucelabsProperty);
+        }
+        
+    	return options;
     }
     
     //TODO: Add all of the valid browser options and make them match saucelabs options
