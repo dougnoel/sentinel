@@ -24,12 +24,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
@@ -408,11 +404,6 @@ public class PageElement {
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
 	 * @throws NoSuchSelectorException if the selector type passed is invalid
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
 	 */
 	public boolean doesNotExist() throws NoSuchSelectorException {
 		// Reducing the time we have to wait for an expected failure.

@@ -126,15 +126,8 @@ public class WebDriverFactory {
      * Creates and returns a useable WebDriver.
      * We use this factory method to handle keeping up with driver versions for all
      * browsers. All the browser drivers can be found in the root of the project
-     * under the drivers/[os]/ paths.
-     * <p>
-     * All Strings are converted to lower case and spaces are removed, so strings
-     * like "FireFox", "chrome" and "Internet Explorer" are all valid.
-     * 
-     * @param browser
-     *            String Valid options: chrome, firefox, internet explorer, safari
-     * @param operatingSystem
-     *            String Valid options: linux, macintosh (mac, os x), windows (win)
+     * under the drivers/[os]/ paths. The browser can be set in the config file or a system
+     * variable. See the README for more information.
      * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
@@ -205,7 +198,7 @@ public class WebDriverFactory {
                     	driver = new ChromeDriver();
                     }
             		catch (IllegalStateException e) {
-            			String errorMeessage = "The driver does not have execute permissions. On linux/mac run chmod +x on the driver.";
+            			String errorMeessage = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver.";
             			throw new WebDriverNotExecutableException(errorMeessage, e);
             		}
                     break;
