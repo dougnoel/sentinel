@@ -6,10 +6,14 @@ package com.dougnoel.sentinel.exceptions;
  * @author Doug Noël
  *
  */
-public class ElementNotVisibleException extends SentinelException {
+public class ElementNotVisibleException extends ElementNotFoundException {
 
     private static final long serialVersionUID = 8469225740522080247L;
 
+    public ElementNotVisibleException(Throwable cause) {
+        super(cause);
+    }
+    
     public ElementNotVisibleException(String message) {
         super(message);
     }

@@ -11,9 +11,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
-import com.dougnoel.sentinel.exceptions.NoSuchElementException;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.strings.StringUtils;
 
@@ -25,25 +24,39 @@ import com.dougnoel.sentinel.strings.StringUtils;
 public class Table extends PageElement {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
+	private String tableHeaderTag = "th";
+	private String tableRowTag = "tr";
+	private String tableCellDataTag = "td";
+	
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
 	protected List<String> headers = new ArrayList<String>(); // Column headers as text
 	protected List<WebElement> rowElements = null; // Table Rows using <tr> tags
 	protected List<ArrayList<String>> rows = new ArrayList<ArrayList<String>>(); // All text values of every row
 	protected Map<String, ArrayList<String>> columns = new HashMap<>(); // All text values of every column
-	protected Map<Integer, List<ArrayList<String>>> tables = new HashMap<>(); // Way to hold values of the same table on
-																				// multiple pages. TODO: Might want to
-																				// put this in a multi-page table
-																				// object.
+	protected Map<Integer, List<ArrayList<String>>> tables = new HashMap<>(); // Way to hold values of the same table on multiple pages.
 
 	/**
-	 * Initializes how the WebElement is going to be found when it is worked on by the WebDriver class. 
-	 * Takes the reference to the WebDriver class that will be exercising its functionality.
+	 * Creates a table object to manipulate. Expects a table or ngx-datatable tag. When used
+	 * the table object finds and creates rows and columns and stores them. If data in the table changes
+	 * you must use the reset() method. You can save the current state of a table by calling the storeTable()
+	 * method.
+	 * NOTE: Unlike other element methods, this one throws an ElementNotFound exception because the constructor
+	 * must look at the tag to determine the table type.
+	 * TODO: To make this more easily extensible, this should be a factory method, creating and returning
+	 * table objects based on the tag name.
 	 * 
 	 * @param selectorType SelectorType the type of selector to use
 	 * @param selectorValue String the value to look for with the given selector type
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public Table(SelectorType selectorType, String selectorValue) {
+	public Table(SelectorType selectorType, String selectorValue) throws ElementNotFoundException {
 		super(selectorType, selectorValue);
+		
+		if (this.toWebElement().getTagName().contains("ngx-datatable")) {
+			tableHeaderTag = "datatable-header-cell";
+			tableRowTag = "datatable-body-row";
+			tableCellDataTag = "datatable-body-cell";
+		}
 	}
 
 	/**
@@ -73,11 +86,11 @@ public class Table extends PageElement {
 	 * 
 	 * @return List&lt;String&gt; the headers of the table, populates with the first
 	 *         row if there are no &lt;th&gt; tags
-	 * @throws SentinelException if there is a problem retrieving the header or rows
+	 * @throws ElementNotFoundException if there is a problem finding the header or rows
 	 */
-	public List<String> getOrCreateHeaders() throws SentinelException {
+	protected List<String> getOrCreateHeaders() throws ElementNotFoundException {
 		if (headers.isEmpty()) {
-			getOrCreateHeadersElements();
+			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
 				String headerText = header.getText();
 				log.trace("Header Text: {}", headerText);
@@ -103,14 +116,14 @@ public class Table extends PageElement {
 	 *  and logs the number of Header Elements
 	 * 
 	 * @return List&lt;WebElement&gt;
-	 * @throws SentinelException if the header elements cannot be found
+	 * @throws ElementNotFoundException if the header elements cannot be found
 	 */
-	public List<WebElement> getOrCreateHeadersElements() throws SentinelException {
+	protected List<WebElement> getOrCreateHeaderElements() throws ElementNotFoundException {
 		if (headerElements == null) {
-			headerElements = this.element().findElements(By.tagName("th"));
+			headerElements = this.element().findElements(By.tagName(tableHeaderTag));
 		}
 		if (headerElements == null) {
-			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName("td"));
+			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
 		}
 		log.trace("Number of Header Elements: {}", headerElements.size());
 		return headerElements;
@@ -120,23 +133,23 @@ public class Table extends PageElement {
 	 * Returns true if the table has &lt;th&gt; elements, otherwise returns false
 	 * even though the first row will be used to populate the headers list.
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeadersElements()
+	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaderElements()
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
 	 * @throws SentinelException if the header elements cannot be found
 	 */
-	public boolean tableHeadersExist() throws SentinelException {
-		return getOrCreateHeadersElements() != null;
+	protected boolean tableHeadersExist() throws SentinelException {
+		return getOrCreateHeaderElements() != null;
 	}
 
 	/**
 	 * Returns &lt;tr&gt; elements found in a table. 
 	 * 
 	 * @return List&lt;WebElement&gt;
-	 * @throws SentinelException if the row elements cannot be found
+	 * @throws ElementNotFoundException if the row elements cannot be found
 	 */
-	public List<WebElement> getOrCreateRowElements() throws SentinelException {
+	protected List<WebElement> getOrCreateRowElements() throws ElementNotFoundException  {
 		if (rowElements == null) {
-			rowElements = this.element().findElements(By.tagName("tr"));
+			rowElements = this.element().findElements(By.tagName(tableRowTag));
 		}
 		return rowElements;
 	}
@@ -145,15 +158,14 @@ public class Table extends PageElement {
 	 * Returns array of cell arrays, with data for each cell, in the table. Initial row of table headers is removed
 	 * 
 	 * @return List&lt;ArrayList&lt;String&gt;&gt;
-	 * @throws SentinelException if the row elements cannot be found
+	 * @throws ElementNotFoundException if the row elements cannot be found
 	 */
-
-	public List<ArrayList<String>> getOrCreateRows() throws SentinelException {
+	protected List<ArrayList<String>> getOrCreateRows() throws ElementNotFoundException {
 		if (rows.isEmpty()) {
 			List<WebElement> dataRows = getOrCreateRowElements();
 			dataRows.remove(0); // Header row
 			for (WebElement row : dataRows) {
-				List<WebElement> cellElements = row.findElements(By.tagName("td"));
+				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
 				ArrayList<String> cells = new ArrayList<String>();
 				for (WebElement cell : cellElements) {
 					cells.add(cell.getText());
@@ -183,7 +195,7 @@ public class Table extends PageElement {
 	 * @return Map&lt;String, ArrayList&lt;String&gt;&gt;
 	 * @throws SentinelException if the header or row elements cannot be found
 	 */
-	public Map<String, ArrayList<String>> getOrCreateColumns() throws SentinelException {
+	protected Map<String, ArrayList<String>> getOrCreateColumns() throws SentinelException {
 		if (columns.isEmpty()) {
 			int index = 0;
 			getOrCreateRows(); // We cannot create the columns without Row data
@@ -218,8 +230,8 @@ public class Table extends PageElement {
 	 * @return List&lt;WebElement;&gt; 
 	 */
 	protected List<WebElement> getCells(WebElement tableRow) {
-		List<WebElement> cells = tableRow.findElements(By.tagName("td"));
-		log.debug("First Cell: {}", tableRow.findElement(By.tagName("td")));
+		List<WebElement> cells = tableRow.findElements(By.tagName(tableCellDataTag));
+		log.debug("First Cell: {}", tableRow.findElement(By.tagName(tableCellDataTag)));
 		log.debug("Row Cells: {}", cells);
 		return cells;
 	}
@@ -261,6 +273,7 @@ public class Table extends PageElement {
 		return (tables.get(pageNumber) == getOrCreateRows());
 	}
 
+	//TODO: Update for ngx-table
 	/**
 	 * Finds the link in a row by using text in another cell. For example,
 	 * finding an "Edit" link for a specific username in a table. To work, this
@@ -271,10 +284,9 @@ public class Table extends PageElement {
 	 * @param elementText String the text of the element (link) you are looking to find.
 	 * @param textToMatch String the unique text to locate the row in question.
 	 * @return WebElement a selenium WebElement object that can be operated on.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the passed selector type does not exist
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected WebElement getElementInRowThatContains(String elementText, String textToMatch) throws NoSuchElementException, NoSuchSelectorException {
+	protected WebElement getElementInRowThatContains(String elementText, String textToMatch) throws ElementNotFoundException {
 		try {
 			return this.element().findElement(By.xpath(
 					"//td[contains(text(),'" + elementText + "')]/..//*[contains(text(),'" + textToMatch + "')]"));
@@ -294,10 +306,9 @@ public class Table extends PageElement {
 	 * 
 	 * @param elementText String the text of the element (link) you are looking to find
 	 * @param textToClick String the unique text to locate the row in question
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the passed selector type does not exist
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void clickElementInRowThatContains(String elementText, String textToClick) throws NoSuchElementException, NoSuchSelectorException {
+	public void clickElementInRowThatContains(String elementText, String textToClick) throws ElementNotFoundException {
 		getElementInRowThatContains(elementText, textToClick).click();
 	}
 
