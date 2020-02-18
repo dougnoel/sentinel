@@ -3,7 +3,7 @@ package com.dougnoel.sentinel.elements;
 import org.openqa.selenium.support.ui.Select;
 
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.NoSuchElementException;
+import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.strings.StringUtils;
 
@@ -27,37 +27,41 @@ public class PageSelectElement extends PageElement {
         super(selectorType, selectorValue);
     }
 
-    public PageSelectElement select(String selectText) throws NoSuchElementException, NoSuchSelectorException{
+    /**
+     * Selects an option from a drop down using the text value of the item to select.
+     * @param selectText the value to select
+     * @return PageSelectElement for object chaining
+     * @throws ElementNotFoundException if the element cannot be found
+     */
+    public PageSelectElement select(String selectText) throws ElementNotFoundException{
         Select selectElement = new Select(this.element());
-        try {
-            selectElement.selectByVisibleText(selectText);
-        } catch (org.openqa.selenium.NoSuchElementException e) {
-            System.err.println(
-                    "PageSelectElement: Attempting to select a value from a list that does not exist. Check your Cucumber test to ensure what you are trying to select exists.");
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        selectElement.selectByVisibleText(selectText);
 
         return this;
     }
 
-    public PageSelectElement select(int index) throws  NoSuchSelectorException, NoSuchElementException{
+    /**
+     * Selects an option from a drop down using the ordinal value of the item to select.
+     * @param index the index to select
+     * @return PageSelectElement for object chaining
+     * @throws ElementNotFoundException if the element cannot be found
+     */
+    public PageSelectElement select(int index) throws  ElementNotFoundException{
         Select selectElement = new Select(this.element());
-        try {
-            selectElement.selectByIndex(index);
-        } catch (org.openqa.selenium.NoSuchElementException e) {
-            System.err.println(
-                    "PageSelectElement: Attempting to select a value from a list that does not exist. Check your Cucumber test to ensure what you are trying to select exists.");
-            throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        selectElement.selectByIndex(index);
+        
         return this;
     }
 
-    public PageSelectElement select(SelectorType selectorType, String selectText) throws NoSuchSelectorException, NoSuchElementException, NumberFormatException{
+    /**
+     * Selects an option from a drop down. Allows for selection by value in addition to 
+     * selection by text or index.
+     * @param selectorType com.dougnoel.sentinel.enums.SelectorType INDEX, VALUE, TEXT
+     * @param selectText the value of the selector
+     * @return PageSelectElement for object chaining
+     * @throws ElementNotFoundException if the element cannot be found
+     */
+    public PageSelectElement select(SelectorType selectorType, String selectText) throws ElementNotFoundException {
         Select selectElement = new Select(this.element());
         switch (selectorType) {
         case INDEX:
@@ -79,12 +83,23 @@ public class PageSelectElement extends PageElement {
         return this;
     }
 
-    public String getText(int index) throws NoSuchSelectorException, NoSuchElementException{
+    /**
+     * Gets the value of the item at the given index.
+     * @param index the index to inspect
+     * @return String the text value of the option at the given index
+     * @throws ElementNotFoundException if the element cannot be found
+     */
+    public String getText(int index) throws ElementNotFoundException{
         Select selectElement = new Select(this.element());
         return selectElement.getOptions().get(index).getText();
     }
     
-    public String getSelectedText() throws NoSuchSelectorException, NoSuchElementException{
+    /**
+     * Gets the text of the first item currently selected.
+     * @return String the text value of the selected option
+     * @throws ElementNotFoundException if the element cannot be found
+     */
+    public String getSelectedText() throws ElementNotFoundException{
         Select selectElement = new Select(this.element());
         return selectElement.getFirstSelectedOption().getText();
     }

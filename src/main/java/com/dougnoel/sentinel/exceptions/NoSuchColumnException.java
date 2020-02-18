@@ -1,12 +1,18 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class NoSuchColumnException extends SentinelException {
+/**
+ * Thrown when a column requested in a table doesn't exist.
+ * @author dougnoel
+ *
+ */
+public class NoSuchColumnException extends ElementNotFoundException {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 8469225740521080367L;
 
+    public NoSuchColumnException(Throwable cause) {
+        super(cause);
+    }
+    
     public NoSuchColumnException(String message) {
         super(message);
     }
