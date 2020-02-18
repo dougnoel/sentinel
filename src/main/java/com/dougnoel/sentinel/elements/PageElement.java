@@ -24,12 +24,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
@@ -113,10 +109,9 @@ public class PageElement {
 	 * page.
 	 * 
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
-	 * @throws NoSuchElementException if the element cannot be found
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	protected WebElement element() throws NoSuchSelectorException, NoSuchElementException {
+	protected WebElement element() throws ElementNotFoundException  {
 		WebElement element = null;
 
 		try {
@@ -176,10 +171,9 @@ public class PageElement {
 	 * @param text
 	 *            String (text to type)
 	 * @return PageElement (for chaining)
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement sendKeys(String text) throws NoSuchSelectorException, NoSuchElementException {
+	public PageElement sendKeys(String text) throws ElementNotFoundException {
 		element().click();
 		element().clear();
 		element().sendKeys(text);
@@ -201,12 +195,10 @@ public class PageElement {
 	 * @param text
 	 *            String (keys to type)
 	 * @return PageElement (for chaining)
-	 * @throws AWTException
-	 *             Throws a Robot framework exception if the key cannot be pressed.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws AWTException if the key cannot be pressed.
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement pressKeys(String text) throws AWTException, NoSuchSelectorException, NoSuchElementException {
+	public PageElement pressKeys(String text) throws AWTException, ElementNotFoundException {
 		// Ensure that the element has focus.
 		if ("input".equals(element().getTagName())) {
 			element().sendKeys("");
@@ -244,12 +236,9 @@ public class PageElement {
 	 * </ul>
 	 * 
 	 * @return PageElement (for chaining)
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
-	 * @throws ElementNotVisibleException if the element is not visible and cannot be clicked
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement click() throws NoSuchSelectorException, NoSuchElementException, ElementNotVisibleException, ConfigurationNotFoundException  {
+	public PageElement click() throws ElementNotFoundException  {
 		long waitTime = ConfigurationManager.getDefaultTimeout();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
@@ -278,10 +267,9 @@ public class PageElement {
 	 * </ul>
 	 * 
 	 * @return PageElement (for chaining)
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement clear() throws NoSuchSelectorException, NoSuchElementException {
+	public PageElement clear() throws ElementNotFoundException {
 		element().clear();
 		return this;
 	}
@@ -292,10 +280,9 @@ public class PageElement {
 	 * 
 	 * @return boolean true if the element is enabled within 10 seconds; otherwise
 	 *         returns false.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean isEnabled() throws NoSuchSelectorException, NoSuchElementException {
+	public boolean isEnabled() throws ElementNotFoundException {
 		return isEnabled(10);
 	}
 
@@ -317,10 +304,9 @@ public class PageElement {
 	 *            int the number of seconds to wait before returning failure.
 	 * @return boolean true if the element is enabled within the number of seconds
 	 *         indicated; otherwise returns false.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean isEnabled(int seconds) throws NoSuchSelectorException, NoSuchElementException {
+	public boolean isEnabled(int seconds) throws ElementNotFoundException {
 		int retries = 0;
 		while (true) {
 			try {
@@ -342,10 +328,9 @@ public class PageElement {
 	/**
 	 * Validates whether or not the element is selected.
 	 * @return boolean true if the element is selected, false if it is not
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean isSelected() throws NoSuchSelectorException, NoSuchElementException {
+	public boolean isSelected() throws ElementNotFoundException {
 		return element().isSelected();
 	}
 
@@ -355,10 +340,9 @@ public class PageElement {
 	 * 
 	 * @return boolean true if the element is displayed within 10 seconds; otherwise
 	 *         returns false.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean isDisplayed() throws NoSuchSelectorException, NoSuchElementException {
+	public boolean isDisplayed() throws ElementNotFoundException {
 		return isDisplayed(10);
 	}
 
@@ -380,10 +364,9 @@ public class PageElement {
 	 *            int the number of seconds to wait before returning failure.
 	 * @return boolean true if the element is displayed within the number of seconds
 	 *         indicated; otherwise returns false.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean isDisplayed(int seconds) throws NoSuchSelectorException, NoSuchElementException  {
+	public boolean isDisplayed(int seconds) throws ElementNotFoundException  {
 		int retries = 0;
 		while (true) {
 			try {
@@ -408,11 +391,6 @@ public class PageElement {
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
 	 * @throws NoSuchSelectorException if the selector type passed is invalid
-     * @throws MissingConfigurationException if the requested configuration property has not been set
-     * @throws ConfigurationParseException if error thrown while reading configuration file into sentinel
-     * @throws ConfigurationMappingException if error thrown while mapping configuration file to sentinel
-     * @throws IOException if other error occurs when mapping yml file into sentinel
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist.
 	 */
 	public boolean doesNotExist() throws NoSuchSelectorException {
 		// Reducing the time we have to wait for an expected failure.
@@ -461,10 +439,9 @@ public class PageElement {
 	 * Returns the text of the page element as a String.
 	 * 
 	 * @return String The text value stored in the element.
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public String getText() throws NoSuchSelectorException, NoSuchElementException {
+	public String getText() throws ElementNotFoundException {
 		return element().getText();
 	}
 
@@ -472,10 +449,9 @@ public class PageElement {
 	 * Returns the WebElement wrapped inside the PageElement so that it can be acted
 	 * upon inside of step definitions.
 	 * @return org.openqa.selenium.WebElement
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public WebElement toWebElement() throws NoSuchSelectorException, NoSuchElementException  {
+	public WebElement toWebElement() throws ElementNotFoundException  {
 		return element();
 	}
 
@@ -487,13 +463,11 @@ public class PageElement {
 	 * <li>Determine if an element is highlighted because class="active"</li>
 	 * </ul>
 	 * 
-	 * @param text
-	 *            String - The class to verify
+	 * @param text String the class to verify
 	 * @return boolean
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean hasClass(String text) throws NoSuchSelectorException, NoSuchElementException {
+	public boolean hasClass(String text) throws ElementNotFoundException {
 		String classes = element().getAttribute("class");
 		log.debug("Classes found on element " + this.getClass().getName().toString() + ": " + classes);
 		for (String c : classes.split(" ")) {
@@ -514,16 +488,12 @@ public class PageElement {
 	 * <li>Determine if an element has a style="display:none" attribute set.
 	 * </ul>
 	 * 
-	 * @param attribute
-	 *            String the attribute to look for
-	 * @param value
-	 *            String the value to which attribute should be set
-	 * @return boolean true if the element as an attribute equal to the value
-	 *         passed; otherwise returns false
-	 * @throws NoSuchElementException if the element cannot be found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
+	 * @param attribute String the attribute to look for
+	 * @param value String the value to which attribute should be set
+	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
+	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean attributeEquals(String attribute, String value) throws NoSuchSelectorException, NoSuchElementException {
+	public boolean attributeEquals(String attribute, String value) throws ElementNotFoundException {
 		String values = element().getAttribute(attribute);
 		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName().toString(),
 				values);

@@ -97,21 +97,28 @@ public class WebDriverFactory {
         
         options.setCapability("username", ConfigurationManager.getProperty("saucelabsUserName"));
         options.setCapability("accesskey", ConfigurationManager.getProperty("saucelabsAccessKey"));
+        String testName = StringUtils.format("Name: {} Tags: {} User: {} Build: {}", ConfigurationManager.getOptionalProperty("name"), ConfigurationManager.getOptionalProperty("tags"), System.getProperty("user.name"), ConfigurationManager.getOptionalProperty("build"));
+        options.setCapability("name", testName);
         
-        String parentTunnel = ConfigurationManager.getOptionalProperty("parenttunnel");
-        String tunnelIdentifier = ConfigurationManager.getOptionalProperty("tunnelIdentifier");
-        
-        if (StringUtils.isNotEmpty(parentTunnel)) {
-        	options.setCapability("parent-tunnel", parentTunnel);
-        }
-        
-        if (StringUtils.isNotEmpty(tunnelIdentifier)) {
-        	options.setCapability("tunnelIdentifier", tunnelIdentifier);
-        }        
+        options = setOptionalSaucelabsProperty("parent-tunnel", options);
+        options = setOptionalSaucelabsProperty("tunnelIdentifier", options);
+//        options = setOptionalSaucelabsProperty("name", options);
+        options = setOptionalSaucelabsProperty("tags", options);
+        options = setOptionalSaucelabsProperty("build", options);
         
         RemoteWebDriver driver = new RemoteWebDriver(SAUCELABS_URL, options);
         
         return driver;
+    }
+    
+    private static MutableCapabilities setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
+        String saucelabsProperty = ConfigurationManager.getOptionalProperty(saucelabsPropertyName);
+        
+        if (StringUtils.isNotEmpty(saucelabsProperty)) {
+        	options.setCapability(saucelabsPropertyName, saucelabsProperty);
+        }
+        
+    	return options;
     }
     
     //TODO: Add all of the valid browser options and make them match saucelabs options
@@ -119,15 +126,8 @@ public class WebDriverFactory {
      * Creates and returns a useable WebDriver.
      * We use this factory method to handle keeping up with driver versions for all
      * browsers. All the browser drivers can be found in the root of the project
-     * under the drivers/[os]/ paths.
-     * <p>
-     * All Strings are converted to lower case and spaces are removed, so strings
-     * like "FireFox", "chrome" and "Internet Explorer" are all valid.
-     * 
-     * @param browser
-     *            String Valid options: chrome, firefox, internet explorer, safari
-     * @param operatingSystem
-     *            String Valid options: linux, macintosh (mac, os x), windows (win)
+     * under the drivers/[os]/ paths. The browser can be set in the config file or a system
+     * variable. See the README for more information.
      * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
@@ -198,7 +198,7 @@ public class WebDriverFactory {
                     	driver = new ChromeDriver();
                     }
             		catch (IllegalStateException e) {
-            			String errorMeessage = "The driver does not have execute permissions. On linux/mac run chmod +x on the driver.";
+            			String errorMeessage = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver.";
             			throw new WebDriverNotExecutableException(errorMeessage, e);
             		}
                     break;

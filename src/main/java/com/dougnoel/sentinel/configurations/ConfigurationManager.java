@@ -162,11 +162,6 @@ public class ConfigurationManager {
 	 * Returns the name of all the folders to be searched for page objects.
 	 * 
 	 * @return String[] the list of page object folders
-	 * @throws ConfigurationParseException if an exception occurs when parsing configuration to data object
-	 * @throws ConfigurationMappingException if an exception is thrown when mapping yml configurations to data object
-	 * @throws IOException if an exception is thrown while mapping ConfigurationData class to new ConfigurationData object
-	 * @throws MissingConfigurationException if system environment is not set, will prompt user to set environment
-	 * @throws FileNotFoundException if the sentinel configuration file does not exist
 	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
 	public static String[] getPageObjectPackageList() throws ConfigurationNotFoundException {
@@ -180,7 +175,7 @@ public class ConfigurationManager {
 	 * Returns the system environment, returns an exception if no env if found, forcing the user to set the env.
 	 * 
 	 * @return String text of system env info
-	 * @throws ConfigurationNotFound if no environment variable has been set
+	 * @throws ConfigurationNotFoundException if no environment variable has been set
 	 */
 	public static String getEnvironment() throws ConfigurationNotFoundException {
 		String env = System.getProperty("env");
@@ -292,7 +287,7 @@ public class ConfigurationManager {
 	 * @param pageName String the name of the page from which the url is retrieved
 	 * @return String baseUrl the url for the given page and current environment
 	 * @throws PageObjectNotFoundException if the page object file cannot be read
-	 * @throws ConfigurationNotFound if the requested configuration property has not been set
+	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
 	public static String getUrl(String pageName) throws ConfigurationNotFoundException, PageObjectNotFoundException {
 		String baseURL = null;

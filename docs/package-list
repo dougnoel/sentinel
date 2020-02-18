@@ -1,6 +1,5 @@
 com.dougnoel.sentinel.apis
 com.dougnoel.sentinel.configurations
-com.dougnoel.sentinel.constants
 com.dougnoel.sentinel.elements
 com.dougnoel.sentinel.enums
 com.dougnoel.sentinel.exceptions

@@ -1,12 +1,19 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class NoSuchElementException extends SentinelException {
+/**
+ * Thrown if an Element does not exist on a webpage.
+ * @author dougnoel
+ *
+ */
 
-    /**
-     * Sentinel handles a captured NoSuchElementException
-     */
+public class NoSuchElementException extends ElementNotFoundException {
+
     private static final long serialVersionUID = 8469225740522080237L;
 
+    public NoSuchElementException(Throwable cause) {
+        super(cause);
+    }
+    
     public NoSuchElementException(String message) {
         super(message);
     }

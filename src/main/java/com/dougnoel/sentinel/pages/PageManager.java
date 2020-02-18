@@ -306,7 +306,6 @@ public class PageManager {
 	 * through a property. If not, 10 seconds will be set as the default.
 	 * 
 	 * @return Timeouts returns to allow object chaining for more complex calls
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
 	public static Timeouts setDefaultTimeout() {
 		return setTimeout(ConfigurationManager.getDefaultTimeout(), ConfigurationManager.getDefaultTimeUnit());
