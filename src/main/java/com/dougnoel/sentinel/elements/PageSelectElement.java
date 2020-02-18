@@ -59,7 +59,7 @@ public class PageSelectElement extends PageElement {
      * @param selectorType com.dougnoel.sentinel.enums.SelectorType INDEX, VALUE, TEXT
      * @param selectText the value of the selector
      * @return PageSelectElement for object chaining
-     * @throws ElementNotFoundException
+     * @throws ElementNotFoundException if the element cannot be found
      */
     public PageSelectElement select(SelectorType selectorType, String selectText) throws ElementNotFoundException {
         Select selectElement = new Select(this.element());
@@ -87,7 +87,7 @@ public class PageSelectElement extends PageElement {
      * Gets the value of the item at the given index.
      * @param index the index to inspect
      * @return String the text value of the option at the given index
-     * @throws ElementNotFoundException
+     * @throws ElementNotFoundException if the element cannot be found
      */
     public String getText(int index) throws ElementNotFoundException{
         Select selectElement = new Select(this.element());
@@ -97,7 +97,7 @@ public class PageSelectElement extends PageElement {
     /**
      * Gets the text of the first item currently selected.
      * @return String the text value of the selected option
-     * @throws ElementNotFoundException
+     * @throws ElementNotFoundException if the element cannot be found
      */
     public String getSelectedText() throws ElementNotFoundException{
         Select selectElement = new Select(this.element());

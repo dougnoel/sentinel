@@ -47,15 +47,19 @@ public class Table extends PageElement {
 	 * 
 	 * @param selectorType SelectorType the type of selector to use
 	 * @param selectorValue String the value to look for with the given selector type
-	 * @throws ElementNotFoundException if the element cannot be found
+	 * TODO: @throws ElementNotFoundException if the element cannot be found, not changing this now to make Page Objects backwards compatible. Should handle this when we change page objects to yml completely.
 	 */
-	public Table(SelectorType selectorType, String selectorValue) throws ElementNotFoundException {
+	public Table(SelectorType selectorType, String selectorValue) {
 		super(selectorType, selectorValue);
 		
-		if (this.toWebElement().getTagName().contains("ngx-datatable")) {
-			tableHeaderTag = "datatable-header-cell";
-			tableRowTag = "datatable-body-row";
-			tableCellDataTag = "datatable-body-cell";
+		try {
+			if (this.toWebElement().getTagName().contains("ngx-datatable")) {
+				tableHeaderTag = "datatable-header-cell";
+				tableRowTag = "datatable-body-row";
+				tableCellDataTag = "datatable-body-cell";
+			}
+		} catch (ElementNotFoundException e) {
+			log.error(e.getStackTrace()); //Suppress this for now.
 		}
 	}
 

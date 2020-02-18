@@ -53,8 +53,8 @@ public class VerificationSteps {
     @Then("^I see (\\d+) rows in the (.*)$")
     public static void i_see_x_rows_in_a_table(int expectedNumberOfRows, String elementName) throws Throwable {
         int numberOfRows = (int) getElementAsTable(elementName).getNumberOfRows();
-        log.debug("Number of Rows Expected/Found: {}/{}", expectedNumberOfRows, numberOfRows);
-        assert (numberOfRows == expectedNumberOfRows);
+        String expectedResult = StringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
+        assertTrue(expectedResult, numberOfRows == expectedNumberOfRows);
     }
     
     /**
