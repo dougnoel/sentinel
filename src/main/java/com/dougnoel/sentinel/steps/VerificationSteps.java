@@ -345,7 +345,7 @@ public class VerificationSteps {
      * @param tableName String name of the table to search
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
-    @Then("^I verify the (.*?) column(s)? in the (.*?) contains unique values$")
+    @Then("^I verify the (.*?) column(s)? in the (.*?) contains? unique values$")
 	public static void i_verify_the_column_in_the_table_contains_unique_text(String columnName, String isMultiCells,
 			String tableName) throws Throwable {
 		if (isMultiCells != null) {		
@@ -382,9 +382,7 @@ public class VerificationSteps {
      * @throws Throwable Throws any errors passed to it.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void i_verify_the_element_contains_the_text(String elementName, String assertion, String matchType,
-            String text)
-            throws Throwable {
+    public static void i_verify_the_element_contains_the_text(String elementName, String assertion, String matchType, String text) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
         if (elementName.contains("URL")) {
@@ -411,8 +409,9 @@ public class VerificationSteps {
             }
         }
     }
+
     /**
-     * Verifies the row column has text for the stored value.
+     * Verifies a table column has text for the stored value.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
@@ -426,10 +425,52 @@ public class VerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
-    public static void i_verify_the_row_column_in_the_table_contains_the_text_for_the_stored_value(String columnName,
-            String tableName, String key) throws Throwable {
+    public static void i_verify_the_column_in_the_table_contains_the_text_for_the_stored_value(String columnName, String tableName, String key) throws Throwable {
         String textToMatch = ConfigurationManager.getValue(key);
-        assertTrue(getElementAsTable(tableName).verifyColumnCellsContain(columnName, textToMatch));
+        assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+    }
+
+    
+    /**
+     * Verifies a table column does or does not have the indicated text. It can check that any cell in the
+     * column matches, or that all (or none) of the cells in the column match.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the Name column in the user info table contains the text Bill</li>
+     * <li>I verify the State column in the Provider Info Table does not contain the text North Carolina</li>
+     * <li>I verify all the cells in the Zip Code column in the Airports table contain the text 10001</li>
+     * <li>I verify all the cells in the Store column in the Coffee Shop Table do not contain the text Roast</li>
+     * </ul>
+     * @param allCells String all cells must match if any value is passed, if null is passed on ly one cell must match
+     * @param columnName String Name of the column to verify
+     * @param tableName String Name of the table containing the column
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param textToMatch String the text to look for in the column
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
+    @Then("^I verify( all the cells in)? the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
+    public static void i_verify_the_column_in_the_table_contains_text(String allCells, String columnName, String tableName, String assertion, String textToMatch) throws Throwable {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        boolean orMatch = StringUtils.isEmpty(allCells);
+        
+        String expectedResult = StringUtils.format(
+                "Expected the {} column of the {} to {}{} with the text {}. The element contained the text: {}",
+                columnName, tableName, (negate ? "not " : ""), (orMatch ? "contain at least one cell" : "only contain cells"), textToMatch);
+        log.trace(expectedResult);
+        if (orMatch) {
+            if (negate) {
+                assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+            } else {
+                assertTrue(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+            }
+        } else {
+            if (negate) {
+                assertFalse(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+            } else {
+                assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+            }
+        }
     }
     
     /**
