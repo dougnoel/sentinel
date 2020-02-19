@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -333,7 +335,7 @@ public class Table extends PageElement {
 		for (String cell : column) {
 			try {
 				if (!cell.contains(textToMatch)) {
-					log.error("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
+					log.debug("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
 					return false;
 				}
 			} catch (NullPointerException e) {
@@ -377,7 +379,57 @@ public class Table extends PageElement {
 			}
 
 		}
-		log.error("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		log.debug("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		return false;
+	}
+	
+	/**
+	 * Checks all the cells in a given column and verifies they are sorted in ascending order.
+	 * 
+	 * @param columnName String the name of the column you want to evaluate
+	 * @return boolean true is the column is sorted in ascending order, false if it is not sorted correctly
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public boolean verifyColumnCellsAreSortedAscending(String columnName) throws ElementNotFoundException {
+		return verifyColumnCellsAreSorted(columnName, null);
+	}
+	
+	/**
+	 * Checks all the cells in a given column and verifies they are sorted in ascending order.
+	 * 
+	 * @param columnName String the name of the column you want to evaluate
+	 * @return boolean true is the column is sorted in descending order, false if it is not sorted correctly
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public boolean verifyColumnCellsAreSortedDescending(String columnName) throws ElementNotFoundException {
+		return verifyColumnCellsAreSorted(columnName, Collections.reverseOrder());
+	}
+	
+	/**
+	 * Checks all the cells in a given column and verifies they are sorted in requested Comparator order.
+	 * <p>
+	 * NOTE: Use the verifyColumnCellsAreSortedAscending() and verifyColumnCellsAreSortedDescending() methods
+	 * unless you have a custom sort to pass. Passing the wrong value can cause errors.
+	 * 
+	 * @param columnName String the name of the column you want to evaluate
+	 * @param sortOrder Comparator the sort you want to do on the ArrayList&lt;String;&gt;, passing null will sort in ascending order
+	 * @return boolean true is the column is sorted in the passed sort order, false if it is not sorted correctly
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean verifyColumnCellsAreSorted(String columnName, @SuppressWarnings("rawtypes") Comparator sortOrder) throws ElementNotFoundException {
+		getOrCreateHeaders();
+		ArrayList<String> column = getOrCreateColumns().get(columnName);
+		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
+		if (sortOrder == null)
+		{
+			Collections.sort(sortedColumn);
+		} else {
+			Collections.sort(sortedColumn, sortOrder);	
+		}
+		if (column.equals(sortedColumn)) {
+			return true;
+		}
 		return false;
 	}
 	

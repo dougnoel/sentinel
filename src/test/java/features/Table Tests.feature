@@ -16,3 +16,5 @@ Feature: Table Tests
     	And I verify the First Name column in the Example Table does not contain the text Sam
     	And I verify all the cells in the Last Name column in the Example Table contain the text Smith
     	And I verify all the cells in the Last Name column in the Example Table do not contain the text Brown
+    	And I verify the cells in the First Name column in the Example Table are sorted in ascending order
+    	And I verify the cells in the Last Name column in the Example Table are sorted in descending order

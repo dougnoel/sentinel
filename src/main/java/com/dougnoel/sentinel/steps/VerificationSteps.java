@@ -473,6 +473,19 @@ public class VerificationSteps {
         }
     }
     
+    @Then("^I verify the cells in the (.*?) column in the (.*?) are sorted in (ascending|descending) order$")
+    public static void i_verify_the_cells_in_the_column_in_the_table_are_sorted(String columnName, String tableName, String ascending) throws Throwable {
+        boolean sortAscending = StringUtils.equals(ascending, "ascending");
+        
+        String expectedResult = StringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));
+        log.trace(expectedResult);
+        if (sortAscending) {
+        	assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedAscending(columnName));
+        } else {
+            assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedDescending(columnName));
+        }
+    }
+    
     /**
      * Used to verify that the selected option of a select element contains certain
      * text. It takes an element name and then an optional "does not", which if
