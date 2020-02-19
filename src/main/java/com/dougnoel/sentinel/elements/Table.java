@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.elements;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,6 @@ import org.openqa.selenium.WebElement;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.strings.StringUtils;
 
 /**
@@ -139,9 +140,9 @@ public class Table extends PageElement {
 	 * 
 	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaderElements()
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
-	 * @throws SentinelException if the header elements cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected boolean tableHeadersExist() throws SentinelException {
+	protected boolean tableHeadersExist() throws ElementNotFoundException  {
 		return getOrCreateHeaderElements() != null;
 	}
 
@@ -186,9 +187,9 @@ public class Table extends PageElement {
 	 * 
 	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateRowElements()
 	 * @return int the number of row elements
-	 * @throws SentinelException if the row elements cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public int getNumberOfRows() throws SentinelException {
+	public int getNumberOfRows() throws ElementNotFoundException  {
 		return getOrCreateRowElements().size() - 1;
 	}
 
@@ -197,9 +198,9 @@ public class Table extends PageElement {
 	 * e.g. { "Date Column": ["1/1/01", "1/2/01", ...] }
 	 * 
 	 * @return Map&lt;String, ArrayList&lt;String&gt;&gt;
-	 * @throws SentinelException if the header or row elements cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected Map<String, ArrayList<String>> getOrCreateColumns() throws SentinelException {
+	protected Map<String, ArrayList<String>> getOrCreateColumns() throws ElementNotFoundException {
 		if (columns.isEmpty()) {
 			int index = 0;
 			getOrCreateRows(); // We cannot create the columns without Row data
@@ -221,9 +222,9 @@ public class Table extends PageElement {
 	 * 
 	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaders()
 	 * @return int the number of columns
-	 * @throws SentinelException if the header elements cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public int getNumberOfColumns() throws SentinelException {
+	public int getNumberOfColumns() throws ElementNotFoundException {
 		return getOrCreateHeaders().size();
 	}
 
@@ -246,9 +247,9 @@ public class Table extends PageElement {
 	 * table data.
 	 * 
 	 * @param pageNumber int the page number under which to store the table data for comparison
-	 * @throws SentinelException if the rows cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void storeTable(int pageNumber) throws SentinelException {
+	public void storeTable(int pageNumber) throws ElementNotFoundException {
 		reset();
 		tables.put(pageNumber, getOrCreateRows());
 	}
@@ -256,10 +257,9 @@ public class Table extends PageElement {
 	/**
 	 * Stores the current tables rows in index 1. Used for single-page
 	 * (un-paginated) tables.
-	 * 
-	 * @throws SentinelException if the rows cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void storeTable() throws SentinelException {
+	public void storeTable() throws ElementNotFoundException  {
 		storeTable(1);
 	}
 
@@ -270,9 +270,9 @@ public class Table extends PageElement {
 	 * 
 	 * @param pageNumber int the stored page number to compare against the current page
 	 * @return boolean Table matches the one in memory.
-	 * @throws SentinelException if the rows cannot be found
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean compareWithStoredTable(int pageNumber) throws SentinelException {
+	public boolean compareWithStoredTable(int pageNumber) throws ElementNotFoundException {
 		reset();
 		return (tables.get(pageNumber) == getOrCreateRows());
 	}
@@ -317,31 +317,31 @@ public class Table extends PageElement {
 	}
 
 	/**
-	 * Returns true if getOrCreateColumns returns a value. Throws error if no column is found 
-	 * or wrong column is found.
+	 * Returns true if all cells in the given column match the text value given.
 	 * 
-	 * @param columnHeader String text in the given column header
-	 * @param textToMatch String text to find in the given column
-	 * @return boolean true if the given cell contains the give text, false if duplicates are found
-	 * @throws SentinelException if the column or row creation fails
+	 * @param columnHeader String the name of the column
+	 * @param textToMatch String the text that should be in every cell
+	 * @return boolean true if the column contains the given text in every cell, false if not
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnCellsContain(String columnHeader, String textToMatch) throws SentinelException {
+	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) throws ElementNotFoundException  {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
-			log.error("Column does not exist. Header text: {} | Text to Match: {}", columnHeader, textToMatch);
-			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
+			String errorMessage = StringUtils.format("{} column does not exist.", columnHeader);
+			log.error(errorMessage);
+			throw new ElementNotFoundException(errorMessage);
 		}
 		for (String cell : column) {
 			try {
 				if (!cell.contains(textToMatch)) {
-					log.error("False result returned. Header text: {} | Cell data: {} | Text to Match: {} | Result: {}",
-							columnHeader, cell, textToMatch, cell.contains(textToMatch));
+					log.debug("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
 					return false;
 				}
 			} catch (NullPointerException e) {
-				log.error("Header text: {} | Cell data: {} | Text to Match: {}", columnHeader, cell, textToMatch);
-				throw e;
+				String errorMessage = StringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				log.error(errorMessage);
+				throw new ElementNotFoundException(errorMessage, e);
 			}
 
 		}
@@ -349,13 +349,98 @@ public class Table extends PageElement {
 	}
 
 	/**
+	 * Returns true if any cells in the given column match the text value given.
+	 * 
+	 * @param columnHeader String the name of the column
+	 * @param textToMatch String the text that should be in at least one of the cells
+	 * @return boolean true if the column contains the given text in at least one of the cells, false if not
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) throws ElementNotFoundException  {
+		getOrCreateHeaders();
+		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
+		if (column == null) {
+			String errorMessage = StringUtils.format("{} column does not exist.", columnHeader);
+			log.error(errorMessage);
+			throw new ElementNotFoundException(errorMessage);
+		}
+		for (String cell : column) {
+			try {
+				if (cell.contains(textToMatch)) {
+					return true;
+				}
+				else {
+					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+				}
+			} catch (NullPointerException e) {
+				String errorMessage = StringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				log.error(errorMessage);
+				throw new ElementNotFoundException(errorMessage, e);
+			}
+
+		}
+		log.debug("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		return false;
+	}
+	
+	/**
+	 * Checks all the cells in a given column and verifies they are sorted in ascending order.
+	 * 
+	 * @param columnName String the name of the column you want to evaluate
+	 * @return boolean true is the column is sorted in ascending order, false if it is not sorted correctly
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public boolean verifyColumnCellsAreSortedAscending(String columnName) throws ElementNotFoundException {
+		return verifyColumnCellsAreSorted(columnName, null);
+	}
+	
+	/**
+	 * Checks all the cells in a given column and verifies they are sorted in ascending order.
+	 * 
+	 * @param columnName String the name of the column you want to evaluate
+	 * @return boolean true is the column is sorted in descending order, false if it is not sorted correctly
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public boolean verifyColumnCellsAreSortedDescending(String columnName) throws ElementNotFoundException {
+		return verifyColumnCellsAreSorted(columnName, Collections.reverseOrder());
+	}
+	
+	/**
+	 * Checks all the cells in a given column and verifies they are sorted in requested Comparator order.
+	 * <p>
+	 * NOTE: Use the verifyColumnCellsAreSortedAscending() and verifyColumnCellsAreSortedDescending() methods
+	 * unless you have a custom sort to pass. Passing the wrong value can cause errors.
+	 * 
+	 * @param columnName String the name of the column you want to evaluate
+	 * @param sortOrder Comparator the sort you want to do on the ArrayList&lt;String;&gt;, passing null will sort in ascending order
+	 * @return boolean true is the column is sorted in the passed sort order, false if it is not sorted correctly
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean verifyColumnCellsAreSorted(String columnName, @SuppressWarnings("rawtypes") Comparator sortOrder) throws ElementNotFoundException {
+		getOrCreateHeaders();
+		ArrayList<String> column = getOrCreateColumns().get(columnName);
+		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
+		if (sortOrder == null)
+		{
+			Collections.sort(sortedColumn);
+		} else {
+			Collections.sort(sortedColumn, sortOrder);	
+		}
+		if (column.equals(sortedColumn)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns &lt;code&gt;true&lt;/code&gt; if the column cells are unique
 	 * 
 	 * @param columnHeader String text of the given column header to search
 	 * @return boolean true if column cells are unique, false if duplicates are found, throws error otherwise
-	 * @throws SentinelException if the column or row creation fails
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnCellsAreUnique(String columnHeader) throws SentinelException {
+	public boolean verifyColumnCellsAreUnique(String columnHeader) throws ElementNotFoundException  {
 		if (verifyColumnExists(columnHeader) == false) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
@@ -393,9 +478,9 @@ public class Table extends PageElement {
 	 * 
 	 * @param columnName String name of column to find
 	 * @return boolean true if column exists, false if column does not exists.
-	 * @throws SentinelException if the headers do not exist
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnExists(String columnName) throws SentinelException {
+	public boolean verifyColumnExists(String columnName) throws ElementNotFoundException  {
 		for (String header : getOrCreateHeaders()) {
 			if (header.contains(columnName)) {
 				return true;
@@ -409,9 +494,9 @@ public class Table extends PageElement {
 	 * 
 	 * @param columnName String comma delimited columns list
 	 * @return boolean true if all cells values are unique, false if any duplicates
-	 * @throws SentinelException if a column doesn't exist
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyRowCellsAreUnique(String columnName) throws SentinelException {
+	public boolean verifyRowCellsAreUnique(String columnName) throws ElementNotFoundException  {
 		String[] columns = columnName.split(", ");
 		return verifyRowCellsAreUnique(columns);
 	}
@@ -421,9 +506,9 @@ public class Table extends PageElement {
 	 * 
 	 * @param columnsHeader string[] the array of column name to validate
 	 * @return boolean true if all cells values are unique, false if any duplicates
-	 * @throws SentinelException if a column doesn't exist
+	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyRowCellsAreUnique(String[] columnsHeader) throws SentinelException {
+	public boolean verifyRowCellsAreUnique(String[] columnsHeader) throws ElementNotFoundException {
 
 		getOrCreateHeaders();
 		getOrCreateRows();
