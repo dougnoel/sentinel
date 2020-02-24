@@ -444,6 +444,13 @@ public class BaseSteps {
         String text = ConfigurationManager.getValue(key);
         getElementAsTable(tableName).clickElementInRowThatContains(text, elementName);
     }
+    
+    @When("^I find the (.*?) link in the row of the the (.*) containing the text (.*) and click it$")
+    public static void i_find_the_row_matching_the_text_in_the_table_and_click_an_associated_link(
+            String elementName, String tableName, String text) throws Throwable {
+        getElementAsTable(tableName).clickElementInRowThatContains(text, elementName);
+    }
+    
     /**
      * Navigates to the given URL
      * <p>

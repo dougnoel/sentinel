@@ -13,6 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
 import com.dougnoel.sentinel.strings.StringUtils;
@@ -25,6 +26,7 @@ import com.dougnoel.sentinel.strings.StringUtils;
 public class Table extends PageElement {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
+	private TableType tableType = TableType.HTML;
 	private String tableHeaderTag = "th";
 	private String tableRowTag = "tr";
 	private String tableCellDataTag = "td";
@@ -55,6 +57,7 @@ public class Table extends PageElement {
 		
 		try {
 			if (this.toWebElement().getTagName().contains("ngx-datatable")) {
+				tableType = TableType.NGXDATATABLE;
 				tableHeaderTag = "datatable-header-cell";
 				tableRowTag = "datatable-body-row";
 				tableCellDataTag = "datatable-body-cell";
@@ -292,8 +295,16 @@ public class Table extends PageElement {
 	 */
 	protected WebElement getElementInRowThatContains(String elementText, String textToMatch) throws ElementNotFoundException {
 		try {
-			return this.element().findElement(By.xpath(
-					"//td[contains(text(),'" + elementText + "')]/..//*[contains(text(),'" + textToMatch + "')]"));
+			if (tableType == TableType.NGXDATATABLE) {
+				return this.element().findElement(By.xpath(
+						"//span[contains(text(),'" + elementText + 
+						"')]/../../..//*[contains(text(),'" + textToMatch + "')]"));
+			} else
+			{
+				return this.element().findElement(By.xpath(
+						"//" + tableCellDataTag + "[contains(text(),'" + elementText + 
+						"')]/..//*[contains(text(),'" + textToMatch + "')]"));
+			}
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = StringUtils.format("{} not found in {} Error: {}", textToMatch, elementText, e.getMessage());
 			log.error(errorMsg);

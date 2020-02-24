@@ -94,6 +94,9 @@ Once you're set up, all you have to do is run this command:
 mvn deploy
 ```
 
+### 5.3 Deploy to Maven Central
+[Instructions for Deploying to Maven Central](https://dzone.com/articles/publish-your-artifacts-to-maven-central)
+
 ## 6.0 Additional Documentation & Resources
 
 ### 6.1 Javadocs

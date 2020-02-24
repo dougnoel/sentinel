@@ -278,8 +278,7 @@ public class VerificationSteps {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         // TODO: Add code to verify the page has loaded.
-    }
-    
+    }    
     
     /**
      * Validates whether the currently open pdf contains the given text on the page(s) passed to it.
@@ -429,7 +428,6 @@ public class VerificationSteps {
         String textToMatch = ConfigurationManager.getValue(key);
         assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
     }
-
     
     /**
      * Verifies a table column does or does not have the indicated text. It can check that any cell in the
@@ -473,9 +471,23 @@ public class VerificationSteps {
         }
     }
     
+    /**
+     * Verifies a table column's values are sorted in ascending or descending order.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the cells in the First Name column in the Users Table are sorted in ascending order</li>
+     * <li>I verify the cells in the Last Name Column in the example table are sorted in descending order</li>
+     * <li>I verify the cells in the state column in the Address table are sorted in ascending order</li>
+     * </ul>
+     * @param columnName String the name of the column to verify
+     * @param tableName String the name of the table containing the column
+     * @param sortOrder String ascending or descending
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
     @Then("^I verify the cells in the (.*?) column in the (.*?) are sorted in (ascending|descending) order$")
-    public static void i_verify_the_cells_in_the_column_in_the_table_are_sorted(String columnName, String tableName, String ascending) throws Throwable {
-        boolean sortAscending = StringUtils.equals(ascending, "ascending");
+    public static void i_verify_the_cells_in_the_column_in_the_table_are_sorted(String columnName, String tableName, String sortOrder) throws Throwable {
+        boolean sortAscending = StringUtils.equals(sortOrder, "ascending");
         
         String expectedResult = StringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));
         log.trace(expectedResult);
