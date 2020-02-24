@@ -17,6 +17,7 @@
     <connection>scm:git:git://github.com/dougnoel/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:dougnoel/${project.artifactId}.git</developerConnection>
     <url>git://github.com/dougnoel/${project.artifactId}.git</url>
+    <tag>HEAD</tag>
   </scm>
       
   <properties>
@@ -34,6 +35,8 @@
     <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
     <maven-dependency-plugin.verbose>true</maven-dependency-plugin.verbose>
     <maven-dependency-plugin.outputXML>true</maven-dependency-plugin.outputXML>
+    
+    <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 
     <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
     <extra-enforcer-rules.version>1.2</extra-enforcer-rules.version>
@@ -103,15 +106,29 @@
             <outputXML>${maven-dependency-plugin.outputXML}</outputXML>
           </configuration>
         </plugin>
-
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin>
+	
+		<plugin>
+			<artifactId>maven-deploy-plugin</artifactId>
+			<version>${maven-deploy-plugin.version}</version>
+			<executions>
+				<execution>
+					<id>default-deploy</id>
+					<phase>deploy</phase>
+					<goals>
+						<goal>deploy</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+	
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+        </plugin>
             
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
@@ -185,42 +202,74 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
         </plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-release-plugin</artifactId>
+			<version>2.5.3</version>
+			<configuration>
+				<localCheckout>true</localCheckout>
+				<pushChanges>false</pushChanges>
+				<mavenExecutorId>forked-path</mavenExecutorId>
+				<arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+			</configuration>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.maven.scm</groupId>
+					<artifactId>maven-scm-provider-gitexe</artifactId>
+					<version>1.9.5</version>
+				</dependency>
+			</dependencies>
+		</plugin>
+		<plugin>
+			<groupId>org.sonatype.plugins</groupId>
+			<artifactId>nexus-staging-maven-plugin</artifactId>
+			<version>1.6.7</version>
+			<extensions>true</extensions>
+			<configuration>
+				<serverId>ossrh</serverId>
+				<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+				<autoReleaseAfterClose>true</autoReleaseAfterClose>
+			</configuration>
+		</plugin>
       </plugins>
     </pluginManagement>
     <!-- Added this because the above wasn't working. Need to resolve. -->
-    <plugins>
-    <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			</plugins>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-source-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>attach-sources</id>
+					<goals>
+						<goal>jar</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-javadoc-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>attach-javadocs</id>
+					<goals>
+						<goal>jar</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
   </build>
 
 	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 		<repository>
-			<id>github</id>
-			<name>GitHub dougnoel Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/dougnoel/sentinel</url>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
 	
@@ -234,6 +283,34 @@
         <defaultGoal>${classpath-integrity.defaultGoal}</defaultGoal>
       </build>
     </profile>
+    <!-- GPG Signature on release -->
+	<profile>
+		<id>release-sign-artifacts</id>
+		<activation>
+			<property>
+				<name>performRelease</name>
+				<value>true</value>
+			</property>
+		</activation>
+		<build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.6</version>
+					<executions>
+						<execution>
+							<id>sign-artifacts</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</build>
+	</profile>
   </profiles>
 
   <dependencyManagement>

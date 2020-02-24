@@ -1,13 +1,16 @@
 #Author: Doug Noël
-@example
+@example @table
 Feature: Table Tests
   Testing the Table Page Object Functionality
 	
+	@ngx-datatable
   Scenario: NGX Data Table
     Given I am on the NGX Data Table Page
+    When I find the female link in the row of the the Example Table containing the text Claudine Neal and click it
     Then I verify the Example Table contains the Name column
     	And I see 99 rows in the Example Table
     	
+  @html-table  	
   Scenario: Table
     Given I am on the Table Page
     Then I verify the Example Table contains the Name column
@@ -18,3 +21,4 @@ Feature: Table Tests
     	And I verify all the cells in the Last Name column in the Example Table do not contain the text Brown
     	And I verify the cells in the First Name column in the Example Table are sorted in ascending order
     	And I verify the cells in the Last Name column in the Example Table are sorted in descending order
+    	    When I find the Smith link in the row of the the Example Table containing the text Bob and click it
