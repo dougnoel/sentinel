@@ -288,28 +288,54 @@ public class Table extends PageElement {
 	 * also be used to validate text in a cell in the same row Returning
 	 * successfully would indicate the expected text was found.
 	 * 
-	 * @param elementText String the text of the element (link) you are looking to find.
-	 * @param textToMatch String the unique text to locate the row in question.
+	 * @param elementToClick String the text of the element (link) you are looking to find.
+	 * @param textToFind String the unique text to locate the row in question.
 	 * @return WebElement a selenium WebElement object that can be operated on.
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected WebElement getElementInRowThatContains(String elementText, String textToMatch) throws ElementNotFoundException {
+	protected WebElement getElementInRowThatContains(String textToFind, String elementToClick) throws ElementNotFoundException {
 		try {
 			if (tableType == TableType.NGXDATATABLE) {
 				return this.element().findElement(By.xpath(
-						"//span[contains(text(),'" + elementText + 
-						"')]/../../..//*[contains(text(),'" + textToMatch + "')]"));
+						"//span[contains(text(),'" + textToFind + 
+						"')]/../../..//*[contains(text(),'" + elementToClick + "')]"));
 			} else
 			{
 				return this.element().findElement(By.xpath(
-						"//" + tableCellDataTag + "[contains(text(),'" + elementText + 
-						"')]/..//*[contains(text(),'" + textToMatch + "')]"));
+						"//" + tableCellDataTag + "[contains(text(),'" + textToFind + 
+						"')]/..//*[contains(text(),'" + elementToClick + "')]"));
 			}
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in {} Error: {}", textToMatch, elementText, e.getMessage());
+			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementToClick, textToFind, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
+	}
+	
+	protected WebElement getElementInRowThatContains(By elementToFind, By elementToClick) throws ElementNotFoundException {
+		WebElement element;
+		try {
+			if (tableType == TableType.NGXDATATABLE) {
+				element = this.element()
+						.findElement(By.xpath("//span"))
+						.findElement(elementToFind)
+						.findElement(By.xpath("//../../..//*"))
+						.findElement(elementToClick);
+			} else
+			{
+				element = this.element()
+						.findElement(By.xpath("//" + tableCellDataTag))
+						.findElement(elementToFind)
+						.findElement(By.xpath("//..//*"))
+						.findElement(elementToClick);
+			}
+		} catch (org.openqa.selenium.NoSuchElementException e) {
+			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementToClick, elementToFind, e.getMessage());
+			log.error(errorMsg);
+			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+		}
+		log.trace("Element found: {}", element);
+		return element;
 	}
 
 	/**
@@ -327,6 +353,9 @@ public class Table extends PageElement {
 		getElementInRowThatContains(elementText, textToClick).click();
 	}
 
+	public void clickElementInRowThatContains(By elementText, By textToClick) throws ElementNotFoundException {
+		getElementInRowThatContains(elementText, textToClick).click();
+	}
 	/**
 	 * Returns true if all cells in the given column match the text value given.
 	 * 
