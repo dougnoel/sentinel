@@ -86,6 +86,12 @@ public class PageElement {
 		this.driver = WebDriverFactory.getWebDriver();
 	}
 
+	/**
+	 * Wrapper for dealing with fluent waits when getting an element.
+	 * 
+	 * @param locator org.openqa.selenium.By
+	 * @return org.openqa.selenium.WebElement
+	 */
 	private WebElement getElementWithWait(final By locator) {
 		Duration timeout =  Duration.ofSeconds(10); //TODO: Move to configuration file
 		Duration interval =  Duration.ofMillis(10); //TODO: Move to configuration file
