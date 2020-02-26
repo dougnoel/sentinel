@@ -507,7 +507,6 @@ public class BaseSteps {
     	}
     	
     	getElementAsTable(tableName).clickElementInRowThatContains(ordinalRow, clickLocator);
-    }
     
     /**
      * Navigates to the given URL
