@@ -8,8 +8,6 @@ import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.strings.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ConfigurationData extends File {
 	/**
@@ -18,7 +16,6 @@ public class ConfigurationData extends File {
 	 * a specific setting by passing in a command line arg or using System.getProperty() in the setup method in the Test java file.
 	 */
 	private static final long serialVersionUID = 3930207641065895241L;
-	private static final Logger log = LogManager.getLogger(ConfigurationData.class); // Create a logger.
 	
 	@JsonProperty("configurations")
 	public Map<String, Map<String, String>> configurations;
@@ -68,9 +65,7 @@ public class ConfigurationData extends File {
 			String errorMessage = StringUtils.format(
 					"A configuration value for {} was not found for the {} environment{}.", configurationKey,
 					environment, defaultChecked == true ? " or the default environment" : "");
-			log.error(errorMessage);
-			throw new ConfigurationNotFoundException(errorMessage);
-			
+			throw new ConfigurationNotFoundException(errorMessage);	
 		}
 
 		return configurationValue;

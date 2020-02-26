@@ -463,7 +463,7 @@ public class BaseSteps {
      * @param elementToClick String the text or xpath used to find the item you want to click upon
      * @param matchLocatorType String the type of locator the next value will be: text or xpath
      * @param elementToMatch String the text or xpath of the value that will ensure you are in the correct row
-     * @throws Throwable
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
     public static void i_find_the_table_and_click_the_link_associated_with_the_locator(
@@ -484,6 +484,22 @@ public class BaseSteps {
     	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
     }
     
+    /**
+     * Clicks a text value, stored value or xpath part in a table in a row. The row is determined by
+     * ordinal value (last, 1st, 2nd, 3rd, etc.).
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I find the 1st row in the Soil Table and click the text Dirt</li>
+     * <li>I find the 2nd row in the Garbage Table and click the xpath //*[@id = 'myValue']</li>
+     * <li>I find the last row in the Users Table and click the value for Username</li>
+     * </ul>
+     * @param ordinal String the row number to search; pass "la" or -1 to get the last row
+     * @param tableName String the name of the table to search
+     * @param clickLocatorType String the type of locator the next value will be: text, xpath, value for (stored value)
+     * @param elementToClick  String the text, xpath or stored value used to find the item you want to click upon
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
     @When("^I find the (\\d+|la)(?:st|nd|rd|th) row in the (.*?) and click the (text|xpath|value for) (.*?)$")
     public static void i_find_the_ordinal_row_in_the_table_and_click_an_associated_link(
     		String ordinal, String tableName, String clickLocatorType, String elementToClick) throws Throwable {

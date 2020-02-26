@@ -292,68 +292,41 @@ public class Table extends PageElement {
 		return (tables.get(pageNumber) == getOrCreateRows());
 	}
 
-	//TODO: Update for ngx-table
 	/**
-	 * Finds the link in a row by using text in another cell. For example,
-	 * finding an "Edit" link for a specific username in a table. To work, this
-	 * method must have a link name and a unique string to match. This method could
-	 * also be used to validate text in a cell in the same row Returning
-	 * successfully would indicate the expected text was found.
+	 * Returns a WebElement found inside the indicated row, taking unique text to find the row and unique 
+	 * text to find a specific element in that row.
 	 * 
-	 * @param elementToClick String the text of the element (link) you are looking to find.
-	 * @param textToFind String the unique text to locate the row in question.
-	 * @return WebElement a selenium WebElement object that can be operated on.
+	 * @param elementLocatorText String the text of the element (link) you are looking to find
+	 * @param rowLocatorText String the unique text to locate the row to search
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected WebElement getElementInRowThatContains(String textToFind, String elementToClick) throws ElementNotFoundException {
-		try {
-			if (tableType == TableType.NGXDATATABLE) {
-				return this.element().findElement(By.xpath(
-						"//span[contains(text(),'" + textToFind + 
-						"')]/../../..//*[contains(text(),'" + elementToClick + "')]"));
-			} else
-			{
-				return this.element().findElement(By.xpath(
-						"//" + tableCellDataTag + "[contains(text(),'" + textToFind + 
-						"')]/..//*[contains(text(),'" + elementToClick + "')]"));
-			}
-		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementToClick, textToFind, e.getMessage());
-			log.error(errorMsg);
-			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
-		}
+	public WebElement getElementInRowThatContains(String rowLocatorText, String elementLocatorText) throws ElementNotFoundException {
+		return getElementInRowThatContains(By.xpath("[contains(text(),'" + rowLocatorText + "')]"), By.xpath("[contains(text(),'" + elementLocatorText + "')]"));
 	}
 	
 	/**
+	 * Returns a WebElement found inside the indicated row using the locator passed.
 	 * 
-	 * @param ordinalRow
-	 * @param clickLocator
-	 * @return
-	 * @throws ElementNotFoundException
+	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
+	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
+	 * @throws ElementNotFoundException if no element is found
 	 */
-	protected WebElement getElementInRowThatContains(int ordinalRow, By clickLocator) throws ElementNotFoundException {
+	public WebElement getElementInRowThatContains(int ordinalRow, By elementLocator) throws ElementNotFoundException {
 		WebElement element;
 		if (ordinalRow == -1) {
 			//Set to the last row
 			ordinalRow = getNumberOfRows();
 		}
-		//TODO: Consolidate into one line after checking to make sure it works
-		ordinalRow--;		
-		List<WebElement> dataRows = getOrCreateRowElements();
-		WebElement rowToSearch = dataRows.get(ordinalRow);
+		String locator = tableType == TableType.NGXDATATABLE ? "//span" : "//" + tableCellDataTag;
+		
 		try {
-			if (tableType == TableType.NGXDATATABLE) {
-				element = rowToSearch
-						.findElement(By.xpath("//span"))
-						.findElement(clickLocator);
-			} else
-			{
-				element = rowToSearch
-						.findElement(By.xpath("//" + tableCellDataTag))
-						.findElement(clickLocator);
-			}
+			element = getOrCreateRowElements().get(ordinalRow--)
+					.findElement(By.xpath(locator))
+					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in row {} Error: {}", clickLocator, ordinalRow, e.getMessage());
+			String errorMsg = StringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
@@ -361,25 +334,29 @@ public class Table extends PageElement {
 		return element;
 	}
 	
-	protected WebElement getElementInRowThatContains(By elementToFind, By elementToClick) throws ElementNotFoundException {
+	/**
+	 * Returns a WebElement found inside the indicated row, taking a locator to find the row and a locator 
+	 * to find a specific element in that row.
+	 * 
+	 * @param rowLocator org.openqa.selenium.By the locator to use to find the row to search
+	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
+	 * @throws ElementNotFoundException if no element is found
+	 */
+	public WebElement getElementInRowThatContains(By rowLocator, By elementLocator) throws ElementNotFoundException {
 		WebElement element;
+		String firstLocator = tableType == TableType.NGXDATATABLE ? "//span" : "//" + tableCellDataTag;
+		String secondLocator = tableType == TableType.NGXDATATABLE ? "//../../..//*" : "//..//*";
+
 		try {
-			if (tableType == TableType.NGXDATATABLE) {
-				element = this.element()
-						.findElement(By.xpath("//span"))
-						.findElement(elementToFind)
-						.findElement(By.xpath("//../../..//*"))
-						.findElement(elementToClick);
-			} else
-			{
-				element = this.element()
-						.findElement(By.xpath("//" + tableCellDataTag))
-						.findElement(elementToFind)
-						.findElement(By.xpath("//..//*"))
-						.findElement(elementToClick);
-			}
+			element = this.element()
+					.findElement(By.xpath(firstLocator))
+					.findElement(rowLocator)
+					.findElement(By.xpath(secondLocator))
+					.findElement(elementLocator);
+
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementToClick, elementToFind, e.getMessage());
+			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementLocator, rowLocator, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
@@ -402,12 +379,26 @@ public class Table extends PageElement {
 		getElementInRowThatContains(elementText, textToClick).click();
 	}
 
-	public void clickElementInRowThatContains(By elementText, By textToClick) throws ElementNotFoundException {
-		getElementInRowThatContains(elementText, textToClick).click();
+	/**
+	 * Clicks on an element found by elementLocator, in a row found by rowLocator.
+	 * 
+	 * @param rowLocator org.openqa.selenium.By the locator to use to find the row to search
+	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public void clickElementInRowThatContains(By rowLocator, By elementLocator) throws ElementNotFoundException {
+		getElementInRowThatContains(rowLocator, elementLocator).click();
 	}
 	
-	public void clickElementInRowThatContains(int ordinalRow, By clickLocator) throws ElementNotFoundException {
-		getElementInRowThatContains(ordinalRow, clickLocator).click();
+	/**
+	 * Clicks on an element found by elementLocator, in a row found by ordinalRow.
+	 * 
+	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
+	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	public void clickElementInRowThatContains(int ordinalRow, By elementLocator) throws ElementNotFoundException {
+		getElementInRowThatContains(ordinalRow, elementLocator).click();
 	}
 	
 	/**
