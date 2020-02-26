@@ -484,6 +484,31 @@ public class BaseSteps {
     	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
     }
     
+    @When("^I find the (\\d+|la)(?:st|nd|rd|th) row in the (.*?) and click the (text|xpath|value for) (.*?)$")
+    public static void i_find_the_ordinal_row_in_the_table_and_click_an_associated_link(
+    		String ordinal, String tableName, String clickLocatorType, String elementToClick) throws Throwable {
+    	By clickLocator;
+    	int ordinalRow;
+    	switch (clickLocatorType) {
+    	case "xpath":
+    		clickLocator = By.xpath(elementToClick);
+    		break;
+    	case "value for":
+    		elementToClick = ConfigurationManager.getValue(elementToClick);
+    		// If we are retrieving a value we want to fall through here
+    	default:
+    		clickLocator = By.xpath("//*[contains(text(),'" + elementToClick + "')]");
+    		break;
+    	}
+    	if ( StringUtils.equals(ordinal, "la") ) { 
+    		ordinalRow = -1;
+    	} else {
+    		ordinalRow = Integer.parseInt(ordinal);
+    	}
+    	
+    	getElementAsTable(tableName).clickElementInRowThatContains(ordinalRow, clickLocator);
+    }
+    
     /**
      * Navigates to the given URL
      * <p>
