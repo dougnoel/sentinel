@@ -123,12 +123,12 @@ public class Table extends PageElement {
 	 *  creates row elements if no &lt;th$gt; elements are found,
 	 *  and logs the number of Header Elements
 	 * 
-	 * @return List&lt;WebElement&gt;
+	 * @return List&lt;WebElement&gt; the headers
 	 * @throws ElementNotFoundException if the header elements cannot be found
 	 */
 	protected List<WebElement> getOrCreateHeaderElements() throws ElementNotFoundException {
 		if (headerElements == null) {
-			headerElements = this.element().findElements(By.tagName(tableHeaderTag));
+			headerElements = getHeaderElements();
 		}
 		if (headerElements == null) {
 			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
@@ -138,6 +138,17 @@ public class Table extends PageElement {
 	}
 
 	/**
+	 * Returns all header elements. Internal method, intended to be called by getOrCreateHeaderElements().
+	 * 
+	 * @return List&lt;WebElement&gt; the headers; or null if the header tags are not found
+	 * @throws ElementNotFoundException if the request is malformed
+	 */
+	protected List<WebElement> getHeaderElements() throws ElementNotFoundException {
+		headerElements = this.element().findElements(By.tagName(tableHeaderTag));
+		return headerElements;
+	}
+	
+	/**
 	 * Returns true if the table has &lt;th&gt; elements, otherwise returns false
 	 * even though the first row will be used to populate the headers list.
 	 * 
@@ -146,7 +157,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	protected boolean tableHeadersExist() throws ElementNotFoundException  {
-		return getOrCreateHeaderElements() != null;
+		return getHeaderElements() != null;
 	}
 
 	/**
@@ -171,7 +182,7 @@ public class Table extends PageElement {
 	protected List<ArrayList<String>> getOrCreateRows() throws ElementNotFoundException {
 		if (rows.isEmpty()) {
 			List<WebElement> dataRows = getOrCreateRowElements();
-			dataRows.remove(0); // Header row
+				dataRows.remove(0);
 			for (WebElement row : dataRows) {
 				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
 				ArrayList<String> cells = new ArrayList<String>();
@@ -193,6 +204,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public int getNumberOfRows() throws ElementNotFoundException  {
+		//TODO: Ensure I should be returning -1
 		return getOrCreateRowElements().size() - 1;
 	}
 
@@ -288,28 +300,91 @@ public class Table extends PageElement {
 	 * also be used to validate text in a cell in the same row Returning
 	 * successfully would indicate the expected text was found.
 	 * 
-	 * @param elementText String the text of the element (link) you are looking to find.
-	 * @param textToMatch String the unique text to locate the row in question.
+	 * @param elementToClick String the text of the element (link) you are looking to find.
+	 * @param textToFind String the unique text to locate the row in question.
 	 * @return WebElement a selenium WebElement object that can be operated on.
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected WebElement getElementInRowThatContains(String elementText, String textToMatch) throws ElementNotFoundException {
+	protected WebElement getElementInRowThatContains(String textToFind, String elementToClick) throws ElementNotFoundException {
 		try {
 			if (tableType == TableType.NGXDATATABLE) {
 				return this.element().findElement(By.xpath(
-						"//span[contains(text(),'" + elementText + 
-						"')]/../../..//*[contains(text(),'" + textToMatch + "')]"));
+						"//span[contains(text(),'" + textToFind + 
+						"')]/../../..//*[contains(text(),'" + elementToClick + "')]"));
 			} else
 			{
 				return this.element().findElement(By.xpath(
-						"//" + tableCellDataTag + "[contains(text(),'" + elementText + 
-						"')]/..//*[contains(text(),'" + textToMatch + "')]"));
+						"//" + tableCellDataTag + "[contains(text(),'" + textToFind + 
+						"')]/..//*[contains(text(),'" + elementToClick + "')]"));
 			}
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in {} Error: {}", textToMatch, elementText, e.getMessage());
+			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementToClick, textToFind, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param ordinalRow
+	 * @param clickLocator
+	 * @return
+	 * @throws ElementNotFoundException
+	 */
+	protected WebElement getElementInRowThatContains(int ordinalRow, By clickLocator) throws ElementNotFoundException {
+		WebElement element;
+		if (ordinalRow == -1) {
+			//Set to the last row
+			ordinalRow = getNumberOfRows();
+		}
+		//TODO: Consolidate into one line after checking to make sure it works
+		ordinalRow--;		
+		List<WebElement> dataRows = getOrCreateRowElements();
+		WebElement rowToSearch = dataRows.get(ordinalRow);
+		try {
+			if (tableType == TableType.NGXDATATABLE) {
+				element = rowToSearch
+						.findElement(By.xpath("//span"))
+						.findElement(clickLocator);
+			} else
+			{
+				element = rowToSearch
+						.findElement(By.xpath("//" + tableCellDataTag))
+						.findElement(clickLocator);
+			}
+		} catch (org.openqa.selenium.NoSuchElementException e) {
+			String errorMsg = StringUtils.format("{} not found in row {} Error: {}", clickLocator, ordinalRow, e.getMessage());
+			log.error(errorMsg);
+			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+		}
+		log.trace("Element found: {}", element);
+		return element;
+	}
+	
+	protected WebElement getElementInRowThatContains(By elementToFind, By elementToClick) throws ElementNotFoundException {
+		WebElement element;
+		try {
+			if (tableType == TableType.NGXDATATABLE) {
+				element = this.element()
+						.findElement(By.xpath("//span"))
+						.findElement(elementToFind)
+						.findElement(By.xpath("//../../..//*"))
+						.findElement(elementToClick);
+			} else
+			{
+				element = this.element()
+						.findElement(By.xpath("//" + tableCellDataTag))
+						.findElement(elementToFind)
+						.findElement(By.xpath("//..//*"))
+						.findElement(elementToClick);
+			}
+		} catch (org.openqa.selenium.NoSuchElementException e) {
+			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementToClick, elementToFind, e.getMessage());
+			log.error(errorMsg);
+			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+		}
+		log.trace("Element found: {}", element);
+		return element;
 	}
 
 	/**
@@ -327,6 +402,14 @@ public class Table extends PageElement {
 		getElementInRowThatContains(elementText, textToClick).click();
 	}
 
+	public void clickElementInRowThatContains(By elementText, By textToClick) throws ElementNotFoundException {
+		getElementInRowThatContains(elementText, textToClick).click();
+	}
+	
+	public void clickElementInRowThatContains(int ordinalRow, By clickLocator) throws ElementNotFoundException {
+		getElementInRowThatContains(ordinalRow, clickLocator).click();
+	}
+	
 	/**
 	 * Returns true if all cells in the given column match the text value given.
 	 * 
