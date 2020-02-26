@@ -6,6 +6,7 @@ Feature: Table Tests
 	@ngx-datatable
   Scenario: NGX Data Table
     Given I am on the NGX Data Table Page
+    When I find the female link in the row of the the Example Table containing the text Claudine Neal and click it
     Then I verify the Example Table contains the Name column
     	And I see 99 rows in the Example Table
     	
