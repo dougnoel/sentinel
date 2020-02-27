@@ -96,6 +96,15 @@ mvn deploy
 
 ### 5.3 Deploy to Maven Central
 [Instructions for Deploying to Maven Central](https://dzone.com/articles/publish-your-artifacts-to-maven-central)
+(NOTE: The version needs to be X.X.X-SNAPSHOT for a release to work.)
+
+```
+mvn clean
+
+mvn release:prepare
+
+mvn release:perform
+```
 
 ## 6.0 Additional Documentation & Resources
 
