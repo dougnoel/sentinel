@@ -12,6 +12,22 @@
     <url>https://github.com/dougnoel/${project.artifactId}</url>
   </organization>
 
+ <developers>
+    <developer>
+      <name>Doug Noël</name>
+      <email>doug@dougnoel.com</email>
+      <organization>Doug Noël</organization>
+      <organizationUrl>https://github.com/dougnoel</organizationUrl>
+    </developer>
+  </developers>
+  
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
   <scm>
     <connection>scm:git:git://github.com/dougnoel/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:dougnoel/${project.artifactId}.git</developerConnection>
@@ -22,6 +38,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <sentinel-release-os>mac</sentinel-release-os>
+    <sentinel-release-browser>chrome</sentinel-release-browser>
+    <sentinel-release-pageobjectpackages>pages</sentinel-release-pageobjectpackages>
+    
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <maven-compiler-plugin.source>1.8</maven-compiler-plugin.source>
     <maven-compiler-plugin.target>1.8</maven-compiler-plugin.target>
@@ -209,7 +229,7 @@
 				<localCheckout>true</localCheckout>
 				<pushChanges>false</pushChanges>
 				<mavenExecutorId>forked-path</mavenExecutorId>
-				<arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+				<arguments>-Dgpg.passphrase=${gpg.passphrase} -Dos=${sentinel-release-os} -Dbrowser=${sentinel-release-browser} -DpageObjectPackages=${sentinel-release-pageobjectpackages}</arguments>
 			</configuration>
 			<dependencies>
 				<dependency>
@@ -271,46 +291,46 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-	
-  <profiles>
-    <profile>
-      <id>classpath-integrity</id>
-      <properties>
-        <classpath-integrity.defaultGoal>dependency:analyze enforcer:enforce</classpath-integrity.defaultGoal>
-      </properties>
-      <build>
-        <defaultGoal>${classpath-integrity.defaultGoal}</defaultGoal>
-      </build>
-    </profile>
-    <!-- GPG Signature on release -->
-	<profile>
-		<id>release-sign-artifacts</id>
-		<activation>
-			<property>
-				<name>performRelease</name>
-				<value>true</value>
-			</property>
-		</activation>
-		<build>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.6</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</build>
-	</profile>
-  </profiles>
+
+	<profiles>
+		<profile>
+			<id>classpath-integrity</id>
+			<properties>
+				<classpath-integrity.defaultGoal>dependency:analyze enforcer:enforce</classpath-integrity.defaultGoal>
+			</properties>
+			<build>
+				<defaultGoal>${classpath-integrity.defaultGoal}</defaultGoal>
+			</build>
+		</profile>
+		<!-- GPG Signature on release -->
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
   <dependencyManagement>
     <dependencies>
@@ -627,4 +647,5 @@
       <artifactId>sauce_junit</artifactId>
     </dependency>
   </dependencies>
+  <description>A Selenium framework that implements the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.</description>
 </project>
