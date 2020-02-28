@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.3-SNAPSHOT</version>
+  <version>1.0.3</version>
   <name>sentinel</name>
   <url>https://github.com/dougnoel/${project.artifactId}</url>
 
@@ -32,7 +32,7 @@
     <connection>scm:git:git://github.com/dougnoel/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:dougnoel/${project.artifactId}.git</developerConnection>
     <url>git://github.com/dougnoel/${project.artifactId}.git</url>
-    <tag>HEAD</tag>
+    <tag>sentinel-1.0.3</tag>
   </scm>
       
   <properties>
