@@ -5,11 +5,11 @@
   <artifactId>sentinel</artifactId>
   <version>1.0.4-SNAPSHOT</version>
   <name>sentinel</name>
-  <url>https://github.com/dougnoel/${project.artifactId}</url>
+  <url>https://github.com/dougnoel/sentinel</url>
 
   <organization>
     <name>Doug Noël</name>
-    <url>https://github.com/dougnoel/${project.artifactId}</url>
+    <url>https://github.com/dougnoel/sentinel</url>
   </organization>
 
  <developers>
