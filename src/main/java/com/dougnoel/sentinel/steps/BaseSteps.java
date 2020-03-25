@@ -211,7 +211,7 @@ public class BaseSteps {
      */
     @When("^I select the (\\d+)(?:st|nd|rd|th) option (?:in|from) the (.*)$")
     public static void i_select_ordinal_item_from_an_element(String ordinal, String elementName) throws Throwable {
-        int index = Integer.parseInt(ordinal) - 1;
+        int index = Integer.parseInt(ordinal);
         String text = getElementAsSelectElement(elementName).select(index).getText(index);
         ConfigurationManager.setValue(elementName, text);
     }

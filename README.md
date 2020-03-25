@@ -127,6 +127,14 @@ mvn javadoc:javadoc
 ```
 The files are generated in the project root folder under the default path of target/site/apidocs and can be accessed by opening up the index.html file contained within that folder.
 
+The following commands will patch the updated javadocs, however it deletes the test table and updates every document. Looking to see if there's a better way to update only the changed docs.
+```
+diff -ruN docs/ target/apidocs/ > javadocs.patch
+patch -p0 < javadocs.patch
+rm javadocs.patch
+git checkout -- docs/test/table.html
+```
+
 Every method should have a Javadoc comment describing what it does, its parameters, what it returns (if not void), and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](https://github.com/liferay/liferay-portal/blob/master/readme/ADVANCED_JAVADOC_GUIDELINES.markdown) for writing Javadoc contents.
 
 #### 6.1.2 Publishing Javadocs to Github
