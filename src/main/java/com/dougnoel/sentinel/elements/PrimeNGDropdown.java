@@ -3,10 +3,10 @@ package com.dougnoel.sentinel.elements;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
-import com.dougnoel.sentinel.strings.StringUtils;
 
 /**
  * Implementation of an NGPrime Dropdown.
@@ -19,7 +19,7 @@ import com.dougnoel.sentinel.strings.StringUtils;
  * <li>public PrimeNGDropdown airport_dropdown() { return new PrimeNGDropdown(NAME, "airport"); }</li>
  * </ul>
  */
-public class PrimeNGDropdown extends Dropdown {
+public class PrimeNGDropdown extends JSDropdownElement {
 	private static final Logger log = LogManager.getLogger(PrimeNGDropdown.class.getName());
 
 	/**
@@ -33,63 +33,34 @@ public class PrimeNGDropdown extends Dropdown {
 		super(selectorType, selectorValue);
 	}
 
-    /**
-     * Selects an option from a drop down using the text value of the item to select.
-     * @param selectText the value to select
-     * @return PageSelectElement for object chaining
-     * @throws ElementNotFoundException if the element cannot be found
-     */
-    public PageSelectElement select(String selectText) throws ElementNotFoundException{
+	/**
+	 * Returns a WebElement for an option with the given text.
+	 * @param selectionText String the text to be selected
+	 * @return WebElement the element representing the option
+	 * @throws ElementNotFoundException if the element cannot be found
+	 */
+    protected WebElement getOption(String selectionText) throws ElementNotFoundException{
     	String xTagName = this.element().getTagName();
-    	String xPath = "//li[@aria-label=\"" + selectText + "\"]";
-    	log.trace("Trying to click option {} from downdown using the xpath {}{}", selectText, xTagName, xPath);
+    	String xPath = "//li[@aria-label=\"" + selectionText + "\"]";
+    	log.trace("Trying to click option {} from downdown using the xpath {}{}", selectionText, xTagName, xPath);
     	this.click();
-    	this.element().findElement(By.xpath(xPath)).click();
-
-        return this;
+    	return this.element().findElement(By.xpath(xPath));
     }
-
+    
     /**
-     * Selects an option from a drop down using the ordinal value of the item to select.
-     * @param index the index to select
-     * @return PageSelectElement for object chaining
-     * @throws ElementNotFoundException if the element cannot be found
+     * Returns a WebElement for an option with the given index.
+     * @param index int the index of the option, starting with 1
+	 * @return WebElement the element representing the option
+	 * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(int index) throws  ElementNotFoundException{
+    protected WebElement getOption(int index) throws ElementNotFoundException{
     	String xTagName = this.element().getTagName();
     	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, xTagName, xPath);
     	this.click();
-    	this.element().findElement(By.xpath(xPath)).click();
-        
-        return this;
+    	return this.element().findElement(By.xpath(xPath));
     }
-
-    /**
-     * Selects an option from a drop down. Allows for selection by value in addition to 
-     * selection by text or index.
-     * @param selectorType com.dougnoel.sentinel.enums.SelectorType INDEX, VALUE, TEXT
-     * @param selectText the value of the selector
-     * @return PageSelectElement for object chaining
-     * @throws ElementNotFoundException if the element cannot be found
-     */
-    public PageSelectElement select(SelectorType selectorType, String selectText) throws ElementNotFoundException {
-        switch (selectorType) {
-        case INDEX:
-            return select(Integer.parseInt(selectText));
-        case VALUE:
-        	return select(selectText);
-        case TEXT:
-            return select(selectText);
-        default:
-            // This is here in case a new type is added to SelectorType and has not been
-            // implemented yet here.
-            String errorMessage = StringUtils.format(
-                    "Unhandled selector type \"{}\" passed to Page Select Element class. Could not resolve the reference. Refer to the Javadoc for valid options.",
-                    selectorType);
-            throw new NoSuchSelectorException(errorMessage);
-        }
-    }
+    
 
     /**
      * Gets the value of the item at the given index.
@@ -98,11 +69,7 @@ public class PrimeNGDropdown extends Dropdown {
      * @throws ElementNotFoundException if the element cannot be found
      */
     public String getText(int index) throws ElementNotFoundException{
-    	String xTagName = this.element().getTagName();
-    	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
-    	log.trace("Looking for the value in the dropdown at position {} using {}{}", index, xTagName, xPath);
-    	this.element().click();
-    	return this.element().findElement(By.xpath(xPath)).getAttribute("aria-label");
+    	return getOption(index).getAttribute("aria-label");
     }
     
     /**

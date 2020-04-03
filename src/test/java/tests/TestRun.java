@@ -21,7 +21,7 @@ import cucumber.api.junit.Cucumber;
 @CucumberOptions(monochrome = true, features = "src/test/java/features", glue = { "stepdefinitions",
         "com.dougnoel.sentinel.steps" }, plugin = {
                 "com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
-//         , tags = { "@example" }
+         , tags = { "@example" }
 )
 
 public class TestRun {
