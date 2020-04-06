@@ -420,7 +420,7 @@ public class VerificationSteps {
      * </ul>
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
-     * @param key String the text to match
+     * @param key String the key to retrieve the text to match from the configuration manager
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
@@ -499,6 +499,44 @@ public class VerificationSteps {
     }
     
     /**
+     * Used to verify that the selected option of a select element contains the text used
+     * in an element. It takes an element name and then an optional "does not", which if
+     * present means that the method will look for the text to not exist. Then it
+     * will look up the value set for the second element. This second element may be the 
+     * same element or a different one. For example, you might select the first item in a
+     * drop down and not know what you selected. Using this method, you can check to make
+     * sure that the value appears correctly. Alternately, you might enter a value in a
+     * text box and want to verify that it was programmatically selected in a drop down.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the City Dropdown has the value selected for the City Dropdown</li>
+     * <li>I verify the City Dropdown has the value entered for the City Field</li>
+     * <li>I verify the Shipping City Dropdown does not have the value used for the Billing City Dropdown</li>
+     * </ul>
+     * 
+     * @param elementName String Name of the Element to verify
+     * @param assertion String if empty we expect this to be false
+     * @param key String the key to retrieve the text to match from the configuration manager
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
+    @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
+    public static void i_verify_the_selection_contains_the_previously_entered_value(String elementName, String assertion, String key) throws Throwable {
+        String textToMatch = ConfigurationManager.getValue(key);
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
+        String expectedResult = StringUtils.format(
+                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
+                elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
+        log.trace(expectedResult);
+        if (negate) {
+            assertFalse(expectedResult, selectedText.contains(textToMatch));
+        } else {
+            assertTrue(expectedResult, selectedText.contains(textToMatch));
+        }
+    }
+    
+    /**
      * Used to verify that the selected option of a select element contains certain
      * text. It takes an element name and then an optional "does not", which if
      * present means that the method will look for the text to not exist. Then it
@@ -507,6 +545,7 @@ public class VerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
+     * <li>I verify the City Dropdown has the text "New York" selected</li>
      * <li>I verify the Area Select Box has the text "This is my example text."
      * selected</li>
      * <li>I verify the cola radio button does not have the text "Root beer"
@@ -515,21 +554,21 @@ public class VerificationSteps {
      * 
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
-     * @param text String Text to match
+     * @param textToMatch String Text to match
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public static void i_verify_the_selection_contains_the_text(String elementName, String assertion, String text) throws Throwable {
+    public static void i_verify_the_selection_contains_the_text(String elementName, String assertion, String textToMatch) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
         String expectedResult = StringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
-                elementName, (negate ? "not " : ""), text, selectedText.replace("\n", " "));
+                elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);
         if (negate) {
-            assertFalse(expectedResult, selectedText.contains(text));
+            assertFalse(expectedResult, selectedText.contains(textToMatch));
         } else {
-            assertTrue(expectedResult, selectedText.contains(text));
+            assertTrue(expectedResult, selectedText.contains(textToMatch));
         }
     }
     

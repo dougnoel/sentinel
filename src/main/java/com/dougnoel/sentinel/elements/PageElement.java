@@ -93,8 +93,8 @@ public class PageElement {
 	 * @return org.openqa.selenium.WebElement
 	 */
 	private WebElement getElementWithWait(final By locator) {
-		Duration timeout =  Duration.ofSeconds(10); //TODO: Move to configuration file
-		Duration interval =  Duration.ofMillis(10); //TODO: Move to configuration file
+		Duration timeout =  Duration.ofSeconds(ConfigurationManager.getDefaultTimeout());
+		Duration interval =  Duration.ofMillis(10);
 		Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 			       .withTimeout(timeout)
 			       .pollingEvery(interval)

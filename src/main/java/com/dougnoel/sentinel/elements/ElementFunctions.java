@@ -107,7 +107,7 @@ public abstract class ElementFunctions {
      * @throws NoSuchElementException if the element cannot be found
      * @throws PageNotFoundException if the page cannot be found
      */
-    public static Dropdown getElementAsDropdown(String elementName) throws SentinelException {
+    public static Dropdown getElementAsDropdown(String elementName) throws SentinelException {  	
         return (Dropdown) getElement(elementName);
     }
 

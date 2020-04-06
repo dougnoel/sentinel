@@ -127,6 +127,14 @@ mvn javadoc:javadoc
 ```
 The files are generated in the project root folder under the default path of target/site/apidocs and can be accessed by opening up the index.html file contained within that folder.
 
+The following commands will patch the updated javadocs, however it deletes the test table and updates every document. Looking to see if there's a better way to update only the changed docs.
+```
+diff -ruN docs/ target/apidocs/ > javadocs.patch
+patch -p0 < javadocs.patch
+rm javadocs.patch
+git checkout -- docs/test/table.html
+```
+
 Every method should have a Javadoc comment describing what it does, its parameters, what it returns (if not void), and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](https://github.com/liferay/liferay-portal/blob/master/readme/ADVANCED_JAVADOC_GUIDELINES.markdown) for writing Javadoc contents.
 
 #### 6.1.2 Publishing Javadocs to Github
@@ -157,12 +165,13 @@ Additional information can be found under [About GitHub Pages and Jekyll](https:
 
 ### 6.3 Web Drivers
 
-The web drivers used by Sentinel are stored in drivers/os to make sure there is only one place to fix driver compatibility issues. Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also reduces the learning curve for using Sentinel.
+The web drivers are stored in src/main/resources/drivers/[os] to make sure there is only one place to fix driver compatibility issues. Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also reduces the learning curve for using Sentinel.
+NOTE: All drivers are 64-bit versions. If you need to test on an old 32-bit browser, you will need to replace the drivers provided with a 32-bit driver. See the driver creators for support.
 
-* [Chromedriver](http://chromedriver.chromium.org/) 2.42 - Driver for automating Google Chrome.
-* [Geckodriver](https://github.com/mozilla/geckodriver/releases) - Driver for automating Mozilla Firefox.
+* [Chromedriver](http://chromedriver.chromium.org/) 80.0.3987.106 (2020-02-13) - Driver for automating Google Chrome.
+* [Geckodriver](https://github.com/mozilla/geckodriver/releases) v0.26.0 (Oct 11 2019) - Driver for automating Mozilla Firefox.
+* [IE Driver](http://selenium-release.storage.googleapis.com/index.html) 3.9 (2018-02-05) - Driver for automating IE.
 * [Safari](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) - Safari driver is embedded in Safari.
-* [IE Driver](http://selenium-release.storage.googleapis.com/index.html) - Driver for automating IE.
 
 ### 6.4 Saucelabs
 Sentinel is setup to use [Saucelabs](https://saucelabs.com/) for remote execution. This is the recommended way to execute test in your build pipeline, because you then do not need to setup an execution server.
