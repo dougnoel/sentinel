@@ -67,32 +67,29 @@ If you want to do this all in one step without generating a jar, just run:
 mvn install
 ```
 
-### 5.2 Deploy to Github
-Note this will only work if you have Admin rights to the Github repo.
-
-#### 5.2.1 Generate a GitHub Personal Access Token
-Note: You must have Maven installed and have an account on [github.com](https://github.com) Instructions modified from: [Create a GitHub personal access token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line).
-
-1. [Verify your email address](https://help.github.com/en/articles/verifying-your-email-address), if it hasn't been verified yet.
-2. In the upper-right corner of any page, click your profile photo, then click **Settings**.
-3. In the left sidebar, click **Developer settings**.
-4. In the left sidebar, click **Personal access tokens**.
-5. Click **Generate new token**.
-6. Name the token **Package Read/Write**
-7. Select the **write:packages** scope. This will auto-select the **read:packages** and **repo** scopes you need as well.
-8. Click **Generate token**.
-9. Click  to copy the token to your clipboard. For security reasons, after you navigate off the page, you will not be able to see the token again.
-
-#### 5.2.2 Maven settings.xml file
-1. Copy the settings-example.xml file to ~/.m2/settings.xml
-2. Replace the USERNAME and GITHUB key with your Github username and the key generated in the previous step.
-
-#### 5.2.3 Deploy the Package to Github
-Once you're set up, all you have to do is run this command:
+### 5.2 Deploy a Snapshot
+If you want to deploy a snapshot version for use by people, use:
 
 ```
 mvn deploy
 ```
+
+As long as you are setup to deploy to Maven central (see Section 5.3 below), to use the version, all someone will need to do is change their version to the SNAPSHOT version and have the following in their pom.xml:
+
+```
+  <repositories>
+    <repository>
+      <id>oss.sonatype.org-snapshot</id>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  ```
 
 ### 5.3 Deploy to Maven Central
 [Instructions for Deploying to Maven Central](https://dzone.com/articles/publish-your-artifacts-to-maven-central)
