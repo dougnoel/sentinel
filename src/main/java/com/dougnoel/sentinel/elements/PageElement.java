@@ -99,7 +99,13 @@ public class PageElement {
 			       .withTimeout(timeout)
 			       .pollingEvery(interval)
 			       .ignoring(NoSuchElementException.class);
-		
+		try {
+			Thread.sleep(2); //Added to deal with intermittent issues that require 2 millisecond waits.
+		} catch (InterruptedException e) {
+			String message = StringUtils.format(
+					"Thread Interrupted: {}", e.getMessage());
+			log.error(message);
+		}
 		WebElement element = wait.until(new Function<WebDriver, WebElement>() {
 			public WebElement apply(WebDriver driver) {
 				return driver.findElement(locator);
