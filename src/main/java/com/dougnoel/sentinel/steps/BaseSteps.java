@@ -89,6 +89,18 @@ public class BaseSteps {
         }
         ConfigurationManager.setValue(elementName, text);
     }
+    
+    /**
+     * Overloaded method for entering random text in a text box, so that nulls do not need to be passed. 
+     * Intended for use in creating complex Cucumber steps definitions.
+     * 
+     * @param text String the text to enter into the element
+     * @param elementName String the name of the element into which to enter text
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
+    public static void i_enter_random_text_in_the_textbox_named(String text, String elementName) throws Throwable {
+    	i_enter_random_text_in_the_textbox_named(text, elementName, null);
+    }
 
     /**
      * Enters the text into a text box that matches the given elementName as defined on the 
@@ -277,13 +289,17 @@ public class BaseSteps {
     }
 
     /**
-     * Loads up a page. This needs to be moved to reading from a configuration file.
+     * Loads a page based on the environment you are currently testing. The url is set in the page object yaml file.
+     * Refer to the documentation in the sentinel.example project for more information. You cannot load a URL
+     * directly, because once there you would not be able to do anything.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I remain on the drug formulary page using no arguments</li>
-     * <li>I navigate to the Documents page using the arguements 'docYear'</li>
-     * <li>I am on the home page using the default arguments</li>
+     * <li>I navigate to the Login Page</li>
+     * <li>I am on the Main page</li>
+     * <li>I remain on the popup page</li>
+     * <li>I navigate to the Documents page using the argument ?docYear=2003</li>
+     * <li>I am on the Home Page using the arguments ?firstname=bob&lastname=smith</li>
      * </ul>
      * @param pageName String Page Object Name
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
@@ -291,16 +307,37 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public static void i_am_on_the_page(String pageName, String hasArguments, String arguments) throws Throwable {
-        pageName = pageName.replaceAll("\\s", "") + "Page";
-        log.trace(pageName);
+    public static void i_am_on_the_page(String pageName, String hasArguments, String arguments) throws Throwable {   	
+    	pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         String baseUrl = ConfigurationManager.getUrl();
         if (hasArguments != null) {
             baseUrl += arguments;
         }
-        log.debug("URL to load for {}: {}", pageName, baseUrl);
+        log.debug("Loading {} for the {} in the {} environment.", baseUrl, pageName, ConfigurationManager.getEnvironment());
         PageManager.openPage(baseUrl);
+    }
+    
+    /**
+     * Overloaded method for navigating to a page object's url based on the current environment, 
+     * so that nulls do not need to be passed. Intended for use in creating complex Cucumber steps definitions.
+     * @param pageName String Page Object Name
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
+    public static void i_am_on_the_page(String pageName) throws Throwable {
+    	i_am_on_the_page(pageName, null, null);
+    }
+    
+    /**
+     * Overloaded method for navigating to a page object's url based on the current environment, and taking a 
+     * query string argument it will append to the request. Used so that nulls do not need to be passed. Intended 
+     * for use in creating complex Cucumber steps definitions.
+     * @param pageName String Page Object Name
+     * @param arguments String the literal string to append to the default URL.
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
+    public static void i_am_on_the_page(String pageName, String arguments) throws Throwable {
+    	i_am_on_the_page(pageName, "has arguments", arguments);
     }
  
     /**
@@ -359,13 +396,13 @@ public class BaseSteps {
      * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getTestData(String, String)
      * @param testData String is test data from configuration
      * @param key String is a key of the test data from configuration
-     * @param key_field String any entry field
+     * @param elementName String any entry field
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I fill the test data for (.*?) of the (.*?) into the (.*?)$")
-    public static void i_fill_the_test_data_into_the_key_field(String testData, String key, String key_field) throws Throwable {
+    public static void i_fill_the_test_data_into_the_key_field(String testData, String key, String elementName) throws Throwable {
     	
-    	i_enter_text_in_the_textbox_named(ConfigurationManager.getTestData(testData, key), key_field);
+    	i_enter_text_in_the_textbox_named(ConfigurationManager.getTestData(testData, key), elementName);
     	
     }
 
@@ -524,25 +561,6 @@ public class BaseSteps {
     	
     	getElementAsTable(tableName).clickElementInRowThatContains(ordinalRow, clickLocator);
     }
-    
-    /**
-     * Navigates to the given URL
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I am on the url https://google.com</li>
-     * <li>I navigate to the url file://mypath/test_doc.pdf</li>
-     * <li>I am on the url ftp://test.password1@testhost:1234/index </li>
-     * </ul>
-     * @param url String the address to which to navigate
-     * @param protocol String
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @Given("^I (?:navigate to|am on) the url ((https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])$")
-    public static void i_navigate_to_the_url(String url, String protocol) throws Throwable {
-        log.debug("Loading {}", url);
-        PageManager.openPage(url);
-    }
 
     /**
      * Takes a link name and an extension type. Expects the document to be opened in a new tab/window.
@@ -659,13 +677,4 @@ public class BaseSteps {
         getElementAsTable(tableName).storeTable(pageNumber);
     }
     
-    /**
-     * Waits for page to load by waiting 5 seconds
-     * TODO: Deprecate
-     * 
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    public static void waitForLoad() throws Throwable {
-    	i_wait_x_seconds(5,0);
-    }
 }
