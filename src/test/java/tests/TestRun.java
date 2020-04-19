@@ -20,6 +20,7 @@ import io.cucumber.junit.Cucumber;
         "com.dougnoel.sentinel.steps" }
 //, plugin = { "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:", "json:target/cucumber-report.json"}
 //                "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:reports/sentinel-report.html" }
+,plugin = {"pretty", "de.monochromata.cucumber.report.PrettyReports:target/pretty-cucumber", "html:target/cucumber-html", "json:target/report.json"}
          , tags = { "@example" }
 )
 

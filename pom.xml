@@ -89,6 +89,7 @@
     <httpclient.version>4.5.10</httpclient.version>
     <!-- <info.cukes.version>1.2.5</info.cukes.version> -->
     <io.cucumber.version>5.6.0</io.cucumber.version>
+    <de.monochromata.cucumber.version>1.0.3</de.monochromata.cucumber.version>
     <jackson2.version>2.9.9</jackson2.version>
     <junit.version>5.5.1</junit.version>
     <log4j2.version>2.12.1</log4j2.version>
@@ -410,6 +411,12 @@
 		<version>${io.cucumber.version}</version>
 	</dependency>
 
+        <dependency>
+            <groupId>de.monochromata.cucumber</groupId>
+            <artifactId>reporting-plugin</artifactId>
+            <version>${de.monochromata.cucumber.version}</version> <!-- this version can be bumped if we also upgrade our Cucumber dependency versions -->
+        </dependency>
+
 
 <!--       <dependency>
         <groupId>info.cukes</groupId>
@@ -583,6 +590,10 @@
       <artifactId>cucumber-junit</artifactId>
     </dependency>
 
+        <dependency>
+            <groupId>de.monochromata.cucumber</groupId>
+            <artifactId>reporting-plugin</artifactId>
+        </dependency>
 <!--     <dependency>
       <groupId>com.vimalselvam</groupId>
       <artifactId>cucumber-extentsreport</artifactId>
