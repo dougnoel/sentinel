@@ -295,12 +295,11 @@ public class BaseSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I remain on the drug formulary page using no arguments</li>
-     * <li>I navigate to the Documents page using the arguments '?docYear'</li>
-     * <li>I am on the home page using the default arguments</li>
+     * <li>I navigate to the Login Page</li>
+     * <li>I remain on the Documents page using the argument ?docYear=2003</li>
+     * <li>I am on the home page using the arguments ?firstname=bob&lastname=smith</li>
      * </ul>
      * @param pageName String Page Object Name
-     * @param type String indicates whether the passed page name is a page name or a URL
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
      * @param arguments String the literal string to append to the default URL.
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
