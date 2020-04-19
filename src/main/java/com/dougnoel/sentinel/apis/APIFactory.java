@@ -76,7 +76,7 @@ public class APIFactory {
 			}
 		}
 		if(api == null) {
-			throw new ConfigurationNotFoundException("The API you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackage property to your conf/sentinel.yml configuration file and try again.");
+			throw new ConfigurationNotFoundException("The API you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackages property to your conf/sentinel.yml configuration file and try again.");
 		}
 		return api;
 	}
