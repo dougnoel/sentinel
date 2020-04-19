@@ -28,6 +28,7 @@ public class PageFactory {
 	 * @param packageName String the name of the package to search
 	 * @return Page the page object if it exists, otherwise null
 	 */
+	@SuppressWarnings("deprecation")
 	private static Page findPageInPackage(String pageName, String packageName) {
 		Page page = null;
 		try {

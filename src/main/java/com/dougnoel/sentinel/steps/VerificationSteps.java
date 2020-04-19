@@ -19,7 +19,7 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.StringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-import cucumber.api.java.en.Then;
+import io.cucumber.java.en.Then;
 
 /**
  * Methods used to defined basic validations

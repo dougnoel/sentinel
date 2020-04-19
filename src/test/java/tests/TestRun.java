@@ -1,6 +1,5 @@
 package tests;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,18 +8,18 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
-import com.cucumber.listener.Reporter;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import io.cucumber.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true, features = "src/test/java/features", glue = { "stepdefinitions",
-        "com.dougnoel.sentinel.steps" }, plugin = {
-                "com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
+        "com.dougnoel.sentinel.steps" }
+//, plugin = { "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:", "json:target/cucumber-report.json"}
+//                "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:reports/sentinel-report.html" }
          , tags = { "@example" }
 )
 
@@ -39,9 +38,13 @@ public class TestRun {
     public static void tearDownAfterClass() throws SentinelException {
         log.info("Driver: {}", WebDriverFactory.getWebDriver());
         PageManager.quit();
-        Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
-        Reporter.setSystemInfo("user", System.getProperty("user.name"));
-        Reporter.setSystemInfo("os", System.getProperty("os"));
-        Reporter.setTestRunnerOutput("Sample test runner output message");
+//        System.setProperty("extent.reporter.avent.start", "true");
+//        System.setProperty("extent.reporter.avent.config", "conf/extent-config.xml");
+//        System.setProperty("extent.reporter.avent.out", "Sentinel Test Report");
+
+//        Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
+//        Reporter.setSystemInfo("user", System.getProperty("user.name"));
+//        Reporter.setSystemInfo("os", System.getProperty("os"));
+//        Reporter.setTestRunnerOutput("Sample test runner output message");
     }
 }

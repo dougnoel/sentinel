@@ -14,10 +14,10 @@ import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.StringUtils;
 
-import cucumber.api.Scenario;
-import cucumber.api.java.Before;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 
 /**
  * Methods used to define basic operations. Other step files can extend or

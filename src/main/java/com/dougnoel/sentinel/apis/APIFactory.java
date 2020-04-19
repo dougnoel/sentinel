@@ -32,6 +32,7 @@ public class APIFactory {
 	 * @param packageName String the name of the package to search
 	 * @return API the API object if it exists, otherwise null
 	 */
+	@SuppressWarnings("deprecation")
 	private static API findAPIInPackage(String pageName, String packageName) {
 		API api = null;
 		try {

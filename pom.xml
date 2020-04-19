@@ -68,7 +68,6 @@
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <!-- <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version> see https://stackoverflow.com/questions/56212981/eclipse-showing-maven-configuration-problem-unknown -->
 
-
     <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
     <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
     <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
@@ -82,12 +81,14 @@
     <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
 
     <commons-lang3.version>3.9</commons-lang3.version>
-    <cucumber-extentsreport.version>3.1.0</cucumber-extentsreport.version>
-    <extentreports.version>3.1.5</extentreports.version>
+    <extentreports.version>4.1.5</extentreports.version>
+    <!-- <cucumber-extentsreport.version>3.1.0</cucumber-extentsreport.version> -->
+    <cucumber4-extentreports.version>1.0.12</cucumber4-extentreports.version>
     <gson.version>2.8.5</gson.version>
     <httpcore.version>4.4.12</httpcore.version>
     <httpclient.version>4.5.10</httpclient.version>
-    <info.cukes.version>1.2.5</info.cukes.version>
+    <!-- <info.cukes.version>1.2.5</info.cukes.version> -->
+    <io.cucumber.version>5.6.0</io.cucumber.version>
     <jackson2.version>2.9.9</jackson2.version>
     <junit.version>5.5.1</junit.version>
     <log4j2.version>2.12.1</log4j2.version>
@@ -388,7 +389,29 @@
         <version>${gson.version}</version>
       </dependency>
 
-      <dependency>
+	<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-core -->
+	<dependency>
+		<groupId>io.cucumber</groupId>
+		<artifactId>cucumber-core</artifactId>
+		<version>${io.cucumber.version}</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
+	<dependency>
+		<groupId>io.cucumber</groupId>
+		<artifactId>cucumber-java</artifactId>
+		<version>${io.cucumber.version}</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
+	<dependency>
+		<groupId>io.cucumber</groupId>
+		<artifactId>cucumber-junit</artifactId>
+		<version>${io.cucumber.version}</version>
+	</dependency>
+
+
+<!--       <dependency>
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-core</artifactId>
         <version>${info.cukes.version}</version>
@@ -404,7 +427,7 @@
         <groupId>info.cukes</groupId>
         <artifactId>cucumber-junit</artifactId>
         <version>${info.cukes.version}</version>
-      </dependency>
+      </dependency> -->
 
       <dependency>
         <groupId>com.aventstack</groupId>
@@ -412,11 +435,17 @@
         <version>${extentreports.version}</version>
       </dependency>
 
-      <dependency>
+	<dependency>
+		<groupId>com.aventstack</groupId>
+		<artifactId>extentreports-cucumber4-adapter</artifactId>
+		<version>${cucumber4-extentreports.version}</version>
+	</dependency>
+	
+<!--       <dependency>
         <groupId>com.vimalselvam</groupId>
         <artifactId>cucumber-extentsreport</artifactId>
         <version>${cucumber-extentsreport.version}</version>
-      </dependency>
+      </dependency> -->
 
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
@@ -540,19 +569,24 @@
     </dependency>
 
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-core</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
     </dependency>
-
+    
     <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit</artifactId>
+    </dependency>
+
+<!--     <dependency>
       <groupId>com.vimalselvam</groupId>
       <artifactId>cucumber-extentsreport</artifactId>
-    </dependency>
+    </dependency> -->
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -624,6 +658,11 @@
       <groupId>com.aventstack</groupId>
       <artifactId>extentreports</artifactId>
     </dependency>
+    
+    <dependency>
+	  <groupId>com.aventstack</groupId>
+	  <artifactId>extentreports-cucumber4-adapter</artifactId>
+	</dependency>
 
     <dependency>
       <groupId>com.mashape.unirest</groupId>
@@ -635,11 +674,6 @@
       <artifactId>junit</artifactId>
       <!-- <scope>test</scope> -->
       <!-- junit should usually be test scope unless this is a dedicated test library -->
-    </dependency>
-
-    <dependency>
-      <groupId>info.cukes</groupId>
-      <artifactId>cucumber-junit</artifactId>
     </dependency>
 
     <dependency>

@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.strings;
 
-import cucumber.api.Scenario;
+import io.cucumber.java.Scenario;
 
 public class Feature {
 	
