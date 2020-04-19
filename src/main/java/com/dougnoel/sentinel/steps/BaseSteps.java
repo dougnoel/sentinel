@@ -296,10 +296,10 @@ public class BaseSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I navigate to the Login Page</li>
-     * <li>I am on the home page</li>
-     * <li>I remain on the Documents page</li>
+     * <li>I am on the Main page</li>
+     * <li>I remain on the popup page</li>
      * <li>I navigate to the Documents page using the argument ?docYear=2003</li>
-     * <li>I am on the home page using the arguments ?firstname=bob&lastname=smith</li>
+     * <li>I am on the Home Page using the arguments ?firstname=bob&lastname=smith</li>
      * </ul>
      * @param pageName String Page Object Name
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
