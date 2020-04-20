@@ -67,7 +67,7 @@ public class PageFactory {
 	 */
 	public static Page buildOrRetrievePage(String pageName) throws PageNotFoundException, ConfigurationNotFoundException {
 		Page page = pages.get(pageName);
-		final String errorMessage = "The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackage property to your conf/sentinel.yml configuration file and try again.";
+		final String errorMessage = "The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackages property to your conf/sentinel.yml configuration file and try again.";
 		if (page != null) {
 			return page;
 		} else {
