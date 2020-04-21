@@ -280,11 +280,11 @@ public class BaseSteps {
      */
     @When("^I wait (\\d+)(?:\\.)?(\\d+) seconds?(?:.*)$")
     public static void i_wait_x_seconds(int seconds, int fraction) throws Throwable {
-        long milliseconds = (long) seconds * 1000;
+        int milliseconds = seconds * 1000;
         if (fraction != 0) {
-            float secs = (float) seconds + (float) fraction;
-            milliseconds = (long) (secs * 1000);
+        	milliseconds = milliseconds + fraction;
         }
+        log.debug("Waiting {} milliseconds. Passed: {}.{}", milliseconds, seconds, fraction);
         Thread.sleep(milliseconds);
     }
 
