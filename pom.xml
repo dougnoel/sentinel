@@ -82,12 +82,10 @@
 
     <commons-lang3.version>3.9</commons-lang3.version>
     <extentreports.version>4.1.5</extentreports.version>
-    <!-- <cucumber-extentsreport.version>3.1.0</cucumber-extentsreport.version> -->
-    <cucumber4-extentreports.version>1.0.12</cucumber4-extentreports.version>
+    <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
     <gson.version>2.8.5</gson.version>
     <httpcore.version>4.4.12</httpcore.version>
     <httpclient.version>4.5.10</httpclient.version>
-    <!-- <info.cukes.version>1.2.5</info.cukes.version> -->
     <io.cucumber.version>5.6.0</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
     <jackson2.version>2.9.9</jackson2.version>
@@ -411,48 +409,17 @@
 		<version>${io.cucumber.version}</version>
 	</dependency>
 
-        <dependency>
-            <groupId>de.monochromata.cucumber</groupId>
-            <artifactId>reporting-plugin</artifactId>
-            <version>${de.monochromata.cucumber.version}</version> <!-- this version can be bumped if we also upgrade our Cucumber dependency versions -->
-        </dependency>
-
-
-<!--       <dependency>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-core</artifactId>
-        <version>${info.cukes.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-java</artifactId>
-        <version>${info.cukes.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>info.cukes</groupId>
-        <artifactId>cucumber-junit</artifactId>
-        <version>${info.cukes.version}</version>
-      </dependency> -->
-
-      <dependency>
-        <groupId>com.aventstack</groupId>
-        <artifactId>extentreports</artifactId>
-        <version>${extentreports.version}</version>
-      </dependency>
-
 	<dependency>
 		<groupId>com.aventstack</groupId>
-		<artifactId>extentreports-cucumber4-adapter</artifactId>
-		<version>${cucumber4-extentreports.version}</version>
+		<artifactId>extentreports</artifactId>
+		<version>${extentreports.version}</version>
 	</dependency>
-	
-<!--       <dependency>
-        <groupId>com.vimalselvam</groupId>
-        <artifactId>cucumber-extentsreport</artifactId>
-        <version>${cucumber-extentsreport.version}</version>
-      </dependency> -->
+
+	<dependency>
+		<groupId>tech.grasshopper</groupId>
+		<artifactId>extentreports-cucumber5-adapter</artifactId>
+		<version>${extent.cucumber.reports.version}</version>
+	</dependency>
 
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
@@ -590,15 +557,6 @@
       <artifactId>cucumber-junit</artifactId>
     </dependency>
 
-        <dependency>
-            <groupId>de.monochromata.cucumber</groupId>
-            <artifactId>reporting-plugin</artifactId>
-        </dependency>
-<!--     <dependency>
-      <groupId>com.vimalselvam</groupId>
-      <artifactId>cucumber-extentsreport</artifactId>
-    </dependency> -->
-
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
@@ -669,10 +627,10 @@
       <groupId>com.aventstack</groupId>
       <artifactId>extentreports</artifactId>
     </dependency>
-    
+
     <dependency>
-	  <groupId>com.aventstack</groupId>
-	  <artifactId>extentreports-cucumber4-adapter</artifactId>
+	  <groupId>tech.grasshopper</groupId>
+	  <artifactId>extentreports-cucumber5-adapter</artifactId>
 	</dependency>
 
     <dependency>

@@ -148,7 +148,7 @@ Additional information can be found under [About GitHub Pages and Jekyll](https:
 ### 6.2 Built With
 
 * [Cucumber](https://cucumber.io/) - BDD Testing Framework
-* [Cucumber Extent Reporter](http://www.vimalselvam.com/cucumber-extent-reporter/) Interface between Cucumber Results and Extent Reports.
+* [Cucumber Extent Reporter](https://grasshopper.tech/1697/) Interface between Cucumber Results and Extent Reports.
 * [Commons Lang](https://commons.apache.org/proper/commons-lang/) - Apache Commons Lang 3 for common Java language options
 * [Extent Reports](http://extentreports.com/) - A report framework for automation testing.
 * [HttpComponents](http://hc.apache.org/) - Apache HttpComponents for API testing.
