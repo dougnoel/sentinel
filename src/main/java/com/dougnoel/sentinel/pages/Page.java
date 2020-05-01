@@ -3,10 +3,9 @@ package com.dougnoel.sentinel.pages;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 
+import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -33,21 +32,14 @@ public class Page {
 
     protected URL url = null;
 
-    private Dimension originalBrowserDimensions = null;
-    private Point originalBrowserLocation = null;
-    private Dimension lastBrowserDimensions = null;
-    private Point lastBrowserLocation = null;
-
     /**
      * Initializes a WebDriver object for operating on page elements, and sets the
      * base URL for the page.
      */
     public Page() {
         driver = WebDriverFactory.getWebDriver();
-        lastBrowserDimensions = originalBrowserDimensions = driver.manage().window().getSize();
-        lastBrowserLocation = originalBrowserLocation = driver.manage().window().getPosition();
-        //TODO: Find this config value and read it.
-        this.setImplicitWait(10); // Set a 10 second wait before erroring out on not finding elements.
+        //TODO: Move this to a setup file somewhere else
+        this.setImplicitWait(ConfigurationManager.getDefaultTimeout()); // Set a 10 second wait before erroring out on not finding elements.
     }
 
     /**
@@ -56,6 +48,8 @@ public class Page {
      * <p>
      * <b>Caution:</b> This does not work well in conjunction with the selenium
      * explicit wait functionality.
+     * 
+     * TODO: Move this higher up and out of individual page objects.
      * 
      * @param timeInSeconds
      *            long
@@ -70,44 +64,12 @@ public class Page {
      * Maximizes the browser window. Stores the current window size and position so
      * you can return to the existing settings.
      * 
+     * TODO: Move this higher up and out of individual page objects.
+     * 
      * @return Page - Returns a page object for chaining.
      */
     public Page maximizeWindow() {
-        lastBrowserDimensions = driver.manage().window().getSize();
-        lastBrowserLocation = driver.manage().window().getPosition();
         driver.manage().window().maximize();
-        return this;
-    }
-
-    /**
-     * Undoes the previous window sizing and position operation.
-     * 
-     * @return Page - Returns a page object for chaining.
-     */
-    public Page undoWindowSizing() {
-        // Store the existing dimensions so we can undo this change if we want to.
-        Dimension currentBrowserDimensions = driver.manage().window().getSize();
-        Point currentBrowserLocation = driver.manage().window().getPosition();
-        // Go back to the last stored window size and location.
-        driver.manage().window().setSize(lastBrowserDimensions);
-        driver.manage().window().setPosition(lastBrowserLocation);
-        // Store where we were so we can undo again later.
-        lastBrowserDimensions = currentBrowserDimensions;
-        lastBrowserLocation = currentBrowserLocation;
-        return this;
-    }
-
-    /**
-     * Restores the browser window size and location to the values set when the page
-     * was first defined.
-     * 
-     * @return Page - Returns a page object for chaining.
-     */
-    public Page restoreOriginalWindowSize() {
-        lastBrowserDimensions = driver.manage().window().getSize();
-        lastBrowserLocation = driver.manage().window().getPosition();
-        driver.manage().window().setSize(originalBrowserDimensions);
-        driver.manage().window().setPosition(originalBrowserLocation);
         return this;
     }
 
@@ -143,19 +105,3 @@ public class Page {
         return this.getClass().getSimpleName();
     }
 }
-
-/*
- * A suite of tests can have multiple browsers and operating systems
- * 
- * A test manipulates a website via a user The user moves through pages, and
- * utilizes elements
- * 
- * A Page Object contains elements It identifies and manipulates those elements
- * It has a URL part It has environments It needs to know where to get a base
- * URL from based on env
- * 
- * A website/portal contains multiple pages It has environments Those
- * environments have base URLs A website has users It will have users per
- * environment It should be able to create new users Users may or may not have
- * passwords
- */
