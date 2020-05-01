@@ -114,6 +114,32 @@ public class VerificationSteps {
     }
     
     /**
+     * Verifies the whether the given element is selected or not. Intended to be used with check boxes and radio buttons.
+     * Using the optional word not will check to make sure the item is not checked/selected.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the Yes check box is checked</li>
+     * <li>I verify the Female Radio Button is selected</li>
+     * <li>I verify the I would like fries with that Check box is not selected</li>
+     * </ul>
+     * @param elementName String Element to check
+     * @param assertion String "" or " not" for true or false
+     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     */
+    @Then("^I verify the (.*) is( not)? (?:checked|selected)$")
+    public static void i_verify_the_element_is_selected(String elementName, String assertion) throws Throwable {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String expectedResult = StringUtils.format("Expected the element {} to {} selected.",
+                elementName, (negate ? "not be" : "be"));
+        if (negate) {
+            assertFalse(expectedResult, getElement(elementName).isSelected());
+        } else {
+            assertTrue(expectedResult, getElement(elementName).isSelected());
+        }
+    }
+    
+    /**
      * Verifies an element has an attribute by asserting the element for the given elementName has the given class attribute.
      * <p>
      * <b>Gherkin Examples:</b>

@@ -3,7 +3,7 @@
 Feature: Dropdown Tests
   Testing the Table Page Object Functionality
 	
-	@#22
+  @#22
   Scenario: 22 Prime NG Dropdown
     Given I am on the Prime NG Dropdown Page
     When I select New York from the City Dropdown
