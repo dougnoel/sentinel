@@ -27,7 +27,8 @@ public abstract class ElementFunctions {
     private static final Logger log = LogManager.getLogger(ElementFunctions.class); 
 
     /**
-     * Returns a PageElement object for a given elementName string from current page. Gets current page reference, replaces page name space characters qith '_'
+     * Returns a PageElement object for a given elementName string from current page. Gets current page reference, 
+     * replaces page name space characters with '_'
      * 
      * @param elementName String name of requested element
      * @return PageElement the requested element
@@ -38,7 +39,7 @@ public abstract class ElementFunctions {
         Page page = PageManager.getPage();
         elementName = elementName.replaceAll("\\s+", "_").toLowerCase();
         Method pageElementName = null;
-        try { // Create a Method object to store the PageElementwe want to exercise;
+        try { // Create a Method object to store the PageElement we want to exercise;
             pageElementName = page.getClass().getMethod(elementName);
         } catch (NoSuchMethodException e) {
             String errorMessage = StringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
