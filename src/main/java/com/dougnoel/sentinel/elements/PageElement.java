@@ -170,7 +170,7 @@ public class PageElement {
 			throw new NoSuchElementException(errorMessage);
 		}
 		return element;
-	}
+	}	
 
 	/**
 	 * Type text into a PageElement.
