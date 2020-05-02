@@ -346,7 +346,7 @@ public class ConfigurationManager {
 	 * @param key String the needed item, either username or password
 	 * @return String the given item value
 	 * @throws PageNotFoundException if the page cannot be created
-	 * @throws ConfigurationNotFoundException if the username and passwqord cannot be found
+	 * @throws ConfigurationNotFoundException if the username and password cannot be found
 	 * @throws PageObjectNotFoundException if the page object file cannot be loaded or found
 	 */
 	public static String getUsernameOrPassword(String key) throws ConfigurationNotFoundException, PageNotFoundException, PageObjectNotFoundException {
