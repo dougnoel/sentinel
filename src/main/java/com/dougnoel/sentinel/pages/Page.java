@@ -21,7 +21,8 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * </ul>
  */
 public class Page {
-    static protected final SelectorType CSS = SelectorType.CSS;
+	static protected final SelectorType CLASS = SelectorType.CLASS;
+	static protected final SelectorType CSS = SelectorType.CSS;
     static protected final SelectorType ID = SelectorType.ID;
     static protected final SelectorType NAME = SelectorType.NAME;
     static protected final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
