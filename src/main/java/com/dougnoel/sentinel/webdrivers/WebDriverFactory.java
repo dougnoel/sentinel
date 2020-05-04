@@ -71,11 +71,8 @@ public class WebDriverFactory {
     }
     
     /**
-     * Creates a single threaded Saucelabs WebDriver using the os, browser, and browser version passed to it.
-     * @param operatingSystem String the operating system you want Saucelabs to stand up
-     * @param browser String the browser you want Saucelabs to use
-     * @param browserVersion String the version of the browser you want Saucelabs to use
-     * @return WebDriver
+     * Creates a single threaded Saucelabs WebDriver.
+     * @return WebDriver a Saucelabs WebDriver
      * @throws ConfigurationNotFoundException if a requested configuration property has not been set
      */
     private static WebDriver createSaucelabsDriver() throws ConfigurationNotFoundException {
@@ -85,13 +82,16 @@ public class WebDriverFactory {
 		} catch (java.net.MalformedURLException e) {
 			throw new MalformedURLException(e);
 		}
+        
+		String browser = ConfigurationManager.getProperty("browser");
+		String operatingSystem = ConfigurationManager.getProperty("os");
 		
         MutableCapabilities options = new MutableCapabilities();
-        options.setCapability("platform", getOperatingSystem());
-        options.setCapability("browserName", getBrowserName());
-        String browserVersion = null;
-        if ((browserVersion = ConfigurationManager.getOptionalProperty("browserVersion")) != null) {
-        	options.setCapability("version", browserVersion); // If we do not specify a browser version, we use the latest
+        options.setCapability("platform", operatingSystem);
+        options.setCapability("browserName", browser);
+        String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion");
+        if (browserVersion != null) {
+        	options.setCapability("version", browserVersion);
         } else {
         	options.setCapability("version", "latest");
         }
@@ -129,7 +129,8 @@ public class WebDriverFactory {
     
     /**
      * Pulls config values and sets a string to pass to Saucelabs for the job.
-     * @return String the string to pass to Saucelabs
+     * @param options MutableCapabilities object to modify
+     * @return MutableCapabilities modified MutableCapabilities object
      */
     private static MutableCapabilities setSaucelabsTestNameProperty(MutableCapabilities options)
     {
@@ -182,10 +183,10 @@ public class WebDriverFactory {
             instance = new WebDriverFactory();
         }
         
-        //Driver setup
+        //Saucelabs Driver setup
         String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	return createSaucelabsDriver();
+        	return driver = createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         }
 
         // Set a Download Directory if one was specified on the command line
@@ -193,16 +194,10 @@ public class WebDriverFactory {
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
 
-        // Make sure whatever string we are passed is all lower case and all spaces are
-        // removed.
         String browser = getBrowserName();
-        browser = browser.replaceAll("\\s+", "").toLowerCase();
-        if (browser.equals("ie"))
-            browser = "internetexplorer";
 
         // Initialize the driver object based on the browser and operating system (OS).
-        // Throw an error if the value isn't found.
-    	
+        // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
         	driver = createChromeDriver();
@@ -236,6 +231,10 @@ public class WebDriverFactory {
         return driver;
     }
 
+    /**
+     * Sets the download directory for chromedriver. Cannot be used with Saucelabs.
+     * @param filePath String path to the download directory
+     */
     private static void setChromeDownloadDirectory(String filePath) {
         HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
         chromePrefs.put("download.default_directory", filePath);
@@ -263,8 +262,14 @@ public class WebDriverFactory {
         WebDriverFactory.downloadPath = downloadPath;
     }
     
+    /**
+     * Returns a sanitized version of the operating system set in the config file or on the command line.
+     * @return String a sanitized string containing the operating system
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static String getOperatingSystem() throws ConfigurationNotFoundException {
     	//TODO: Add auto detection
+    	//TODO Make this useable by Saucelabs driver
     	String operatingSystem = ConfigurationManager.getProperty("os");
         operatingSystem = operatingSystem.replaceAll("\\s+", "").toLowerCase();
         if (operatingSystem.equals("macintosh") || operatingSystem.equals("osx"))
@@ -275,12 +280,22 @@ public class WebDriverFactory {
         return operatingSystem;
     }
     
+    /**
+     * Returns an error message string 
+     * @return String error message
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	return StringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
     }
     
+    /**
+     * Returns an error message string 
+     * @return String error message
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static String getOSNotCompatibleWithBrowserErrorMessage() throws ConfigurationNotFoundException {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	String browser = ConfigurationManager.getProperty("browser");
@@ -288,11 +303,29 @@ public class WebDriverFactory {
     	
     }
     
+    /**
+     * Returns a sanitized version of the browser set in the config file or on the command line.
+     * @return String a sanitized string containing the browser
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static String getBrowserName() throws ConfigurationNotFoundException {
     	//TODO: Add auto detection
-    	return ConfigurationManager.getProperty("browser");
+    	//TODO Make this useable by Saucelabs driver
+    	String browser = ConfigurationManager.getProperty("browser");
+        // Make sure whatever string we are passed is all lower case and all spaces are
+        // removed.
+        browser = browser.replaceAll("\\s+", "").toLowerCase();
+        if (browser.equals("ie"))
+            browser = "internetexplorer";
+        return browser;
     }
     
+    /**
+     * Creates a Chrome WebDriver and returns it.
+     * @return WebDriver a Chrome WebDriver object
+     * @throws WebDriverException if the WebDriver creation fails
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static WebDriver createChromeDriver() throws WebDriverException, ConfigurationNotFoundException {
     	String driverPath;
         switch (getOperatingSystem()) {
@@ -319,6 +352,12 @@ public class WebDriverFactory {
 		}
     }
     
+    /**
+     * Creates a Firefox WebDriver and returns it.
+     * @return WebDriver a Firefox WebDriver object
+     * @throws WebDriverException if the WebDriver creation fails
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static WebDriver createFirefoxDriver() throws WebDriverException, ConfigurationNotFoundException {
     	String driverPath;
         switch (getOperatingSystem()) {
@@ -338,6 +377,12 @@ public class WebDriverFactory {
         return new FirefoxDriver();
     }
     
+    /**
+     * Creates an IE WebDriver and returns it.
+     * @return WebDriver an IE WebDriver object
+     * @throws WebDriverException if the WebDriver creation fails
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static WebDriver createInternetExplorerDriver() throws WebDriverException, ConfigurationNotFoundException {
     	String driverPath;
         switch (getOperatingSystem()) {
@@ -356,6 +401,12 @@ public class WebDriverFactory {
         return new InternetExplorerDriver(options);
     }
 
+    /**
+     * Creates a Safari WebDriver and returns it.
+     * @return WebDriver a Safari WebDriver object
+     * @throws WebDriverException if the WebDriver creation fails
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
     private static WebDriver createSafariDriver() throws WebDriverException, ConfigurationNotFoundException {
         switch (getOperatingSystem()) {
         case "linux":
