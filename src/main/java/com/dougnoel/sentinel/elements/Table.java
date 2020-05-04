@@ -506,6 +506,15 @@ public class Table extends PageElement {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
+//		//Dealing with numbers in strings
+//		if (columnName.equalsIgnoreCase("MemberDistnce")) {
+//			List<Float> distances = new ArrayList<>();
+//			for(String str : sortedColumn) {
+//				distances.add(Float.valueOf(str));
+//			}
+//			Collections.sort(distances);
+//		}
+		
 		if (sortOrder == null)
 		{
 			Collections.sort(sortedColumn);

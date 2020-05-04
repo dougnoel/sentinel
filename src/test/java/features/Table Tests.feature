@@ -20,7 +20,9 @@ Feature: Table Tests
       And I verify all the cells in the Last Name column in the Example Table do not contain the text Brown
    	  And I verify the cells in the First Name column in the Example Table are sorted in ascending order
       And I verify the cells in the Last Name column in the Example Table are sorted in descending order
-      And I see 2 rows in the Example Table
+      And I verify the cells in the Distance column in the Example Table are sorted in ascending order
+      And I verify the cells in the ID Number column in the Example Table are sorted in ascending order
+      And I see 3 rows in the Example Table
     	
   @#44 @link-tests
   Scenario: Testing links inside tables using chaining locators
