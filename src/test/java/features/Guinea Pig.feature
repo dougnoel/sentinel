@@ -1,5 +1,5 @@
 #Author: Doug Noël
-@example
+@example @saucelabs
 Feature: Example Feature
   This is an example of a test using Cucumber.
 
