@@ -39,7 +39,6 @@ public class ConfigurationManager {
 	
 	private static Properties appProps = new Properties();
 	
-	private static String downloadDirectory = "../../Downloads";
 	/* default timeout in seconds */
 	private static long timeout = createDefaultTimeout();
 	
@@ -58,23 +57,6 @@ public class ConfigurationManager {
 			instance = new ConfigurationManager();
 		}
 		return instance;
-	}
-	/**
-	 * Getter function for the downloadDirectory
-	 * 
-	 * @return String the download directory
-	 */
-	public static String getDownloadDirectory() {
-		return downloadDirectory;
-	}
-	
-	/**
-	 * Sets download directory with the given directory path
-	 * 
-	 * @param newDirectory String the new directory path
-	 */
-	public static void setDownloadDirectory(String newDirectory) {
-		downloadDirectory = newDirectory;
 	}
 	
 	/**
