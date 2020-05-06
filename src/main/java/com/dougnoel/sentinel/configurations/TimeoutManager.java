@@ -69,7 +69,7 @@ public class TimeoutManager {
 		String timeoutProp = ConfigurationManager.getOptionalProperty("timeout");
 		if(StringUtils.isNotEmpty(timeoutProp)) {
 			timeout = Long.parseLong(timeoutProp);
-			log.debug("Timeout property set to {}.", timeoutProp);
+			log.info("Timeout property set to {}.", timeoutProp);
 		} else {
 			log.info("No timeout property set, using the default timeout value of {}. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", timeout);
 		}
@@ -78,7 +78,7 @@ public class TimeoutManager {
 	
 	/**
 	 * Returns the timeunit property if it is set for implicit waits, otherwise returns the default.
-	 * Possible return values: DAYS  HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS
+	 * Possible return values: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS
 	 * The default if the value is not set is TimeUnit.SECONDS.
 	 * The method getDefaultTimeout is used to determine the duration of the timeout.
 	 * 
@@ -86,27 +86,36 @@ public class TimeoutManager {
 	 */
 	private static TimeUnit createDefaultTimeUnit() {
 		String unit = StringUtils.capitalize(ConfigurationManager.getOptionalProperty("timeunit"));
+		TimeUnit timeunit = TimeUnit.SECONDS;
 
-		if(unit == null) {
-			return TimeUnit.SECONDS;
+		if(StringUtils.isEmpty(unit)) {
+			log.info("No timeunit property set, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS");
+			return timeunit;
 		}
 		switch (unit) {
 		case "DAYS":
-			return TimeUnit.DAYS;
+			timeunit = TimeUnit.DAYS;
+			break;
 		case "HOURS":
-			return TimeUnit.HOURS;
+			timeunit = TimeUnit.HOURS;
+			break;
 		case "MINUTES":
-			return TimeUnit.MINUTES;
+			timeunit = TimeUnit.MINUTES;
+			break;
 		case "SECONDS":
-			return TimeUnit.SECONDS;
+			timeunit = TimeUnit.SECONDS;
+			break;
 		case "MICROSECONDS":
-			return TimeUnit.MICROSECONDS;
+			timeunit = TimeUnit.MICROSECONDS;
+			break;
 		case "MILLISECONDS":
-			return TimeUnit.MILLISECONDS;
+			timeunit = TimeUnit.MILLISECONDS;
+			break;
 		case "NANOSECONDS":
-			return TimeUnit.NANOSECONDS;
-		default:
-			return TimeUnit.SECONDS;
+			timeunit = TimeUnit.NANOSECONDS;
+			break;
 		}
+		log.info("Timeunit property set to {}.", unit);
+		return timeunit;
 	}
 }
