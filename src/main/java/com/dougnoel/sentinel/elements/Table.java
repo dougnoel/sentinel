@@ -16,6 +16,7 @@ import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
+import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.StringUtils;
 
 /**
@@ -101,12 +102,10 @@ public class Table extends PageElement {
 			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
 				String headerText = header.getText();
-				log.trace("Header Text: {}", headerText);
 				headers.add(headerText);
 			}
 		}
-		// If we cannot find headers, then we need to populate this array with the first
-		// row
+		// If we cannot find headers, then we need to populate this array with the first row
 		if (headers.isEmpty()) {
 			getOrCreateRows();
 			List<String> firstRow = rows.get(0);
@@ -476,7 +475,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyColumnCellsAreSortedAscending(String columnName) throws ElementNotFoundException {
-		return verifyColumnCellsAreSorted(columnName, null);
+		return verifyColumnCellsAreSorted(columnName, true);
 	}
 	
 	/**
@@ -487,7 +486,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyColumnCellsAreSortedDescending(String columnName) throws ElementNotFoundException {
-		return verifyColumnCellsAreSorted(columnName, Collections.reverseOrder());
+		return verifyColumnCellsAreSorted(columnName, false);
 	}
 	
 	/**
@@ -502,28 +501,27 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean verifyColumnCellsAreSorted(String columnName, @SuppressWarnings("rawtypes") Comparator sortOrder) throws ElementNotFoundException {
+	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) throws ElementNotFoundException {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
-//		//Dealing with numbers in strings
-//		if (columnName.equalsIgnoreCase("MemberDistnce")) {
-//			List<Float> distances = new ArrayList<>();
-//			for(String str : sortedColumn) {
-//				distances.add(Float.valueOf(str));
-//			}
-//			Collections.sort(distances);
-//		}
 		
-		if (sortOrder == null)
+		// We needs to sort the strings taking into account there might be numbers in the strings.
+		// We do that with a special sort.
+		Collections.sort(sortedColumn, new AlphanumComparator());
+		//If we want a descending sort order, we need to use the custom sort above, then reverse it.
+		if (sortOrderAscending == false)
 		{
-			Collections.sort(sortedColumn);
-		} else {
-			Collections.sort(sortedColumn, sortOrder);	
+			Collections.reverse(sortedColumn);	
 		}
+		log.trace("          Sort Order: {}", sortOrderAscending == true ? "Ascending" : "Descending");
+		log.trace("Original Column Data: {}",column);
+		log.trace("  Sorted Column Data: {}",sortedColumn);
+
 		if (column.equals(sortedColumn)) {
 			return true;
 		}
+
 		return false;
 	}
 	

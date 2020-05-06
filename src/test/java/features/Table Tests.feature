@@ -13,16 +13,14 @@ Feature: Table Tests
   Scenario: Table
     Given I am on the Table Page
     Then I verify the Example Table contains the Name column
-      And I see 2 rows in the Example Table
+      And I see 3 rows in the Example Table
       And I verify the First Name column in the Example Table contains the text Bob
       And I verify the First Name column in the Example Table does not contain the text Sam
       And I verify all the cells in the Last Name column in the Example Table contain the text Smith
       And I verify all the cells in the Last Name column in the Example Table do not contain the text Brown
    	  And I verify the cells in the First Name column in the Example Table are sorted in ascending order
-      And I verify the cells in the Last Name column in the Example Table are sorted in descending order
       And I verify the cells in the Distance column in the Example Table are sorted in ascending order
-      And I verify the cells in the ID Number column in the Example Table are sorted in ascending order
-      And I see 3 rows in the Example Table
+      And I verify the cells in the ID Number column in the Example Table are sorted in descending order
     	
   @#44 @link-tests
   Scenario: Testing links inside tables using chaining locators
