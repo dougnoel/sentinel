@@ -41,7 +41,7 @@ public class ConfigurationManager {
 	
 	private static String downloadDirectory = "../../Downloads";
 	/* default timeout in seconds */
-	private static long timeout = 10L;
+	private static long timeout = createDefaultTimeout();
 	
 	private static ConfigurationData sentinelConfigurations = null;
 
@@ -154,7 +154,14 @@ public class ConfigurationManager {
 				log.error(e.getMessage(),e.getStackTrace().toString());
 				throw e;
 			}
-		}		
+		}
+		//Checked a second time, because this option is assumed to not be optional.
+		//TODO: Rename this method to getRequiredProperty and have it call getOptionalProperty to reduce the number of checks we make.
+		if(systemProperty == null) {
+			String errorMessage = ConfigurationManager.getConfigurationNotFoundErrorMessage(property);
+			log.error(errorMessage);
+			throw new ConfigurationNotFoundException(errorMessage);
+		}
 		return systemProperty;
 	}
 	
@@ -461,20 +468,32 @@ public class ConfigurationManager {
 		log.debug(data);
 		return data;
 	}
-
+	
 	/**
-	 * Returns the default value set in the timeout property.
-	 * The default if the property is not set is 10.
-	 * The method getDefaultTimeUnit is used to determine how the value is measured.
-	 * @return long the timeout 
+	 * Returns the value set in the timeout property.
+	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).
+	 * @return long the timeout
+	 * 
 	 */
 	public static long getDefaultTimeout() {
-		long timeout = ConfigurationManager.timeout;
+		return ConfigurationManager.timeout;
+	}
+	
+	/**
+	 * Sets the timeout property value by reading it from the config file or from the command line.
+	 * The default if the property is not set is 10.
+	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).
+	 * @return long the timeout
+	 * 
+	 */
+	public static long createDefaultTimeout() {
+		long timeout = 10L;
 		String timeoutProp = getOptionalProperty("timeout");
 		if(StringUtils.isNotEmpty(timeoutProp)) {
 			timeout = Long.parseLong(timeoutProp);
+			log.debug("Timeout property set to {}.", timeoutProp);
 		} else {
-			log.debug("No timeout property set, using the default timeout value of {}.", timeout);
+			log.info("No timeout property set, using the default timeout value of {}. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", timeout);
 		}
 		return timeout;
 	}
@@ -538,5 +557,9 @@ public class ConfigurationManager {
 		String value = appProps.getProperty(key);
 		log.trace("Retrieved key/value pair: " + key + "/" + value);
 		return value;
+	}
+	
+	public static String getConfigurationNotFoundErrorMessage(String configurtaionValue) {
+		return StringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.",configurtaionValue,configurtaionValue,configurtaionValue);
 	}
 }

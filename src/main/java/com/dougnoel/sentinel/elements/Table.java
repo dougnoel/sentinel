@@ -2,7 +2,6 @@ package com.dougnoel.sentinel.elements;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,7 +202,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public int getNumberOfRows() throws ElementNotFoundException  {
-		//TODO: Ensure I should be returning -1
+		//TODO: Ensure I should be returning -1 I.E. Test to see if a header was specified separately, if so then I should not be returning -1
 		return getOrCreateRowElements().size() - 1;
 	}
 

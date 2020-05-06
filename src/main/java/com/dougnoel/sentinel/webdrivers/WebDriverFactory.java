@@ -194,9 +194,9 @@ public class WebDriverFactory {
     private static String getBrowserName() throws ConfigurationNotFoundException {
     	//TODO: Add auto detection
     	//TODO Make this useable by Saucelabs driver
-    	String browser = ConfigurationManager.getProperty("browser");
-        // Make sure whatever string we are passed is all lower case and all spaces are
-        // removed.
+    	String browser;
+		browser = ConfigurationManager.getProperty("browser");
+        // Make sure whatever string we are passed is all lower case and all spaces are removed.
         browser = browser.replaceAll("\\s+", "").toLowerCase();
         if (browser.equals("ie"))
             browser = "internetexplorer";
