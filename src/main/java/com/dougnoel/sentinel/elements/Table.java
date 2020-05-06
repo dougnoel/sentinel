@@ -499,10 +499,10 @@ public class Table extends PageElement {
 	 * @return boolean true is the column is sorted in the passed sort order, false if it is not sorted correctly
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	@SuppressWarnings("unchecked")
 	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) throws ElementNotFoundException {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
+		@SuppressWarnings("unchecked")
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
 		
 		// We needs to sort the strings taking into account there might be numbers in the strings.
@@ -513,9 +513,10 @@ public class Table extends PageElement {
 		{
 			Collections.reverse(sortedColumn);	
 		}
-		log.trace("          Sort Order: {}", sortOrderAscending == true ? "Ascending" : "Descending");
-		log.trace("Original Column Data: {}",column);
-		log.trace("  Sorted Column Data: {}",sortedColumn);
+		log.trace("Sort Order: {}\n"
+				+ "Original Column Data: {}\n"
+				+ "  Sorted Column Data: {}", 
+				sortOrderAscending == true ? "Ascending" : "Descending", column, sortedColumn);
 
 		if (column.equals(sortedColumn)) {
 			return true;
