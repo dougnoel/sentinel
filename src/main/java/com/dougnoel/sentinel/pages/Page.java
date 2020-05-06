@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -40,7 +40,7 @@ public class Page {
     public Page() {
         driver = WebDriverFactory.getWebDriver();
         //TODO: Move this to a setup file somewhere else
-        this.setImplicitWait(ConfigurationManager.getDefaultTimeout()); // Set a 10 second wait before erroring out on not finding elements.
+        this.setImplicitWait(TimeoutManager.getDefaultTimeout()); // Set a 10 second wait before erroring out on not finding elements.
     }
 
     /**

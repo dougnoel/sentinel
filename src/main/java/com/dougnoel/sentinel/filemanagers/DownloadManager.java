@@ -41,7 +41,7 @@ public class DownloadManager {
     private static String fileExtension = "pdf"; // Current file extension - Default of pdf
     private static File file = null; // Current file
 
-    private static String downloadDirectory = initializeDownloadDirectory();
+    private static String downloadDirectory = createDownloadDirectory();
 
     // Create a list to store all the downloaded files
     // This will allow us to clean them all up at the end of a run.
@@ -397,7 +397,7 @@ public class DownloadManager {
     /**
      * Sets downlaodDirectory upon creation of the Download manager.
      */
-    public static String initializeDownloadDirectory() {
+    public static String createDownloadDirectory() {
     	String downloadDirectory = ConfigurationManager.getOptionalProperty("downloadDirectory");
     	if (downloadDirectory == null) {
     		downloadDirectory = "../../Downloads";

@@ -2,8 +2,6 @@ package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,9 +36,6 @@ public class ConfigurationManager {
 	private static ConfigurationManager instance = null;
 	
 	private static Properties appProps = new Properties();
-	
-	/* default timeout in seconds */
-	private static long timeout = createDefaultTimeout();
 	
 	private static ConfigurationData sentinelConfigurations = null;
 
@@ -449,69 +444,6 @@ public class ConfigurationManager {
 		String data = pageData.getTestData(env, testData).get(key);
 		log.debug(data);
 		return data;
-	}
-	
-	/**
-	 * Returns the value set in the timeout property.
-	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).
-	 * @return long the timeout
-	 * 
-	 */
-	public static long getDefaultTimeout() {
-		return ConfigurationManager.timeout;
-	}
-	
-	/**
-	 * Sets the timeout property value by reading it from the config file or from the command line.
-	 * The default if the property is not set is 10.
-	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).
-	 * @return long the timeout
-	 * 
-	 */
-	public static long createDefaultTimeout() {
-		long timeout = 10L;
-		String timeoutProp = getOptionalProperty("timeout");
-		if(StringUtils.isNotEmpty(timeoutProp)) {
-			timeout = Long.parseLong(timeoutProp);
-			log.debug("Timeout property set to {}.", timeoutProp);
-		} else {
-			log.info("No timeout property set, using the default timeout value of {}. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", timeout);
-		}
-		return timeout;
-	}
-
-	/**
-	 * Returns the timeunit property if it is set for implicit waits, otherwise returns the default.
-	 * Possible return values: DAYS  HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS
-	 * The default if the value is not set is TimeUnit.SECONDS.
-	 * The method getDefaultTimeout is used to determine the duration of the timeout.
-	 * 
-	 * @return java.util.concurrent.TimeUnit the default value
-	 */
-	public static TimeUnit getDefaultTimeUnit() {
-		String unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
-
-		if(unit == null) {
-			return TimeUnit.SECONDS;
-		}
-		switch (unit) {
-		case "DAYS":
-			return TimeUnit.DAYS;
-		case "HOURS":
-			return TimeUnit.HOURS;
-		case "MINUTES":
-			return TimeUnit.MINUTES;
-		case "SECONDS":
-			return TimeUnit.SECONDS;
-		case "MICROSECONDS":
-			return TimeUnit.MICROSECONDS;
-		case "MILLISECONDS":
-			return TimeUnit.MILLISECONDS;
-		case "NANOSECONDS":
-			return TimeUnit.NANOSECONDS;
-		default:
-			return TimeUnit.SECONDS;
-		}
 	}
 
 	/**
