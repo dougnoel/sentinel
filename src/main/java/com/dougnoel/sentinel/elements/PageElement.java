@@ -22,14 +22,13 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.StringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -93,7 +92,7 @@ public class PageElement {
 	 * @return org.openqa.selenium.WebElement
 	 */
 	private WebElement getElementWithWait(final By locator) {
-		Duration timeout =  Duration.ofSeconds(ConfigurationManager.getDefaultTimeout());
+		Duration timeout =  Duration.ofSeconds(TimeoutManager.getDefaultTimeout());
 		Duration interval =  Duration.ofMillis(10);
 		Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 			       .withTimeout(timeout)
@@ -251,7 +250,7 @@ public class PageElement {
 	 * @throws ElementNotFoundException if the element cannot be found
 	 */
 	public PageElement click() throws ElementNotFoundException  {
-		long waitTime = ConfigurationManager.getDefaultTimeout();
+		long waitTime = TimeoutManager.getDefaultTimeout();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
 		} catch (WebDriverException e) {
@@ -406,7 +405,7 @@ public class PageElement {
 	 */
 	public boolean doesNotExist() throws NoSuchSelectorException {
 		// Reducing the time we have to wait for an expected failure.
-		PageManager.setTimeout(250, TimeUnit.MILLISECONDS);
+		TimeoutManager.setTimeout(driver, 250, TimeUnit.MILLISECONDS);
 		WebElement element = null;
 		boolean flag = false;
 
@@ -442,7 +441,7 @@ public class PageElement {
 			if (element == null)
 				flag = true;
 		}
-		PageManager.setDefaultTimeout();
+		TimeoutManager.setDefaultTimeout(driver);
 		log.trace("Return result: {}", flag);
 		return flag;
 	}

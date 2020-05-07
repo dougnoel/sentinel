@@ -44,6 +44,24 @@ git clone https://github.com/dougnoel/sentinel.git
 ## 2.0 - 4.0
 These sections have been moved to the [sentinel.example Project](https://github.com/dougnoel/sentinel.example). Please refer to that Readme for how to create and execute tests.
 
+## 4.0 Frequently Asked Questions (FAQs)
+
+### How do I change the default timeout?
+All timeouts default to 10 seconds, however you can change that either on the commandline or in the sentinel.yml config file. For example if you want to double it to 20 seconds you would use `-Dtimeout=20`. If you wanted it to fail fast after only half a second you could use `-Dtimeout=500 -Dtimeunit=MILLISECONDS`. If you realy wanted to extend the time, you could etend it to a minute using `-Dtimeout=1 -Dtimeunit=MINUTES`.
+
+Perhaps your dev environment is giving you a problem and you want to set the wait time astronomically high, but leave it the same for your other environments, so you want to give it an hour because sometimes your job runs at night and you don't want it to hangup during a deploy. In that case you could set a value in the conf file like so:
+
+```
+configurations:
+  dev:
+  	timeout=10
+  	timeunit=MINUTES
+```
+
+It will wait ten minutes before failing on any wait in dev, but stick to the 10 second timeout in any other environment.
+
+All timeout values must be whole numbers. The valid values for timeunit are DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS. It is not recommended that you use anything other than SECONDS or MILLISECONDS. MINUTES and HOURS can be used on nightly regression jobs to deal with infrastructure instability issues you cannot control. Your tests will likely all fail if you use MICROSECONDS or NANOSECONDS, but they'll fail fast, and that's the Agile way!
+
 ## 5.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.

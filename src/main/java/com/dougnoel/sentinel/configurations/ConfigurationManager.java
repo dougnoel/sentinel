@@ -2,8 +2,6 @@ package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,10 +37,6 @@ public class ConfigurationManager {
 	
 	private static Properties appProps = new Properties();
 	
-	private static String downloadDirectory = "../../Downloads";
-	/* default timeout in seconds */
-	private static long timeout = 10L;
-	
 	private static ConfigurationData sentinelConfigurations = null;
 
 	protected ConfigurationManager() {
@@ -58,23 +52,6 @@ public class ConfigurationManager {
 			instance = new ConfigurationManager();
 		}
 		return instance;
-	}
-	/**
-	 * Getter function for the downloadDirectory
-	 * 
-	 * @return String the download directory
-	 */
-	public static String getDownloadDirectory() {
-		return downloadDirectory;
-	}
-	
-	/**
-	 * Sets download directory with the given directory path
-	 * 
-	 * @param newDirectory String the new directory path
-	 */
-	public static void setDownloadDirectory(String newDirectory) {
-		downloadDirectory = newDirectory;
 	}
 	
 	/**
@@ -154,7 +131,14 @@ public class ConfigurationManager {
 				log.error(e.getMessage(),e.getStackTrace().toString());
 				throw e;
 			}
-		}		
+		}
+		//Checked a second time, because this option is assumed to not be optional.
+		//TODO: Rename this method to getRequiredProperty and have it call getOptionalProperty to reduce the number of checks we make.
+		if(systemProperty == null) {
+			String errorMessage = ConfigurationManager.getConfigurationNotFoundErrorMessage(property);
+			log.error(errorMessage);
+			throw new ConfigurationNotFoundException(errorMessage);
+		}
 		return systemProperty;
 	}
 	
@@ -463,57 +447,6 @@ public class ConfigurationManager {
 	}
 
 	/**
-	 * Returns the default value set in the timeout property.
-	 * The default if the property is not set is 10.
-	 * The method getDefaultTimeUnit is used to determine how the value is measured.
-	 * @return long the timeout 
-	 */
-	public static long getDefaultTimeout() {
-		long timeout = ConfigurationManager.timeout;
-		String timeoutProp = getOptionalProperty("timeout");
-		if(StringUtils.isNotEmpty(timeoutProp)) {
-			timeout = Long.parseLong(timeoutProp);
-		} else {
-			log.debug("No timeout property set, using the default timeout value of {}.", timeout);
-		}
-		return timeout;
-	}
-
-	/**
-	 * Returns the timeunit property if it is set for implicit waits, otherwise returns the default.
-	 * Possible return values: DAYS  HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS
-	 * The default if the value is not set is TimeUnit.SECONDS.
-	 * The method getDefaultTimeout is used to determine the duration of the timeout.
-	 * 
-	 * @return java.util.concurrent.TimeUnit the default value
-	 */
-	public static TimeUnit getDefaultTimeUnit() {
-		String unit = StringUtils.capitalize(getOptionalProperty("timeunit"));
-
-		if(unit == null) {
-			return TimeUnit.SECONDS;
-		}
-		switch (unit) {
-		case "DAYS":
-			return TimeUnit.DAYS;
-		case "HOURS":
-			return TimeUnit.HOURS;
-		case "MINUTES":
-			return TimeUnit.MINUTES;
-		case "SECONDS":
-			return TimeUnit.SECONDS;
-		case "MICROSECONDS":
-			return TimeUnit.MICROSECONDS;
-		case "MILLISECONDS":
-			return TimeUnit.MILLISECONDS;
-		case "NANOSECONDS":
-			return TimeUnit.NANOSECONDS;
-		default:
-			return TimeUnit.SECONDS;
-		}
-	}
-
-	/**
 	 * Stores values in a property object for quick and dirty dependency injection.
 	 * Replaces space chars with '_' char, makes key all lowercase, and logs action.
 	 * 
@@ -538,5 +471,9 @@ public class ConfigurationManager {
 		String value = appProps.getProperty(key);
 		log.trace("Retrieved key/value pair: " + key + "/" + value);
 		return value;
+	}
+	
+	public static String getConfigurationNotFoundErrorMessage(String configurtaionValue) {
+		return StringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.",configurtaionValue,configurtaionValue,configurtaionValue);
 	}
 }
