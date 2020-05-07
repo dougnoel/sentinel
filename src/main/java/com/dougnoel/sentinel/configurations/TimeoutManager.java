@@ -81,36 +81,29 @@ public class TimeoutManager {
 	 */
 	private static TimeUnit createDefaultTimeUnit() {
 		String unit = StringUtils.capitalize(ConfigurationManager.getOptionalProperty("timeunit"));
-		TimeUnit timeunit = TimeUnit.SECONDS;
 
 		if(StringUtils.isEmpty(unit)) {
 			log.info("No timeunit property set, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS");
-			return timeunit;
-		}
-		switch (unit) {
-		case "DAYS":
-			timeunit = TimeUnit.DAYS;
-			break;
-		case "HOURS":
-			timeunit = TimeUnit.HOURS;
-			break;
-		case "MINUTES":
-			timeunit = TimeUnit.MINUTES;
-			break;
-		case "SECONDS":
-			timeunit = TimeUnit.SECONDS;
-			break;
-		case "MICROSECONDS":
-			timeunit = TimeUnit.MICROSECONDS;
-			break;
-		case "MILLISECONDS":
-			timeunit = TimeUnit.MILLISECONDS;
-			break;
-		case "NANOSECONDS":
-			timeunit = TimeUnit.NANOSECONDS;
-			break;
+			return TimeUnit.SECONDS;
 		}
 		log.info("Timeunit property set to {}.", unit);
-		return timeunit;
+		switch (unit) {
+		case "DAYS":
+			return TimeUnit.DAYS;
+		case "HOURS":
+			return TimeUnit.HOURS;
+		case "MINUTES":
+			return TimeUnit.MINUTES;
+		case "SECONDS":
+			return TimeUnit.SECONDS;
+		case "MICROSECONDS":
+			return TimeUnit.MICROSECONDS;
+		case "MILLISECONDS":
+			return TimeUnit.MILLISECONDS;
+		case "NANOSECONDS":
+			return TimeUnit.NANOSECONDS;
+		default:
+			return TimeUnit.SECONDS;
+		}
 	}
 }
