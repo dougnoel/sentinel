@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.dropdowns;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +39,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 * @return WebElement the element representing the option
 	 * @throws ElementNotFoundException if the element cannot be found
 	 */
+	@Override
     protected WebElement getOption(String selectionText) throws ElementNotFoundException{
     	String xTagName = this.element().getTagName();
     	String xPath = "//li[@aria-label=\"" + selectionText + "\"]";
@@ -53,6 +54,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 * @return WebElement the element representing the option
 	 * @throws ElementNotFoundException if the element cannot be found
      */
+	@Override
     protected WebElement getOption(int index) throws ElementNotFoundException{
     	String xTagName = this.element().getTagName();
     	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
@@ -68,6 +70,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * @return String the text value of the option at the given index
      * @throws ElementNotFoundException if the element cannot be found
      */
+	@Override
     public String getText(int index) throws ElementNotFoundException{
     	return getOption(index).getAttribute("aria-label");
     }
@@ -77,6 +80,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * @return String the text value of the selected option
      * @throws ElementNotFoundException if the element cannot be found
      */
+	@Override
     public String getSelectedText() throws ElementNotFoundException{
     	return this.element().findElement(By.xpath("//label")).getText();
     }

@@ -1,6 +1,6 @@
 package pages;
 
-import com.dougnoel.sentinel.elements.MaterialUISelect;
+import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.pages.Page;
 
 public class MaterialUISelectPage extends Page {

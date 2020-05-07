@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.tables;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
@@ -26,11 +27,6 @@ import com.dougnoel.sentinel.strings.StringUtils;
 public class Table extends PageElement {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
-	private TableType tableType = TableType.HTML;
-	private String tableHeaderTag = "th";
-	private String tableRowTag = "tr";
-	private String tableCellDataTag = "td";
-	
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
 	protected List<String> headers = new ArrayList<String>(); // Column headers as text
 	protected List<WebElement> rowElements = null; // Table Rows using <tr> tags
@@ -38,6 +34,13 @@ public class Table extends PageElement {
 	protected Map<String, ArrayList<String>> columns = new HashMap<>(); // All text values of every column
 	protected Map<Integer, List<ArrayList<String>>> tables = new HashMap<>(); // Way to hold values of the same table on multiple pages.
 
+	protected TableType tableType = TableType.HTML;
+	protected String tableHeaderTag = "th";
+	protected String tableRowTag = "tr";
+	protected String tableCellDataTag = "td";
+	protected String tableDataCellLocator = "//" + tableCellDataTag;
+	protected String tableSiblingCellLocator = "//..//*";
+	
 	/**
 	 * Creates a table object to manipulate. Expects a table or ngx-datatable tag. When used
 	 * the table object finds and creates rows and columns and stores them. If data in the table changes
@@ -54,17 +57,6 @@ public class Table extends PageElement {
 	 */
 	public Table(SelectorType selectorType, String selectorValue) {
 		super(selectorType, selectorValue);
-		
-		try {
-			if (this.toWebElement().getTagName().contains("ngx-datatable")) {
-				tableType = TableType.NGXDATATABLE;
-				tableHeaderTag = "datatable-header-cell";
-				tableRowTag = "datatable-body-row";
-				tableCellDataTag = "datatable-body-cell";
-			}
-		} catch (ElementNotFoundException e) {
-			log.error(e.getStackTrace()); //Suppress this for now.
-		}
 	}
 
 	/**
@@ -150,7 +142,7 @@ public class Table extends PageElement {
 	 * Returns true if the table has &lt;th&gt; elements, otherwise returns false
 	 * even though the first row will be used to populate the headers list.
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaderElements()
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateHeaderElements()
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
 	 * @throws ElementNotFoundException if an element is not found
 	 */
@@ -197,7 +189,7 @@ public class Table extends PageElement {
 	/**
 	 * Returns number of row elements from getOrCreateRowElements
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateRowElements()
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateRowElements()
 	 * @return int the number of row elements
 	 * @throws ElementNotFoundException if an element is not found
 	 */
@@ -233,7 +225,7 @@ public class Table extends PageElement {
 	/**
 	 * Returns the number of columns in the table.
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaders()
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateHeaders()
 	 * @return int the number of columns
 	 * @throws ElementNotFoundException if an element is not found
 	 */
@@ -317,11 +309,10 @@ public class Table extends PageElement {
 			//Set to the last row
 			ordinalRow = getNumberOfRows();
 		}
-		String locator = tableType == TableType.NGXDATATABLE ? "//span" : "//" + tableCellDataTag;
 		
 		try {
 			element = getOrCreateRowElements().get(ordinalRow--)
-					.findElement(By.xpath(locator))
+					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = StringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
@@ -343,14 +334,11 @@ public class Table extends PageElement {
 	 */
 	public WebElement getElementInRowThatContains(By rowLocator, By elementLocator) throws ElementNotFoundException {
 		WebElement element;
-		String firstLocator = tableType == TableType.NGXDATATABLE ? "//span" : "//" + tableCellDataTag;
-		String secondLocator = tableType == TableType.NGXDATATABLE ? "//../../..//*" : "//..//*";
-
 		try {
 			element = this.element()
-					.findElement(By.xpath(firstLocator))
+					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(rowLocator)
-					.findElement(By.xpath(secondLocator))
+					.findElement(By.xpath(tableSiblingCellLocator))
 					.findElement(elementLocator);
 
 		} catch (org.openqa.selenium.NoSuchElementException e) {
