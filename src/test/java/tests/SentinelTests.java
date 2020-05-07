@@ -21,11 +21,11 @@ import cucumber.api.junit.Cucumber;
 @CucumberOptions(monochrome = true, features = "src/test/java/features", glue = { "stepdefinitions",
         "com.dougnoel.sentinel.steps" }, plugin = {
                 "com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
-//         , tags = { "@html-table" }
+//         , tags = { "@dropdown" }
 )
 
-public class TestRun {
-    private static final Logger log = LogManager.getLogger(TestRun.class); // Create a logger.
+public class SentinelTests {
+    private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException, SentinelException {
