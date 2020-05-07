@@ -14,28 +14,6 @@ public class TimeoutManager {
 	private static TimeUnit timeunit = createDefaultTimeUnit();
 	
 	/**
-	 * Sets the implicit timeout for the passed driver.
-	 * 
-	 * @param time long the number of seconds to wait before reporting a failure to
-	 *             find an element
-	 * @param unit java.util.concurrent.TimeUnit the unit of time to wait (e.g.
-	 *             seconds, milliseconds, etc)
-	 * @return Timeouts returns to allow object chaining for more complex calls
-	 */
-	public static void setTimeout(WebDriver driver, long time, TimeUnit unit) {
-		driver.manage().timeouts().implicitlyWait(time, unit);
-	}
-	
-	/**
-	 * Sets the implicit timeout for the current driver. Calls the Configuration
-	 * Manager to see if the default timeout or default time unit have been changed
-	 * through a property. If not, 10 seconds will be set as the default.
-	 */
-	public static void setDefaultTimeout(WebDriver driver) {
-		setTimeout(driver, getDefaultTimeout(), getDefaultTimeUnit());
-	}
-	
-	/**
 	 * Returns the value set in the timeout property.
 	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).
 	 * @return long the timeout
@@ -56,6 +34,23 @@ public class TimeoutManager {
 	public static TimeUnit getDefaultTimeUnit() {
 		return timeunit;
 	}
+	
+	/**
+	 * Sets the implicit timeout for the passed WebDriver using the system defaults.
+	 */
+	public static void setDefaultTimeout(WebDriver driver) {
+		setTimeout(driver, getDefaultTimeout(), getDefaultTimeUnit());
+	}
+	
+	/**
+	 * Sets the implicit timeout for the passed WebDriver.
+	 * 
+	 * @param time long the number of timeunits to wait before reporting a failure to find an element
+	 * @param unit java.util.concurrent.TimeUnit the unit of time to wait (DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS)
+	 */
+	public static void setTimeout(WebDriver driver, long time, TimeUnit unit) {
+		driver.manage().timeouts().implicitlyWait(time, unit);
+	}	
 	
 	/**
 	 * Sets the timeout property value by reading it from the config file or from the command line.
