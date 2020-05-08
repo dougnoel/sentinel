@@ -40,7 +40,9 @@ public class SentinelTests {
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
         log.info("Driver: {}", WebDriverFactory.getWebDriver());
-        PageManager.quit();
+        if (System.getProperty("leaveBrowserOpen", "false") == "false") {
+        	PageManager.quit();
+        }
         Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
         Reporter.setSystemInfo("user", System.getProperty("user.name"));
         Reporter.setSystemInfo("os", System.getProperty("os"));
