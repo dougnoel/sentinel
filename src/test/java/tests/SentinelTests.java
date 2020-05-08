@@ -18,9 +18,11 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(monochrome = true, features = "src/test/java/features", glue = { "stepdefinitions",
-        "com.dougnoel.sentinel.steps" }, plugin = {
-                "com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
+@CucumberOptions(monochrome = true, 
+				features = "src/test/java/features", 
+				glue = { "stepdefinitions","com.dougnoel.sentinel.steps" }, 
+				plugin = {"json:target/cucumber.json",
+						"com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
 //         , tags = { "@table" }
 )
 
