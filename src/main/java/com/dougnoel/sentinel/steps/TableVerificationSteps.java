@@ -13,10 +13,9 @@ import com.dougnoel.sentinel.strings.StringUtils;
 import cucumber.api.java.en.Then;
 
 public class TableVerificationSteps {
-	
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
-
-	  /**
+	
+	/**
      * Verifies we have the expected, given number of rows in the given string representing the Table object.
  	 * The string is made lower case and whitespaces are replaced with underscores, then it is sent a 
  	 * getNumberOfRows event and returns the number of rows in the table. The page object and driver 
@@ -39,7 +38,7 @@ public class TableVerificationSteps {
      */
     @Then("^I see (\\d+) rows in the (.*)$")
     public static void i_see_x_rows_in_a_table(int expectedNumberOfRows, String elementName) throws Throwable {
-        int numberOfRows = (int) getElementAsTable(elementName).getNumberOfRows();
+        int numberOfRows = getElementAsTable(elementName).getNumberOfRows();
         String expectedResult = StringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
         assertTrue(expectedResult, numberOfRows == expectedNumberOfRows);
     }

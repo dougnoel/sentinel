@@ -28,12 +28,12 @@ public class Table extends PageElement {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
-	protected List<String> headers = new ArrayList<String>(); // Column headers as text
+	protected List<String> headers = new ArrayList<>(); // Column headers as text
 	protected List<WebElement> rowElements = null; // Table Rows using <tr> tags
-	protected List<ArrayList<String>> rows = new ArrayList<ArrayList<String>>(); // All text values of every row
+	protected List<ArrayList<String>> rows = new ArrayList<>(); // All text values of every row
 	protected Map<String, ArrayList<String>> columns = new HashMap<>(); // All text values of every column
 	protected Map<Integer, List<ArrayList<String>>> tables = new HashMap<>(); // Way to hold values of the same table on multiple pages.
-
+	
 	protected TableType tableType = TableType.HTML;
 	protected String tableHeaderTag = "th";
 	protected String tableRowTag = "tr";
@@ -48,12 +48,9 @@ public class Table extends PageElement {
 	 * method.
 	 * NOTE: Unlike other element methods, this one throws an ElementNotFound exception because the constructor
 	 * must look at the tag to determine the table type.
-	 * TODO: To make this more easily extensible, this should be a factory method, creating and returning
-	 * table objects based on the tag name.
 	 * 
 	 * @param selectorType SelectorType the type of selector to use
 	 * @param selectorValue String the value to look for with the given selector type
-	 * TODO: @throws ElementNotFoundException if the element cannot be found, not changing this now to make Page Objects backwards compatible. Should handle this when we change page objects to yml completely.
 	 */
 	public Table(SelectorType selectorType, String selectorValue) {
 		super(selectorType, selectorValue);
@@ -121,7 +118,10 @@ public class Table extends PageElement {
 			headerElements = getHeaderElements();
 		}
 		if (headerElements == null) {
+			log.trace("Header tags not found, using first row for headers.");
 			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
+		} else {
+			log.trace("Header tags found");
 		}
 		log.trace("Number of Header Elements: {}", headerElements.size());
 		return headerElements;
@@ -175,7 +175,7 @@ public class Table extends PageElement {
 				dataRows.remove(0);
 			for (WebElement row : dataRows) {
 				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
-				ArrayList<String> cells = new ArrayList<String>();
+				ArrayList<String> cells = new ArrayList<>();
 				for (WebElement cell : cellElements) {
 					cells.add(cell.getText());
 				}
@@ -194,7 +194,10 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public int getNumberOfRows() throws ElementNotFoundException  {
-		//TODO: Ensure I should be returning -1 I.E. Test to see if a header was specified separately, if so then I should not be returning -1
+		//Selenium counts a <th> tag as a <td> tag and returns it.
+		if (tableHeadersExist() && tableType != TableType.HTML) {
+			return getOrCreateRowElements().size();
+		}
 		return getOrCreateRowElements().size() - 1;
 	}
 
@@ -210,7 +213,7 @@ public class Table extends PageElement {
 			int index = 0;
 			getOrCreateRows(); // We cannot create the columns without Row data
 			for (String header : getOrCreateHeaders()) {
-				ArrayList<String> cells = new ArrayList<String>();
+				ArrayList<String> cells = new ArrayList<>();
 				for (ArrayList<String> row : rows) {
 					cells.add(row.get(index));
 				}
@@ -307,7 +310,7 @@ public class Table extends PageElement {
 		WebElement element;
 		if (ordinalRow == -1) {
 			//Set to the last row
-			ordinalRow = getNumberOfRows();
+			ordinalRow = getNumberOfRows()-1;
 		}
 		
 		try {
@@ -497,20 +500,16 @@ public class Table extends PageElement {
 		// We do that with a special sort.
 		Collections.sort(sortedColumn, new AlphanumComparator());
 		//If we want a descending sort order, we need to use the custom sort above, then reverse it.
-		if (sortOrderAscending == false)
+		if (!sortOrderAscending)
 		{
 			Collections.reverse(sortedColumn);	
 		}
 		log.trace("Sort Order: {}\n"
 				+ "Original Column Data: {}\n"
 				+ "  Sorted Column Data: {}", 
-				sortOrderAscending == true ? "Ascending" : "Descending", column, sortedColumn);
+				sortOrderAscending ? "Ascending" : "Descending", column, sortedColumn);
 
-		if (column.equals(sortedColumn)) {
-			return true;
-		}
-
-		return false;
+		return column.equals(sortedColumn);
 	}
 	
 	/**
@@ -521,7 +520,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyColumnCellsAreUnique(String columnHeader) throws ElementNotFoundException  {
-		if (verifyColumnExists(columnHeader) == false) {
+		if (!verifyColumnExists(columnHeader)) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
 		}
@@ -577,24 +576,24 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyRowCellsAreUnique(String columnName) throws ElementNotFoundException  {
-		String[] columns = columnName.split(", ");
-		return verifyRowCellsAreUnique(columns);
+		String[] columnHeaders = columnName.split(", ");
+		return verifyRowCellsAreUnique(columnHeaders);
 	}
 
 	/**
 	 * Returns true if the cell values are unique for the given array of column names
 	 * 
-	 * @param columnsHeader string[] the array of column name to validate
+	 * @param columnHeaders string[] the array of column name to validate
 	 * @return boolean true if all cells values are unique, false if any duplicates
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyRowCellsAreUnique(String[] columnsHeader) throws ElementNotFoundException {
+	public boolean verifyRowCellsAreUnique(String[] columnHeaders) throws ElementNotFoundException {
 
 		getOrCreateHeaders();
 		getOrCreateRows();
-		List<Integer> indexes = new ArrayList<Integer>();
-		for (String columnHeader : columnsHeader) {
-			if (verifyColumnExists(columnHeader) == false) {
+		List<Integer> indexes = new ArrayList<>();
+		for (String columnHeader : columnHeaders) {
+			if (!verifyColumnExists(columnHeader)) {
 				String errorMessage = StringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
 				throw new NoSuchColumnException(errorMessage);
