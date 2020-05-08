@@ -7,7 +7,9 @@ Feature: Table Tests
   Scenario: NGX Data Table
     Given I am on the NGX Data Table Page
     Then I verify the Example Table contains the Name column
-      And I see 99 rows in the Example Table
+    When I click the Name header
+    Then I verify the cells in the Name column in the Example Table are sorted in ascending order
+      And I see 100 rows in the Example Table
     	
   @html-table  	
   Scenario: Table

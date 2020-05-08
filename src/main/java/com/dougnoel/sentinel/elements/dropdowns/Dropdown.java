@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.dropdowns;
 
 import com.dougnoel.sentinel.enums.SelectorType;
 
@@ -8,8 +8,7 @@ import com.dougnoel.sentinel.enums.SelectorType;
 public class Dropdown extends PageSelectElement {
 
 	/**
-	 * Implementation of a WebElement to initialize how an element is going to be found when it is worked on by the 
-	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
+	 * More common name for a select element.
 	 * 
 	 * @param selectorType SelectorType
 	 * @param selectorValue String

@@ -1,5 +1,6 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.radiobuttons;
 
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.enums.SelectorType;
 
 /**

@@ -6,6 +6,10 @@ import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
+import com.dougnoel.sentinel.elements.dropdowns.PageSelectElement;
+import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
+import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;

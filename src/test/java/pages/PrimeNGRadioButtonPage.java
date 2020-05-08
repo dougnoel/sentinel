@@ -1,6 +1,6 @@
 package pages;
 
-import com.dougnoel.sentinel.elements.PrimeNGRadioButton;
+import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
 import com.dougnoel.sentinel.pages.Page;
 
 public class PrimeNGRadioButtonPage extends Page {

@@ -1,6 +1,6 @@
 package pages;
 
-import com.dougnoel.sentinel.elements.Radiobutton;
+import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.pages.Page;
 
 public class RadioButtonPage extends Page {

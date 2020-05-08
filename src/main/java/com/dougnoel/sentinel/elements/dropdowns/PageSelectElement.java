@@ -1,15 +1,15 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.dropdowns;
 
 import org.openqa.selenium.support.ui.Select;
 
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.strings.StringUtils;
 
 /**
- * Extends PageElement. Is intended to be a a base class for Radiobutton and
- * Dropdown.
+ * Extends PageElement. Is intended to be a a base class for Dropdown.
  */
 public class PageSelectElement extends PageElement {
 
