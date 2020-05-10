@@ -17,7 +17,6 @@ public class ConfigurationManagerTests {
 	private static WebDriver driver;
 	
 	private static final String STAGE = "stage";
-	private static final String DEV = "dev";
 	private static final String DEFAULT = "default";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";

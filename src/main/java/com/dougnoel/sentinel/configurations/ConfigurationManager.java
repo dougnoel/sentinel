@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -412,7 +411,11 @@ public class ConfigurationManager {
 			throws PageObjectNotFoundException, ConfigurationNotFoundException {
 		PageData pageData = loadPageData(pageName);
 		Map <String,String> accountData = pageData.getAccount(env, account);
-		if (Objects.deepEquals(accountData, null)) {
+		if (Objects.equals(accountData, null)) {
+			env = "default";
+			accountData = pageData.getAccount(env, account);
+		}
+		if (Objects.equals(accountData, null)) {
 			String erroMessage = StringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
 			log.debug(erroMessage);
 			throw new ConfigurationNotFoundException(erroMessage);
