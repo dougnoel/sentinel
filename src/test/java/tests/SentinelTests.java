@@ -23,7 +23,7 @@ import cucumber.api.junit.Cucumber;
 				glue = { "stepdefinitions","com.dougnoel.sentinel.steps" }, 
 				plugin = {"json:target/cucumber.json",
 						"com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
-//         , tags = { "@table" }
+         , tags = { "@16" }
 )
 
 public class SentinelTests {
@@ -33,7 +33,7 @@ public class SentinelTests {
     public static void setUpBeforeClass() throws IOException, SentinelException {
 //         System.setProperty("cucumber.options", "@example");
         System.setProperty("org.freemarker.loggerLibrary", "none");
-        System.setProperty("env", "dev"); // Set the environment (dev/qa/stage/prod/etc)
+//        System.setProperty("env", "demo"); // Set the environment (dev/qa/stage/prod/etc)
         WebDriverFactory.instantiateWebDriver();
     }
 

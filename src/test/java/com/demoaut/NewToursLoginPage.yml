@@ -1,0 +1,17 @@
+urls:
+   base: http://newtours.demoaut.com/
+accounts:
+   default:
+      RegularUser:
+         username: test
+         password: test
+      BadUser:
+         username: test
+         password: test
+   stage:
+      default:
+         username: DefaultUser
+         password: MyPassw0rd
+      StageUser:
+         username: StageUserName
+         password: BadPassw0rd
