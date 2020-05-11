@@ -3,10 +3,12 @@ package com.dougnoel.sentinel.steps;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.dougnoel.sentinel.elements.Link;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import cucumber.api.java.en.When;
 
@@ -37,7 +39,7 @@ public class PDFSteps {
         PageManager.waitForPageLoad();
         PageManager.switchToNewWindow();
         String pdfUrl = PageManager.getCurrentUrl();
-        String expectedResult = StringUtils.format("Expected URL \"{}\" to contain the .{} extension.", pdfUrl,
+        String expectedResult = SentinelStringUtils.format("Expected URL \"{}\" to contain the .{} extension.", pdfUrl,
                 extension);
         assertTrue(expectedResult, pdfUrl.contains("." + extension));
     }

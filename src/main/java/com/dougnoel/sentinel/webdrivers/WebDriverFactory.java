@@ -15,10 +15,9 @@ import org.openqa.selenium.safari.SafariDriver;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
-import com.dougnoel.sentinel.exceptions.MalformedURLException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.filemanagers.DownloadManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * This object factory is used to keep up with driver versions for all browsers.
@@ -75,11 +74,10 @@ public class WebDriverFactory {
      * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
-     * @throws MalformedURLException if the saucelabs URL is malformed
      * @throws WebDriverException if error thrown while creating WebDriver instance
      * @throws ConfigurationNotFoundException if a needed configuration value cannot be found
      */
-    public static WebDriver instantiateWebDriver() throws WebDriverException, MalformedURLException, ConfigurationNotFoundException {
+    public static WebDriver instantiateWebDriver() throws WebDriverException, ConfigurationNotFoundException {
         // Ensure we only have one instance of this class, so that we always return the
         // same driver.
         if (instance == null) {
@@ -89,7 +87,7 @@ public class WebDriverFactory {
         //Saucelabs Driver setup
         String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	return driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
+        	return SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         }
 
         // Set a Download Directory if one was specified on the command line
@@ -115,7 +113,7 @@ public class WebDriverFactory {
         	driver = createSafariDriver();
             break;
         default:
-            throw new WebDriverException(StringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
+            throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
         }
 
         return driver;
@@ -139,7 +137,7 @@ public class WebDriverFactory {
      * @param filePath String path to the download directory
      */
     private static void setChromeDownloadDirectory(String filePath) {
-        HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
+        HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("download.default_directory", filePath);
         ChromeOptions options = new ChromeOptions();
         options.setExperimentalOption("prefs", chromePrefs);
@@ -170,7 +168,7 @@ public class WebDriverFactory {
      */
     private static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
     	String operatingSystem = ConfigurationManager.getProperty("os");
-    	return StringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
+    	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
     }
     
@@ -182,7 +180,7 @@ public class WebDriverFactory {
     private static String getOSNotCompatibleWithBrowserErrorMessage() throws ConfigurationNotFoundException {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	String browser = ConfigurationManager.getProperty("browser");
-    	return StringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
+    	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
     	
     }
     

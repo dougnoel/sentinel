@@ -4,13 +4,14 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import cucumber.api.java.en.Then;
@@ -67,7 +68,7 @@ public class VerificationSteps {
     @Then("^I verify (?:the|a|an) (.*?)( does not)?(?: does)? exists?$")
     public static void i_verify_an_element_exists(String elementName, String assertion) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = StringUtils.format("Expected the element {} to {}exist.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}exist.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
             // We need a different assertion here because checking to see if something does
@@ -96,7 +97,7 @@ public class VerificationSteps {
     @Then("^I verify the (.*) is( not)? (?:checked|selected)$")
     public static void i_verify_the_element_is_selected(String elementName, String assertion) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = StringUtils.format("Expected the element {} to {} selected.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to {} selected.",
                 elementName, (negate ? "not be" : "be"));
         if (negate) {
             assertFalse(expectedResult, getElement(elementName).isSelected());
@@ -123,7 +124,7 @@ public class VerificationSteps {
     public static void i_verify_an_element_has_an_attribute(String elementName, String assertion, String attribute)
             throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = StringUtils.format("Expected the element {} to {}have the attribute \"{}\".",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have the attribute \"{}\".",
                 elementName, (negate ? "" : "not "), attribute);
         log.trace(expectedResult);
         if (negate) {
@@ -149,7 +150,7 @@ public class VerificationSteps {
     @Then("^I verify (?:the|a|an) (.*) is( not)? active$")
     public static void i_verify_an_element_is_active(String elementName, String assertion) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = StringUtils.format("Expected the element {} to {}be active.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be active.",
                 elementName, (negate ? "" : "not "));
         log.trace(expectedResult);
         if (negate) {
@@ -175,7 +176,7 @@ public class VerificationSteps {
     @Then("^I verify (?:the|a|an) (.*?) is( not)? enabled$")
     public static void i_verify_an_element_is_enabled(String elementName, String assertion) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = StringUtils.format("Expected the element {} to {}be enabled.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be enabled.",
                 elementName, (negate ? "not " : ""));
         log.trace(expectedResult);
         int waitTime = (negate) ? 1 : 10; // If we expect it to fail, only wait a second, otherwise wait the normal 10
@@ -199,7 +200,7 @@ public class VerificationSteps {
     @Then("^I verify (?:the|a|an) (.*?) is( not)? hidden$")
     public static void i_verify_an_element_is_hidden(String elementName, String assertion) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion); // is hidden = empty, so negate is false
-        String expectedResult = StringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
                 : "hidden"));
         log.debug(expectedResult);
         int waitTime = (negate) ? 10 : 1; // If we expect it to fail, only wait a second, otherwise wait the normal 10

@@ -2,10 +2,10 @@ package com.dougnoel.sentinel.configurations;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import com.dougnoel.sentinel.strings.StringUtils;
 
 public class TimeoutManager {
 	private static final Logger log = LogManager.getLogger(TimeoutManager.class); // Create a logger.
@@ -13,6 +13,9 @@ public class TimeoutManager {
 	private static long timeout = createDefaultTimeout();
 	private static TimeUnit timeunit = createDefaultTimeUnit();
 	
+	private TimeoutManager() {
+		
+	}
 	/**
 	 * Returns the value set in the timeout property.
 	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).

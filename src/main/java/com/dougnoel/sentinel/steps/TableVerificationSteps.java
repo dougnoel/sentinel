@@ -4,11 +4,12 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import cucumber.api.java.en.Then;
 
@@ -39,7 +40,7 @@ public class TableVerificationSteps {
     @Then("^I see (\\d+) rows in the (.*)$")
     public static void i_see_x_rows_in_a_table(int expectedNumberOfRows, String elementName) throws Throwable {
         int numberOfRows = getElementAsTable(elementName).getNumberOfRows();
-        String expectedResult = StringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
+        String expectedResult = SentinelStringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
         assertTrue(expectedResult, numberOfRows == expectedNumberOfRows);
     }
     
@@ -147,7 +148,7 @@ public class TableVerificationSteps {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean orMatch = StringUtils.isEmpty(allCells);
         
-        String expectedResult = StringUtils.format(
+        String expectedResult = SentinelStringUtils.format(
                 "Expected the {} column of the {} to {}{} with the text {}. The element contained the text: {}",
                 columnName, tableName, (negate ? "not " : ""), (orMatch ? "contain at least one cell" : "only contain cells"), textToMatch);
         log.trace(expectedResult);
@@ -184,7 +185,7 @@ public class TableVerificationSteps {
     public static void i_verify_the_cells_in_the_column_in_the_table_are_sorted(String columnName, String tableName, String sortOrder) throws Throwable {
         boolean sortAscending = StringUtils.equals(sortOrder, "ascending");
         
-        String expectedResult = StringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));
+        String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));
         log.trace(expectedResult);
         if (sortAscending) {
         	assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedAscending(columnName));
