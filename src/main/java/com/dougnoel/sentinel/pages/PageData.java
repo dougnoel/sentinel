@@ -94,11 +94,14 @@ public class PageData {
 	 * 
 	 * @param env String the desired environment (qa, sit, etc.)
 	 * @param account String the requested account 
-	 * @return Map&lt;String, String&gt; the user account data
+	 * @return Map&lt;String, String&gt; the user account data, or null if the requested environment doesn't exist
 	 */
 
     public Map<String,String> getAccount(String env, String account) {
-        return accounts.get(env).get(account);
+    	if (accounts.containsKey(env)) {
+    		return accounts.get(env).get(account);
+    	}
+    	return null;
     }
     
     /**

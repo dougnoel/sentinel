@@ -17,6 +17,7 @@ public class ConfigurationManagerTests {
 	private static WebDriver driver;
 	
 	private static final String STAGE = "stage";
+	private static final String DEV = "dev";
 	private static final String DEFAULT = "default";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
@@ -74,15 +75,25 @@ public class ConfigurationManagerTests {
 	
 	@Test
 	public void loadDefaultEnvironmentUsername() throws SentinelException {
-//		System.setProperty("env", DEV);
 		assertEquals("Expecting the default env RegularUser username", "test", ConfigurationManager.getUsernameOrPassword(REGULARUSER, USERNAME));
 	}
 
 	@Test
 	public void loadDefaultEnvironmentPassword() throws SentinelException {
-//		System.setProperty("env", DEV);
 		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getUsernameOrPassword(REGULARUSER, PASSWORD));
 	}
+	
+	@Test
+	public void loadValueForNonExistentEnvironment() throws SentinelException {
+		System.setProperty("env", DEV);
+		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getUsernameOrPassword(REGULARUSER, PASSWORD));
+	}
+	
+	@Test(expected = ConfigurationNotFoundException.class)
+	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() throws SentinelException {
+		System.setProperty("env", DEV);
+		ConfigurationManager.getUsernameOrPassword(DOESNOTEXIST, USERNAME);
+	}	
 	
 //	urls:
 //		   base: http://newtours.demoaut.com/
