@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 
-public class StringUtils extends org.apache.commons.lang3.StringUtils {
+public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 
 	/**
 	 * Returns a formatted String by replacing each instance of {} place holders  with the given arguments.

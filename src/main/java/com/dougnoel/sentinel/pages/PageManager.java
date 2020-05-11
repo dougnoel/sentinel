@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.Set;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -15,7 +14,7 @@ import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
 import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * The Page Manager is a singleton class that manages what page the test is on.
@@ -75,12 +74,10 @@ public class PageManager {
 	public static Page getPage() throws PageNotFoundException {
 		if (instance == null)
 			try {
-				throw new Exception(
-						"Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
+				throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
 			} catch (Exception e) {
-				log.error("utilities.Page.PageNotInitializedError: " + e.getMessage());
-				if (log.getLevel() == Level.TRACE)
-					e.printStackTrace();
+				log.error("utilities.Page.PageNotInitializedError: {}", e.getMessage());
+				log.trace(e.getStackTrace());
 			}
 	
 		if(page == null) {
@@ -226,9 +223,9 @@ public class PageManager {
 	public static void switchToNewWindow(String index) throws NoSuchWindowException {
 		try {
 			driver().switchTo().window(index);
-			log.trace(StringUtils.format("Switched to new window {}", index));
+			log.trace("Switched to new window {}", index);
 		} catch (org.openqa.selenium.NoSuchWindowException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -259,7 +256,7 @@ public class PageManager {
 			driver().switchTo().frame(0);
 			log.trace("Switched to iFrame on current page");
 		} catch (org.openqa.selenium.NoSuchFrameException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"No iFrames were found on the current page. Ensure you have the correct page open, and please try again. {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -276,13 +273,13 @@ public class PageManager {
 	 * @throws URLNotFoundException if URL is not found, or if exception thrown
 	 *                              while retrieving the url
 	 */
-	public static String getCurrentUrl() throws URLNotFoundException, WebDriverException {
+	public static String getCurrentUrl() throws URLNotFoundException {
 		String currentUrl = null;
 		try {
 			currentUrl = page.getCurrentUrl();
-			log.trace(StringUtils.format("Current URL retrieved: {}", currentUrl));
+			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
 					page.getName(), e.getMessage());
 			log.error(errorMessage);
@@ -306,14 +303,12 @@ public class PageManager {
 	 * @param time long the amount of time to wait
 	 * @param unit TimeUnit the unit of time to wait for the given time value
 	 * @return boolean always returns true, will throw exception if page does not load
-	 * @throws TimeoutException     if timeout occurs before the page has loaded (default timeout: 10000 milliseconds)
 	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
 	 */
-	public static boolean waitForPageLoad() throws TimeoutException, InterruptedException {
+	public static boolean waitForPageLoad() throws InterruptedException {
 		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());
 		while (!isPageLoaded()) {
 			Thread.sleep(200);
-			continue;
 		}
 		return true;
 	}
@@ -325,9 +320,8 @@ public class PageManager {
 	 * the page.
 	 * 
 	 * @return boolean true if page has loaded, false if not
-	 * @throws TimeoutException if timeout occurs before page has finished loading
 	 */
-	private static boolean isPageLoaded() throws TimeoutException {
+	private static boolean isPageLoaded() {
 		try {
 			// TimeoutException is triggered by using driver().findElement
 			driver().findElement(By.tagName("body"));

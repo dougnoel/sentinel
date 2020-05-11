@@ -5,12 +5,13 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelect
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import cucumber.api.java.en.Then;
 
@@ -34,7 +35,7 @@ public class TextVerificationSteps {
     @Then("^I verify (?:the|a|an) (.*?)( is not)?(?: is)? empty?$")
     public static void i_verify_an_element_text(String elementName, String assertion) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = StringUtils.format("Expected the element {} to {}be empty.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be empty.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
             assertFalse(expectedResult, getElement(elementName).getText().isEmpty());
@@ -76,8 +77,8 @@ public class TextVerificationSteps {
         if (elementName.contains("URL")) {
             i_verify_the_URL_contains_the_text(text);
         } else {
-            String elementText = (String) getElement(elementName).getText();
-            String expectedResult = StringUtils.format(
+            String elementText = getElement(elementName).getText();
+            String expectedResult = SentinelStringUtils.format(
                     "Expected the {} element to {}{} the text {}. The element contained the text: {}",
                     elementName, (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, elementText
                             .replace("\n", " "));
@@ -107,7 +108,7 @@ public class TextVerificationSteps {
      */
     private static void i_verify_the_URL_contains_the_text(String text) throws Throwable {
         String currentUrl = PageManager.getCurrentUrl();
-        String expectedResult = StringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
+        String expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));
     }
@@ -136,8 +137,8 @@ public class TextVerificationSteps {
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
     public static void i_verify_the_selection_contains_the_text(String elementName, String assertion, String textToMatch) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
-        String expectedResult = StringUtils.format(
+        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
+        String expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);
@@ -175,7 +176,7 @@ public class TextVerificationSteps {
         String textToMatch = ConfigurationManager.getValue(key);
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
-        String expectedResult = StringUtils.format(
+        String expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);

@@ -29,7 +29,7 @@ import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
@@ -101,7 +101,7 @@ public class PageElement {
 		try {
 			Thread.sleep(2); //Added to deal with intermittent issues that require 2 millisecond waits.
 		} catch (InterruptedException e) {
-			String message = StringUtils.format(
+			String message = SentinelStringUtils.format(
 					"Thread Interrupted: {}", e.getMessage());
 			log.error(message);
 		}
@@ -151,19 +151,19 @@ public class PageElement {
 			default:
 				// This is here in case a new type is added to SelectorType and has not been
 				// implemented yet here.
-				String errorMessage = StringUtils.format(
+				String errorMessage = SentinelStringUtils.format(
 						"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
 						selectorType);
 				throw new NoSuchSelectorException(errorMessage);
 			}
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"{} element does not exist or is not visible using the {} value \"{}\". Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 					this.getClass().getSimpleName(), selectorType, selectorValue);
 			throw new NoSuchElementException(errorMessage, e);
 		}
 		if (element == null) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"{} element does not exist or is not visible using the {} value \"{}\". Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 					this.getClass().getSimpleName(), selectorType, selectorValue);
 			throw new NoSuchElementException(errorMessage);
@@ -258,7 +258,7 @@ public class PageElement {
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
 				executor.executeScript("arguments[0].click();", element());
 			} catch (Exception e2) {
-				String message = StringUtils.format(
+				String message = SentinelStringUtils.format(
 						"{} element is not visible using the {} value \"{}\" and cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
 						this.getClass().getSimpleName(), selectorType, selectorValue, waitTime);
 				log.error(message);
@@ -431,7 +431,7 @@ public class PageElement {
 			default:
 				// This is here in case a new type is added to SelectorType and has not been
 				// implemented yet here.
-				String errorMessage = StringUtils.format(
+				String errorMessage = SentinelStringUtils.format(
 						"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
 						selectorType);
 				throw new NoSuchSelectorException(errorMessage);
@@ -480,7 +480,7 @@ public class PageElement {
 	 */
 	public boolean hasClass(String text) throws ElementNotFoundException {
 		String classes = element().getAttribute("class");
-		log.debug("Classes found on element " + this.getClass().getName().toString() + ": " + classes);
+		log.debug("Classes found on element {}: {}", this.getClass().getName(), classes);
 		for (String c : classes.split(" ")) {
 			if (c.equals(text)) {
 				return true;
@@ -506,9 +506,9 @@ public class PageElement {
 	 */
 	public boolean attributeEquals(String attribute, String value) throws ElementNotFoundException {
 		String values = element().getAttribute(attribute);
-		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName().toString(),
+		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 				values);
-		if (values == value) {
+		if (values.equals(value)) {
 			return true;
 		} else {
 			for (String c : values.split(" ")) {

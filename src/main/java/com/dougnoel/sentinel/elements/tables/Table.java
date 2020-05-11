@@ -17,7 +17,7 @@ import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Implements a Table WebElement. contains functionality for counting values, finding values inside a table, and other
@@ -318,7 +318,7 @@ public class Table extends PageElement {
 					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
+			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
@@ -345,7 +345,7 @@ public class Table extends PageElement {
 					.findElement(elementLocator);
 
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementLocator, rowLocator, e.getMessage());
+			String errorMsg = SentinelStringUtils.format("{} not found in the row with {} Error: {}", elementLocator, rowLocator, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
@@ -402,7 +402,7 @@ public class Table extends PageElement {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
-			String errorMessage = StringUtils.format("{} column does not exist.", columnHeader);
+			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
 			throw new ElementNotFoundException(errorMessage);
 		}
@@ -413,7 +413,7 @@ public class Table extends PageElement {
 					return false;
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = StringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new ElementNotFoundException(errorMessage, e);
 			}
@@ -434,7 +434,7 @@ public class Table extends PageElement {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
-			String errorMessage = StringUtils.format("{} column does not exist.", columnHeader);
+			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
 			throw new ElementNotFoundException(errorMessage);
 		}
@@ -447,7 +447,7 @@ public class Table extends PageElement {
 					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = StringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new ElementNotFoundException(errorMessage, e);
 			}
@@ -594,7 +594,7 @@ public class Table extends PageElement {
 		List<Integer> indexes = new ArrayList<>();
 		for (String columnHeader : columnHeaders) {
 			if (!verifyColumnExists(columnHeader)) {
-				String errorMessage = StringUtils.format("Column header \"{}\" does not exist.", columnHeader);
+				String errorMessage = SentinelStringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
 				throw new NoSuchColumnException(errorMessage);
 			}

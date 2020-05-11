@@ -2,11 +2,10 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.strings.StringUtils;
-
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 

@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.net.URL;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -9,7 +10,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
-import com.dougnoel.sentinel.strings.StringUtils;
 
 public class SauceLabsDriverFactory {
 

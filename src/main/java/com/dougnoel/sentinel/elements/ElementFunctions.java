@@ -15,7 +15,7 @@ import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Retrieves as an element as a  PageElement or as one of the following types:
@@ -46,7 +46,7 @@ public abstract class ElementFunctions {
         try { // Create a Method object to store the PageElement we want to exercise;
             pageElementMethod = page.getClass().getMethod(elementName);
         } catch (NoSuchMethodException e) {
-            String errorMessage = StringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
+            String errorMessage = SentinelStringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
                     .getClass().getSimpleName());
             log.error(errorMessage);
             throw new NoSuchElementException(errorMessage, e);
@@ -56,7 +56,7 @@ public abstract class ElementFunctions {
             element = (PageElement) pageElementMethod.invoke(page);
             log.trace("PageElement Name: " + pageElementMethod.getName());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        	String errorMessage = StringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementMethod.getName(), page.getName());
+        	String errorMessage = SentinelStringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementMethod.getName(), page.getName());
         	log.error(errorMessage);
         	throw new NoSuchElementException(errorMessage);
         } 

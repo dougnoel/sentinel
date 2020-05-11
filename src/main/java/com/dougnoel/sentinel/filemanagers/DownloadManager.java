@@ -26,7 +26,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Manages Download actions and interactions, which handles CRUD and IO for Sentinel. This includes deleting files, getting/setting files, filenames, or file extensions,
@@ -126,11 +126,10 @@ public class DownloadManager {
                     WatchEvent.Kind<?> kind = event.kind();
                     if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                         String fileName = event.context().toString();
-                        log.debug("New File Created: " + fileName);
+                        log.debug("New File Created: {}", fileName);
                         if (fileName.endsWith(fileExtension)) {
                             downloadedFileName = fileName;
-                            log.debug("Downloaded file found with extension " + fileExtension + ". File name is "
-                                    + fileName);
+                            log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
                             Thread.sleep(100);
                             found = true;
                             break;
@@ -151,11 +150,11 @@ public class DownloadManager {
         }
 
         catch (InterruptedException e) {
-            log.error("Interrupted error - " + e.getMessage());
+            log.error("Interrupted error - {}", e.getMessage());
         } catch (NullPointerException e) {
             log.error("Download operation timed out.. Expected file was not downloaded");
         } catch (Exception e) {
-            log.error("Error occured - " + e.getMessage());
+            log.error("Error occured - {}", e.getMessage());
         }
         return downloadedFileName;
     }
@@ -206,7 +205,7 @@ public class DownloadManager {
         try {
             file = new BufferedInputStream(url.openStream());
         } catch (IOException e) {
-            String errorMessage = StringUtils.format("Could not open the PDF file: {}", url.toString());
+            String errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
         } finally {
         	file.close();
@@ -215,7 +214,7 @@ public class DownloadManager {
         try {
             pdfStripper = new PDFTextStripper();
         } catch (IOException e) {
-            String errorMessage = StringUtils.format("Could not create PDFTextStripper() for PDF file {} Setting -Dssltrust=all on the command line will bypass PKIX errors.", url.toString());
+            String errorMessage = SentinelStringUtils.format("Could not create PDFTextStripper() for PDF file {} Setting -Dssltrust=all on the command line will bypass PKIX errors.", url.toString());
             throw new IOException(errorMessage, e);
         }
         pdfStripper.setStartPage(pageStart);
@@ -224,17 +223,17 @@ public class DownloadManager {
         try {
             pdDoc = PDDocument.load(file);
         } catch (InvalidPasswordException e) {
-            String errorMessage = StringUtils.format("PDF file {} was password protected.", url.toString());
+            String errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
             throw new IOException(errorMessage, e);
         } catch (IOException e) {
-            String errorMessage = StringUtils.format("Could not load the PDF {}", url.toString());
+            String errorMessage = SentinelStringUtils.format("Could not load the PDF {}", url.toString());
             throw new IOException(errorMessage, e);
         }
         
         try {
             parsedText = pdfStripper.getText(pdDoc);
         } catch (IOException e) {
-            String errorMessage = StringUtils.format("Could not get text from PDFTextStripper() for PDF file {}", url.toString());
+            String errorMessage = SentinelStringUtils.format("Could not get text from PDFTextStripper() for PDF file {}", url.toString());
             throw new IOException(errorMessage, e);
         }
 
@@ -242,12 +241,12 @@ public class DownloadManager {
             try {
                 pdDoc.close();
             } catch (IOException e) {
-                String errorMessage = StringUtils.format("Could not close the PDF document {}", url.toString());
+                String errorMessage = SentinelStringUtils.format("Could not close the PDF document {}", url.toString());
                 throw new IOException(errorMessage, e);
             }
         }
 
-        log.trace("PDF Parsed Text: \n" + parsedText);
+        log.trace("PDF Parsed Text: \n{}", parsedText);
 
         if (parsedText.contains(expectedText)) {
             flag = true;
