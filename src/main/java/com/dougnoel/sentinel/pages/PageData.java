@@ -25,14 +25,9 @@ public class PageData {
 	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
 	// page urls to load in the web driver
 	public Map<String,String> urls;
-	// user account data 
-	public Map<String,Map<String,String>> account;
-	// environment specific user account data
+	// user account data
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	// data object
-    public Map<String,Map<String,String>> data;
-    // test data object
-    public Map<String,Map<String,Map<String,String>>> testdata;
 	
 
 	/**
@@ -77,16 +72,6 @@ public class PageData {
 		return pageData;
 		
 	}
-
-	/**
-	 * Returns account data for the given environment
-	 * 
-	 * @param env String the desired environment (qa, sit, etc.)
-	 * @return Map&lt;String,String&gt; a map of the user account data.
-	 */
-	public Map<String,String> getAccount(String env) {
-	    return account.get(env);
-	}
 	
 	/**
 	 * Returns account data for the given environment and the given account, e.g. If an environment has more than one account,
@@ -96,31 +81,11 @@ public class PageData {
 	 * @param account String the requested account 
 	 * @return Map&lt;String, String&gt; the user account data, or null if the requested environment doesn't exist
 	 */
-
     public Map<String,String> getAccount(String env, String account) {
     	if (accounts.containsKey(env)) {
     		return accounts.get(env).get(account);
     	}
     	return null;
     }
-    
-    /**
-     * Returns test data for the given environment
-     * 
-     * @param env String the desired environment (Dev, sit, etc.)
-     * @return Map&lt;String, String&gt; the data for the given environment
-     */
-    public Map<String,String> getTestData(String env) {
-	    return data.get(env);
-	}
-	
-    /**
-     * Returns the value for then given key from the test data object for the given environment
-     * @param env String the desired environment (dev, qa, sit, etc.)
-     * @param key String the key for the desired value
-     * @return Map&lt;String, String&gt; the test data
-     */
-    public Map<String,String> getTestData(String env, String key) {
-        return testdata.get(env).get(key);
-    }
+
 }

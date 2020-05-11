@@ -93,22 +93,4 @@ public class AccountSteps {
         }           
     }
     
-    /**
-     * Enters test data into specified fields based on the environment
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I fill the test data for Test User of the MemberId into the eligibility search memberid field</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getTestData(String, String)
-     * @param testData String is test data from configuration
-     * @param key String is a key of the test data from configuration
-     * @param elementName String any entry field
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @When("^I fill the test data for (.*?) of the (.*?) into the (.*?)$")
-    public static void fillTestDataIntoField(String testData, String key, String elementName) throws Throwable {
-    	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getTestData(testData, key), elementName);
-    }
-    
 }

@@ -122,6 +122,82 @@ Yes, you can but be aware this will affect not only your local, but anyone who p
 ### When I try to pass in a different environment on the command line it ignores it and uses another environment. How do I fix that?
 Check `SentinelTests.java` and look for the string `System.setProperty("env"` and comment it out or delete it. Likely someone hard coded your environment. This setting overrides anything passed on the command line.
 
+### How do I set the URL for my page object?
+The URL for your page object is set in the page object yaml file. The file name needs to match the name you use for the page in your Cucumber steps without spaces. So if your page name is `Bits N Bobs Main Page` then your file needs to be named `BitsNBobsMainPage.yml`. Note that the word Page must be at the end of the file and it must have an upper case P. Then you just put in a `urls:` section and a default url. It will be used regardless of what environment is passed.
+
+```
+urls:
+	default: http://myurl.com
+```
+
+### How do I set different URLs for specific environments?
+If you want to define urls for different test environments (dev, qa, stage, uat, etc) then you can define them in your file. If a url is not found, the default url will be used. If no default is used, the tests will fail with an error message telling you that the url could not be found.
+
+```
+urls:
+	default: http://myurl.com
+	dev: http://dev.myurl.com
+```
+
+If you passed the **dev** environment using the above configuration, you would get `http://dev.myurl.com`. If you passed the **qa** environment, it would load the default `http://myurl.com`.
+
+### How do I use a URL pattern for similar environments?
+If you have multiple environments with the same naming convention, you do not need to spell out each one. Instead you can put the `{env}` specifier in your url and tag it with `default:` and it will be auto replaced by the environment name you have passed. If you want to override this default pattern, you just define the environment names you want to overload.
+
+```
+urls:
+	default: http://{env}.myurl.com
+	prod: http://myurl.com
+```
+
+If you passed the **prod** environment using the above configuration, you would get `http://myurl.com`. If you passed the **stage** environment, it would load the default and replace the name resulting in `http://stage.myurl.com`.
+
+### None of my elements can be found! What's going on?
+You need to ensure that you are telling the framework what page you are on. It keeps track of that by the `I am on the Page Name Page` steps. If you do not expect to be on a particular page, then the framework assumes you are still on the last page you started on, or no page if you have not told it you expect to be on your page. Defining page objects is an exercise that is helpful for us as people to be able to grasp a whole web site, but it means nothing to a computer. DEfine your page objects in such a way that people can understand the distinctions.
+
+### How do I set default username and password account info across environments?
+If you have the same test account across multiple environments, you can easily set them all at the same time. For example, your dev, qa and stage environments might share the same identification provider. Lets say there is a standard user and an admin user. You could set their values for all environments like so:
+
+```
+urls:
+	default: http://myurl.com
+accounts:
+	default:
+		StandardUser:
+			username: user1
+			password: badp@ssw0rd
+		AdminUser:
+			username: user2
+			password: @n0therb@dp@ssw0rd
+```
+
+*Remember to update your passwords in the page object yaml when you update them in your test environments!*
+
+### How do I set username and password account info for a specific environment?
+If you have a specific test accounts, say a more secure admin one for your stage environment only, you could define it like so:
+
+```
+urls:
+	default: http://myurl.com
+accounts:
+	default:
+		StandardUser:
+			username: user1
+			password: badp@ssw0rd
+		AdminUser:
+			username: user2
+			password: @n0therb@dp@ssw0rd
+	stage:
+		AdminUser:
+			username: stageadmin
+			password: 3h@njk#wnk{wdf76
+```
+
+In stage it would use your more secure admin account, but for normal user tests it would use your original account, and for all other environments it would use the default accounts.
+
+### My tests were all passing and now some (or all) of my accounts can no longer log in! What's going on?
+Check to make sure someone didn't update the tests account passwords. If they did, update your page object yaml files accordingly.
+
 ## 5.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.

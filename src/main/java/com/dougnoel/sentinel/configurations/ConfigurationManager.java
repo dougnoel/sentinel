@@ -333,38 +333,6 @@ public class ConfigurationManager {
 		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);
 		return data;
 	}
-	
-	/**
-	 * Returns configuration data for a specific key and environment.
-	 * @param testData String the test data name in the configuration file
-	 * @param key String the key under which the data is stored
-	 * @return String requested value
-	 * @throws ConfigurationNotFoundException if the configuration data is not found
-	 * @throws PageNotFoundException if no page is found
-	 */
-	public static String getTestData(String testData, String key) throws ConfigurationNotFoundException, PageNotFoundException {
-		
-		return getTestData(PageManager.getPage().getName(), testData, key);
-	}
-	
-	/**
-	 * Returns configuration data for a specific key and env
-	 * @param pageName String the name of current browser page
-	 * @param testData String is test data from configuration
-	 * @param key String is a key of the test data from configuration
-	 * @return String requested key value
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 * @throws PageObjectNotFoundException if the page object file cannot be loaded
-
-	 */
-	public static String getTestData(String pageName, String testData, String key) throws ConfigurationNotFoundException, PageObjectNotFoundException {
-		String env = getEnvironment();
-		PageData pageData = loadPageData(pageName);
-		log.debug(pageData.getTestData(env, testData).get(key));
-		String data = pageData.getTestData(env, testData).get(key);
-		log.debug(data);
-		return data;
-	}
 
 	/**
 	 * Stores values in a property object for quick and dirty dependency injection.
