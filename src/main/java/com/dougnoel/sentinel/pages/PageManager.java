@@ -95,7 +95,7 @@ public class PageManager {
 	 */
 	public static String openPage(String pageURL) {
 		open(pageURL);
-		return parentHandle = driver().getWindowHandle();
+		return driver().getWindowHandle();
 	}
 
 	/**

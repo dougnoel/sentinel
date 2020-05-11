@@ -43,8 +43,10 @@ public class ConfigurationManager {
 	private static Properties appProps = new Properties();
 	
 	private static ConfigurationData sentinelConfigurations = null;
+	
+	private static final String DEFAULT = "default";
 
-	protected ConfigurationManager() {
+	private ConfigurationManager() {
 		// Exists only to defeat instantiation.
 	}
 	/**
@@ -280,25 +282,21 @@ public class ConfigurationManager {
 	public static String getUrl(String pageName) throws ConfigurationNotFoundException, PageObjectNotFoundException {
 		String baseURL = null;
 		PageData pageData = loadPageData(pageName);
-		// Get the test environment. If none is passed, it defaults to dev. See the
-		// Readme.md file for how to pass the env
-		// on the command line.
-		String env = System.getProperty("env");
-		if (env == null)
-			env = "dev";
+		String env = ConfigurationManager.getEnvironment();
 
-		try {
-			if (pageData.urls.containsKey(env)) {
-				baseURL = pageData.urls.get(env);
-			} else {
-				baseURL = pageData.urls.get("base");
-				baseURL = StringUtils.replace(baseURL, "{env}", env);
-			}
-		} catch (NullPointerException e){
-			String errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your page's yml file. Please add a URL to the yml file. See the project README for details.", getEnvironment());
+		if (pageData.urls.containsKey(env)) {
+			baseURL = pageData.urls.get(env);
+		} else if (pageData.urls.containsKey(DEFAULT)){
+			baseURL = pageData.urls.get(DEFAULT);
+			baseURL = StringUtils.replace(baseURL, "{env}", env);
+		} else if (pageData.urls.containsKey("base")){
+			baseURL = pageData.urls.get("base");
+			baseURL = StringUtils.replace(baseURL, "{env}", env);
+		}
+		if (StringUtils.isEmpty(baseURL)) {
+			String errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the yml file. See the project README for details.", env, pageName);
 			log.error(errorMessage);
-			throw new URLNotFoundException(errorMessage, e);
-			
+			throw new URLNotFoundException(errorMessage);
 		}
 		return baseURL;
 	}
@@ -323,7 +321,7 @@ public class ConfigurationManager {
 		PageData pageData = loadPageData(pageName);
 		Map <String,String> accountData = pageData.getAccount(env, account);
 		if (Objects.equals(accountData, null)) {
-			env = "default";
+			env = DEFAULT;
 			accountData = pageData.getAccount(env, account);
 		}
 		if (Objects.equals(accountData, null)) {
