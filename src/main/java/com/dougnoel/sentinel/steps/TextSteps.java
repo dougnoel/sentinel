@@ -10,7 +10,7 @@ import cucumber.api.java.en.When;
 
 public class TextSteps {
 
-    /**
+	/**
      * Appends random text to the given text and enters this new text into a text box that matches the given elementName
      * as defined on the Page object. The given element name is made lower  case and whitespaces are replaced with underscores,
      * then it is sent a sendKeys event to an element defined on a page object with that name. The
@@ -141,109 +141,6 @@ public class TextSteps {
             throws Throwable {
         String text = ConfigurationManager.getValue(key);
         i_enter_text_in_the_textbox_named(text, elementName);
-    }
-    
-    /**
-     * Enters username and password information into specified fields based on the environment, and optionally
-     * a specific account or account type for the environment.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I fill the account information into the username field and password field</li>
-     * <li>I fill the account information for account Tester into the username box and the password box</li>
-     * <li>I fill the account information for account SystemEnv into the username field and the password field</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername(String)
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword(String)
-     * @param usingAccountName String if we have a user account, get the info from its account
-     * @param account String user account
-     * @param username_field String username field
-     * @param password_field String password field
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @When("^I fill the account information( for account (.*?))? into the (.*?) and the (.*?)$")
-    public static void i_fill_the_account_information_into_the_username_field_and_the_password_field(String usingAccountName, String account, String username_field, String password_field) throws Throwable {
-        if (usingAccountName == null) {
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getUsername(), username_field);
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getPassword(), password_field);            
-        } else {
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getUsername(account), username_field);
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getPassword(account), password_field); 
-        }           
-    }
-    
-    /**
-     * Enters test data into specified fields based on the environment
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I fill the test data for Test User of the MemberId into the eligibility search memberid field</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getTestData(String, String)
-     * @param testData String is test data from configuration
-     * @param key String is a key of the test data from configuration
-     * @param elementName String any entry field
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @When("^I fill the test data for (.*?) of the (.*?) into the (.*?)$")
-    public static void i_fill_the_test_data_into_the_key_field(String testData, String key, String elementName) throws Throwable {
-    	
-    	i_enter_text_in_the_textbox_named(ConfigurationManager.getTestData(testData, key), elementName);
-    	
-    }
-
-    /**
-     * Enters password information into the specified field based on the environment, and optionally
-     * a specific account or account type for the environment.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I fill the password into the password field</li>
-     * <li>I fill the password for account Tester into the password box</li>
-     * <li>I fill the password for account SystemEnv into the password field</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword(String)
-     * @param usingAccountName String if we have a user account, get the info from its account
-     * @param account String user account
-     * @param password_field String password field
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @When("^I fill the password( for account (.*?))? into the (.*?)$")
-    public static void i_fill_the_password_into_the_password_field(String usingAccountName, String account, String password_field) throws Throwable {
-        if (usingAccountName == null) {
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getPassword(), password_field);            
-        } else {
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getPassword(account), password_field); 
-        }           
-    }
-    
-    /**
-     * Enters username  information into specified fields based on the environment, and optionally
-     * a specific account or account type for the environment.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I fill the username into the username field</li>
-     * <li>I fill the username for account Tester into the username box</li>
-     * <li>I fill the username for account SystemEnv into the User Name field</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername(String)
-     * @param usingAccountName String if we have a user account, get the info from its account
-     * @param account String user account
-     * @param username_field String username field
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @When("^I fill the username( for account (.*?))? into the (.*?)$")
-    public static void i_fill_the_username_into_the_username_field(String usingAccountName, String account, String username_field) throws Throwable {
-        if (usingAccountName == null) {
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getUsername(), username_field);
-        } else {
-            i_enter_text_in_the_textbox_named(ConfigurationManager.getUsername(account), username_field);
-        }           
     }
 
     /**
