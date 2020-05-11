@@ -9,7 +9,9 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
+import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
+import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -18,6 +20,7 @@ public class ConfigurationManagerTests {
 	
 	private static final String STAGE = "stage";
 	private static final String DEV = "dev";
+	private static final String PROD = "prod";
 	private static final String DEFAULT = "default";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
@@ -95,21 +98,29 @@ public class ConfigurationManagerTests {
 		ConfigurationManager.getAccountInformation(DOESNOTEXIST, USERNAME);
 	}	
 	
-//	urls:
-//		   base: http://newtours.demoaut.com/
-//		accounts:
-//		   default:
-//		      RegularUser:
-//		         username: test
-//		         password: test
-//		      BadUser:
-//		         username: test
-//		         password: test
-//		   stage:
-//		      default:
-//		         username: DefaultUser
-//		         password: MyPassw0rd
-//		      StageUser:
-//		         username: StageUserName
-//		         password: BadPassw0rd
+	@Test
+	public void loadStageUrlUsingDefault() throws SentinelException {
+		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", ConfigurationManager.getUrl("DefaultUrls"));
+	}
+	
+	@Test
+	public void loadProdUrl() throws SentinelException {
+		System.setProperty("env", PROD);
+		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", ConfigurationManager.getUrl("DefaultUrls"));
+	}
+	
+	@Test
+	public void loadStageUrlUsingBase() throws SentinelException {
+		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", ConfigurationManager.getUrl("BaseUrl"));
+	}
+	
+	@Test(expected = URLNotFoundException.class)
+	public void failToLoadDefaultUrl() throws SentinelException {
+		ConfigurationManager.getUrl("NoDefaultUrl");
+	}
+	
+	@Test(expected = FileNotFoundException.class)
+	public void failToLoadPageWhenFindingUrl() throws SentinelException {
+		ConfigurationManager.getUrl("FakePageObject");
+	}
 }
