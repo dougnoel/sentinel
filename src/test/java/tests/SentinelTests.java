@@ -33,7 +33,7 @@ public class SentinelTests {
     public static void setUpBeforeClass() throws IOException, SentinelException {
 //         System.setProperty("cucumber.options", "@example");
         System.setProperty("org.freemarker.loggerLibrary", "none");
-//        System.setProperty("env", "demo"); // Set the environment (dev/qa/stage/prod/etc)
+//        System.setProperty("env", "dev"); // Set the environment (dev/qa/stage/prod/etc)
         WebDriverFactory.instantiateWebDriver();
     }
 

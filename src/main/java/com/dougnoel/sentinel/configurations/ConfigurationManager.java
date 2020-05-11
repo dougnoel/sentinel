@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -382,19 +381,6 @@ public class ConfigurationManager {
 	}
 	
 	/**
-	 * Returns username or password. Takes a given account and env
-	 * @param account String user account
-	 * @param key String username or password
-	 * @return String requested username or password
-	 * @throws PageNotFoundException if the page object cannot be created
-	 * @throws ConfigurationNotFoundException if the username and password cannot be found
-	 */
-
-	public static String getUsernameOrPassword(String account, String key) throws PageNotFoundException, ConfigurationNotFoundException {
-		String env = getEnvironment();
-		return getUsernameOrPassword(PageManager.getPage().getName(), env, account, key);
-	}
-	/**
 	 * Returns username or password. Parent Method.
 	 * 
 	 * Creates pageData object and gets user name or password from its account and env. Logs the key from account info.
@@ -406,10 +392,11 @@ public class ConfigurationManager {
 	 * @param key String username or password
 	 * @return String requested username or password
 	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 * @throws PageObjectNotFoundException if the page cannot be created
+	 * @throws PageNotFoundException if the page object cannot be created
 	 */
-	public static String getUsernameOrPassword(String pageName, String env, String account, String key)
-			throws PageObjectNotFoundException, ConfigurationNotFoundException {
+	public static String getUsernameOrPassword(String account, String key) throws ConfigurationNotFoundException, PageNotFoundException {
+		String pageName = PageManager.getPage().getName();
+		String env = getEnvironment();
 		PageData pageData = loadPageData(pageName);
 		Map <String,String> accountData = pageData.getAccount(env, account);
 		if (Objects.equals(accountData, null)) {
@@ -422,7 +409,7 @@ public class ConfigurationManager {
 			throw new ConfigurationNotFoundException(erroMessage);
 		}
 		String data = accountData.get(key);
-		log.debug("{} loaded for account {} in {} environment: {}", key, account, env, data);
+		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);
 		return data;
 	}
 	
