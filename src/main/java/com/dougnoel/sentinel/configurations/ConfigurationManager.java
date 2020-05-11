@@ -300,85 +300,6 @@ public class ConfigurationManager {
 		}
 		return baseURL;
 	}
-  
-	/**
-	 * Returns the current Usernane
-	 * 
-	 * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsernameOrPassword(String)
-	 * @return String the username
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 */
-	public static String getUsername() throws IOException, ConfigurationParseException, ConfigurationMappingException, Exception {
-		return getUsernameOrPassword("username");
-	}
-	/**
-	 * Returns the current password
-	 * 
-	 * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsernameOrPassword(String)
-	 * @return String password
-	 * @throws IOException from sentinel.utils.ConfigurationManager#loadPageData(String)
-	 * @throws ConfigurationParseException if error occurs when reading configuration file
-	 * @throws ConfigurationMappingException if error occurs when mapping configuration values to sentinel
-	 */
-	public static String getPassword() throws IOException, ConfigurationParseException, ConfigurationMappingException, Exception {
-		return getUsernameOrPassword("password");
-	}
-
-	/**
-	 * Returns given username or password key from the pageData env method
-	 * 
-	 * @param key String the needed item, either username or password
-	 * @return String the given item value
-	 * @throws PageNotFoundException if the page cannot be created
-	 * @throws ConfigurationNotFoundException if the username and password cannot be found
-	 * @throws PageObjectNotFoundException if the page object file cannot be loaded or found
-	 */
-	public static String getUsernameOrPassword(String key) throws ConfigurationNotFoundException, PageNotFoundException, PageObjectNotFoundException {
-		String env = getEnvironment();
-		return getUsernameOrPassword(PageManager.getPage().getName(), env, key);
-	}
-
-	/**
-	 * Returns username or password for a given page env from current PageData account
-	 * 
-	 * @param pageName String name of needed page
-	 * @param env String user environment
-	 * @param key String user name or password
-	 * @return String requested username or password
-	 * @throws ConfigurationNotFoundException if the username and password cannot be read from the page object
-	 * @throws PageObjectNotFoundException if the page object file cannot be found
-	 */
-	public static String getUsernameOrPassword(String pageName, String env, String key) throws PageObjectNotFoundException, ConfigurationNotFoundException{
-		PageData pageData = loadPageData(pageName);
-		log.debug(pageData.getAccount(env).get(key));
-		String data = pageData.getAccount(env).get(key);
-		log.debug(data);
-		return data;
-	}
-
-	/**
-	 * Returns the username for the given account and the currently set environment.
-	 * @param account String the name of the account as stored in the configuration file for the current envrionment
-	 * @return String requested username value
-	 * @throws PageNotFoundException if the page cannot be created
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 */
-	public static String getUsername(String account) throws PageNotFoundException, ConfigurationNotFoundException {
-		return getUsernameOrPassword(account, "username");
-	}
-	
-	/**
-	 * Returns password for given account
-	 * @param account String user account
-	 * @return String requested password
-	 * @throws PageNotFoundException if no page is found
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 */
-	public static String getPassword(String account) throws PageNotFoundException, ConfigurationNotFoundException {
-		return getUsernameOrPassword(account, "password");
-	}
 	
 	/**
 	 * Returns username or password. Parent Method.
@@ -394,7 +315,7 @@ public class ConfigurationManager {
 	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 * @throws PageNotFoundException if the page object cannot be created
 	 */
-	public static String getUsernameOrPassword(String account, String key) throws ConfigurationNotFoundException, PageNotFoundException {
+	public static String getAccountInformation(String account, String key) throws ConfigurationNotFoundException, PageNotFoundException {
 		String pageName = PageManager.getPage().getName();
 		String env = getEnvironment();
 		PageData pageData = loadPageData(pageName);

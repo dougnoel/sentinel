@@ -45,54 +45,54 @@ public class ConfigurationManagerTests {
 
 	@Test
 	public void loadDefaultUsername() throws SentinelException {
-		assertEquals("Expecting the Stage env default username", "DefaultUser", ConfigurationManager.getUsernameOrPassword(DEFAULT, USERNAME));
+		assertEquals("Expecting the Stage env default username", "DefaultUser", ConfigurationManager.getAccountInformation(DEFAULT, USERNAME));
 	}
 
 	@Test
 	public void loadDefaultPassword() throws SentinelException {
-		assertEquals("Expecting the Stage env default password", "MyPassw0rd", ConfigurationManager.getUsernameOrPassword(DEFAULT, PASSWORD));
+		assertEquals("Expecting the Stage env default password", "MyPassw0rd", ConfigurationManager.getAccountInformation(DEFAULT, PASSWORD));
 	}
 
 	@Test
 	public void loadUsername() throws SentinelException {
-		assertEquals("Expecting the Stage env StageUser username", "StageUserName", ConfigurationManager.getUsernameOrPassword(STAGEUSER, USERNAME));
+		assertEquals("Expecting the Stage env StageUser username", "StageUserName", ConfigurationManager.getAccountInformation(STAGEUSER, USERNAME));
 	}
 
 	@Test
 	public void loadPassword() throws SentinelException {
-		assertEquals("Expecting the Stage env StageUser password", "BadPassw0rd", ConfigurationManager.getUsernameOrPassword(STAGEUSER, PASSWORD));
+		assertEquals("Expecting the Stage env StageUser password", "BadPassw0rd", ConfigurationManager.getAccountInformation(STAGEUSER, PASSWORD));
 	}
 
 	@Test(expected = ConfigurationNotFoundException.class)
 	public void failToLoadNonExistentUsername() throws SentinelException {
-		ConfigurationManager.getUsernameOrPassword(DOESNOTEXIST, USERNAME);
+		ConfigurationManager.getAccountInformation(DOESNOTEXIST, USERNAME);
 	}
 
 	@Test(expected = ConfigurationNotFoundException.class)
 	public void failToLoadNonExistentPassword() throws SentinelException {
-		ConfigurationManager.getUsernameOrPassword(DOESNOTEXIST, PASSWORD);
+		ConfigurationManager.getAccountInformation(DOESNOTEXIST, PASSWORD);
 	}
 	
 	@Test
 	public void loadDefaultEnvironmentUsername() throws SentinelException {
-		assertEquals("Expecting the default env RegularUser username", "test", ConfigurationManager.getUsernameOrPassword(REGULARUSER, USERNAME));
+		assertEquals("Expecting the default env RegularUser username", "test", ConfigurationManager.getAccountInformation(REGULARUSER, USERNAME));
 	}
 
 	@Test
 	public void loadDefaultEnvironmentPassword() throws SentinelException {
-		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getUsernameOrPassword(REGULARUSER, PASSWORD));
+		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getAccountInformation(REGULARUSER, PASSWORD));
 	}
 	
 	@Test
 	public void loadValueForNonExistentEnvironment() throws SentinelException {
 		System.setProperty("env", DEV);
-		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getUsernameOrPassword(REGULARUSER, PASSWORD));
+		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getAccountInformation(REGULARUSER, PASSWORD));
 	}
 	
 	@Test(expected = ConfigurationNotFoundException.class)
 	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() throws SentinelException {
 		System.setProperty("env", DEV);
-		ConfigurationManager.getUsernameOrPassword(DOESNOTEXIST, USERNAME);
+		ConfigurationManager.getAccountInformation(DOESNOTEXIST, USERNAME);
 	}	
 	
 //	urls:
