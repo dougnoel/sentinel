@@ -4,6 +4,8 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.TimeoutManager;
+import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import cucumber.api.Scenario;
 import cucumber.api.java.Before;
@@ -40,10 +42,10 @@ public class BaseSteps {
      * </ul>
      * 
      * @param elementName String the name of the element to click
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I click (?:the|a|an) (.*?)$")
-    public static void i_click_the(String elementName) throws Throwable {
+    public static void click(String elementName) throws SentinelException {
         getElement(elementName).click();
     }
 
@@ -75,14 +77,8 @@ public class BaseSteps {
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
-        long milliseconds = (long) (seconds * 1000);
-        log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, milliseconds);
-        try {
-			Thread.sleep(milliseconds);
-		} catch (InterruptedException e) {
-			log.warn(e.getMessage());
-			Thread.currentThread().interrupt();
-		}
+        TimeoutManager.wait(seconds);
+        log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, (seconds * 1000));
     }
 
     /**
@@ -101,10 +97,10 @@ public class BaseSteps {
      * @param pageName String Page Object Name
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
      * @param arguments String the literal string to append to the default URL.
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public static void i_am_on_the_page(String pageName, String hasArguments, String arguments) throws Throwable {   	
+    public static void navigateToPage(String pageName, String hasArguments, String arguments) throws SentinelException  {   	
     	pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         String baseUrl = ConfigurationManager.getUrl();
@@ -119,10 +115,10 @@ public class BaseSteps {
      * Overloaded method for navigating to a page object's url based on the current environment, 
      * so that nulls do not need to be passed. Intended for use in creating complex Cucumber steps definitions.
      * @param pageName String Page Object Name
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    public static void i_am_on_the_page(String pageName) throws Throwable {
-    	i_am_on_the_page(pageName, null, null);
+    public static void naviagteToPage(String pageName) throws SentinelException {
+    	navigateToPage(pageName, null, null);
     }
     
     /**
@@ -131,10 +127,10 @@ public class BaseSteps {
      * for use in creating complex Cucumber steps definitions.
      * @param pageName String Page Object Name
      * @param arguments String the literal string to append to the default URL.
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    public static void i_am_on_the_page(String pageName, String arguments) throws Throwable {
-    	i_am_on_the_page(pageName, "has arguments", arguments);
+    public static void naviagteToPage(String pageName, String arguments) throws SentinelException {
+    	navigateToPage(pageName, "has arguments", arguments);
     }
  
     /**
@@ -148,7 +144,7 @@ public class BaseSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I close the browser (?:tab|window)$")
-    public static void i_close_the_browser_tab() throws Throwable {
+    public static void closeBrowserWindow() {
         PageManager.closeChildWindow();
     }
     
@@ -168,7 +164,7 @@ public class BaseSteps {
      * @throws Throwable Passes through any errors to the executing code.
      */
     @When("^I press the browser (back|forward|refresh) button$")
-    public static void i_press_the_browser(String option) throws Throwable {
+    public static void pressBrowserButton(String option) {
         switch (option) {
         case "back":
             PageManager.navigateBack();

@@ -16,6 +16,22 @@ public class TimeoutManager {
 	private TimeoutManager() {
 		
 	}
+	
+	/**
+	 * Wait functionality that takes a double in seconds and converts it to milliseconds before waiting.
+	 * @param seconds double number of seconds or fraction thereof (up to milliseconds) to wait.
+	 */
+	public static void wait(double seconds) {
+        long milliseconds = (long) (seconds * 1000);
+        log.debug("Passed {} seconds, waiting {} milliseconds.", seconds, milliseconds);
+        try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			log.warn(e.getMessage());
+			Thread.currentThread().interrupt();
+		}
+	}
+	
 	/**
 	 * Returns the value set in the timeout property.
 	 * The method getDefaultTimeUnit is used to determine how the value is measured (seconds, milliseconds, etc).

@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-import com.dougnoel.sentinel.steps.BaseSteps;
 
 /**
  * Implementation of an NGPrime Dropdown.
@@ -23,7 +23,7 @@ import com.dougnoel.sentinel.steps.BaseSteps;
 public class PrimeNGDropdown extends JSDropdownElement {
 	private static final Logger log = LogManager.getLogger(PrimeNGDropdown.class.getName());
 	
-	private static final double SELECTWAITTIME = 0.04; //Selenium is faster than NGPrime, and so we needed to allow it to catch up for drop down selection
+	private static final double SELECTWAITTIME = 0.1; //Selenium is faster than NGPrime, and so we needed to allow it to catch up for drop down selection
 
 	/**
 	 * Implementation of a WebElement to initialize how an element is going to be found when it is worked on by the 
@@ -44,7 +44,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 */
 	@Override
     protected WebElement getOption(String selectionText) throws ElementNotFoundException {
-		BaseSteps.wait(SELECTWAITTIME);
+		TimeoutManager.wait(SELECTWAITTIME);
 		String xTagName = this.element().getTagName();
     	String xPath = "//li[@aria-label=\"" + selectionText + "\"]";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", selectionText, xTagName, xPath);
@@ -60,7 +60,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
      */
 	@Override
     protected WebElement getOption(int index) throws ElementNotFoundException{
-		BaseSteps.wait(SELECTWAITTIME);
+		TimeoutManager.wait(SELECTWAITTIME);
     	String xTagName = this.element().getTagName();
     	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, xTagName, xPath);
