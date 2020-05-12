@@ -33,7 +33,7 @@ public class PageSelectElement extends PageElement {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(String selectText) throws ElementNotFoundException{
+    public PageSelectElement select(String selectText) throws ElementNotFoundException {
         Select selectElement = new Select(this.element());
         selectElement.selectByVisibleText(selectText);
 

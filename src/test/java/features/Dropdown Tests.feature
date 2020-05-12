@@ -8,7 +8,6 @@ Feature: Dropdown Tests
     Given I am on the Prime NG Dropdown Page
     When I select New York from the City Dropdown
     	And I verify the City Dropdown has the text "New York" selected
-    	And I wait 0.0001 seconds
     	And I select the 2nd option from the City Dropdown
     Then I verify the City Dropdown has the text "Rome" selected
       And I verify the City Dropdown has the value selected for the City Dropdown

@@ -308,7 +308,7 @@ public class PageManager {
 	public static boolean waitForPageLoad() throws InterruptedException {
 		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());
 		while (!isPageLoaded()) {
-			Thread.sleep(200);
+			Thread.sleep(20);
 		}
 		return true;
 	}

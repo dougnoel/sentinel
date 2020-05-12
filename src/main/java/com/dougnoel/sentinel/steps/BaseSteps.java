@@ -73,14 +73,16 @@ public class BaseSteps {
      * @param fraction int Fraction of a second to wait, added to the number above.
      * @throws Throwable Throws any errors passed to it.
      */
-    @When("^I wait (\\d+)(?:\\.)?(\\d+) seconds?(?:.*)$")
-    public static void i_wait_x_seconds(int seconds, int fraction) throws Throwable {
-        long milliseconds = (long) seconds * 1000;
-        if (fraction != 0) {
-            float secs = (float) seconds + (float) fraction;
-            milliseconds = (long) (secs * 1000);
-        }
-        Thread.sleep(milliseconds);
+    @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
+    public static void wait(double seconds) {
+        long milliseconds = (long) (seconds * 1000);
+        log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, milliseconds);
+        try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException e) {
+			log.warn(e.getMessage());
+			Thread.currentThread().interrupt();
+		}
     }
 
     /**

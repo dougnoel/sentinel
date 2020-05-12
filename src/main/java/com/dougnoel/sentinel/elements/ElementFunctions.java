@@ -25,11 +25,11 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
  *
  */
 public abstract class ElementFunctions {
-	/**
-	 * Instance of LogManager for a given ElementFunctions class
-	 */
     private static final Logger log = LogManager.getLogger(ElementFunctions.class); 
 
+    private ElementFunctions() {
+    	// Exists to defeat instantiation.
+    }
     /**
      * Returns a PageElement object for a given elementName string from current page. Gets current page reference, 
      * replaces page name space characters with '_'
@@ -43,7 +43,7 @@ public abstract class ElementFunctions {
         Page page = PageManager.getPage();
         elementName = elementName.replaceAll("\\s+", "_").toLowerCase();
         Method pageElementMethod = null;
-        try { // Create a Method object to store the PageElement we want to exercise;
+        try { // Create a Method object to store the PageElement we want to exercise
             pageElementMethod = page.getClass().getMethod(elementName);
         } catch (NoSuchMethodException e) {
             String errorMessage = SentinelStringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
@@ -54,7 +54,7 @@ public abstract class ElementFunctions {
         PageElement element = null;
         try {  // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
             element = (PageElement) pageElementMethod.invoke(page);
-            log.trace("PageElement Name: " + pageElementMethod.getName());
+            log.trace("PageElement Name: {}", pageElementMethod.getName());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         	String errorMessage = SentinelStringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementMethod.getName(), page.getName());
         	log.error(errorMessage);

@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -224,8 +223,7 @@ public class VerificationSteps {
     public static void i_am_redirected_to_the_page(String pageName) throws Throwable {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
-        // TODO: Add code to verify the page has loaded.
-        // Add a wait for now.
+        PageManager.waitForPageLoad();
     }
     
     /**
@@ -245,7 +243,7 @@ public class VerificationSteps {
         PageManager.switchToNewWindow();
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
-        // TODO: Add code to verify the page has loaded.
+        PageManager.waitForPageLoad();
     }
        
     /**
