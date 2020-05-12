@@ -49,7 +49,7 @@ public abstract class JSDropdownElement extends Dropdown {
      * @throws ElementNotFoundException if the element cannot be found
      */
     @Override
-    public PageSelectElement select(String selectionText) throws ElementNotFoundException{
+    public PageSelectElement select(String selectionText) throws ElementNotFoundException {
     	getOption(selectionText).click();
         return this;
     }

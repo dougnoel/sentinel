@@ -59,6 +59,13 @@ In Eclipse:
 ## 2.0 - 4.0
 These sections have been moved to the [sentinel.example Project](https://github.com/dougnoel/sentinel.example). Please refer to that Readme for how to create and execute tests.
 
+## 3.0 Release Notes
+
+### 1.0.4
+
+**Bug Fixes:**
+- Waits using the Cucumber step `I wait x seconds` were always waiting at least one second. They will now wait the actual amount of time they ar intended to wait.
+
 ## 4.0 Frequently Asked Questions (FAQs)
 
 ### How do I change the default timeout?
@@ -197,6 +204,11 @@ In stage it would use your more secure admin account, but for normal user tests 
 
 ### My tests were all passing and now some (or all) of my accounts can no longer log in! What's going on?
 Check to make sure someone didn't update the tests account passwords. If they did, update your page object yaml files accordingly.
+
+### How do I wait?
+Sometimes you need to add an implicit wait to your tests due to the vagaries of the Internet. You can do this by using anything from `And I wait 0.001 seconds` to `And I wait 99 seconds`. You can use whole numbers or can add fractions of a second up to the thousandths place. For example if you want to wait a second and a half, use `And I wait 0.001 seconds`.
+
+*NOTE: If you find yourself needing to use waits a lot, create a bug ticket in the Sentinel project and see if we can solve that problem.*
 
 ## 5.0 Deployment
 
