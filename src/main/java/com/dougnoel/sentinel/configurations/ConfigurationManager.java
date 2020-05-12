@@ -284,13 +284,13 @@ public class ConfigurationManager {
 		PageData pageData = loadPageData(pageName);
 		String env = ConfigurationManager.getEnvironment();
 
-		if (pageData.urls.containsKey(env)) {
-			baseURL = pageData.urls.get(env);
-		} else if (pageData.urls.containsKey(DEFAULT)){
-			baseURL = pageData.urls.get(DEFAULT);
+		if (pageData.containsUrl(env)) {
+			baseURL = pageData.getUrl(env);
+		} else if (pageData.containsUrl(DEFAULT)){
+			baseURL = pageData.getUrl(DEFAULT);
 			baseURL = StringUtils.replace(baseURL, "{env}", env);
-		} else if (pageData.urls.containsKey("base")){
-			baseURL = pageData.urls.get("base");
+		} else if (pageData.containsUrl("base")){
+			baseURL = pageData.getUrl("base");
 			baseURL = StringUtils.replace(baseURL, "{env}", env);
 		}
 		if (StringUtils.isEmpty(baseURL)) {

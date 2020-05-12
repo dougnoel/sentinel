@@ -23,12 +23,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 public class PageData {
 	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
-	// page urls to load in the web driver
+	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
-	// user account data
-	public Map<String,Map<String,Map<String,String>>> accounts;
-	// data object
-	
+	// user account data TODO: Annotate corretly.
+	public Map<String,Map<String,Map<String,String>>> accounts;	
 
 	/**
 	 * Returns PageData for the given fileName as a string.
@@ -86,6 +84,14 @@ public class PageData {
     		return accounts.get(env).get(account);
     	}
     	return null;
+    }
+    
+    public boolean containsUrl(String env) {
+    	return urls.containsKey(env);
+    }
+    
+    public String getUrl(String env) {
+    	return urls.get(env);
     }
 
 }
