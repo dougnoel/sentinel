@@ -317,7 +317,6 @@ public class PageElement {
 			} catch (StaleElementReferenceException e) {
 				if (retries < 5) {
 					retries++;
-					continue;
 				} else {
 					return false;
 				}
@@ -377,7 +376,6 @@ public class PageElement {
 			} catch (StaleElementReferenceException e) {
 				if (retries < 5) {
 					retries++;
-					continue;
 				} else {
 					return false;
 				}
@@ -397,27 +395,27 @@ public class PageElement {
 	public boolean doesNotExist() throws NoSuchSelectorException {
 		// Reducing the time we have to wait for an expected failure.
 		TimeoutManager.setTimeout(driver, 250, TimeUnit.MILLISECONDS);
-		WebElement element = null;
 		boolean flag = false;
 
 		try {
 			switch (selectorType) {
 			case CSS:
-				element = driver.findElement(By.cssSelector(selectorValue));
+				driver.findElement(By.cssSelector(selectorValue));
+				break;
 			case ID:
-				element = driver.findElement(By.id(selectorValue));
+				driver.findElement(By.id(selectorValue));
 				break;
 			case NAME:
-				element = driver.findElement(By.name(selectorValue));
+				driver.findElement(By.name(selectorValue));
 				break;
 			case PARTIALTEXT:
-				element = driver.findElement(By.partialLinkText(selectorValue));
+				driver.findElement(By.partialLinkText(selectorValue));
 				break;
 			case TEXT:
-				element = driver.findElement(By.linkText(selectorValue));
+				driver.findElement(By.linkText(selectorValue));
 				break;
 			case XPATH:
-				element = driver.findElement(By.xpath(selectorValue));
+				driver.findElement(By.xpath(selectorValue));
 				break;
 			default:
 				// This is here in case a new type is added to SelectorType and has not been
@@ -429,8 +427,7 @@ public class PageElement {
 			}
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			// If we cannot find the element does not exist and we return true
-			if (element == null)
-				flag = true;
+			flag = true;
 		}
 		TimeoutManager.setDefaultTimeout(driver);
 		log.trace("Return result: {}", flag);

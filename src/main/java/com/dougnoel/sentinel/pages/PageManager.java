@@ -64,7 +64,6 @@ public class PageManager {
 		return page;
 	}
 
-	//TODO: Update thrown exception to be a custom exception and not catch it
 	/**
 	 * This method returns the current Page Object stored in the Page Manager.
 	 * 
@@ -73,13 +72,7 @@ public class PageManager {
 	 */
 	public static Page getPage() throws PageNotFoundException {
 		if (instance == null)
-			try {
-				throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
-			} catch (Exception e) {
-				log.error("utilities.Page.PageNotInitializedError: {}", e.getMessage());
-				log.trace(e.getStackTrace());
-			}
-	
+			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
 		if(page == null) {
 			throw new PageNotFoundException("We could not find the Page you are looking for. Please check the pageObjectPackages configuration in conf/sentinel.yml and make sure it includes directory containing your page object.");
 		}
