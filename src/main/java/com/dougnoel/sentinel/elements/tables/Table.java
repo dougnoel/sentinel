@@ -486,7 +486,7 @@ public class Table extends PageElement {
 	 * unless you have a custom sort to pass. Passing the wrong value can cause errors.
 	 * 
 	 * @param columnName String the name of the column you want to evaluate
-	 * @param sortOrder Comparator the sort you want to do on the ArrayList&lt;String;&gt;, passing null will sort in ascending order
+	 * @param sortOrderAscending boolean true for ascending, false for descending
 	 * @return boolean true is the column is sorted in the passed sort order, false if it is not sorted correctly
 	 * @throws ElementNotFoundException if an element is not found
 	 */

@@ -56,6 +56,7 @@ public class TimeoutManager {
 	
 	/**
 	 * Sets the implicit timeout for the passed WebDriver using the system defaults.
+	 * @param driver WebDriver the driver to set
 	 */
 	public static void setDefaultTimeout(WebDriver driver) {
 		setTimeout(driver, getDefaultTimeout(), getDefaultTimeUnit());
@@ -63,7 +64,7 @@ public class TimeoutManager {
 	
 	/**
 	 * Sets the implicit timeout for the passed WebDriver.
-	 * 
+	 * @param driver WebDriver the driver to set
 	 * @param time long the number of timeunits to wait before reporting a failure to find an element
 	 * @param unit java.util.concurrent.TimeUnit the unit of time to wait (DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS)
 	 */

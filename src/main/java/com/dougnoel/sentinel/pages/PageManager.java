@@ -293,8 +293,6 @@ public class PageManager {
 	 * 
 	 * @see PageManager#isPageLoaded()
 	 * 
-	 * @param time long the amount of time to wait
-	 * @param unit TimeUnit the unit of time to wait for the given time value
 	 * @return boolean always returns true, will throw exception if page does not load
 	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
 	 */

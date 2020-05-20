@@ -395,6 +395,7 @@ public class DownloadManager {
     }
     /**
      * Sets downlaodDirectory upon creation of the Download manager.
+     * @return String the download directory path
      */
     public static String createDownloadDirectory() {
     	String downloadDirectory = ConfigurationManager.getOptionalProperty("downloadDirectory");
