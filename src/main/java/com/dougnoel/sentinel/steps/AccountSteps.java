@@ -33,11 +33,11 @@ public class AccountSteps {
     @When("^I fill the account information( for account (.*?))? into the (.*?) and the (.*?)$")
     public static void fillAccountInfoIntoUsernameAndPasswordFields(String usingAccountName, String account, String usernameField, String passwordField) throws Throwable {
         if (usingAccountName == null) {
-            TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(DEFAULT,USERNAME), usernameField);
-            TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(DEFAULT,PASSWORD), passwordField);            
+            TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT,USERNAME), usernameField);
+            TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT,PASSWORD), passwordField);            
         } else {
-        	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(account,USERNAME), usernameField);
-        	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(account,PASSWORD), passwordField); 
+        	TextSteps.enterText(ConfigurationManager.getAccountInformation(account,USERNAME), usernameField);
+        	TextSteps.enterText(ConfigurationManager.getAccountInformation(account,PASSWORD), passwordField); 
         }           
     }
 
@@ -61,9 +61,9 @@ public class AccountSteps {
     @When("^I fill the password( for account (.*?))? into the (.*?)$")
     public static void fillPasswordField(String usingAccountName, String account, String passwordField) throws Throwable {
         if (usingAccountName == null) {
-        	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(DEFAULT,PASSWORD), passwordField);            
+        	TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT,PASSWORD), passwordField);            
         } else {
-        	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(account,PASSWORD), passwordField); 
+        	TextSteps.enterText(ConfigurationManager.getAccountInformation(account,PASSWORD), passwordField); 
         }           
     }
     
@@ -87,9 +87,9 @@ public class AccountSteps {
     @When("^I fill the username( for account (.*?))? into the (.*?)$")
     public static void fillUsernameField(String usingAccountName, String account, String usernameField) throws Throwable {
         if (usingAccountName == null) {
-        	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(DEFAULT,USERNAME), usernameField);
+        	TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT,USERNAME), usernameField);
         } else {
-        	TextSteps.i_enter_text_in_the_textbox_named(ConfigurationManager.getAccountInformation(account,USERNAME), usernameField);
+        	TextSteps.enterText(ConfigurationManager.getAccountInformation(account,USERNAME), usernameField);
         }           
     }
     

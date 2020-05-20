@@ -244,7 +244,7 @@ If you want to deploy a snapshot version for use by people, use:
 mvn deploy
 ```
 
-As long as you are setup to deploy to Maven central (see Section 5.3 below), to use the version, all someone will need to do is change their version to the SNAPSHOT version and have the following in their pom.xml:
+As long as you are setup to deploy to Maven central (see Section 5.3 below), to use the version, all someone will need to do is change their version to the SNAPSHOT version and have the following in their settings.xml:
 
 ```
   <repositories>
