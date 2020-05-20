@@ -71,9 +71,7 @@ public class BaseSteps {
      * it</li>
      * </ul>
      * 
-     * @param seconds int Number of whole seconds to wait.
-     * @param fraction int Fraction of a second to wait, added to the number above.
-     * @throws Throwable Throws any errors passed to it.
+     * @param seconds double the number of seconds to wait
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
@@ -92,7 +90,7 @@ public class BaseSteps {
      * <li>I am on the Main page</li>
      * <li>I remain on the popup page</li>
      * <li>I navigate to the Documents page using the argument ?docYear=2003</li>
-     * <li>I am on the Home Page using the arguments ?firstname=bob&lastname=smith</li>
+     * <li>I am on the Home Page using the arguments ?firstname=bob{@literal &}lastname=smith</li>
      * </ul>
      * @param pageName String Page Object Name
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
@@ -141,7 +139,6 @@ public class BaseSteps {
      * <li>I close the browser tab</li>
      * <li>I close the browser window"</li>
      * </ul>
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I close the browser (?:tab|window)$")
     public static void closeBrowserWindow() {
@@ -161,7 +158,6 @@ public class BaseSteps {
      * @see com.dougnoel.sentinel.pages.PageManager#navigateForward()
      * @see com.dougnoel.sentinel.pages.PageManager#refresh()
      * @param option String the browser action
-     * @throws Throwable Passes through any errors to the executing code.
      */
     @When("^I press the browser (back|forward|refresh) button$")
     public static void pressBrowserButton(String option) {

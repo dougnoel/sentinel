@@ -20,10 +20,6 @@ public class AccountSteps {
      * <li>I fill the account information for account Tester into the username box and the password box</li>
      * <li>I fill the account information for account SystemEnv into the username field and the password field</li>
      * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername(String)
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword(String)
      * @param usingAccountName String if we have a user account, get the info from its account
      * @param account String user account
      * @param usernameField String username field
@@ -51,8 +47,6 @@ public class AccountSteps {
      * <li>I fill the password for account Tester into the password box</li>
      * <li>I fill the password for account SystemEnv into the password field</li>
      * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPassword(String)
      * @param usingAccountName String if we have a user account, get the info from its account
      * @param account String user account
      * @param passwordField String password field
@@ -77,8 +71,6 @@ public class AccountSteps {
      * <li>I fill the username for account Tester into the username box</li>
      * <li>I fill the username for account SystemEnv into the User Name field</li>
      * </ul>
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername()
-     * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getUsername(String)
      * @param usingAccountName String if we have a user account, get the info from its account
      * @param account String user account
      * @param usernameField String username field

@@ -307,8 +307,6 @@ public class ConfigurationManager {
 	 * Creates pageData object and gets user name or password from its account and env. Logs the key from account info.
 	 * and logs data var before returning.
 	 * 
-	 * @param pageName String the name of current browser page
-	 * @param env String user environment
 	 * @param account String user account
 	 * @param key String username or password
 	 * @return String requested username or password
