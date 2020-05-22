@@ -59,6 +59,8 @@ public class WebDriverFactory {
     private static WebDriver driver = null;
 
     private static WebDriverFactory instance = null;
+    
+    private static final String LINUX = "linux";
 
     protected WebDriverFactory() {
         // Exists only to defeat instantiation.
@@ -202,33 +204,46 @@ public class WebDriverFactory {
     }
     
     /**
+     * Returns the driver path if it exists, otherwise null.
+     * @return String the driver path if it exists, otherwise null
+     * @throws ConfigurationNotFoundException if there is a problem reading the configuration file
+     */
+    private static String getDriverPath() throws ConfigurationNotFoundException {
+    	return ConfigurationManager.getOptionalProperty("driver");
+    }
+    
+    /**
      * Creates a Chrome WebDriver and returns it.
      * @return WebDriver a Chrome WebDriver object
      * @throws WebDriverException if the WebDriver creation fails
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
     private static WebDriver createChromeDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath;
-        switch (getOperatingSystem()) {
-        case "linux":
-            driverPath = "src/main/resources/drivers/linux/chromedriver";
-            break;
-        case "mac":
-            driverPath = "src/main/resources/drivers/mac/chromedriver";
-            break;
-        case "windows":
-            driverPath = "src\\main\\resources\\drivers\\windows\\chromedriver.exe";
-            break;
-        default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
+    	String driverPath = getDriverPath();
+    	if (driverPath == null)
+    	{
+	        switch (getOperatingSystem()) {
+	        case LINUX:
+	            driverPath = "src/main/resources/drivers/linux/chromedriver";
+	            break;
+	        case "mac":
+	            driverPath = "src/main/resources/drivers/mac/chromedriver";
+	            break;
+	        case "windows":
+	            driverPath = "src\\main\\resources\\drivers\\windows\\chromedriver.exe";
+	            break;
+	        default:
+	            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
+	        }
+    	}
         System.setProperty("webdriver.chrome.driver", driverPath);
         setChromeDownloadDirectory("downloads");
         try {
         	return new ChromeDriver();
         }
 		catch (IllegalStateException e) {
-			String errorMeessage = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver.";
+			String errorMeessage = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.";
+			log.error(errorMeessage);
 			throw new WebDriverNotExecutableException(errorMeessage, e);
 		}
     }
@@ -240,20 +255,23 @@ public class WebDriverFactory {
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
     private static WebDriver createFirefoxDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath;
-        switch (getOperatingSystem()) {
-        case "linux":
-            driverPath = "src/main/resources/drivers/linux/geckodriver";
-            break;
-        case "mac":
-            driverPath = "src/main/resources/drivers/mac/geckodriver";
-            break;
-        case "windows":
-            driverPath = "src\\main\\resources\\drivers\\windows\\geckodriver.exe";
-            break;
-        default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
+    	String driverPath = getDriverPath();
+    	if (driverPath == null)
+    	{
+	        switch (getOperatingSystem()) {
+	        case LINUX:
+	            driverPath = "src/main/resources/drivers/linux/geckodriver";
+	            break;
+	        case "mac":
+	            driverPath = "src/main/resources/drivers/mac/geckodriver";
+	            break;
+	        case "windows":
+	            driverPath = "src\\main\\resources\\drivers\\windows\\geckodriver.exe";
+	            break;
+	        default:
+	            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
+	        }
+    	}
         System.setProperty("webdriver.gecko.driver", driverPath);
         return new FirefoxDriver();
     }
@@ -265,17 +283,20 @@ public class WebDriverFactory {
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
     private static WebDriver createInternetExplorerDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath;
-        switch (getOperatingSystem()) {
-        case "linux":
-        case "mac":
-            throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
-        case "windows":
-            driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
-            break;
-        default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
+    	String driverPath = getDriverPath();
+    	if (driverPath == null)
+	    	{
+	        switch (getOperatingSystem()) {
+	        case LINUX:
+	        case "mac":
+	            throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
+	        case "windows":
+	            driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
+	            break;
+	        default:
+	            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
+	        }
+    	}
         System.setProperty("webdriver.ie.driver", driverPath);
     	InternetExplorerOptions options = new InternetExplorerOptions();
     	options.ignoreZoomSettings();
@@ -290,7 +311,7 @@ public class WebDriverFactory {
      */
     private static WebDriver createSafariDriver() throws WebDriverException, ConfigurationNotFoundException {
         switch (getOperatingSystem()) {
-        case "linux":
+        case LINUX:
         case "windows":
             throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
         case "mac":

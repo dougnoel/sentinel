@@ -210,6 +210,17 @@ Sometimes you need to add an implicit wait to your tests due to the vagaries of 
 
 *NOTE: If you find yourself needing to use waits a lot, create a bug ticket in the Sentinel project and see if we can solve that problem.*
 
+### How do I use a different/newer/custom webdriver?
+You can pass a custom driver in on the command line. This is here to allow you to use different driver versions that the one currently bundled with Sentinel. Note, this doesn't work with Safari, as its driver is bundled with the browser in the operating system.
+
+```
+mvn test -Ddriver=path/to/driver/drivername
+```
+
+If you want to update the default driver used, just overwrite the driver in the src/main/resources/drivers folder under the correct OS. If you are updating a linux or mac driver, ensure the driver is executable by typing `chmod x drivername` on the command line in the folder where the driver resides.
+
+*NOTE: chmod +x is not the most secure way to do this, but an explanation of users and groups in linux is beyond this document.*+
+
 ## 5.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
