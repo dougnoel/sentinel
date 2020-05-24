@@ -23,7 +23,7 @@ import cucumber.api.junit.Cucumber;
 				glue = { "stepdefinitions","com.dougnoel.sentinel.steps" }, 
 				plugin = {"json:target/cucumber.json",
 						"com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
-         , tags = { "@html-table" }
+         , tags = { "@element-visibilty" }
 )
 
 public class SentinelTests {

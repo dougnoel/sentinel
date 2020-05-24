@@ -19,9 +19,9 @@ public class SauceLabsDriverFactory {
      * @throws ConfigurationNotFoundException if a requested configuration property has not been set
      */
     protected static WebDriver createSaucelabsDriver() throws ConfigurationNotFoundException {
-        URL SAUCELABS_URL;
+        URL sauceLabsUrl;
 		try {
-			SAUCELABS_URL = new URL("https://ondemand.saucelabs.com:443/wd/hub");
+			sauceLabsUrl = new URL("https://ondemand.saucelabs.com:443/wd/hub");
 		} catch (java.net.MalformedURLException e) {
 			throw new MalformedURLException(e);
 		}
@@ -49,7 +49,7 @@ public class SauceLabsDriverFactory {
         options = setOptionalSaucelabsProperty("tags", options);
         options = setOptionalSaucelabsProperty("build", options);
         
-        RemoteWebDriver driver = new RemoteWebDriver(SAUCELABS_URL, options);
+        RemoteWebDriver driver = new RemoteWebDriver(sauceLabsUrl, options);
         
         return driver;
     }

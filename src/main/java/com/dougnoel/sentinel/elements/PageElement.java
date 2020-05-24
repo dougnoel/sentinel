@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
@@ -393,43 +392,37 @@ public class PageElement {
 	 * @throws NoSuchSelectorException if the selector type passed is invalid
 	 */
 	public boolean doesNotExist() throws NoSuchSelectorException {
-		// Reducing the time we have to wait for an expected failure.
-		TimeoutManager.setTimeout(driver, 250, TimeUnit.MILLISECONDS);
+		By locator = null;
 		boolean flag = false;
 
-		try {
-			switch (selectorType) {
-			case CSS:
-				driver.findElement(By.cssSelector(selectorValue));
-				break;
-			case ID:
-				driver.findElement(By.id(selectorValue));
-				break;
-			case NAME:
-				driver.findElement(By.name(selectorValue));
-				break;
-			case PARTIALTEXT:
-				driver.findElement(By.partialLinkText(selectorValue));
-				break;
-			case TEXT:
-				driver.findElement(By.linkText(selectorValue));
-				break;
-			case XPATH:
-				driver.findElement(By.xpath(selectorValue));
-				break;
-			default:
-				// This is here in case a new type is added to SelectorType and has not been
-				// implemented yet here.
-				String errorMessage = SentinelStringUtils.format(
-						"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
-						selectorType);
-				throw new NoSuchSelectorException(errorMessage);
-			}
-		} catch (org.openqa.selenium.NoSuchElementException e) {
-			// If we cannot find the element does not exist and we return true
-			flag = true;
+		switch (selectorType) {
+		case CSS:
+			locator = By.cssSelector(selectorValue);
+			break;
+		case ID:
+			locator = By.id(selectorValue);
+			break;
+		case NAME:
+			locator = By.name(selectorValue);
+			break;
+		case PARTIALTEXT:
+			locator = By.partialLinkText(selectorValue);
+			break;
+		case TEXT:
+			locator = By.linkText(selectorValue);
+			break;
+		case XPATH:
+			locator = By.xpath(selectorValue);
+			break;
+		default:
+			// This is here in case a new type is added to SelectorType and has not been
+			// implemented yet here.
+			String errorMessage = SentinelStringUtils.format(
+					"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
+					selectorType);
+			throw new NoSuchSelectorException(errorMessage);
 		}
-		TimeoutManager.setDefaultTimeout(driver);
+		flag = new WebDriverWait(driver, 1).until(ExpectedConditions.invisibilityOfElementLocated(locator));
 		log.trace("Return result: {}", flag);
 		return flag;
 	}

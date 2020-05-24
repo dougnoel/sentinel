@@ -4,9 +4,6 @@ import static org.junit.Assert.*;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class TimeoutManagerTests {
 
@@ -38,13 +35,5 @@ public class TimeoutManagerTests {
 //		System.setProperty("timeunit", "MILLISECONDS");
 //		assertEquals("Custom timeunit", TimeUnit.MILLISECONDS, TimeoutManager.getDefaultTimeUnit());
 //	}
-	
-	@Test(expected = Test.None.class /* no exception expected */)
-	public void setTimeout() throws Throwable {
-		System.setProperty("env", "dev");
-		WebDriver driver = WebDriverFactory.instantiateWebDriver();
-		TimeoutManager.setDefaultTimeout(driver);
-		driver.close();
-	}
 
 }
