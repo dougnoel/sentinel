@@ -61,8 +61,11 @@ public class WebDriverFactory {
     private static WebDriverFactory instance = null;
     
     private static final String LINUX = "linux";
+    private static final String MAC = "mac";
+    private static final String WINDOWS = "windows";
+    private static final String DRIVERNOTFOUNDERRORMESSAGEPATTERN = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.\n{}";
 
-    protected WebDriverFactory() {
+    private WebDriverFactory() {
         // Exists only to defeat instantiation.
     }
     
@@ -156,9 +159,9 @@ public class WebDriverFactory {
     	String operatingSystem = ConfigurationManager.getProperty("os");
         operatingSystem = operatingSystem.replaceAll("\\s+", "").toLowerCase();
         if (operatingSystem.equals("macintosh") || operatingSystem.equals("osx"))
-            operatingSystem = "mac";
+            operatingSystem = MAC;
         else if (operatingSystem.equals("win"))
-            operatingSystem = "windows";
+            operatingSystem = WINDOWS;
         
         return operatingSystem;
     }
@@ -208,7 +211,7 @@ public class WebDriverFactory {
      * @return String the driver path if it exists, otherwise null
      * @throws ConfigurationNotFoundException if there is a problem reading the configuration file
      */
-    private static String getDriverPath() throws ConfigurationNotFoundException {
+    private static String getDriverPath() {
     	return ConfigurationManager.getOptionalProperty("driver");
     }
     
@@ -226,10 +229,10 @@ public class WebDriverFactory {
 	        case LINUX:
 	            driverPath = "src/main/resources/drivers/linux/chromedriver";
 	            break;
-	        case "mac":
+	        case MAC:
 	            driverPath = "src/main/resources/drivers/mac/chromedriver";
 	            break;
-	        case "windows":
+	        case WINDOWS:
 	            driverPath = "src\\main\\resources\\drivers\\windows\\chromedriver.exe";
 	            break;
 	        default:
@@ -242,9 +245,9 @@ public class WebDriverFactory {
         	return new ChromeDriver();
         }
 		catch (IllegalStateException e) {
-			String errorMeessage = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.";
-			log.error(errorMeessage);
-			throw new WebDriverNotExecutableException(errorMeessage, e);
+			String errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			log.error(errorMessage);
+			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
     }
     
@@ -262,10 +265,10 @@ public class WebDriverFactory {
 	        case LINUX:
 	            driverPath = "src/main/resources/drivers/linux/geckodriver";
 	            break;
-	        case "mac":
+	        case MAC:
 	            driverPath = "src/main/resources/drivers/mac/geckodriver";
 	            break;
-	        case "windows":
+	        case WINDOWS:
 	            driverPath = "src\\main\\resources\\drivers\\windows\\geckodriver.exe";
 	            break;
 	        default:
@@ -273,7 +276,14 @@ public class WebDriverFactory {
 	        }
     	}
         System.setProperty("webdriver.gecko.driver", driverPath);
-        return new FirefoxDriver();
+        try {
+        	return new FirefoxDriver();
+        }
+		catch (IllegalStateException e) {
+			String errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			log.error(errorMessage);
+			throw new WebDriverNotExecutableException(errorMessage, e);
+		}
     }
     
     /**
@@ -284,23 +294,34 @@ public class WebDriverFactory {
      */
     private static WebDriver createInternetExplorerDriver() throws WebDriverException, ConfigurationNotFoundException {
     	String driverPath = getDriverPath();
-    	if (driverPath == null)
-	    	{
-	        switch (getOperatingSystem()) {
-	        case LINUX:
-	        case "mac":
-	            throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
-	        case "windows":
-	            driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
-	            break;
-	        default:
-	            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-	        }
+    	String errorMessage;
+        switch (getOperatingSystem()) {
+        case LINUX:
+        case MAC:
+        	errorMessage = getOSNotCompatibleWithBrowserErrorMessage();
+        	log.error(errorMessage);
+            throw new WebDriverException(errorMessage);
+        case WINDOWS:
+        	if (driverPath == null) {
+        		driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
+        	}
+            break;
+        default:
+        	errorMessage = getMissingOSConfigurationErrorMessage();
+        	log.error(errorMessage);
+            throw new WebDriverException(errorMessage);
     	}
         System.setProperty("webdriver.ie.driver", driverPath);
     	InternetExplorerOptions options = new InternetExplorerOptions();
     	options.ignoreZoomSettings();
-        return new InternetExplorerDriver(options);
+    	try {
+    		return new InternetExplorerDriver(options);
+    	}
+		catch (IllegalStateException e) {
+			errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			log.error(errorMessage);
+			throw new WebDriverNotExecutableException(errorMessage, e);
+		}
     }
 
     /**
@@ -312,9 +333,9 @@ public class WebDriverFactory {
     private static WebDriver createSafariDriver() throws WebDriverException, ConfigurationNotFoundException {
         switch (getOperatingSystem()) {
         case LINUX:
-        case "windows":
+        case WINDOWS:
             throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
-        case "mac":
+        case MAC:
             // Nothing to do here, as Apple has already set this up on macs.
             break;
         default:
