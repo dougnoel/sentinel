@@ -5,8 +5,6 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -97,11 +95,9 @@ public class PageElement {
 			       .withTimeout(timeout)
 			       .pollingEvery(interval)
 			       .ignoring(NoSuchElementException.class);
-		return wait.until(new Function<WebDriver, WebElement>() {
-			public WebElement apply(WebDriver driver) {
-				return driver.findElement(locator);
-			}
-		});
+
+		return wait.until(d -> driver.findElement(locator));
+		
 	}
 	
 	/**
