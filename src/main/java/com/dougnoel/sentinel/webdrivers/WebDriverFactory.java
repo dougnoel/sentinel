@@ -249,6 +249,10 @@ public class WebDriverFactory {
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
+        catch (org.openqa.selenium.WebDriverException e) {
+        	log.error(e.getMessage());
+        	throw new WebDriverException(e);
+        }
     }
     
     /**
@@ -284,6 +288,10 @@ public class WebDriverFactory {
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
+        catch (org.openqa.selenium.WebDriverException e) {
+        	log.error(e.getMessage());
+        	throw new WebDriverException(e);
+        }
     }
     
     /**
@@ -322,6 +330,10 @@ public class WebDriverFactory {
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
+        catch (org.openqa.selenium.WebDriverException e) {
+        	log.error(e.getMessage());
+        	throw new WebDriverException(e);
+        }
     }
 
     /**
