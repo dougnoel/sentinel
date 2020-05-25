@@ -109,7 +109,7 @@ public class WebDriverFactory {
         	driver = ChromeDriverFactory.createChromeDriver();
             break;
         case "firefox":
-        	driver = createFirefoxDriver();
+        	driver = FirefoxDriverFactory.createFirefoxDriver();
             break;
         case "internetexplorer":
         	driver = createInternetExplorerDriver();
@@ -202,45 +202,6 @@ public class WebDriverFactory {
      */
     protected static String getDriverPath() {
     	return ConfigurationManager.getOptionalProperty("driver");
-    }
-    
-    /**
-     * Creates a Firefox WebDriver and returns it.
-     * @return WebDriver a Firefox WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
-     */
-    private static WebDriver createFirefoxDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath = getDriverPath();
-    	if (driverPath == null)
-    	{
-	        switch (getOperatingSystem()) {
-	        case LINUX:
-	            driverPath = "src/main/resources/drivers/linux/geckodriver";
-	            break;
-	        case MAC:
-	            driverPath = "src/main/resources/drivers/mac/geckodriver";
-	            break;
-	        case WINDOWS:
-	            driverPath = "src\\main\\resources\\drivers\\windows\\geckodriver.exe";
-	            break;
-	        default:
-	            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-	        }
-    	}
-        System.setProperty("webdriver.gecko.driver", driverPath);
-        try {
-        	return new FirefoxDriver();
-        }
-		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
-			log.error(errorMessage);
-			throw new WebDriverNotExecutableException(errorMessage, e);
-		}
-        catch (org.openqa.selenium.WebDriverException e) {
-        	log.error(e.getMessage());
-        	throw new WebDriverException(e);
-        }
     }
     
     /**
