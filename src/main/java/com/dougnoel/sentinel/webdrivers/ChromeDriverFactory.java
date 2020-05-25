@@ -27,6 +27,28 @@ public class ChromeDriverFactory {
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
     protected static WebDriver createChromeDriver() throws WebDriverException, ConfigurationNotFoundException {
+    	setChromeDriverPath();
+        setChromeDownloadDirectory("downloads");
+        try {
+        	return new ChromeDriver();
+        }
+		catch (IllegalStateException e) {
+			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			log.error(errorMessage);
+			throw new WebDriverNotExecutableException(errorMessage, e);
+		}
+        catch (org.openqa.selenium.WebDriverException e) {
+        	log.error(e.getMessage());
+        	throw new WebDriverException(e);
+        }
+    }
+    
+    /**
+     * Sets the path for the ChromeDriver based on operating system. Uses a custom driver if it is set as a configuration.
+     * @throws WebDriverException if the WebDriver creation fails
+     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     */
+    private static void setChromeDriverPath() throws WebDriverException, ConfigurationNotFoundException {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{
@@ -45,19 +67,6 @@ public class ChromeDriverFactory {
 	        }
     	}
         System.setProperty("webdriver.chrome.driver", driverPath);
-        setChromeDownloadDirectory("downloads");
-        try {
-        	return new ChromeDriver();
-        }
-		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
-			log.error(errorMessage);
-			throw new WebDriverNotExecutableException(errorMessage, e);
-		}
-        catch (org.openqa.selenium.WebDriverException e) {
-        	log.error(e.getMessage());
-        	throw new WebDriverException(e);
-        }
     }
     
     /**
