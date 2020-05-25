@@ -21,7 +21,8 @@ public class PageFactory {
 		//Exists only to defeat instantiation.
 	}
 	
-	//TODO: Throw Exceptions if page object creationg fails
+	//TODO: Throw Exceptions if page object creation fails
+	//TODO: Need to find Java 11 way of instantiation of objects using reflection
 	/**
 	 * Returns a page object if it exists in the package searched.
 	 * @param pageName String the name of the page object class to instantiate

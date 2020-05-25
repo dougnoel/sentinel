@@ -6,12 +6,16 @@ import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
+import com.dougnoel.sentinel.elements.dropdowns.PageSelectElement;
+import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
+import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Retrieves as an element as a  PageElement or as one of the following types:
@@ -21,13 +25,14 @@ import com.dougnoel.sentinel.strings.StringUtils;
  *
  */
 public abstract class ElementFunctions {
-	/**
-	 * Instance of LogManager for a given ElementFunctions class
-	 */
     private static final Logger log = LogManager.getLogger(ElementFunctions.class); 
 
+    private ElementFunctions() {
+    	// Exists to defeat instantiation.
+    }
     /**
-     * Returns a PageElement object for a given elementName string from current page. Gets current page reference, replaces page name space characters qith '_'
+     * Returns a PageElement object for a given elementName string from current page. Gets current page reference, 
+     * replaces page name space characters with '_'
      * 
      * @param elementName String name of requested element
      * @return PageElement the requested element
@@ -37,21 +42,21 @@ public abstract class ElementFunctions {
     public static PageElement getElement(String elementName) throws NoSuchElementException, PageNotFoundException {
         Page page = PageManager.getPage();
         elementName = elementName.replaceAll("\\s+", "_").toLowerCase();
-        Method pageElementName = null;
-        try { // Create a Method object to store the PageElementwe want to exercise;
-            pageElementName = page.getClass().getMethod(elementName);
+        Method pageElementMethod = null;
+        try { // Create a Method object to store the PageElement we want to exercise
+            pageElementMethod = page.getClass().getMethod(elementName);
         } catch (NoSuchMethodException e) {
-            String errorMessage = StringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
+            String errorMessage = SentinelStringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
                     .getClass().getSimpleName());
             log.error(errorMessage);
             throw new NoSuchElementException(errorMessage, e);
         }
         PageElement element = null;
         try {  // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
-            element = (PageElement) pageElementName.invoke(page);
-            log.trace("PageElement Name: " + pageElementName.getName());
+            element = (PageElement) pageElementMethod.invoke(page);
+            log.trace("PageElement Name: {}", pageElementMethod.getName());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        	String errorMessage = StringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementName.getName(), page.getName());
+        	String errorMessage = SentinelStringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementMethod.getName(), page.getName());
         	log.error(errorMessage);
         	throw new NoSuchElementException(errorMessage);
         } 

@@ -1,15 +1,15 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.dropdowns;
 
 import org.openqa.selenium.support.ui.Select;
 
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
- * Extends PageElement. Is intended to be a a base class for Radiobutton and
- * Dropdown.
+ * Extends PageElement. Is intended to be a a base class for Dropdown.
  */
 public class PageSelectElement extends PageElement {
 
@@ -33,7 +33,7 @@ public class PageSelectElement extends PageElement {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(String selectText) throws ElementNotFoundException{
+    public PageSelectElement select(String selectText) throws ElementNotFoundException {
         Select selectElement = new Select(this.element());
         selectElement.selectByVisibleText(selectText);
 
@@ -74,7 +74,7 @@ public class PageSelectElement extends PageElement {
         default:
             // This is here in case a new type is added to SelectorType and has not been
             // implemented yet here.
-            String errorMessage = StringUtils.format(
+            String errorMessage = SentinelStringUtils.format(
                     "Unhandled selector type \"{}\" passed to Page Select Element class. Could not resolve the reference. Refer to the Javadoc for valid options.",
                     selectorType);
             throw new NoSuchSelectorException(errorMessage);

@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Map;
 
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -62,9 +62,9 @@ public class ConfigurationData extends File {
 				configurationValue = configurations.get("default").get(configurationKey);
 			}
 		} catch (NullPointerException e){
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"A configuration value for {} was not found for the {} environment{}.", configurationKey,
-					environment, defaultChecked == true ? " or the default environment" : "");
+					environment, defaultChecked ? " or the default environment" : "");
 			throw new ConfigurationNotFoundException(errorMessage);	
 		}
 

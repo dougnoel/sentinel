@@ -4,6 +4,7 @@ import static com.dougnoel.sentinel.apis.ActionFunctions.getAction;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,7 @@ import com.dougnoel.sentinel.apis.Response;
 import com.dougnoel.sentinel.apis.ResponseManager;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -172,7 +173,7 @@ public class APISteps {
 
         Integer responseCode = ResponseManager.getResponse(uid).getResponseCode();
         String responseText = ResponseManager.getResponse(uid).getResponse();
-        String expectedResult = StringUtils.format(
+        String expectedResult = SentinelStringUtils.format(
                 "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
                 (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
                         .replace("\n", " "));

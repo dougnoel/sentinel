@@ -1,10 +1,11 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.dropdowns;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 
@@ -21,6 +22,8 @@ import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
  */
 public class PrimeNGDropdown extends JSDropdownElement {
 	private static final Logger log = LogManager.getLogger(PrimeNGDropdown.class.getName());
+	
+	private static final double SELECTWAITTIME = 0.1; //Selenium is faster than NGPrime, and so we needed to allow it to catch up for drop down selection
 
 	/**
 	 * Implementation of a WebElement to initialize how an element is going to be found when it is worked on by the 
@@ -39,8 +42,10 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 * @return WebElement the element representing the option
 	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-    protected WebElement getOption(String selectionText) throws ElementNotFoundException{
-    	String xTagName = this.element().getTagName();
+	@Override
+    protected WebElement getOption(String selectionText) throws ElementNotFoundException {
+		TimeoutManager.wait(SELECTWAITTIME);
+		String xTagName = this.element().getTagName();
     	String xPath = "//li[@aria-label=\"" + selectionText + "\"]";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", selectionText, xTagName, xPath);
     	this.click();
@@ -53,7 +58,9 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 * @return WebElement the element representing the option
 	 * @throws ElementNotFoundException if the element cannot be found
      */
+	@Override
     protected WebElement getOption(int index) throws ElementNotFoundException{
+		TimeoutManager.wait(SELECTWAITTIME);
     	String xTagName = this.element().getTagName();
     	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, xTagName, xPath);
@@ -68,6 +75,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * @return String the text value of the option at the given index
      * @throws ElementNotFoundException if the element cannot be found
      */
+	@Override
     public String getText(int index) throws ElementNotFoundException{
     	return getOption(index).getAttribute("aria-label");
     }
@@ -77,7 +85,12 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * @return String the text value of the selected option
      * @throws ElementNotFoundException if the element cannot be found
      */
+	@Override
     public String getSelectedText() throws ElementNotFoundException{
-    	return this.element().findElement(By.xpath("//label")).getText();
-    }
+    	try {
+		return this.element().findElement(By.xpath("//label")).getText(); //TODO: apparently deprecated on 5/25/2020 figure out if we can remove this immediately
+    	} catch (org.openqa.selenium.NoSuchElementException e) {
+    		return this.element().findElement(By.xpath("//span[contains(@class, 'ui-dropdown-label')]")).getText();
+    	}
+   }
 }

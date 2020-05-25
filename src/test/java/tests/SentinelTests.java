@@ -19,13 +19,14 @@ import io.cucumber.junit.Cucumber;
 @CucumberOptions(monochrome = true
 	, features = "src/test/java/features"
 	, glue = { "stepdefinitions", "com.dougnoel.sentinel.steps" }
-	, plugin = {"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
+	, plugin = {"json:target/cucumber.json",
+			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 //	, junit = {"--step-notifications"}
 //  , tags = { "@example" }
 )
 
-public class TestRun {
-    private static final Logger log = LogManager.getLogger(TestRun.class); // Create a logger.
+public class SentinelTests {
+    private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException, SentinelException {
@@ -37,6 +38,8 @@ public class TestRun {
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
         log.info("Driver: {}", WebDriverFactory.getWebDriver());
-        PageManager.quit();
+        if (System.getProperty("leaveBrowserOpen", "false") == "false") {
+        	PageManager.quit();
+        }
     }
 }

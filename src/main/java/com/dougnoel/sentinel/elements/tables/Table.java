@@ -1,8 +1,7 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.tables;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,11 +11,13 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.AlphanumComparator;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Implements a Table WebElement. contains functionality for counting values, finding values inside a table, and other
@@ -26,18 +27,20 @@ import com.dougnoel.sentinel.strings.StringUtils;
 public class Table extends PageElement {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
-	private TableType tableType = TableType.HTML;
-	private String tableHeaderTag = "th";
-	private String tableRowTag = "tr";
-	private String tableCellDataTag = "td";
-	
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
-	protected List<String> headers = new ArrayList<String>(); // Column headers as text
+	protected List<String> headers = new ArrayList<>(); // Column headers as text
 	protected List<WebElement> rowElements = null; // Table Rows using <tr> tags
-	protected List<ArrayList<String>> rows = new ArrayList<ArrayList<String>>(); // All text values of every row
+	protected List<ArrayList<String>> rows = new ArrayList<>(); // All text values of every row
 	protected Map<String, ArrayList<String>> columns = new HashMap<>(); // All text values of every column
 	protected Map<Integer, List<ArrayList<String>>> tables = new HashMap<>(); // Way to hold values of the same table on multiple pages.
-
+	
+	protected TableType tableType = TableType.HTML;
+	protected String tableHeaderTag = "th";
+	protected String tableRowTag = "tr";
+	protected String tableCellDataTag = "td";
+	protected String tableDataCellLocator = "//" + tableCellDataTag;
+	protected String tableSiblingCellLocator = "//..//*";
+	
 	/**
 	 * Creates a table object to manipulate. Expects a table or ngx-datatable tag. When used
 	 * the table object finds and creates rows and columns and stores them. If data in the table changes
@@ -45,26 +48,12 @@ public class Table extends PageElement {
 	 * method.
 	 * NOTE: Unlike other element methods, this one throws an ElementNotFound exception because the constructor
 	 * must look at the tag to determine the table type.
-	 * TODO: To make this more easily extensible, this should be a factory method, creating and returning
-	 * table objects based on the tag name.
 	 * 
 	 * @param selectorType SelectorType the type of selector to use
 	 * @param selectorValue String the value to look for with the given selector type
-	 * TODO: @throws ElementNotFoundException if the element cannot be found, not changing this now to make Page Objects backwards compatible. Should handle this when we change page objects to yml completely.
 	 */
 	public Table(SelectorType selectorType, String selectorValue) {
 		super(selectorType, selectorValue);
-		
-		try {
-			if (this.toWebElement().getTagName().contains("ngx-datatable")) {
-				tableType = TableType.NGXDATATABLE;
-				tableHeaderTag = "datatable-header-cell";
-				tableRowTag = "datatable-body-row";
-				tableCellDataTag = "datatable-body-cell";
-			}
-		} catch (ElementNotFoundException e) {
-			log.error(e.getStackTrace()); //Suppress this for now.
-		}
 	}
 
 	/**
@@ -101,12 +90,10 @@ public class Table extends PageElement {
 			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
 				String headerText = header.getText();
-				log.trace("Header Text: {}", headerText);
 				headers.add(headerText);
 			}
 		}
-		// If we cannot find headers, then we need to populate this array with the first
-		// row
+		// If we cannot find headers, then we need to populate this array with the first row
 		if (headers.isEmpty()) {
 			getOrCreateRows();
 			List<String> firstRow = rows.get(0);
@@ -131,7 +118,10 @@ public class Table extends PageElement {
 			headerElements = getHeaderElements();
 		}
 		if (headerElements == null) {
+			log.trace("Header tags not found, using first row for headers.");
 			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
+		} else {
+			log.trace("Header tags found");
 		}
 		log.trace("Number of Header Elements: {}", headerElements.size());
 		return headerElements;
@@ -152,7 +142,7 @@ public class Table extends PageElement {
 	 * Returns true if the table has &lt;th&gt; elements, otherwise returns false
 	 * even though the first row will be used to populate the headers list.
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaderElements()
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateHeaderElements()
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
 	 * @throws ElementNotFoundException if an element is not found
 	 */
@@ -185,7 +175,7 @@ public class Table extends PageElement {
 				dataRows.remove(0);
 			for (WebElement row : dataRows) {
 				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
-				ArrayList<String> cells = new ArrayList<String>();
+				ArrayList<String> cells = new ArrayList<>();
 				for (WebElement cell : cellElements) {
 					cells.add(cell.getText());
 				}
@@ -199,12 +189,15 @@ public class Table extends PageElement {
 	/**
 	 * Returns number of row elements from getOrCreateRowElements
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateRowElements()
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateRowElements()
 	 * @return int the number of row elements
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public int getNumberOfRows() throws ElementNotFoundException  {
-		//TODO: Ensure I should be returning -1
+		//Selenium counts a <th> tag as a <td> tag and returns it.
+		if (tableHeadersExist() && tableType != TableType.HTML) {
+			return getOrCreateRowElements().size();
+		}
 		return getOrCreateRowElements().size() - 1;
 	}
 
@@ -220,7 +213,7 @@ public class Table extends PageElement {
 			int index = 0;
 			getOrCreateRows(); // We cannot create the columns without Row data
 			for (String header : getOrCreateHeaders()) {
-				ArrayList<String> cells = new ArrayList<String>();
+				ArrayList<String> cells = new ArrayList<>();
 				for (ArrayList<String> row : rows) {
 					cells.add(row.get(index));
 				}
@@ -235,7 +228,7 @@ public class Table extends PageElement {
 	/**
 	 * Returns the number of columns in the table.
 	 * 
-	 * @see com.dougnoel.sentinel.elements.Table#getOrCreateHeaders()
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateHeaders()
 	 * @return int the number of columns
 	 * @throws ElementNotFoundException if an element is not found
 	 */
@@ -317,16 +310,15 @@ public class Table extends PageElement {
 		WebElement element;
 		if (ordinalRow == -1) {
 			//Set to the last row
-			ordinalRow = getNumberOfRows();
+			ordinalRow = getNumberOfRows()-1;
 		}
-		String locator = tableType == TableType.NGXDATATABLE ? "//span" : "//" + tableCellDataTag;
 		
 		try {
 			element = getOrCreateRowElements().get(ordinalRow--)
-					.findElement(By.xpath(locator))
+					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
+			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
@@ -345,18 +337,15 @@ public class Table extends PageElement {
 	 */
 	public WebElement getElementInRowThatContains(By rowLocator, By elementLocator) throws ElementNotFoundException {
 		WebElement element;
-		String firstLocator = tableType == TableType.NGXDATATABLE ? "//span" : "//" + tableCellDataTag;
-		String secondLocator = tableType == TableType.NGXDATATABLE ? "//../../..//*" : "//..//*";
-
 		try {
 			element = this.element()
-					.findElement(By.xpath(firstLocator))
+					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(rowLocator)
-					.findElement(By.xpath(secondLocator))
+					.findElement(By.xpath(tableSiblingCellLocator))
 					.findElement(elementLocator);
 
 		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMsg = StringUtils.format("{} not found in the row with {} Error: {}", elementLocator, rowLocator, e.getMessage());
+			String errorMsg = SentinelStringUtils.format("{} not found in the row with {} Error: {}", elementLocator, rowLocator, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
 		}
@@ -413,7 +402,7 @@ public class Table extends PageElement {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
-			String errorMessage = StringUtils.format("{} column does not exist.", columnHeader);
+			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
 			throw new ElementNotFoundException(errorMessage);
 		}
@@ -424,7 +413,7 @@ public class Table extends PageElement {
 					return false;
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = StringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new ElementNotFoundException(errorMessage, e);
 			}
@@ -445,7 +434,7 @@ public class Table extends PageElement {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
-			String errorMessage = StringUtils.format("{} column does not exist.", columnHeader);
+			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
 			throw new ElementNotFoundException(errorMessage);
 		}
@@ -458,7 +447,7 @@ public class Table extends PageElement {
 					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = StringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new ElementNotFoundException(errorMessage, e);
 			}
@@ -476,7 +465,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyColumnCellsAreSortedAscending(String columnName) throws ElementNotFoundException {
-		return verifyColumnCellsAreSorted(columnName, null);
+		return verifyColumnCellsAreSorted(columnName, true);
 	}
 	
 	/**
@@ -487,7 +476,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyColumnCellsAreSortedDescending(String columnName) throws ElementNotFoundException {
-		return verifyColumnCellsAreSorted(columnName, Collections.reverseOrder());
+		return verifyColumnCellsAreSorted(columnName, false);
 	}
 	
 	/**
@@ -497,25 +486,30 @@ public class Table extends PageElement {
 	 * unless you have a custom sort to pass. Passing the wrong value can cause errors.
 	 * 
 	 * @param columnName String the name of the column you want to evaluate
-	 * @param sortOrder Comparator the sort you want to do on the ArrayList&lt;String;&gt;, passing null will sort in ascending order
+	 * @param sortOrderAscending boolean true for ascending, false for descending
 	 * @return boolean true is the column is sorted in the passed sort order, false if it is not sorted correctly
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	@SuppressWarnings("unchecked")
-	public boolean verifyColumnCellsAreSorted(String columnName, @SuppressWarnings("rawtypes") Comparator sortOrder) throws ElementNotFoundException {
+	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) throws ElementNotFoundException {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
+		@SuppressWarnings("unchecked")
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
-		if (sortOrder == null)
+		
+		// We needs to sort the strings taking into account there might be numbers in the strings.
+		// We do that with a special sort.
+		Collections.sort(sortedColumn, new AlphanumComparator());
+		//If we want a descending sort order, we need to use the custom sort above, then reverse it.
+		if (!sortOrderAscending)
 		{
-			Collections.sort(sortedColumn);
-		} else {
-			Collections.sort(sortedColumn, sortOrder);	
+			Collections.reverse(sortedColumn);	
 		}
-		if (column.equals(sortedColumn)) {
-			return true;
-		}
-		return false;
+		log.trace("Sort Order: {}\n"
+				+ "Original Column Data: {}\n"
+				+ "  Sorted Column Data: {}", 
+				sortOrderAscending ? "Ascending" : "Descending", column, sortedColumn);
+
+		return column.equals(sortedColumn);
 	}
 	
 	/**
@@ -526,7 +520,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyColumnCellsAreUnique(String columnHeader) throws ElementNotFoundException  {
-		if (verifyColumnExists(columnHeader) == false) {
+		if (!verifyColumnExists(columnHeader)) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
 		}
@@ -582,25 +576,25 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if an element is not found
 	 */
 	public boolean verifyRowCellsAreUnique(String columnName) throws ElementNotFoundException  {
-		String[] columns = columnName.split(", ");
-		return verifyRowCellsAreUnique(columns);
+		String[] columnHeaders = columnName.split(", ");
+		return verifyRowCellsAreUnique(columnHeaders);
 	}
 
 	/**
 	 * Returns true if the cell values are unique for the given array of column names
 	 * 
-	 * @param columnsHeader string[] the array of column name to validate
+	 * @param columnHeaders string[] the array of column name to validate
 	 * @return boolean true if all cells values are unique, false if any duplicates
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyRowCellsAreUnique(String[] columnsHeader) throws ElementNotFoundException {
+	public boolean verifyRowCellsAreUnique(String[] columnHeaders) throws ElementNotFoundException {
 
 		getOrCreateHeaders();
 		getOrCreateRows();
-		List<Integer> indexes = new ArrayList<Integer>();
-		for (String columnHeader : columnsHeader) {
-			if (verifyColumnExists(columnHeader) == false) {
-				String errorMessage = StringUtils.format("Column header \"{}\" does not exist.", columnHeader);
+		List<Integer> indexes = new ArrayList<>();
+		for (String columnHeader : columnHeaders) {
+			if (!verifyColumnExists(columnHeader)) {
+				String errorMessage = SentinelStringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
 				throw new NoSuchColumnException(errorMessage);
 			}

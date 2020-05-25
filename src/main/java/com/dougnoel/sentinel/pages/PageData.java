@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -23,17 +23,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 public class PageData {
 	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
-	// page urls to load in the web driver
+	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
-	// user account data 
-	public Map<String,Map<String,String>> account;
-	// environment specific user account data
-	public Map<String,Map<String,Map<String,String>>> accounts;
-	// data object
-    public Map<String,Map<String,String>> data;
-    // test data object
-    public Map<String,Map<String,Map<String,String>>> testdata;
-	
+	// user account data TODO: Annotate corretly.
+	public Map<String,Map<String,Map<String,String>>> accounts;	
 
 	/**
 	 * Returns PageData for the given fileName as a string.
@@ -65,27 +58,17 @@ public class PageData {
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
 		} catch (JsonParseException e) {
-			String errorMessage = StringUtils.format("Configuration file is not a valid YAML file: {}.", fileName);
+			String errorMessage = SentinelStringUtils.format("Configuration file is not a valid YAML file: {}.", fileName);
 			log.error(errorMessage);
 			throw new ConfigurationParseException(errorMessage, e);
 		} catch (JsonMappingException e) {
-			String errorMessage = StringUtils.format("Incorrect formatting in the configuration file: {}.", fileName);
+			String errorMessage = SentinelStringUtils.format("Incorrect formatting in the configuration file: {}.", fileName);
 			log.error(errorMessage);
 			throw new ConfigurationMappingException(errorMessage, e);
 		}
 			
 		return pageData;
 		
-	}
-
-	/**
-	 * Returns account data for the given environment
-	 * 
-	 * @param env String the desired environment (qa, sit, etc.)
-	 * @return Map&lt;String,String&gt; a map of the user account data.
-	 */
-	public Map<String,String> getAccount(String env) {
-	    return account.get(env);
 	}
 	
 	/**
@@ -94,30 +77,21 @@ public class PageData {
 	 * 
 	 * @param env String the desired environment (qa, sit, etc.)
 	 * @param account String the requested account 
-	 * @return Map&lt;String, String&gt; the user account data
+	 * @return Map&lt;String, String&gt; the user account data, or null if the requested environment doesn't exist
 	 */
-
     public Map<String,String> getAccount(String env, String account) {
-        return accounts.get(env).get(account);
+    	if (accounts.containsKey(env)) {
+    		return accounts.get(env).get(account);
+    	}
+    	return null;
     }
     
-    /**
-     * Returns test data for the given environment
-     * 
-     * @param env String the desired environment (Dev, sit, etc.)
-     * @return Map&lt;String, String&gt; the data for the given environment
-     */
-    public Map<String,String> getTestData(String env) {
-	    return data.get(env);
-	}
-	
-    /**
-     * Returns the value for then given key from the test data object for the given environment
-     * @param env String the desired environment (dev, qa, sit, etc.)
-     * @param key String the key for the desired value
-     * @return Map&lt;String, String&gt; the test data
-     */
-    public Map<String,String> getTestData(String env, String key) {
-        return testdata.get(env).get(key);
+    public boolean containsUrl(String env) {
+    	return urls.containsKey(env);
     }
+    
+    public String getUrl(String env) {
+    	return urls.get(env);
+    }
+
 }

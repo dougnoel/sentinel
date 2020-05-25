@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.NoSuchActionException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 public abstract class ActionFunctions {
 
@@ -35,7 +35,7 @@ public abstract class ActionFunctions {
         try { // Create a Method object to store the Action we want to exercise;
         	actionMethod = api.getClass().getMethod(actionName);
         } catch (NoSuchMethodException e) {
-            String errorMessage = StringUtils.format("Action {} is not defined for the API object {}. Make sure you have spelled the API name correctly in your Cucumber step definition and in the API object.", 
+            String errorMessage = SentinelStringUtils.format("Action {} is not defined for the API object {}. Make sure you have spelled the API name correctly in your Cucumber step definition and in the API object.", 
             		actionName, api.getName());
             log.error(errorMessage);
             throw new NoSuchActionException(errorMessage, e);
@@ -43,9 +43,9 @@ public abstract class ActionFunctions {
         Action action = null;
         try {  // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
         	action = (Action) actionMethod.invoke(api);
-            log.trace("PageElement Name: " + actionMethod.getName());
+            log.trace("PageElement Name: {}", actionMethod.getName());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        	String errorMessage = StringUtils.format("Action {} could not be found in API {}. Please ensure the Action is defined on the page.", actionMethod.getName(), api.getName());
+        	String errorMessage = SentinelStringUtils.format("Action {} could not be found in API {}. Please ensure the Action is defined on the page.", actionMethod.getName(), api.getName());
         	log.error(errorMessage);
         	throw new NoSuchActionException(errorMessage);
         } 

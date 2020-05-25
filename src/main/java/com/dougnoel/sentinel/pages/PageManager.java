@@ -1,9 +1,6 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -11,15 +8,13 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebDriver.Timeouts;
-
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
 import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
-import com.dougnoel.sentinel.strings.StringUtils;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * The Page Manager is a singleton class that manages what page the test is on.
@@ -69,7 +64,6 @@ public class PageManager {
 		return page;
 	}
 
-	//TODO: Update thrown exception to be a custom exception and not catch it
 	/**
 	 * This method returns the current Page Object stored in the Page Manager.
 	 * 
@@ -78,15 +72,7 @@ public class PageManager {
 	 */
 	public static Page getPage() throws PageNotFoundException {
 		if (instance == null)
-			try {
-				throw new Exception(
-						"Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
-			} catch (Exception e) {
-				log.error("utilities.Page.PageNotInitializedError: " + e.getMessage());
-				if (log.getLevel() == Level.TRACE)
-					e.printStackTrace();
-			}
-	
+			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
 		if(page == null) {
 			throw new PageNotFoundException("We could not find the Page you are looking for. Please check the pageObjectPackages configuration in conf/sentinel.yml and make sure it includes directory containing your page object.");
 		}
@@ -102,7 +88,7 @@ public class PageManager {
 	 */
 	public static String openPage(String pageURL) {
 		open(pageURL);
-		return parentHandle = driver().getWindowHandle();
+		return driver().getWindowHandle();
 	}
 
 	/**
@@ -230,9 +216,9 @@ public class PageManager {
 	public static void switchToNewWindow(String index) throws NoSuchWindowException {
 		try {
 			driver().switchTo().window(index);
-			log.trace(StringUtils.format("Switched to new window {}", index));
+			log.trace("Switched to new window {}", index);
 		} catch (org.openqa.selenium.NoSuchWindowException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -263,7 +249,7 @@ public class PageManager {
 			driver().switchTo().frame(0);
 			log.trace("Switched to iFrame on current page");
 		} catch (org.openqa.selenium.NoSuchFrameException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"No iFrames were found on the current page. Ensure you have the correct page open, and please try again. {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -280,13 +266,13 @@ public class PageManager {
 	 * @throws URLNotFoundException if URL is not found, or if exception thrown
 	 *                              while retrieving the url
 	 */
-	public static String getCurrentUrl() throws URLNotFoundException, WebDriverException {
+	public static String getCurrentUrl() throws URLNotFoundException {
 		String currentUrl = null;
 		try {
 			currentUrl = page.getCurrentUrl();
-			log.trace(StringUtils.format("Current URL retrieved: {}", currentUrl));
+			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
-			String errorMessage = StringUtils.format(
+			String errorMessage = SentinelStringUtils.format(
 					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
 					page.getName(), e.getMessage());
 			log.error(errorMessage);
@@ -301,101 +287,19 @@ public class PageManager {
 	}
 
 	/**
-	 * Sets the implicit timeout for the current driver. Calls the Configuration
-	 * Manager to see if the default timeout or default time unit have been changed
-	 * through a property. If not, 10 seconds will be set as the default.
-	 * 
-	 * @return Timeouts returns to allow object chaining for more complex calls
-	 */
-	public static Timeouts setDefaultTimeout() {
-		return setTimeout(ConfigurationManager.getDefaultTimeout(), ConfigurationManager.getDefaultTimeUnit());
-	}
-
-	/**
-	 * Sets the implicit timeout for the current driver in seconds.
-	 * 
-	 * @param time long the number of seconds to wait before reporting a failure to
-	 *             find an element
-	 * @return Timeouts returns to allow object chaining for more complex calls
-	 */
-	public static Timeouts setTimeout(long time) {
-		return setTimeout(time, TimeUnit.SECONDS);
-	}
-
-	/**
-	 * Sets the implicit timeout for the current driver.
-	 * 
-	 * @param time long the number of seconds to wait before reporting a failure to
-	 *             find an element
-	 * @param unit java.util.concurrent.TimeUnit the unit of time to wait (e.g.
-	 *             seconds, milliseconds, etc)
-	 * @return Timeouts returns to allow object chaining for more complex calls
-	 */
-	public static Timeouts setTimeout(long time, TimeUnit unit) {
-		return driver().manage().timeouts().implicitlyWait(time, unit);
-	}
-
-	/**
-	 * Sets page load timeout on web driver instance to the given time in the given
-	 * unit of time.
-	 * 
-	 * @param time long the number used to set the timeout
-	 * @param unit TimeUnit the measurement of time in which the timeout will be set
-	 *             (defaults to seconds)
-	 * @return Timeouts
-	 */
-	public static Timeouts setPageLoadTimeout(long time, TimeUnit unit) {
-		return driver().manage().timeouts().pageLoadTimeout(time, unit);
-	}
-
-	/**
-	 * Overloads waitForPageLoad method with no parameters, passthrough to
-	 * waitForPageLoad with default timeout.
-	 * 
-	 * @return true if page loads, throws exception if an error occurs or page load
-	 *         times out
-	 * @throws TimeoutException if page load times out.
-	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 */
-	public static boolean waitForPageLoad() throws TimeoutException, InterruptedException, ConfigurationNotFoundException {
-		return waitForPageLoad(ConfigurationManager.getDefaultTimeout());
-	}
-
-	//TODO: There should always be a default. This error should never make it this far up
-	/**
-	 * Overloads waitForPageLoad method with one parameters, passthrough to
-	 * waitForPageLoad with the given timeout and the default TimeUnit of seconds.
-	 * 
-	 * @param seconds long the number of seconds to wait before the page times out
-	 * @return true if page loads, throws exception if an error occurs or page load
-	 *         times out
-	 * @throws TimeoutException if page load times out.
-	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
-	 */
-	public static boolean waitForPageLoad(long seconds) throws TimeoutException, InterruptedException {
-		return waitForPageLoad(seconds, TimeUnit.SECONDS);
-	}
-
-	/**
-	 * Sets a pageLoadTimeout and Interfaces with isPageLoaded to continually test if
-	 * a page is loaded until it returns true or times out
+	 * Sets page load timeout on web driver instance using the timeout and timeunit values set in
+	 * the configuration file or on the command line. Then interfaces with isPageLoaded to continually 
+	 * test if a page is loaded until it returns true or times out.
 	 * 
 	 * @see PageManager#isPageLoaded()
-	 * TODO: It looks like this is not actually using the passed parameters
 	 * 
-	 * @param time long the amount of time to wait
-	 * @param unit TimeUnit the unit of time to wait for the given time value
-	 * @return boolean always returns true, will throw exception if page does not
-	 *          load
-	 * @throws TimeoutException     if timeout occurs before the page has loaded (default timeout: 10000 milliseconds)
+	 * @return boolean always returns true, will throw exception if page does not load
 	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
 	 */
-	public static boolean waitForPageLoad(long time, TimeUnit unit) throws TimeoutException, InterruptedException {
-		setPageLoadTimeout(time, unit);
+	public static boolean waitForPageLoad() throws InterruptedException {
+		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());
 		while (!isPageLoaded()) {
-			Thread.sleep(200);
-			continue;
+			Thread.sleep(20);
 		}
 		return true;
 	}
@@ -407,9 +311,8 @@ public class PageManager {
 	 * the page.
 	 * 
 	 * @return boolean true if page has loaded, false if not
-	 * @throws TimeoutException if timeout occurs before page has finished loading
 	 */
-	private static boolean isPageLoaded() throws TimeoutException {
+	private static boolean isPageLoaded() {
 		try {
 			// TimeoutException is triggered by using driver().findElement
 			driver().findElement(By.tagName("body"));

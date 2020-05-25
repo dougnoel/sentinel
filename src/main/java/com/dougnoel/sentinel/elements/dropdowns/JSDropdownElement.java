@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.elements;
+package com.dougnoel.sentinel.elements.dropdowns;
 
 import org.openqa.selenium.WebElement;
 
@@ -48,7 +48,8 @@ public abstract class JSDropdownElement extends Dropdown {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(String selectionText) throws ElementNotFoundException{
+    @Override
+    public PageSelectElement select(String selectionText) throws ElementNotFoundException {
     	getOption(selectionText).click();
         return this;
     }
@@ -59,6 +60,7 @@ public abstract class JSDropdownElement extends Dropdown {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
+    @Override
     public PageSelectElement select(int index) throws  ElementNotFoundException{
     	getOption(index).click();        
         return this;
@@ -70,6 +72,7 @@ public abstract class JSDropdownElement extends Dropdown {
      * @return String the text value of the option at the given index
      * @throws ElementNotFoundException if the element cannot be found
      */
+    @Override
     public String getText(int index) throws ElementNotFoundException{
     	return getOption(index).getText();
     }
@@ -79,6 +82,7 @@ public abstract class JSDropdownElement extends Dropdown {
      * @return String the text value of the selected option
      * @throws ElementNotFoundException if the element cannot be found
      */
+    @Override
     public String getSelectedText() throws ElementNotFoundException{
     	return this.element().getText();
     }
