@@ -63,7 +63,7 @@ public class WebDriverFactory {
     private static final String LINUX = "linux";
     private static final String MAC = "mac";
     private static final String WINDOWS = "windows";
-    private static final String DRIVERNOTFOUNDERRORMESSAGEPATTERN = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.\n{}";
+    protected static final String DRIVERNOTFOUNDERRORMESSAGEPATTERN = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.\n{}";
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
@@ -106,7 +106,7 @@ public class WebDriverFactory {
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	driver = createChromeDriver();
+        	driver = ChromeDriverFactory.createChromeDriver();
             break;
         case "firefox":
         	driver = createFirefoxDriver();
@@ -136,24 +136,13 @@ public class WebDriverFactory {
         }
         return driver;
     }
-
-    /**
-     * Sets the download directory for chromedriver. Cannot be used with Saucelabs.
-     * @param filePath String path to the download directory
-     */
-    private static void setChromeDownloadDirectory(String filePath) {
-        HashMap<String, Object> chromePrefs = new HashMap<>();
-        chromePrefs.put("download.default_directory", filePath);
-        ChromeOptions options = new ChromeOptions();
-        options.setExperimentalOption("prefs", chromePrefs);
-    }
     
     /**
      * Returns a sanitized version of the operating system set in the config file or on the command line.
      * @return String a sanitized string containing the operating system
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static String getOperatingSystem() throws ConfigurationNotFoundException {
+    protected static String getOperatingSystem() throws ConfigurationNotFoundException {
     	//TODO: Add auto detection
     	//TODO Make this useable by Saucelabs driver
     	String operatingSystem = ConfigurationManager.getProperty("os");
@@ -171,7 +160,7 @@ public class WebDriverFactory {
      * @return String error message
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
+    protected static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
@@ -211,48 +200,8 @@ public class WebDriverFactory {
      * @return String the driver path if it exists, otherwise null
      * @throws ConfigurationNotFoundException if there is a problem reading the configuration file
      */
-    private static String getDriverPath() {
+    protected static String getDriverPath() {
     	return ConfigurationManager.getOptionalProperty("driver");
-    }
-    
-    /**
-     * Creates a Chrome WebDriver and returns it.
-     * @return WebDriver a Chrome WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
-     */
-    private static WebDriver createChromeDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath = getDriverPath();
-    	if (driverPath == null)
-    	{
-	        switch (getOperatingSystem()) {
-	        case LINUX:
-	            driverPath = "src/main/resources/drivers/linux/chromedriver";
-	            break;
-	        case MAC:
-	            driverPath = "src/main/resources/drivers/mac/chromedriver";
-	            break;
-	        case WINDOWS:
-	            driverPath = "src\\main\\resources\\drivers\\windows\\chromedriver.exe";
-	            break;
-	        default:
-	            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-	        }
-    	}
-        System.setProperty("webdriver.chrome.driver", driverPath);
-        setChromeDownloadDirectory("downloads");
-        try {
-        	return new ChromeDriver();
-        }
-		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
-			log.error(errorMessage);
-			throw new WebDriverNotExecutableException(errorMessage, e);
-		}
-        catch (org.openqa.selenium.WebDriverException e) {
-        	log.error(e.getMessage());
-        	throw new WebDriverException(e);
-        }
     }
     
     /**
