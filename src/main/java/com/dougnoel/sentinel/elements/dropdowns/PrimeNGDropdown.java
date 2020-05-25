@@ -87,6 +87,10 @@ public class PrimeNGDropdown extends JSDropdownElement {
      */
 	@Override
     public String getSelectedText() throws ElementNotFoundException{
-    	return this.element().findElement(By.xpath("//label")).getText();
-    }
+    	try {
+		return this.element().findElement(By.xpath("//label")).getText(); //TODO: apparently deprecated on 5/25/2020 figure out if we can remove this immediately
+    	} catch (org.openqa.selenium.NoSuchElementException e) {
+    		return this.element().findElement(By.xpath("//span[contains(@class, 'ui-dropdown-label')]")).getText();
+    	}
+   }
 }

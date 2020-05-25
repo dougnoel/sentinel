@@ -59,8 +59,13 @@ public class WebDriverFactory {
     private static WebDriver driver = null;
 
     private static WebDriverFactory instance = null;
+    
+    private static final String LINUX = "linux";
+    private static final String MAC = "mac";
+    private static final String WINDOWS = "windows";
+    protected static final String DRIVERNOTFOUNDERRORMESSAGEPATTERN = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.\n{}";
 
-    protected WebDriverFactory() {
+    private WebDriverFactory() {
         // Exists only to defeat instantiation.
     }
     
@@ -87,7 +92,7 @@ public class WebDriverFactory {
         //Saucelabs Driver setup
         String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	return SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
+        	return driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         }
 
         // Set a Download Directory if one was specified on the command line
@@ -101,10 +106,10 @@ public class WebDriverFactory {
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	driver = createChromeDriver();
+        	driver = ChromeDriverFactory.createChromeDriver();
             break;
         case "firefox":
-        	driver = createFirefoxDriver();
+        	driver = FirefoxDriverFactory.createFirefoxDriver();
             break;
         case "internetexplorer":
         	driver = createInternetExplorerDriver();
@@ -131,32 +136,21 @@ public class WebDriverFactory {
         }
         return driver;
     }
-
-    /**
-     * Sets the download directory for chromedriver. Cannot be used with Saucelabs.
-     * @param filePath String path to the download directory
-     */
-    private static void setChromeDownloadDirectory(String filePath) {
-        HashMap<String, Object> chromePrefs = new HashMap<>();
-        chromePrefs.put("download.default_directory", filePath);
-        ChromeOptions options = new ChromeOptions();
-        options.setExperimentalOption("prefs", chromePrefs);
-    }
     
     /**
      * Returns a sanitized version of the operating system set in the config file or on the command line.
      * @return String a sanitized string containing the operating system
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static String getOperatingSystem() throws ConfigurationNotFoundException {
+    protected static String getOperatingSystem() throws ConfigurationNotFoundException {
     	//TODO: Add auto detection
     	//TODO Make this useable by Saucelabs driver
     	String operatingSystem = ConfigurationManager.getProperty("os");
         operatingSystem = operatingSystem.replaceAll("\\s+", "").toLowerCase();
         if (operatingSystem.equals("macintosh") || operatingSystem.equals("osx"))
-            operatingSystem = "mac";
+            operatingSystem = MAC;
         else if (operatingSystem.equals("win"))
-            operatingSystem = "windows";
+            operatingSystem = WINDOWS;
         
         return operatingSystem;
     }
@@ -166,7 +160,7 @@ public class WebDriverFactory {
      * @return String error message
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
+    protected static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
@@ -202,60 +196,12 @@ public class WebDriverFactory {
     }
     
     /**
-     * Creates a Chrome WebDriver and returns it.
-     * @return WebDriver a Chrome WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
+     * Returns the driver path if it exists, otherwise null.
+     * @return String the driver path if it exists, otherwise null
+     * @throws ConfigurationNotFoundException if there is a problem reading the configuration file
      */
-    private static WebDriver createChromeDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath;
-        switch (getOperatingSystem()) {
-        case "linux":
-            driverPath = "src/main/resources/drivers/linux/chromedriver";
-            break;
-        case "mac":
-            driverPath = "src/main/resources/drivers/mac/chromedriver";
-            break;
-        case "windows":
-            driverPath = "src\\main\\resources\\drivers\\windows\\chromedriver.exe";
-            break;
-        default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
-        System.setProperty("webdriver.chrome.driver", driverPath);
-        setChromeDownloadDirectory("downloads");
-        try {
-        	return new ChromeDriver();
-        }
-		catch (IllegalStateException e) {
-			String errorMeessage = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver.";
-			throw new WebDriverNotExecutableException(errorMeessage, e);
-		}
-    }
-    
-    /**
-     * Creates a Firefox WebDriver and returns it.
-     * @return WebDriver a Firefox WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
-     */
-    private static WebDriver createFirefoxDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath;
-        switch (getOperatingSystem()) {
-        case "linux":
-            driverPath = "src/main/resources/drivers/linux/geckodriver";
-            break;
-        case "mac":
-            driverPath = "src/main/resources/drivers/mac/geckodriver";
-            break;
-        case "windows":
-            driverPath = "src\\main\\resources\\drivers\\windows\\geckodriver.exe";
-            break;
-        default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
-        System.setProperty("webdriver.gecko.driver", driverPath);
-        return new FirefoxDriver();
+    protected static String getDriverPath() {
+    	return ConfigurationManager.getOptionalProperty("driver");
     }
     
     /**
@@ -265,21 +211,39 @@ public class WebDriverFactory {
      * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
     private static WebDriver createInternetExplorerDriver() throws WebDriverException, ConfigurationNotFoundException {
-    	String driverPath;
+    	String driverPath = getDriverPath();
+    	String errorMessage;
         switch (getOperatingSystem()) {
-        case "linux":
-        case "mac":
-            throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
-        case "windows":
-            driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
+        case LINUX:
+        case MAC:
+        	errorMessage = getOSNotCompatibleWithBrowserErrorMessage();
+        	log.error(errorMessage);
+            throw new WebDriverException(errorMessage);
+        case WINDOWS:
+        	if (driverPath == null) {
+        		driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
+        	}
             break;
         default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
+        	errorMessage = getMissingOSConfigurationErrorMessage();
+        	log.error(errorMessage);
+            throw new WebDriverException(errorMessage);
+    	}
         System.setProperty("webdriver.ie.driver", driverPath);
     	InternetExplorerOptions options = new InternetExplorerOptions();
     	options.ignoreZoomSettings();
-        return new InternetExplorerDriver(options);
+    	try {
+    		return new InternetExplorerDriver(options);
+    	}
+		catch (IllegalStateException e) {
+			errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			log.error(errorMessage);
+			throw new WebDriverNotExecutableException(errorMessage, e);
+		}
+        catch (org.openqa.selenium.WebDriverException e) {
+        	log.error(e.getMessage());
+        	throw new WebDriverException(e);
+        }
     }
 
     /**
@@ -290,10 +254,10 @@ public class WebDriverFactory {
      */
     private static WebDriver createSafariDriver() throws WebDriverException, ConfigurationNotFoundException {
         switch (getOperatingSystem()) {
-        case "linux":
-        case "windows":
+        case LINUX:
+        case WINDOWS:
             throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
-        case "mac":
+        case MAC:
             // Nothing to do here, as Apple has already set this up on macs.
             break;
         default:

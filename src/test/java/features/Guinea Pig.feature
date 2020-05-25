@@ -6,7 +6,7 @@ Feature: Example Feature
   Scenario: Guinea Pig
     Given I am on the Guinea Pig Page
     And I verify the URL contains the text "guinea-pig"
-    When I click the I am a link Link
+    When I click the Example Link
   
   @#87  
   Scenario: 87 Add the ability to press keys using a cucumber step

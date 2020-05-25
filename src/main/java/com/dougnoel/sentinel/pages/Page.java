@@ -1,11 +1,8 @@
 package com.dougnoel.sentinel.pages;
 
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.WebDriver;
 
-import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -21,13 +18,13 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * </ul>
  */
 public class Page {
-	static protected final SelectorType CLASS = SelectorType.CLASS;
-	static protected final SelectorType CSS = SelectorType.CSS;
-    static protected final SelectorType ID = SelectorType.ID;
-    static protected final SelectorType NAME = SelectorType.NAME;
-    static protected final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
-    static protected final SelectorType TEXT = SelectorType.TEXT;
-    static protected final SelectorType XPATH = SelectorType.XPATH;    
+	protected static final SelectorType CLASS = SelectorType.CLASS;
+	protected static final SelectorType CSS = SelectorType.CSS;
+	protected static final SelectorType ID = SelectorType.ID;
+	protected static final SelectorType NAME = SelectorType.NAME;
+	protected static final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
+	protected static final SelectorType TEXT = SelectorType.TEXT;
+	protected static final SelectorType XPATH = SelectorType.XPATH;    
 
     protected WebDriver driver;
 
@@ -39,26 +36,6 @@ public class Page {
      */
     public Page() {
         driver = WebDriverFactory.getWebDriver();
-        //TODO: Move this to a setup file somewhere else
-        this.setImplicitWait(TimeoutManager.getDefaultTimeout()); // Set a 10 second wait before erroring out on not finding elements.
-    }
-
-    /**
-     * Sets an implicit wait time for the page before giving up on finding an
-     * element.
-     * <p>
-     * <b>Caution:</b> This does not work well in conjunction with the selenium
-     * explicit wait functionality.
-     * 
-     * TODO: Move this higher up and out of individual page objects.
-     * 
-     * @param timeInSeconds
-     *            long
-     * @return Page - Returns a page object for chaining.
-     */
-    public Page setImplicitWait(long timeInSeconds) {
-        driver.manage().timeouts().implicitlyWait(timeInSeconds, TimeUnit.SECONDS);
-        return this;
     }
 
     /**

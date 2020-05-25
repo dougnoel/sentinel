@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
 
 public class TimeoutManager {
 	private static final Logger log = LogManager.getLogger(TimeoutManager.class); // Create a logger.
@@ -53,24 +52,6 @@ public class TimeoutManager {
 	public static TimeUnit getDefaultTimeUnit() {
 		return timeunit;
 	}
-	
-	/**
-	 * Sets the implicit timeout for the passed WebDriver using the system defaults.
-	 * @param driver WebDriver the driver to set
-	 */
-	public static void setDefaultTimeout(WebDriver driver) {
-		setTimeout(driver, getDefaultTimeout(), getDefaultTimeUnit());
-	}
-	
-	/**
-	 * Sets the implicit timeout for the passed WebDriver.
-	 * @param driver WebDriver the driver to set
-	 * @param time long the number of timeunits to wait before reporting a failure to find an element
-	 * @param unit java.util.concurrent.TimeUnit the unit of time to wait (DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS)
-	 */
-	public static void setTimeout(WebDriver driver, long time, TimeUnit unit) {
-		driver.manage().timeouts().implicitlyWait(time, unit);
-	}	
 	
 	/**
 	 * Sets the timeout property value by reading it from the config file or from the command line.

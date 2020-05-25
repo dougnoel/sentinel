@@ -13,15 +13,19 @@ import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 public class SauceLabsDriverFactory {
 
+	private SauceLabsDriverFactory() {
+		//exists to defeat instantiation
+	}
+	
     /**
      * Creates a single threaded Saucelabs WebDriver.
      * @return WebDriver a Saucelabs WebDriver
      * @throws ConfigurationNotFoundException if a requested configuration property has not been set
      */
     protected static WebDriver createSaucelabsDriver() throws ConfigurationNotFoundException {
-        URL SAUCELABS_URL;
+        URL sauceLabsUrl;
 		try {
-			SAUCELABS_URL = new URL("https://ondemand.saucelabs.com:443/wd/hub");
+			sauceLabsUrl = new URL("https://ondemand.saucelabs.com:443/wd/hub");
 		} catch (java.net.MalformedURLException e) {
 			throw new MalformedURLException(e);
 		}
@@ -42,16 +46,14 @@ public class SauceLabsDriverFactory {
         options.setCapability("username", ConfigurationManager.getProperty("saucelabsUserName"));
         options.setCapability("accesskey", ConfigurationManager.getProperty("saucelabsAccessKey"));
         
-        options = setSaucelabsTestNameProperty(options);
+        setSaucelabsTestNameProperty(options);
         
-        options = setOptionalSaucelabsProperty("parent-tunnel", options);
-        options = setOptionalSaucelabsProperty("tunnelIdentifier", options);
-        options = setOptionalSaucelabsProperty("tags", options);
-        options = setOptionalSaucelabsProperty("build", options);
+        setOptionalSaucelabsProperty("parent-tunnel", options);
+        setOptionalSaucelabsProperty("tunnelIdentifier", options);
+        setOptionalSaucelabsProperty("tags", options);
+        setOptionalSaucelabsProperty("build", options);
         
-        RemoteWebDriver driver = new RemoteWebDriver(SAUCELABS_URL, options);
-        
-        return driver;
+        return new RemoteWebDriver(sauceLabsUrl, options);
     }
     
     /**
@@ -60,14 +62,12 @@ public class SauceLabsDriverFactory {
      * @param options MutableCapabilities the MutableCapabilities object in which to set the properties
      * @return MutableCapabilities the new MutableCapabilities object with the properties set.
      */
-    private static MutableCapabilities setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
+    private static void setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
         String saucelabsProperty = ConfigurationManager.getOptionalProperty(saucelabsPropertyName);
         
         if (StringUtils.isNotEmpty(saucelabsProperty)) {
         	options.setCapability(saucelabsPropertyName, saucelabsProperty);
         }
-        
-    	return options;
     }
     
     /**
@@ -75,7 +75,7 @@ public class SauceLabsDriverFactory {
      * @param options MutableCapabilities object to modify
      * @return MutableCapabilities modified MutableCapabilities object
      */
-    private static MutableCapabilities setSaucelabsTestNameProperty(MutableCapabilities options)
+    private static void setSaucelabsTestNameProperty(MutableCapabilities options)
     {
         String testName = "";
         String jobName = ConfigurationManager.getOptionalProperty("name");
@@ -98,10 +98,9 @@ public class SauceLabsDriverFactory {
         	testName += "Default Sentinel Test Name";
         }
         else {
-        	testName = testName.stripTrailing();
+        	testName = testName.trim();
         }
         
         options.setCapability("name", testName);
-        return options;
     }
 }
