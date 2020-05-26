@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 
 public class TableSteps {
 

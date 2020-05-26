@@ -12,7 +12,7 @@ import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.When;
 
 public class TextSteps {
 

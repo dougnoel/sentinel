@@ -21,8 +21,7 @@ import io.cucumber.junit.Cucumber;
 	, glue = { "stepdefinitions", "com.dougnoel.sentinel.steps" }
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
-//	, junit = {"--step-notifications"}
-//  , tags = { "@example" }
+//  , tags = { "@16" }
 )
 
 public class SentinelTests {

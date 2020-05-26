@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
-import cucumber.api.java.en.Then;
+import io.cucumber.java.en.Then;
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.

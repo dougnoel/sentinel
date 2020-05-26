@@ -5,7 +5,7 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelect
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.When;
 
 public class SelectSteps {
 	

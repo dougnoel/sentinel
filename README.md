@@ -231,6 +231,34 @@ configurations:
 
 *NOTE: This is only intended as a way to temporarily update a driver. You can only pass in a path for one driver at a time. If you hard code it in your configuration file and attempt to switch browsers, you will need to comment this line out or the custom driver will be used and your execution will fail.*
 
+### Chromedriver is telling me it timed out or I have the wrong version, what do I do?
+If you get something like the below errors, your Chromedriver is likely out of date.
+
+```
+org.openqa.selenium.TimeoutException: timeout: Timed out receiving message from renderer: -0.001
+  (Session info: chrome=81.0.4044.138)
+Build info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'
+System info: host: 'Optimus.attlocal.net', ip: '2600:1700:1850:6c90:0:0:0:45%en0', os.name: 'Mac OS X', os.arch: 'x86_64', os.version: '10.15.4', java.version: '11.0.2'
+Driver info: org.openqa.selenium.chrome.ChromeDriver
+Capabilities {acceptInsecureCerts: false, browserName: chrome, browserVersion: 81.0.4044.138, chrome: {chromedriverVersion: 81.0.4044.69
+```
+
+```
+17:27:57.355 ERROR webdrivers.ChromeDriverFactory (ChromeDriverFactory.java:41) - session not created: This version of ChromeDriver only supports Chrome version 81
+```
+
+*NOTE: Chrome automatically updates, and it will do so while you are using it, which can cause your tests to suddenly fail.*
+
+To update Chrome, first determine your version of Chrome:
+1. Open Chrome.
+2. Click on the three vertical dots on the right-hand side of the window past the address (url) bar.
+3. Select Help -> About Google Chrome
+4. Go to the Google Chrome Download page (See section 6.3 for a link and the current version included with Sentinel).
+5. Download the version that most closely matches your browser version.
+6. Copy that file to the src/main/resources/drivers/[os] folder, where [os] is the operating system of your computer.
+
+*NOTE: You may need to update the version for other operating systems if your co-workers or CI/CD pipeline use different operating systems.*
+
 ## 5.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
@@ -356,9 +384,9 @@ Additional information can be found under [About GitHub Pages and Jekyll](https:
 The web drivers are stored in src/main/resources/drivers/[os] to make sure there is only one place to fix driver compatibility issues. Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also reduces the learning curve for using Sentinel.
 NOTE: All drivers are 64-bit versions. If you need to test on an old 32-bit browser, you will need to replace the drivers provided with a 32-bit driver. See the driver creators for support.
 
-* [Chromedriver](http://chromedriver.chromium.org/) 80.0.3987.106 (2020-02-13) - Driver for automating Google Chrome.
+* [Chromedriver](http://chromedriver.chromium.org/) 83.0.4103.39 (2020-05-05) - Driver for automating Google Chrome.
 * [Geckodriver](https://github.com/mozilla/geckodriver/releases) v0.26.0 (Oct 11 2019) - Driver for automating Mozilla Firefox.
-* [IE Driver](http://selenium-release.storage.googleapis.com/index.html) 3.9 (2018-02-05) - Driver for automating IE.
+* [IE Driver](http://selenium-release.storage.googleapis.com/index.html) 3.9 (2018-02-05) - Driver for automating IE. (*This driver version matches the selenium version being used and NOT the IE Version.*)
 * [Safari](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) - Safari driver is embedded in Safari.
 
 ### 6.4 Saucelabs

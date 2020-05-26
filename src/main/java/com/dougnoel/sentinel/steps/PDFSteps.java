@@ -10,7 +10,7 @@ import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
-import cucumber.api.java.en.When;
+import io.cucumber.java.en.When;
 
 public class PDFSteps {
 

@@ -13,7 +13,7 @@ import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
-import cucumber.api.java.en.Then;
+import io.cucumber.java.en.Then;
 
 public class TextVerificationSteps {
 	
