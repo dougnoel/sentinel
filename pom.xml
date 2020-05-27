@@ -43,8 +43,7 @@
     <sentinel-release-pageobjectpackages>pages</sentinel-release-pageobjectpackages>
     
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <maven-compiler-plugin.source>1.8</maven-compiler-plugin.source>
-    <maven-compiler-plugin.target>1.8</maven-compiler-plugin.target>
+    <maven-compiler-plugin.release>11</maven-compiler-plugin.release>
     <maven-compiler-plugin.verbose>true</maven-compiler-plugin.verbose>
     <maven-compiler-plugin.debug>true</maven-compiler-plugin.debug>
     <maven-compiler-plugin.parameters>true</maven-compiler-plugin.parameters>
@@ -107,8 +106,7 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin.version}</version>
           <configuration>
-            <source>${maven-compiler-plugin.source}</source>
-            <target>${maven-compiler-plugin.target}</target>
+            <release>${maven-compiler-plugin.release}</release>
             <verbose>${maven-compiler-plugin.verbose}</verbose>
             <debug>${maven-compiler-plugin.debug}</debug>
             <parameters>${maven-compiler-plugin.parameters}</parameters>
