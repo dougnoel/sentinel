@@ -60,7 +60,6 @@ public class SauceLabsDriverFactory {
      * Looks for a passed Saucelabs property name and sets it if it exists.
      * @param saucelabsPropertyName String the property to be set if it exists
      * @param options MutableCapabilities the MutableCapabilities object in which to set the properties
-     * @return MutableCapabilities the new MutableCapabilities object with the properties set.
      */
     private static void setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
         String saucelabsProperty = ConfigurationManager.getOptionalProperty(saucelabsPropertyName);
@@ -73,7 +72,6 @@ public class SauceLabsDriverFactory {
     /**
      * Pulls config values and sets a string to pass to Saucelabs for the job.
      * @param options MutableCapabilities object to modify
-     * @return MutableCapabilities modified MutableCapabilities object
      */
     private static void setSaucelabsTestNameProperty(MutableCapabilities options)
     {
@@ -98,7 +96,7 @@ public class SauceLabsDriverFactory {
         	testName += "Default Sentinel Test Name";
         }
         else {
-        	testName = testName.trim();
+        	testName = testName.stripTrailing();
         }
         
         options.setCapability("name", testName);

@@ -1,6 +1,5 @@
 package tests;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,21 +8,21 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
-import com.cucumber.listener.Reporter;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
+import io.cucumber.junit.Cucumber;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(monochrome = true, 
-				features = "src/test/java/features", 
-				glue = { "stepdefinitions","com.dougnoel.sentinel.steps" }, 
-				plugin = {"json:target/cucumber.json",
-						"com.cucumber.listener.ExtentCucumberFormatter:reports/extent-cucumber-report.html" }
-//         , tags = { "@22" }
+@CucumberOptions(monochrome = true
+	, features = "src/test/java/features"
+	, glue = { "stepdefinitions", "com.dougnoel.sentinel.steps" }
+	, plugin = {"json:target/cucumber.json",
+			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
+	, strict = true
+//  , tags = { "@16" }
 )
 
 public class SentinelTests {
@@ -31,7 +30,6 @@ public class SentinelTests {
     
     @BeforeClass
     public static void setUpBeforeClass() throws IOException, SentinelException {
-//         System.setProperty("cucumber.options", "@example");
         System.setProperty("org.freemarker.loggerLibrary", "none");
         System.setProperty("env", "dev"); // Set the environment (dev/qa/stage/prod/etc)
         WebDriverFactory.instantiateWebDriver();
@@ -43,9 +41,5 @@ public class SentinelTests {
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
         	PageManager.quit();
         }
-        Reporter.loadXMLConfig(new File("conf/extent-config.xml"));
-        Reporter.setSystemInfo("user", System.getProperty("user.name"));
-        Reporter.setSystemInfo("os", System.getProperty("os"));
-        Reporter.setTestRunnerOutput("Sample test runner output message");
     }
 }

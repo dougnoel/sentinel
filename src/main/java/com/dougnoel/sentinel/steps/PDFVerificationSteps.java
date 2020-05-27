@@ -7,7 +7,7 @@ import java.net.URL;
 import com.dougnoel.sentinel.filemanagers.DownloadManager;
 import com.dougnoel.sentinel.pages.PageManager;
 
-import cucumber.api.java.en.Then;
+import io.cucumber.java.en.Then;
 
 public class PDFVerificationSteps {
 

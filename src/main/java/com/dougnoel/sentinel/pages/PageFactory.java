@@ -22,7 +22,6 @@ public class PageFactory {
 	}
 	
 	//TODO: Throw Exceptions if page object creation fails
-	//TODO: Need to find Java 11 way of instantiation of objects using reflection
 	/**
 	 * Returns a page object if it exists in the package searched.
 	 * @param pageName String the name of the page object class to instantiate
@@ -32,17 +31,11 @@ public class PageFactory {
 	private static Page findPageInPackage(String pageName, String packageName) {
 		Page page = null;
 		try {
-			page = (Page) Class.forName(packageName + "." + pageName).newInstance();
-		} catch (InstantiationException e) {
-			log.trace("{}.{} Page Object creation failed.", packageName, pageName);
-			log.trace("java.lang.InstantiationException: {}", e.getMessage());
-		} catch (IllegalAccessException e) {
-			log.trace("{}.{} Page Object creation failed.", packageName, pageName);
-			log.trace("java.lang.IllegalAccessException: {}", e.getMessage());
-		} catch (ClassNotFoundException e) {
-			log.trace("{}.{} Page Object creation failed.", packageName, pageName);
-			log.trace("java.lang.ClassNotFoundException: {}", e.getMessage());
+			page = (Page) Class.forName(packageName + "." + pageName).getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			log.trace("{}.{} Page Object creation failed.\n{}", packageName, pageName, e.getMessage());
 		}
+		
 		
 		return page;
 	}
@@ -79,7 +72,7 @@ public class PageFactory {
 			}
 
 			for (String pageObjectPackage : pageObjectPackagesList) {
-				log.trace("pageObjectPackage: " + pageObjectPackage);
+				log.trace("pageObjectPackage: {}", pageObjectPackage);
 				page = findPageInPackage(pageName, pageObjectPackage);
 				if (page != null) {
 					break; // If we have a page object, stop searching.

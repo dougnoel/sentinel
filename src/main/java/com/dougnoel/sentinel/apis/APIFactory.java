@@ -35,16 +35,9 @@ public class APIFactory {
 	private static API findAPIInPackage(String pageName, String packageName) {
 		API api = null;
 		try {
-			api = (API) Class.forName(packageName + "." + pageName).newInstance();
-		} catch (InstantiationException e) {
-			log.trace("{}.{} API Object creation failed.", packageName, pageName);
-			log.trace("java.lang.InstantiationException: {}", e.getMessage());
-		} catch (IllegalAccessException e) {
-			log.trace("{}.{} API Object creation failed.", packageName, pageName);
-			log.trace("java.lang.IllegalAccessException: {}", e.getMessage());
-		} catch (ClassNotFoundException e) {
-			log.trace("{}.{} API Object creation failed.", packageName, pageName);
-			log.trace("java.lang.ClassNotFoundException: {}", e.getMessage());
+			api = (API) Class.forName(packageName + "." + pageName).getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			log.trace("{}.{} API Object creation failed.\n{}", packageName, pageName, e.getMessage());
 		}
 		
 		return api;
@@ -69,7 +62,7 @@ public class APIFactory {
 		String[] pageObjectPackagesList = ConfigurationManager.getPageObjectPackageList();
 
 		for (String apiObjectPackage : pageObjectPackagesList) {
-			log.trace("apiObjectPackage: " + apiObjectPackage);
+			log.trace("apiObjectPackage: {}", apiObjectPackage);
 			api = findAPIInPackage(apiName, apiObjectPackage);
 			if (api != null) {
 				break; // If we have a page object, stop searching.

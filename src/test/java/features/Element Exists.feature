@@ -1,5 +1,5 @@
 @element-visibilty
-Feature: Validtae the Fucntionality of Elements Existing and Not Existing
+Feature: Validate the Fucntionality of Elements Existing and Not Existing
 
   @element-exists @element-does-not-exist @145
   Scenario: Test Link Existance
