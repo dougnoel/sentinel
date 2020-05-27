@@ -193,7 +193,6 @@ public class WebDriverFactory {
     /**
      * Returns the driver path if it exists, otherwise null.
      * @return String the driver path if it exists, otherwise null
-     * @throws ConfigurationNotFoundException if there is a problem reading the configuration file
      */
     protected static String getDriverPath() {
     	return ConfigurationManager.getOptionalProperty("driver");
