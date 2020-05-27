@@ -96,7 +96,7 @@ public class SauceLabsDriverFactory {
         	testName += "Default Sentinel Test Name";
         }
         else {
-        	testName = testName.trim();
+        	testName = testName.stripTrailing();
         }
         
         options.setCapability("name", testName);
