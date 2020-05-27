@@ -37,7 +37,7 @@ public class APIFactory {
 		try {
 			api = (API) Class.forName(packageName + "." + pageName).getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
-			log.trace("{}.{} Page Object creation failed.\n{}", packageName, pageName, e.getMessage());
+			log.trace("{}.{} API Object creation failed.\n{}", packageName, pageName, e.getMessage());
 		}
 		
 		return api;
