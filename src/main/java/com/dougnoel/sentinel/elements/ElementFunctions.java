@@ -41,27 +41,9 @@ public abstract class ElementFunctions {
      */
     public static PageElement getElement(String elementName) throws NoSuchElementException, PageNotFoundException {
         Page page = PageManager.getPage();
-        elementName = elementName.replaceAll("\\s+", "_").toLowerCase();
-        Method pageElementMethod = null;
-        try { // Create a Method object to store the PageElement we want to exercise
-            pageElementMethod = page.getClass().getMethod(elementName);
-        } catch (NoSuchMethodException e) {
-            String errorMessage = SentinelStringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
-                    .getClass().getSimpleName());
-            log.error(errorMessage);
-            throw new NoSuchElementException(errorMessage, e);
-        }
-        PageElement element = null;
-        try {  // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
-            element = (PageElement) pageElementMethod.invoke(page);
-            log.trace("PageElement Name: {}", pageElementMethod.getName());
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        	String errorMessage = SentinelStringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementMethod.getName(), page.getName());
-        	log.error(errorMessage);
-        	throw new NoSuchElementException(errorMessage);
-        } 
-
-        return element;
+        
+        return page.getElement(elementName);
+        
     }
 
     /**

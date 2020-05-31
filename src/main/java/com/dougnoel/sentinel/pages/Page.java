@@ -1,9 +1,23 @@
 package com.dougnoel.sentinel.pages;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
+import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.elements.ElementFunctions;
+import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.exceptions.NoSuchElementException;
+import com.dougnoel.sentinel.exceptions.SentinelException;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
@@ -18,6 +32,8 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * </ul>
  */
 public class Page {
+	private static final Logger log = LogManager.getLogger(Page.class); 
+	
 	protected static final SelectorType CLASS = SelectorType.CLASS;
 	protected static final SelectorType CSS = SelectorType.CSS;
 	protected static final SelectorType ID = SelectorType.ID;
@@ -28,7 +44,9 @@ public class Page {
 
     protected WebDriver driver;
 
-    protected URL url = null;
+    protected URL url;
+    
+    protected Map<String,PageElement> elements;
 
     /**
      * Initializes a WebDriver object for operating on page elements, and sets the
@@ -36,6 +54,7 @@ public class Page {
      */
     public Page() {
         driver = WebDriverFactory.getWebDriver();
+        elements = new HashMap<>();
     }
 
     /**
@@ -82,4 +101,22 @@ public class Page {
     public String getName() {
         return this.getClass().getSimpleName();
     }
+
+	public PageElement getElement(String elementName) {
+        String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
+        return elements.computeIfAbsent(normalizedName, name -> createPageElement(name));
+	}
+	
+	private PageElement createPageElement(String elementName) {
+		Map<String, String> elementData = ConfigurationManager.getElement(elementName, getName());
+		
+		String elementType = elementData.get("elementType");
+		SelectorType selectorType = SelectorType.of(elementData.get("selectorType"));
+		String locatorValue = elementData.get("locatorValue");
+		//TODO: Use Reflection to do this
+		if ("Table".equalsIgnoreCase(elementType)) {
+			return new Table(selectorType, locatorValue);
+		}
+		return null;
+	}
 }

@@ -26,7 +26,8 @@ public class PageData {
 	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
 	// user account data TODO: Annotate corretly.
-	public Map<String,Map<String,Map<String,String>>> accounts;	
+	public Map<String,Map<String,Map<String,String>>> accounts;
+	public Map<String,Map<String,String>> elements;
 
 	/**
 	 * Returns PageData for the given fileName as a string.
@@ -82,6 +83,13 @@ public class PageData {
     public Map<String,String> getAccount(String env, String account) {
     	if (accounts.containsKey(env)) {
     		return accounts.get(env).get(account);
+    	}
+    	return null;
+    }
+    
+    public Map<String,String> getElement(String elementName) {
+    	if (elements.containsKey(elementName)) {
+    		return elements.get(elementName);
     	}
     	return null;
     }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
+import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -38,6 +40,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 public class ConfigurationManager {
 	private static final Logger log = LogManager.getLogger(ConfigurationManager.class); // Create a logger.
 
+	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
 	private static ConfigurationManager instance = null;
 	
 	private static Properties appProps = new Properties();
@@ -234,7 +237,7 @@ public class ConfigurationManager {
 	 * @throws ConfigurationNotFoundException if a configuration option cannot be loaded
 	 * @throws PageObjectNotFoundException if the page object file could not be read
 	 */
-	protected static PageData loadPageData(String pageName) throws PageObjectNotFoundException, ConfigurationNotFoundException {
+	private static PageData loadPageData(String pageName) {
 		PageData pageData = null;
 		try {
 			pageData = PageData.loadYaml(getPageObjectConfigPath(pageName));
@@ -330,6 +333,10 @@ public class ConfigurationManager {
 		String data = accountData.get(key);
 		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);
 		return data;
+	}
+	
+	public static Map <String,String> getElement(String elementName, String pageName) {
+		return PAGE_DATA.computeIfAbsent(pageName, ConfigurationManager::loadPageData).getElement(elementName);
 	}
 
 	/**

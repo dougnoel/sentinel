@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class SentinelException extends Exception {
+public class SentinelException extends RuntimeException {
 
     /**
      * 
