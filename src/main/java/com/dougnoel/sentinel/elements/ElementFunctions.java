@@ -1,11 +1,5 @@
 package com.dougnoel.sentinel.elements;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.PageSelectElement;
 import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
@@ -15,7 +9,6 @@ import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Retrieves as an element as a  PageElement or as one of the following types:
@@ -25,7 +18,6 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
  *
  */
 public abstract class ElementFunctions {
-    private static final Logger log = LogManager.getLogger(ElementFunctions.class); 
 
     private ElementFunctions() {
     	// Exists to defeat instantiation.
