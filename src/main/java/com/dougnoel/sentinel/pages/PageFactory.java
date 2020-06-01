@@ -16,6 +16,8 @@ public class PageFactory {
 	private static final Logger log = LogManager.getLogger(PageFactory.class); // Create a logger.
 	private static HashMap<String, Page> pages = new HashMap<String, Page>();
 	private static String[] pageObjectPackagesList = null;
+	private static final String PAGE_NOT_FOUND_ERROR_MESSAGE = "The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackages property to your conf/sentinel.yml configuration file and try again.";
+	
 	
 	private PageFactory() {
 		//Exists only to defeat instantiation.
@@ -60,14 +62,13 @@ public class PageFactory {
 	 */
 	public static Page buildOrRetrievePage(String pageName) throws PageNotFoundException, ConfigurationNotFoundException {
 		Page page = pages.get(pageName);
-		final String errorMessage = "The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackages property to your conf/sentinel.yml configuration file and try again.";
 		if (page != null) {
 			return page;
 		} else {
 			if (pageObjectPackagesList == null) {
 				pageObjectPackagesList = ConfigurationManager.getPageObjectPackageList();
 				if(pageObjectPackagesList == null) {
-					throw new PageNotFoundException(errorMessage);
+					throw new PageNotFoundException(PAGE_NOT_FOUND_ERROR_MESSAGE);
 				}
 			}
 
@@ -78,9 +79,8 @@ public class PageFactory {
 					break; // If we have a page object, stop searching.
 				}
 			}
-		}
-		if(page == null) {
-			throw new PageNotFoundException(errorMessage);
+			//Added ability to create a page object without a java file, but still allow default functionality for now.
+			page = new Page(pageName);
 		}
 		pages.put(pageName, page);
 		return page;

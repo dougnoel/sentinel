@@ -38,12 +38,21 @@ public class Page {
     protected URL url;
     
     protected Map<String,PageElement> elements;
+    
+    private String pageName;
 
     /**
      * Initializes a WebDriver object for operating on page elements, and sets the
      * base URL for the page.
      */
     public Page() {
+    	this.pageName = this.getClass().getSimpleName();
+        driver = WebDriverFactory.getWebDriver();
+        elements = new HashMap<>();
+    }
+    
+    public Page(String pageName) {
+    	this.pageName = pageName;
         driver = WebDriverFactory.getWebDriver();
         elements = new HashMap<>();
     }
@@ -90,7 +99,7 @@ public class Page {
     }
 
     public String getName() {
-        return this.getClass().getSimpleName();
+        return pageName;
     }
 
 	public PageElement getElement(String elementName) {
