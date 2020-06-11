@@ -152,6 +152,7 @@ public class Page {
 		if ("Table".equalsIgnoreCase(elementType)) {
 			return new Table(elementName, elementData);
 		}
-		return new PageElement(elementName, elementData);
+		// This allows people to call their element type whatever they want without needing a child class to implement it.
+		return new PageElement(elementType, elementName, elementData);
 	}
 }

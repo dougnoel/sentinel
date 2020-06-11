@@ -26,7 +26,6 @@ import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -62,11 +61,9 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 public class PageElement {
 	private static final Logger log = LogManager.getLogger(PageElement.class.getName()); // Create a logger.
 
-	protected SelectorType selectorType;
-	protected String selectorValue;
-
 	protected Map<SelectorType,String> selectors;
 	protected String name;
+	private final String elementType;
 	protected WebDriver driver;
 
 	/**
@@ -84,6 +81,17 @@ public class PageElement {
 		selectors.forEach((locatorType, locatorValue) -> {
 			this.selectors.put(SelectorType.of(locatorType), locatorValue);
 		});
+		this.elementType = this.getClass().getSimpleName();
+		name = elementName;
+		this.driver = WebDriverFactory.getWebDriver();
+	}
+	
+	public PageElement(String elementType, String elementName, Map<String,String> selectors) {
+		this.selectors = new EnumMap<>(SelectorType.class);
+		selectors.forEach((locatorType, locatorValue) -> {
+			this.selectors.put(SelectorType.of(locatorType), locatorValue);
+		});
+		this.elementType = elementType;
 		name = elementName;
 		this.driver = WebDriverFactory.getWebDriver();
 	}
@@ -150,9 +158,8 @@ public class PageElement {
     	    	}
     	    }
         }
-		String errorMessage = SentinelStringUtils.format(
-				"{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
-				this.getClass().getSimpleName(), getName(), selectors);
+		String errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
+				elementType, getName(), selectors);
 		throw new NoSuchElementException(errorMessage);
 	}
 
@@ -167,16 +174,15 @@ public class PageElement {
 	 * @param text
 	 *            String (text to type)
 	 * @return PageElement (for chaining)
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement sendKeys(String text) throws ElementNotFoundException {
+	public PageElement sendKeys(String text) {
 		element().click();
 		element().clear();
 		element().sendKeys(text);
 		return this;
 	}
 
-	public PageElement javaScriptSendKeys(String text) throws SentinelException {
+	public PageElement javaScriptSendKeys(String text) {
 		JavascriptExecutor jse = (JavascriptExecutor) driver;
 		jse.executeScript("arguments[0].value='" + text + "';", element());
 
@@ -194,7 +200,7 @@ public class PageElement {
 	 * @throws AWTException if the key cannot be pressed.
 	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement pressKeys(String text) throws AWTException, ElementNotFoundException {
+	public PageElement pressKeys(String text) throws AWTException {
 		// Ensure that the element has focus.
 		if ("input".equals(element().getTagName())) {
 			element().sendKeys("");
@@ -232,9 +238,8 @@ public class PageElement {
 	 * </ul>
 	 * 
 	 * @return PageElement (for chaining)
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement click() throws ElementNotFoundException  {
+	public PageElement click() {
 		long waitTime = TimeoutManager.getDefaultTimeout();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
@@ -243,11 +248,11 @@ public class PageElement {
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
 				executor.executeScript("arguments[0].click();", element());
 			} catch (Exception e2) {
-				String message = SentinelStringUtils.format(
-						"{} element is not visible using the {} value \"{}\" and cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
-						this.getClass().getSimpleName(), selectorType, selectorValue, waitTime);
-				log.error(message);
-				throw new ElementNotVisibleException(message, e2);
+				String errorMessage = SentinelStringUtils.format(
+						"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
+								elementType, getName(), selectors, waitTime);
+				log.error(errorMessage);
+				throw new ElementNotVisibleException(errorMessage, e2);
 			}
 		}
 		return this;
@@ -263,9 +268,8 @@ public class PageElement {
 	 * </ul>
 	 * 
 	 * @return PageElement (for chaining)
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public PageElement clear() throws ElementNotFoundException {
+	public PageElement clear() {
 		element().clear();
 		return this;
 	}
@@ -274,11 +278,9 @@ public class PageElement {
 	 * Returns true if the element is enabled within 10 seconds; otherwise returns
 	 * false.
 	 * 
-	 * @return boolean true if the element is enabled within 10 seconds; otherwise
-	 *         returns false.
-	 * @throws ElementNotFoundException if the element cannot be found
+	 * @return boolean true if the element is enabled within 10 seconds; otherwise returns false.
 	 */
-	public boolean isEnabled() throws ElementNotFoundException {
+	public boolean isEnabled()  {
 		return isEnabled(10);
 	}
 
@@ -296,13 +298,10 @@ public class PageElement {
 	 * a failure indicating the element wasn't found instead of throwing an
 	 * exception.
 	 * 
-	 * @param seconds
-	 *            int the number of seconds to wait before returning failure.
-	 * @return boolean true if the element is enabled within the number of seconds
-	 *         indicated; otherwise returns false.
-	 * @throws ElementNotFoundException if the element cannot be found
+	 * @param seconds int the number of seconds to wait before returning failure.
+	 * @return boolean true if the element is enabled within the number of seconds indicated; otherwise returns false.
 	 */
-	public boolean isEnabled(int seconds) throws ElementNotFoundException {
+	public boolean isEnabled(int seconds) {
 		int retries = 0;
 		while (true) {
 			try {
@@ -323,9 +322,8 @@ public class PageElement {
 	/**
 	 * Validates whether or not the element is selected.
 	 * @return boolean true if the element is selected, false if it is not
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean isSelected() throws ElementNotFoundException {
+	public boolean isSelected() {
 		return element().isSelected();
 	}
 
@@ -333,11 +331,9 @@ public class PageElement {
 	 * Returns true if the element is displayed within 10 seconds; otherwise returns
 	 * false.
 	 * 
-	 * @return boolean true if the element is displayed within 10 seconds; otherwise
-	 *         returns false.
-	 * @throws ElementNotFoundException if the element cannot be found
+	 * @return boolean true if the element is displayed within 10 seconds; otherwise returns false.
 	 */
-	public boolean isDisplayed() throws ElementNotFoundException {
+	public boolean isDisplayed() {
 		return isDisplayed(10);
 	}
 
@@ -355,13 +351,10 @@ public class PageElement {
 	 * a failure indicating the element wasn't found instead of throwing an
 	 * exception.
 	 * 
-	 * @param seconds
-	 *            int the number of seconds to wait before returning failure.
-	 * @return boolean true if the element is displayed within the number of seconds
-	 *         indicated; otherwise returns false.
-	 * @throws ElementNotFoundException if the element cannot be found
+	 * @param seconds int the number of seconds to wait before returning failure.
+	 * @return boolean true if the element is displayed within the number of seconds indicated; otherwise returns false.
 	 */
-	public boolean isDisplayed(int seconds) throws ElementNotFoundException  {
+	public boolean isDisplayed(int seconds) {
 		int retries = 0;
 		while (true) {
 			try {
@@ -385,9 +378,8 @@ public class PageElement {
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
-	 * @throws NoSuchSelectorException if the selector type passed is invalid
 	 */
-	public boolean doesNotExist() throws NoSuchSelectorException {
+	public boolean doesNotExist() {
 	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
 	    	if (getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10)) != null) {
@@ -402,10 +394,8 @@ public class PageElement {
 	/**
 	 * Returns the text of the page element as a String.
 	 * 
-	 * @return String The text value stored in the element.
-	 * @throws ElementNotFoundException if the element cannot be found
-	 */
-	public String getText() throws ElementNotFoundException {
+	 * @return String The text value stored in the element.	 */
+	public String getText() {
 		return element().getText();
 	}
 
@@ -413,9 +403,8 @@ public class PageElement {
 	 * Returns the WebElement wrapped inside the PageElement so that it can be acted
 	 * upon inside of step definitions.
 	 * @return org.openqa.selenium.WebElement
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public WebElement toWebElement() throws ElementNotFoundException  {
+	public WebElement toWebElement() {
 		return element();
 	}
 
@@ -429,9 +418,8 @@ public class PageElement {
 	 * 
 	 * @param text String the class to verify
 	 * @return boolean
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean hasClass(String text) throws ElementNotFoundException {
+	public boolean hasClass(String text) {
 		String classes = element().getAttribute("class");
 		log.debug("Classes found on element {}: {}", this.getClass().getName(), classes);
 		for (String c : classes.split(" ")) {
@@ -455,9 +443,8 @@ public class PageElement {
 	 * @param attribute String the attribute to look for
 	 * @param value String the value to which attribute should be set
 	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	public boolean attributeEquals(String attribute, String value) throws ElementNotFoundException {
+	public boolean attributeEquals(String attribute, String value) {
 		String values = element().getAttribute(attribute);
 		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 				values);
