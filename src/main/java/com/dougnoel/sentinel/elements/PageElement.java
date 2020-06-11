@@ -4,6 +4,8 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.time.Duration;
+import java.util.EnumMap;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -63,6 +65,8 @@ public class PageElement {
 	protected SelectorType selectorType;
 	protected String selectorValue;
 
+	protected Map<SelectorType,String> selectors;
+	protected String name;
 	protected WebDriver driver;
 
 	/**
@@ -75,28 +79,55 @@ public class PageElement {
 	 * @param selectorValue
 	 *            String
 	 */
-	public PageElement(SelectorType selectorType, String selectorValue) {
-		this.selectorType = selectorType;
-		this.selectorValue = selectorValue;
+	public PageElement(String elementName, Map<String,String> selectors) {
+		this.selectors = new EnumMap<>(SelectorType.class);
+		selectors.forEach((locatorType, locatorValue) -> {
+			this.selectors.put(SelectorType.of(locatorType), locatorValue);
+		});
+		name = elementName;
 		this.driver = WebDriverFactory.getWebDriver();
 	}
 	
-	/**
-	 * Wrapper for dealing with fluent waits when getting an element.
-	 * 
-	 * @param locator org.openqa.selenium.By
-	 * @return org.openqa.selenium.WebElement
-	 */
-	private WebElement getElementWithWait(final By locator) {
-		Duration timeout =  Duration.ofSeconds(TimeoutManager.getDefaultTimeout());
-		Duration interval =  Duration.ofMillis(10);
+	public String getName() {
+		return name;
+	}
+
+	private WebElement getElementWithWait(final By locator, Duration timeout, Duration interval) {
+		try {
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 			       .withTimeout(timeout)
 			       .pollingEvery(interval)
-			       .ignoring(NoSuchElementException.class);
+			       .ignoring(org.openqa.selenium.NoSuchElementException.class);
 
 		return wait.until(d -> driver.findElement(locator));
-		
+		}
+		catch (org.openqa.selenium.TimeoutException e) {
+			return null;
+		}
+	}
+	
+	private By createByLocator(SelectorType selectorType, String selectorValue) {
+		switch (selectorType) {
+		case CLASS:
+			return By.className(selectorValue);
+		case CSS:
+			return By.cssSelector(selectorValue);
+		case ID:
+			return By.id(selectorValue);
+		case NAME:
+			return By.name(selectorValue);
+		case PARTIALTEXT:
+			return By.partialLinkText(selectorValue);
+		case TEXT:
+			return By.linkText(selectorValue);
+		case XPATH:
+			return By.xpath(selectorValue);
+		default:
+			String errorMessage = SentinelStringUtils.format(
+					"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
+					selectorType);
+			throw new NoSuchSelectorException(errorMessage);
+		}
 	}
 	
 	/**
@@ -106,56 +137,24 @@ public class PageElement {
 	 * page.
 	 * 
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
-	protected WebElement element() throws ElementNotFoundException  {
+	protected WebElement element() {
 		WebElement element = null;
-
-		try {
-			switch (selectorType) {
-			case CLASS:
-				element = getElementWithWait(By.className(selectorValue));
-				break;
-			case CSS:
-				element = getElementWithWait(By.cssSelector(selectorValue));
-				break;
-			case ID:
-				element = getElementWithWait(By.id(selectorValue));
-				break;
-			case NAME:
-				element = getElementWithWait(By.name(selectorValue));
-				break;
-			case PARTIALTEXT:
-				element = getElementWithWait(By.partialLinkText(selectorValue));
-				break;
-			case TEXT:
-				element = getElementWithWait(By.linkText(selectorValue));
-				break;
-			case XPATH:
-				element = getElementWithWait(By.xpath(selectorValue));
-				break;
-			default:
-				// This is here in case a new type is added to SelectorType and has not been
-				// implemented yet here.
-				String errorMessage = SentinelStringUtils.format(
-						"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
-						selectorType);
-				throw new NoSuchSelectorException(errorMessage);
-			}
-		} catch (org.openqa.selenium.NoSuchElementException e) {
-			String errorMessage = SentinelStringUtils.format(
-					"{} element does not exist or is not visible using the {} value \"{}\". Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
-					this.getClass().getSimpleName(), selectorType, selectorValue);
-			throw new NoSuchElementException(errorMessage, e);
-		}
-		if (element == null) {
-			String errorMessage = SentinelStringUtils.format(
-					"{} element does not exist or is not visible using the {} value \"{}\". Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
-					this.getClass().getSimpleName(), selectorType, selectorValue);
-			throw new NoSuchElementException(errorMessage);
-		}
-		return element;
-	}	
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		while((System.currentTimeMillis()-startTime) < TimeoutManager.getDefaultTimeout() * 1000) {
+    	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
+    	    	log.trace("Attempting to find with {} {}", selector.getKey(), selector.getValue());
+    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
+    	    	if (element != null) {
+    	    		return element;
+    	    	}
+    	    }
+        }
+		String errorMessage = SentinelStringUtils.format(
+				"{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
+				this.getClass().getSimpleName(), getName(), selectors);
+		throw new NoSuchElementException(errorMessage);
+	}
 
 	/**
 	 * Type text into a PageElement.
@@ -381,6 +380,7 @@ public class PageElement {
 	}
 
 	/**
+	 * TODO: Test to make sure this to work with multiple selectors
 	 * Determines with 250 milliseconds (1/4 of a second) if an element is not present.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
@@ -388,39 +388,15 @@ public class PageElement {
 	 * @throws NoSuchSelectorException if the selector type passed is invalid
 	 */
 	public boolean doesNotExist() throws NoSuchSelectorException {
-		By locator = null;
-		boolean flag = false;
-
-		switch (selectorType) {
-		case CSS:
-			locator = By.cssSelector(selectorValue);
-			break;
-		case ID:
-			locator = By.id(selectorValue);
-			break;
-		case NAME:
-			locator = By.name(selectorValue);
-			break;
-		case PARTIALTEXT:
-			locator = By.partialLinkText(selectorValue);
-			break;
-		case TEXT:
-			locator = By.linkText(selectorValue);
-			break;
-		case XPATH:
-			locator = By.xpath(selectorValue);
-			break;
-		default:
-			// This is here in case a new type is added to SelectorType and has not been
-			// implemented yet here.
-			String errorMessage = SentinelStringUtils.format(
-					"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
-					selectorType);
-			throw new NoSuchSelectorException(errorMessage);
-		}
-		flag = new WebDriverWait(driver, 1).until(ExpectedConditions.invisibilityOfElementLocated(locator));
-		log.trace("Return result: {}", flag);
-		return flag;
+	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
+	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
+	    	if (getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10)) != null) {
+	    		log.trace("doesNotExist() return result: true");
+	    		return true;
+	    	}
+	    }
+	    log.trace("doesNotExist() return result: false");
+	    return false;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package com.dougnoel.sentinel.elements;
 
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
-import com.dougnoel.sentinel.elements.dropdowns.PageSelectElement;
+import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
@@ -99,8 +99,8 @@ public abstract class ElementFunctions {
      * @throws NoSuchElementException if the element cannot be found
      * @throws PageNotFoundException if the page cannot be found
      */
-    public static GoogleMap getElementAsGoogleMap(String elementName) throws SentinelException {
-        return (GoogleMap) getElement(elementName);
+    public static EmbeddedMap getElementAsGoogleMap(String elementName) throws SentinelException {
+        return (EmbeddedMap) getElement(elementName);
     }
 
     /**
@@ -125,8 +125,8 @@ public abstract class ElementFunctions {
      * @throws NoSuchElementException if the element cannot be found
      * @throws PageNotFoundException if the page cannot be found
      */
-    public static PageSelectElement getElementAsSelectElement(String elementName) throws SentinelException {
-        return (PageSelectElement) getElement(elementName);
+    public static SelectElement getElementAsSelectElement(String elementName) throws SentinelException {
+        return (SelectElement) getElement(elementName);
     }
 
     /**

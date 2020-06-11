@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.elements;
 
-import com.dougnoel.sentinel.enums.SelectorType;
+import java.util.Map;
 
 /**
  * Span implementation of a WebElement.
@@ -8,13 +8,13 @@ import com.dougnoel.sentinel.enums.SelectorType;
 public class Span extends PageElement {
 
 	/**
-	 * Implementation of a WebElement to initialize how an element is going to be found when it is worked on by the 
+	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
 	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
 	 * 
-	 * @param selectorType SelectorType
-	 * @param selectorValue String
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
 	 */
-	public Span(SelectorType selectorType, String selectorValue) {
-		super(selectorType, selectorValue);
+	public Span(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
 	}
 }

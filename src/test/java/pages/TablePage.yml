@@ -3,5 +3,6 @@ urls:
 elements:
    example_table:
       elementType: Table
-      selectorType: id
-      locatorValue: mytable
+      css: blah
+      id: mytable
+      xpath: //*[@id="mytable"]

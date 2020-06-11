@@ -7,7 +7,16 @@ import java.util.Map;
 import org.openqa.selenium.WebDriver;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.elements.Checkbox;
 import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Textbox;
+import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
+import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
+import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
+import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
+import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
+import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
+import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -104,19 +113,45 @@ public class Page {
 
 	public PageElement getElement(String elementName) {
         String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
-        return elements.computeIfAbsent(normalizedName, name -> createPageElement(name));
+        return elements.computeIfAbsent(normalizedName, name -> createElement(name));
 	}
 	
-	private PageElement createPageElement(String elementName) {
+	private PageElement createElement(String elementName) {
 		Map<String, String> elementData = ConfigurationManager.getElement(elementName, getName());
 		
 		String elementType = elementData.get("elementType");
-		SelectorType selectorType = SelectorType.of(elementData.get("selectorType"));
-		String locatorValue = elementData.get("locatorValue");
-		//TODO: Use Reflection to do this
-		if ("Table".equalsIgnoreCase(elementType)) {
-			return new Table(selectorType, locatorValue);
+		elementData.remove("elementType");
+
+		if ("Checkbox".equalsIgnoreCase(elementType)) {
+			return new Checkbox(elementName, elementData);
 		}
-		return null;
+		if ("Textbox".equalsIgnoreCase(elementType)) {
+			return new Textbox(elementName, elementData);
+		}
+		if ("Dropdown".equalsIgnoreCase(elementType)) {
+			return new Dropdown(elementName, elementData);
+		}
+		if ("MaterialUISelect".equalsIgnoreCase(elementType)) {
+			return new MaterialUISelect(elementName, elementData);
+		}
+		if ("PrimeNGDropdown".equalsIgnoreCase(elementType)) {
+			return new PrimeNGDropdown(elementName, elementData);
+		}
+		if ("SelectElement".equalsIgnoreCase(elementType)) {
+			return new SelectElement(elementName, elementData);
+		}
+		if ("PrimeNGRadioButton".equalsIgnoreCase(elementType)) {
+			return new PrimeNGRadioButton(elementName, elementData);
+		}
+		if ("Radiobutton".equalsIgnoreCase(elementType)) {
+			return new Radiobutton(elementName, elementData);
+		}
+		if ("NGXDataTable".equalsIgnoreCase(elementType)) {
+			return new NGXDataTable(elementName, elementData);
+		}
+		if ("Table".equalsIgnoreCase(elementType)) {
+			return new Table(elementName, elementData);
+		}
+		return new PageElement(elementName, elementData);
 	}
 }

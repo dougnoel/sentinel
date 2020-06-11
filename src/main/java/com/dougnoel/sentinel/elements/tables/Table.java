@@ -12,7 +12,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.elements.PageElement;
-import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
@@ -42,18 +41,15 @@ public class Table extends PageElement {
 	protected String tableSiblingCellLocator = "//..//*";
 	
 	/**
-	 * Creates a table object to manipulate. Expects a table or ngx-datatable tag. When used
-	 * the table object finds and creates rows and columns and stores them. If data in the table changes
-	 * you must use the reset() method. You can save the current state of a table by calling the storeTable()
-	 * method.
-	 * NOTE: Unlike other element methods, this one throws an ElementNotFound exception because the constructor
-	 * must look at the tag to determine the table type.
-	 * 
-	 * @param selectorType SelectorType the type of selector to use
-	 * @param selectorValue String the value to look for with the given selector type
+	 * Creates a table object to manipulate. When used the table object finds and creates rows and columns and stores them. 
+	 * If data in the table changes you must use the reset() method. You can save the current state of a table by calling 
+	 * the storeTable() method.
+	 *
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
 	 */
-	public Table(SelectorType selectorType, String selectorValue) {
-		super(selectorType, selectorValue);
+	public Table(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
 	}
 
 	/**
@@ -85,7 +81,7 @@ public class Table extends PageElement {
 	 *         row if there are no &lt;th&gt; tags
 	 * @throws ElementNotFoundException if there is a problem finding the header or rows
 	 */
-	protected List<String> getOrCreateHeaders() throws ElementNotFoundException {
+	protected List<String> getOrCreateHeaders() {
 		if (headers.isEmpty()) {
 			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
@@ -113,7 +109,7 @@ public class Table extends PageElement {
 	 * @return List&lt;WebElement&gt; the headers
 	 * @throws ElementNotFoundException if the header elements cannot be found
 	 */
-	protected List<WebElement> getOrCreateHeaderElements() throws ElementNotFoundException {
+	protected List<WebElement> getOrCreateHeaderElements() {
 		if (headerElements == null) {
 			headerElements = getHeaderElements();
 		}
@@ -133,7 +129,7 @@ public class Table extends PageElement {
 	 * @return List&lt;WebElement&gt; the headers; or null if the header tags are not found
 	 * @throws ElementNotFoundException if the request is malformed
 	 */
-	protected List<WebElement> getHeaderElements() throws ElementNotFoundException {
+	protected List<WebElement> getHeaderElements() {
 		headerElements = this.element().findElements(By.tagName(tableHeaderTag));
 		return headerElements;
 	}
@@ -146,7 +142,7 @@ public class Table extends PageElement {
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected boolean tableHeadersExist() throws ElementNotFoundException  {
+	protected boolean tableHeadersExist()  {
 		return getHeaderElements() != null;
 	}
 
@@ -156,7 +152,7 @@ public class Table extends PageElement {
 	 * @return List&lt;WebElement&gt;
 	 * @throws ElementNotFoundException if the row elements cannot be found
 	 */
-	protected List<WebElement> getOrCreateRowElements() throws ElementNotFoundException  {
+	protected List<WebElement> getOrCreateRowElements() {
 		if (rowElements == null) {
 			rowElements = this.element().findElements(By.tagName(tableRowTag));
 		}
@@ -169,7 +165,7 @@ public class Table extends PageElement {
 	 * @return List&lt;ArrayList&lt;String&gt;&gt;
 	 * @throws ElementNotFoundException if the row elements cannot be found
 	 */
-	protected List<ArrayList<String>> getOrCreateRows() throws ElementNotFoundException {
+	protected List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
 			List<WebElement> dataRows = getOrCreateRowElements();
 				dataRows.remove(0);
@@ -193,7 +189,7 @@ public class Table extends PageElement {
 	 * @return int the number of row elements
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public int getNumberOfRows() throws ElementNotFoundException  {
+	public int getNumberOfRows() {
 		//Selenium counts a <th> tag as a <td> tag and returns it.
 		if (tableHeadersExist() && tableType != TableType.HTML) {
 			return getOrCreateRowElements().size();
@@ -208,7 +204,7 @@ public class Table extends PageElement {
 	 * @return Map&lt;String, ArrayList&lt;String&gt;&gt;
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	protected Map<String, ArrayList<String>> getOrCreateColumns() throws ElementNotFoundException {
+	protected Map<String, ArrayList<String>> getOrCreateColumns() {
 		if (columns.isEmpty()) {
 			int index = 0;
 			getOrCreateRows(); // We cannot create the columns without Row data
@@ -232,7 +228,7 @@ public class Table extends PageElement {
 	 * @return int the number of columns
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public int getNumberOfColumns() throws ElementNotFoundException {
+	public int getNumberOfColumns() {
 		return getOrCreateHeaders().size();
 	}
 
@@ -257,7 +253,7 @@ public class Table extends PageElement {
 	 * @param pageNumber int the page number under which to store the table data for comparison
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void storeTable(int pageNumber) throws ElementNotFoundException {
+	public void storeTable(int pageNumber) {
 		reset();
 		tables.put(pageNumber, getOrCreateRows());
 	}
@@ -267,7 +263,7 @@ public class Table extends PageElement {
 	 * (un-paginated) tables.
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void storeTable() throws ElementNotFoundException  {
+	public void storeTable() {
 		storeTable(1);
 	}
 
@@ -280,7 +276,7 @@ public class Table extends PageElement {
 	 * @return boolean Table matches the one in memory.
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean compareWithStoredTable(int pageNumber) throws ElementNotFoundException {
+	public boolean compareWithStoredTable(int pageNumber) {
 		reset();
 		return (tables.get(pageNumber) == getOrCreateRows());
 	}
@@ -294,7 +290,7 @@ public class Table extends PageElement {
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public WebElement getElementInRowThatContains(String rowLocatorText, String elementLocatorText) throws ElementNotFoundException {
+	public WebElement getElementInRowThatContains(String rowLocatorText, String elementLocatorText) {
 		return getElementInRowThatContains(By.xpath("[contains(text(),'" + rowLocatorText + "')]"), By.xpath("[contains(text(),'" + elementLocatorText + "')]"));
 	}
 	
@@ -306,7 +302,7 @@ public class Table extends PageElement {
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 * @throws ElementNotFoundException if no element is found
 	 */
-	public WebElement getElementInRowThatContains(int ordinalRow, By elementLocator) throws ElementNotFoundException {
+	public WebElement getElementInRowThatContains(int ordinalRow, By elementLocator) {
 		WebElement element;
 		if (ordinalRow == -1) {
 			//Set to the last row
@@ -335,7 +331,7 @@ public class Table extends PageElement {
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 * @throws ElementNotFoundException if no element is found
 	 */
-	public WebElement getElementInRowThatContains(By rowLocator, By elementLocator) throws ElementNotFoundException {
+	public WebElement getElementInRowThatContains(By rowLocator, By elementLocator) {
 		WebElement element;
 		try {
 			element = this.element()
@@ -364,7 +360,7 @@ public class Table extends PageElement {
 	 * @param textToClick String the unique text to locate the row in question
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void clickElementInRowThatContains(String elementText, String textToClick) throws ElementNotFoundException {
+	public void clickElementInRowThatContains(String elementText, String textToClick) {
 		getElementInRowThatContains(elementText, textToClick).click();
 	}
 
@@ -375,7 +371,7 @@ public class Table extends PageElement {
 	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void clickElementInRowThatContains(By rowLocator, By elementLocator) throws ElementNotFoundException {
+	public void clickElementInRowThatContains(By rowLocator, By elementLocator) {
 		getElementInRowThatContains(rowLocator, elementLocator).click();
 	}
 	
@@ -386,7 +382,7 @@ public class Table extends PageElement {
 	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public void clickElementInRowThatContains(int ordinalRow, By elementLocator) throws ElementNotFoundException {
+	public void clickElementInRowThatContains(int ordinalRow, By elementLocator) {
 		getElementInRowThatContains(ordinalRow, elementLocator).click();
 	}
 	
@@ -398,7 +394,7 @@ public class Table extends PageElement {
 	 * @return boolean true if the column contains the given text in every cell, false if not
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) throws ElementNotFoundException  {
+	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
@@ -430,7 +426,7 @@ public class Table extends PageElement {
 	 * @return boolean true if the column contains the given text in at least one of the cells, false if not
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) throws ElementNotFoundException  {
+	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
 		if (column == null) {
@@ -464,7 +460,7 @@ public class Table extends PageElement {
 	 * @return boolean true is the column is sorted in ascending order, false if it is not sorted correctly
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnCellsAreSortedAscending(String columnName) throws ElementNotFoundException {
+	public boolean verifyColumnCellsAreSortedAscending(String columnName) {
 		return verifyColumnCellsAreSorted(columnName, true);
 	}
 	
@@ -475,7 +471,7 @@ public class Table extends PageElement {
 	 * @return boolean true is the column is sorted in descending order, false if it is not sorted correctly
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnCellsAreSortedDescending(String columnName) throws ElementNotFoundException {
+	public boolean verifyColumnCellsAreSortedDescending(String columnName) {
 		return verifyColumnCellsAreSorted(columnName, false);
 	}
 	
@@ -490,7 +486,7 @@ public class Table extends PageElement {
 	 * @return boolean true is the column is sorted in the passed sort order, false if it is not sorted correctly
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) throws ElementNotFoundException {
+	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
 		@SuppressWarnings("unchecked")
@@ -519,7 +515,7 @@ public class Table extends PageElement {
 	 * @return boolean true if column cells are unique, false if duplicates are found, throws error otherwise
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnCellsAreUnique(String columnHeader) throws ElementNotFoundException  {
+	public boolean verifyColumnCellsAreUnique(String columnHeader) {
 		if (!verifyColumnExists(columnHeader)) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
@@ -559,7 +555,7 @@ public class Table extends PageElement {
 	 * @return boolean true if column exists, false if column does not exists.
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyColumnExists(String columnName) throws ElementNotFoundException  {
+	public boolean verifyColumnExists(String columnName) {
 		for (String header : getOrCreateHeaders()) {
 			if (header.contains(columnName)) {
 				return true;
@@ -575,7 +571,7 @@ public class Table extends PageElement {
 	 * @return boolean true if all cells values are unique, false if any duplicates
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyRowCellsAreUnique(String columnName) throws ElementNotFoundException  {
+	public boolean verifyRowCellsAreUnique(String columnName) {
 		String[] columnHeaders = columnName.split(", ");
 		return verifyRowCellsAreUnique(columnHeaders);
 	}
@@ -587,7 +583,7 @@ public class Table extends PageElement {
 	 * @return boolean true if all cells values are unique, false if any duplicates
 	 * @throws ElementNotFoundException if an element is not found
 	 */
-	public boolean verifyRowCellsAreUnique(String[] columnHeaders) throws ElementNotFoundException {
+	public boolean verifyRowCellsAreUnique(String[] columnHeaders) {
 
 		getOrCreateHeaders();
 		getOrCreateRows();

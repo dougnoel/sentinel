@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.elements;
 
-import com.dougnoel.sentinel.enums.SelectorType;
+import java.util.Map;
+
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 
@@ -10,12 +11,14 @@ import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 public class Checkbox extends PageElement {
 
 	/**
+	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
+	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
 	 * 
-	 * @param selectorType (CSS, ID, NAME, TEXT, XPATH)
-	 * @param selectorValue the value of the selector we are using to access the checkbox
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
 	 */
-	public Checkbox(SelectorType selectorType, String selectorValue){
-		super(selectorType, selectorValue);
+	public Checkbox(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
 	}
 	
 	/**
@@ -26,7 +29,7 @@ public class Checkbox extends PageElement {
 	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 * @throws ElementNotFoundException if the element is not found
 	 */
-	public PageElement check() throws ConfigurationNotFoundException, ElementNotFoundException {
+	public PageElement check() {
 		return this.click();
 	}
 		
@@ -37,7 +40,7 @@ public class Checkbox extends PageElement {
 	 * @return PageElement (for chaining)
 	 * @throws ElementNotFoundException if the eleemnt is not found
 	 */
-	public PageElement uncheck() throws ElementNotFoundException{
+	public PageElement uncheck() {
 		return this.clear();
 	}
 

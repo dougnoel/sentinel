@@ -1,5 +1,7 @@
 package com.dougnoel.sentinel.elements.dropdowns;
 
+import java.util.Map;
+
 import org.openqa.selenium.support.ui.Select;
 
 import com.dougnoel.sentinel.elements.PageElement;
@@ -11,21 +13,18 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 /**
  * Extends PageElement. Is intended to be a a base class for Dropdown.
  */
-public class PageSelectElement extends PageElement {
+public class SelectElement extends PageElement {
 
-    /**
-     * Implementation of a WebElement to initialize how an element is going to be
-     * found when it is worked on by the WebDriver class. Takes a reference to the
-     * WebDriver class that will be exercising its functionality.
-     * 
-     * @param selectorType
-     *            SelectorType
-     * @param selectorValue
-     *            String
-     */
-    public PageSelectElement(SelectorType selectorType, String selectorValue) {
-        super(selectorType, selectorValue);
-    }
+	/**
+	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
+	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
+	 * 
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
+	 */
+	public SelectElement(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
+	}
 
     /**
      * Selects an option from a drop down using the text value of the item to select.
@@ -33,7 +32,7 @@ public class PageSelectElement extends PageElement {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(String selectText) throws ElementNotFoundException {
+    public SelectElement select(String selectText) throws ElementNotFoundException {
         Select selectElement = new Select(this.element());
         selectElement.selectByVisibleText(selectText);
 
@@ -46,7 +45,7 @@ public class PageSelectElement extends PageElement {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(int index) throws  ElementNotFoundException{
+    public SelectElement select(int index) throws  ElementNotFoundException{
         Select selectElement = new Select(this.element());
         selectElement.selectByIndex(index);
         
@@ -61,7 +60,7 @@ public class PageSelectElement extends PageElement {
      * @return PageSelectElement for object chaining
      * @throws ElementNotFoundException if the element cannot be found
      */
-    public PageSelectElement select(SelectorType selectorType, String selectText) throws ElementNotFoundException {
+    public SelectElement select(SelectorType selectorType, String selectText) throws ElementNotFoundException {
         Select selectElement = new Select(this.element());
         switch (selectorType) {
         case INDEX:

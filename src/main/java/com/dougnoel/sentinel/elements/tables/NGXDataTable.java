@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.elements.tables;
 
-import com.dougnoel.sentinel.enums.SelectorType;
+import java.util.Map;
+
 import com.dougnoel.sentinel.enums.TableType;
 
 /**
@@ -10,15 +11,14 @@ import com.dougnoel.sentinel.enums.TableType;
 
 public class NGXDataTable extends Table {
 
-	
 	/**
 	 * Creates an NGX-DataTable object overriding the Table creator and setting the values necessary for this object to work correctly.
 	 * 
-	 * @param selectorType SelectorType the type of selector to use
-	 * @param selectorValue String the value to look for with the given selector type
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
 	 */
-	public NGXDataTable(SelectorType selectorType, String selectorValue) {
-		super(selectorType, selectorValue);
+	public NGXDataTable(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
 		tableType = TableType.NGXDATATABLE;
 		tableHeaderTag = "datatable-header-cell";
 		tableRowTag = "datatable-body-row";
@@ -26,5 +26,5 @@ public class NGXDataTable extends Table {
 		tableDataCellLocator = "//span";
 		tableSiblingCellLocator = "//../../..//*";
 	}
-
+	
 }
