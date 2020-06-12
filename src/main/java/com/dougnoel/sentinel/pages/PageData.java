@@ -87,11 +87,27 @@ public class PageData {
     	return null;
     }
     
+    /**
+     * Returns an element if it exists in a page object.
+     * @param elementName the name of the element in the page object under the 'elements' section
+     * @return Map&lt;String, String&gt; the locators for an element
+     */
     public Map<String,String> getElement(String elementName) {
     	if (elements.containsKey(elementName)) {
     		return elements.get(elementName);
     	}
     	return null;
+    }
+    
+    /**
+     * Returns any page parts to search for elements
+     * @return String[] list of page parts
+     */
+    public String[] getPageParts() {
+    	if (elements.containsKey("include")) {
+    		return elements.get("include").toString().trim().split(",");
+    	}
+    	return new String[0];
     }
     
     public boolean containsUrl(String env) {

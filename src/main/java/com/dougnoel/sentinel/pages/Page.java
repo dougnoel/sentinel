@@ -116,8 +116,21 @@ public class Page {
         return elements.computeIfAbsent(normalizedName, name -> createElement(name));
 	}
 	
-	private PageElement createElement(String elementName) {
+	private Map<String, String> findElement(String elementName) {
 		Map<String, String> elementData = ConfigurationManager.getElement(elementName, getName());
+		if (elementData.isEmpty()) {
+			for (String page : ConfigurationManager.getPageParts(getName())) {
+				elementData = ConfigurationManager.getElement(elementName, page);
+				if (!elementData.isEmpty()) {
+					return elementData;
+				}
+			}
+		}
+		return elementData;
+	}
+	
+	private PageElement createElement(String elementName) {
+		Map<String, String> elementData = findElement(elementName);
 		
 		String elementType = elementData.get("elementType");
 		elementData.remove("elementType");

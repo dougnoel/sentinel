@@ -338,6 +338,10 @@ public class ConfigurationManager {
 		return PAGE_DATA.computeIfAbsent(pageName, ConfigurationManager::loadPageData).getElement(elementName);
 	}
 
+	public static String[] getPageParts(String pageName) {
+		return PAGE_DATA.computeIfAbsent(pageName, ConfigurationManager::loadPageData).getPageParts();
+	}
+	
 	/**
 	 * Stores values in a property object for quick and dirty dependency injection.
 	 * Replaces space chars with '_' char, makes key all lowercase, and logs action.
