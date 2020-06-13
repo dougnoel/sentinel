@@ -382,7 +382,8 @@ public class PageElement {
 	public boolean doesNotExist() {
 	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-	    	if (getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10)) != null) {
+	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
+	    	if (element == null || !(element.isDisplayed())) {
 	    		log.trace("doesNotExist() return result: true");
 	    		return true;
 	    	}
