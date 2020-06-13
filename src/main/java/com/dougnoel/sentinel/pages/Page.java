@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriver;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
@@ -116,13 +117,13 @@ public class Page {
         return elements.computeIfAbsent(normalizedName, name -> createElement(name));
 	}
 	
-	private Map<String, String> findElement(String elementName) {
-		Map<String, String> elementData = ConfigurationManager.getElement(elementName, getName());
-		if (elementData.isEmpty()) {
-			for (String page : ConfigurationManager.getPageParts(getName())) {
-				elementData = ConfigurationManager.getElement(elementName, page);
-				if (!elementData.isEmpty()) {
-					return elementData;
+	private Map<String, String> findElement(String elementName, String pageName) {
+		Map<String, String> elementData = ConfigurationManager.getElement(elementName, pageName);
+		if (elementData == null) {
+			for (String page : ConfigurationManager.getPageParts(pageName)) {
+				elementData = findElement(elementName, page);
+				if (elementData != null) {
+					break;
 				}
 			}
 		}
@@ -130,7 +131,7 @@ public class Page {
 	}
 	
 	private PageElement createElement(String elementName) {
-		Map<String, String> elementData = findElement(elementName);
+		Map<String, String> elementData = findElement(elementName, getName());
 		
 		String elementType = elementData.get("elementType");
 		elementData.remove("elementType");

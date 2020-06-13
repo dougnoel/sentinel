@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,6 +29,7 @@ public class PageData {
 	// user account data TODO: Annotate corretly.
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
+	public String include;
 
 	/**
 	 * Returns PageData for the given fileName as a string.
@@ -104,8 +106,8 @@ public class PageData {
      * @return String[] list of page parts
      */
     public String[] getPageParts() {
-    	if (elements.containsKey("include")) {
-    		return elements.get("include").toString().trim().split(",");
+    	if (StringUtils.isNotBlank(include)) {
+    		return include.toString().trim().split(",");
     	}
     	return new String[0];
     }
