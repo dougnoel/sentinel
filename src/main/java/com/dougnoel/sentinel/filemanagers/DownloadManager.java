@@ -285,7 +285,7 @@ public class DownloadManager {
             pdDoc = PDDocument.load(file);
             parsedText = pdfStripper.getText(pdDoc);
         } catch (IOException e) {
-            log.error("Unable to open PDF Parser. " + e.getMessage());
+            log.error("Unable to open PDF Parser. {}", e.getMessage());
             try {
                 if (pdDoc != null)
                     pdDoc.close();
@@ -296,7 +296,7 @@ public class DownloadManager {
         	fis.close();
         }
 
-        log.trace("PDF Parsed Text: \n" + parsedText);
+        log.trace("PDF Parsed Text: \n{}", parsedText);
 
         if (parsedText != null && parsedText.contains(expectedText)) {
             flag = true;

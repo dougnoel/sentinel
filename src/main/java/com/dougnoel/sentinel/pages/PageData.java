@@ -37,11 +37,9 @@ public class PageData {
 	 * @see PageData#loadYaml(File)
 	 * @param fileName String the name of the page configuration file
 	 * @return PageData the configured PageData 
-	 * @throws ConfigurationParseException if error occurs when parsing page configuration data
-	 * @throws ConfigurationMappingException if error occurs when mapping page configuration data
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
-	public static PageData loadYaml(String fileName) throws ConfigurationParseException, ConfigurationMappingException, IOException{
+	public static PageData loadYaml(String fileName) throws IOException{
 		return loadYaml(new File(fileName));
 	}
 	
@@ -50,11 +48,9 @@ public class PageData {
 	 * 
 	 * @param fileName File the File object to which the configurations will be mapped.
 	 * @return PageData the configured PageData
-	 * @throws ConfigurationParseException if error occurs when parsing page configuration data
-	 * @throws ConfigurationMappingException if error occurs when mapping page configuration data
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
-	public static PageData loadYaml(File fileName) throws ConfigurationParseException, ConfigurationMappingException, IOException{
+	public static PageData loadYaml(File fileName) throws IOException{
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		PageData pageData = null;

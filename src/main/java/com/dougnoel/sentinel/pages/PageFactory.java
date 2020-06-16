@@ -6,15 +6,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 /**
  * The Page Factory is a factory method that simply takes a string containing the name of a 
  * Page Object and returns the object to be worked on. It handles searching packages for page definitions.
  */
 public class PageFactory {
 	private static final Logger log = LogManager.getLogger(PageFactory.class); // Create a logger.
-	private static HashMap<String, Page> pages = new HashMap<String, Page>();
+	private static HashMap<String, Page> pages = new HashMap<>();
 	private static String[] pageObjectPackagesList = null;
 	private static final String PAGE_NOT_FOUND_ERROR_MESSAGE = "The page you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackages property to your conf/sentinel.yml configuration file and try again.";
 	
@@ -35,7 +35,8 @@ public class PageFactory {
 		try {
 			page = (Page) Class.forName(packageName + "." + pageName).getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
-			log.trace("{}.{} Page Object creation failed.\n{}", packageName, pageName, e.getMessage());
+			String errorMessage = SentinelStringUtils.format("Exception suppressed during {}.{} Page Object creation.\n{}", packageName, pageName, e);
+			log.trace(errorMessage);
 		}
 		
 		
@@ -57,10 +58,8 @@ public class PageFactory {
 	 *                 <a href="https://en.wikipedia.org/wiki/Camel_case">Pascal
 	 *                 case</a>
 	 * @return Page the specific page object cast as a generic page object
-	 * @throws PageNotFoundException if page could not be built or retrieved.
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static Page buildOrRetrievePage(String pageName) throws PageNotFoundException, ConfigurationNotFoundException {
+	public static Page buildOrRetrievePage(String pageName) {
 		Page page = pages.get(pageName);
 		if (page != null) {
 			return page;
