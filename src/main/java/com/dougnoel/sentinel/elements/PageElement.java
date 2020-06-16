@@ -77,19 +77,15 @@ public class PageElement {
 	 *            String
 	 */
 	public PageElement(String elementName, Map<String,String> selectors) {
-		this.selectors = new EnumMap<>(SelectorType.class);
-		selectors.forEach((locatorType, locatorValue) -> {
-			this.selectors.put(SelectorType.of(locatorType), locatorValue);
-		});
-		this.elementType = this.getClass().getSimpleName();
-		name = elementName;
-		this.driver = WebDriverFactory.getWebDriver();
+		this("PageElement", elementName, selectors);
 	}
 	
 	public PageElement(String elementType, String elementName, Map<String,String> selectors) {
 		this.selectors = new EnumMap<>(SelectorType.class);
 		selectors.forEach((locatorType, locatorValue) -> {
-			this.selectors.put(SelectorType.of(locatorType), locatorValue);
+			if (!"elementType".equalsIgnoreCase(locatorType)) {
+				this.selectors.put(SelectorType.of(locatorType), locatorValue);
+			}
 		});
 		this.elementType = elementType;
 		name = elementName;
@@ -151,7 +147,7 @@ public class PageElement {
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		while((System.currentTimeMillis()-startTime) < TimeoutManager.getDefaultTimeout() * 1000) {
     	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-    	    	log.trace("Attempting to find with {} {}", selector.getKey(), selector.getValue());
+    	    	log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
     	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
     	    	if (element != null) {
     	    		return element;

@@ -133,7 +133,7 @@ public class Page {
 		Map<String, String> elementData = findElement(elementName, getName());
 		
 		String elementType = elementData.get("elementType");
-		elementData.remove("elementType");
+//		elementData.remove("elementType");
 
 		if ("Checkbox".equalsIgnoreCase(elementType)) {
 			return new Checkbox(elementName, elementData);

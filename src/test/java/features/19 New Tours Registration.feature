@@ -1,5 +1,5 @@
 #Author: Doug Noël
-@19
+@19 @new-tours
 Feature: 19 New Tours Registration
   As a new user of the New Tours website,
   I want to be able to register, 

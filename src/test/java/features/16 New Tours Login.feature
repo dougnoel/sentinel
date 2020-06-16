@@ -1,5 +1,5 @@
 #Author: Doug Noël
-@16
+@16 @new-tours
 Feature: 16 New Tours Login
   As a user of the New Tours website,
   I want to be able to login, 

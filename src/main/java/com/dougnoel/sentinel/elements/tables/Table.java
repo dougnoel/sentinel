@@ -153,7 +153,7 @@ public class Table extends PageElement {
 	 * @throws ElementNotFoundException if the row elements cannot be found
 	 */
 	protected List<WebElement> getOrCreateRowElements() {
-		if (rowElements == null) {
+		if (rowElements == null || rowElements.isEmpty()) {
 			rowElements = this.element().findElements(By.tagName(tableRowTag));
 		}
 		return rowElements;
@@ -168,7 +168,6 @@ public class Table extends PageElement {
 	protected List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
 			List<WebElement> dataRows = getOrCreateRowElements();
-				dataRows.remove(0);
 			for (WebElement row : dataRows) {
 				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
 				ArrayList<String> cells = new ArrayList<>();
@@ -191,10 +190,12 @@ public class Table extends PageElement {
 	 */
 	public int getNumberOfRows() {
 		//Selenium counts a <th> tag as a <td> tag and returns it.
-		if (tableHeadersExist() && tableType != TableType.HTML) {
-			return getOrCreateRowElements().size();
+		final int numberOfRows = getOrCreateRowElements().size();
+		log.trace("Number of rows found: {}", numberOfRows);
+		if (tableType == TableType.NGXDATATABLE) {
+			return numberOfRows;
 		}
-		return getOrCreateRowElements().size() - 1;
+		return numberOfRows - 1;
 	}
 
 	/**
@@ -211,7 +212,9 @@ public class Table extends PageElement {
 			for (String header : getOrCreateHeaders()) {
 				ArrayList<String> cells = new ArrayList<>();
 				for (ArrayList<String> row : rows) {
-					cells.add(row.get(index));
+					if (!row.isEmpty()) {
+						cells.add(row.get(index));
+					}
 				}
 				columns.put(header, cells);
 				index++;
@@ -296,11 +299,11 @@ public class Table extends PageElement {
 	
 	/**
 	 * Returns a WebElement found inside the indicated row using the locator passed.
+	 * TODO: Fix this so that it uses PageElements
 	 * 
 	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
 	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
-	 * @throws ElementNotFoundException if no element is found
 	 */
 	public WebElement getElementInRowThatContains(int ordinalRow, By elementLocator) {
 		WebElement element;
@@ -309,14 +312,28 @@ public class Table extends PageElement {
 			ordinalRow = getNumberOfRows()-1;
 		}
 		
+		ordinalRow--;
+		
 		try {
-			element = getOrCreateRowElements().get(ordinalRow--)
+			element = getOrCreateRowElements().get(ordinalRow)
 					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
 			log.error(errorMsg);
 			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+		} 
+		catch (org.openqa.selenium.StaleElementReferenceException e2) {
+			reset(); //We ended up with a stale element so reset the whole table
+			try {
+				element = getOrCreateRowElements().get(ordinalRow)
+						.findElement(By.xpath(tableDataCellLocator))
+						.findElement(elementLocator);
+			} catch (org.openqa.selenium.NoSuchElementException e) {
+				String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
+				log.error(errorMsg);
+				throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+			}
 		}
 		log.trace("Element found: {}", element);
 		return element;
