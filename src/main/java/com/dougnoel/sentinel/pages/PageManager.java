@@ -166,8 +166,6 @@ public class PageManager {
      * Maximizes the browser window. Stores the current window size and position so
      * you can return to the existing settings.
      * 
-     * TODO: Move this higher up and out of individual page objects.
-     * 
      * @return Page - Returns a page object for chaining.
      */
     public Page maximizeWindow() {
