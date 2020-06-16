@@ -19,6 +19,8 @@ import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
@@ -132,8 +134,18 @@ public class Page {
 	private PageElement createElement(String elementName) {
 		Map<String, String> elementData = findElement(elementName, getName());
 		
-		String elementType = elementData.get("elementType");
-//		elementData.remove("elementType");
+		if (elementData == null) {
+			String errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
+			throw new ElementNotFoundException(errorMessage);
+		}
+		
+		String elementType = null;
+		if (elementData.containsKey("elementType")) {
+			elementType = elementData.get("elementType");
+		}
+		else {
+			elementType = "Element";
+		}
 
 		if ("Checkbox".equalsIgnoreCase(elementType)) {
 			return new Checkbox(elementName, elementData);

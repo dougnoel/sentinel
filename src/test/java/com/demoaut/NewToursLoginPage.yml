@@ -24,5 +24,4 @@ elements:
     elementType: Textbox
     name: "password"
   sign_in_button:
-    elementType: Button
     name: "login"
