@@ -1,5 +1,5 @@
 urls:
-  base: https://dougnoel.github.io/sentinel/test/radiobutton.html
+  default: https://dougnoel.github.io/sentinel/test/radiobutton.html
 elements:
   male_radio_button:
     elementType: Radiobutton

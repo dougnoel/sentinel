@@ -1,5 +1,5 @@
 urls:
-   base: http://newtours.demoaut.com/
+   default: http://newtours.demoaut.com/
 accounts:
    default:
       RegularUser:

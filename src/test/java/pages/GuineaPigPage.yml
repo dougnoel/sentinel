@@ -1,5 +1,5 @@
 urls:
-  base: https://saucelabs.com/test/guinea-pig
+  default: https://saucelabs.com/test/guinea-pig
 elements:
   example_link:
     elementType: Link

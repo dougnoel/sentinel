@@ -1,5 +1,5 @@
 urls:
-  base: https://swimlane.github.io/ngx-datatable/
+  default: https://swimlane.github.io/ngx-datatable/
 elements:
   example_table:
     elementType: NGXDataTable

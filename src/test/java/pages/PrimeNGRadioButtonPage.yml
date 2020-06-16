@@ -1,5 +1,5 @@
 urls:
-  base: "https://primefaces.org/primeng/showcase/#/radiobutton"
+  default: "https://primefaces.org/primeng/showcase/#/radiobutton"
 elements:
   option_one_radio_buton:
     elementType: PrimeNGRadioButton

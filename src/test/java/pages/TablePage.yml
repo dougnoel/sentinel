@@ -1,5 +1,5 @@
 urls:
-  base: https://dougnoel.github.io/sentinel/test/table.html
+  default: https://dougnoel.github.io/sentinel/test/table.html
 elements:
    example_table:
       elementType: Table

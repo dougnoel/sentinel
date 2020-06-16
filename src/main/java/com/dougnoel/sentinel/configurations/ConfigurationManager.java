@@ -68,9 +68,8 @@ public class ConfigurationManager {
 	 * 
 	 * @param configurationKey String the key for the requested configuration property
 	 * @return String the configuration value
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	private static String getOrCreateConfigurationData(String configurationKey) throws ConfigurationNotFoundException {	
+	private static String getOrCreateConfigurationData(String configurationKey) {	
 		//First we see if the property is set on the maven commandline or in code.
 		String data = System.getProperty(configurationKey);
 		if (data != null) {
@@ -129,9 +128,8 @@ public class ConfigurationManager {
 	 * @see ConfigurationManager#getOrCreateConfigurationData(String)
 	 * @param property String the requested configuration property key
 	 * @return String the configuration property value
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static String getProperty(String property) throws ConfigurationNotFoundException {
+	public static String getProperty(String property)  {
 		String systemProperty = System.getProperty(property);
 		if(systemProperty == null) {
 			try {
@@ -155,9 +153,8 @@ public class ConfigurationManager {
 	 * Returns the name of all the folders to be searched for page objects.
 	 * 
 	 * @return String[] the list of page object folders
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static String[] getPageObjectPackageList() throws ConfigurationNotFoundException {
+	public static String[] getPageObjectPackageList() {
 		String pageObjectPackages = getProperty("pageObjectPackages");
 
 		log.trace("pageObjectPackages: {}", pageObjectPackages);
@@ -168,9 +165,8 @@ public class ConfigurationManager {
 	 * Returns the system environment, returns an exception if no env if found, forcing the user to set the env.
 	 * 
 	 * @return String text of system env info
-	 * @throws ConfigurationNotFoundException if no environment variable has been set
 	 */
-	public static String getEnvironment() throws ConfigurationNotFoundException {
+	public static String getEnvironment()  {
 		String env = System.getProperty("env");
 		if (env == null)
 			throw new ConfigurationNotFoundException("Enviroment is not set, please restart your test and pass -Denv=\"<your environment>\"");
@@ -182,9 +178,8 @@ public class ConfigurationManager {
 	 * 
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
-	 * @throws FileNotFoundException if the config file is not found in the project or the file is not readable.
 	 */
-	public static File getPageObjectConfigPath(String pageName) throws ConfigurationNotFoundException {
+	public static File getPageObjectConfigPath(String pageName)  {
 		String filename = pageName + ".yml";
 		File result = searchDirectory(new File("src/"), filename);
 
@@ -204,9 +199,8 @@ public class ConfigurationManager {
 	 * @param directory File the directory to start the search
 	 * @param fileName String the full name of the file with extension to find
 	 * @return File the file that is found, null if nothing is found
-	 * @throws AccessDeniedException when a directory or file cannot be read.
 	 */
-	public static File searchDirectory(File directory, String fileName) throws AccessDeniedException {
+	public static File searchDirectory(File directory, String fileName) {
 		log.trace("Searching directory {}", directory.getAbsoluteFile());
 		File searchResult = null;
 		if (directory.canRead()) {
@@ -266,10 +260,8 @@ public class ConfigurationManager {
 	 * @return String the desired URL
 	 * @throws PageNotFoundException if page is not found
 	 * @throws URLNotFoundException if url is not found for the page
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 * @throws PageNotFoundException if the if the page was not successfully created
 	 */
-	public static String getUrl() throws ConfigurationNotFoundException, PageNotFoundException {
+	public static String getUrl()  {
 		return getUrl(PageManager.getPage().getName());
 	}
 	
@@ -278,10 +270,8 @@ public class ConfigurationManager {
 	 
 	 * @param pageName String the name of the page from which the url is retrieved
 	 * @return String baseUrl the url for the given page and current environment
-	 * @throws PageObjectNotFoundException if the page object file cannot be read
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
 	 */
-	public static String getUrl(String pageName) throws ConfigurationNotFoundException, PageObjectNotFoundException {
+	public static String getUrl(String pageName) {
 		String baseURL = null;
 		PageData pageData = loadPageData(pageName);
 		String env = ConfigurationManager.getEnvironment();
@@ -312,10 +302,8 @@ public class ConfigurationManager {
 	 * @param account String user account
 	 * @param key String username or password
 	 * @return String requested username or password
-	 * @throws ConfigurationNotFoundException if the requested configuration property has not been set
-	 * @throws PageNotFoundException if the page object cannot be created
 	 */
-	public static String getAccountInformation(String account, String key) throws ConfigurationNotFoundException, PageNotFoundException {
+	public static String getAccountInformation(String account, String key) {
 		String pageName = PageManager.getPage().getName();
 		String env = getEnvironment();
 		PageData pageData = loadPageData(pageName);
