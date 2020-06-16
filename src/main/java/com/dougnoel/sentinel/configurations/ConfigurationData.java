@@ -30,9 +30,8 @@ public class ConfigurationData extends File {
 	 * 
 	 * @param configurationKey String the name of the setting to retrieve
 	 * @return String the configuration value
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public String getDefaultConfigurationValue(String configurationKey) throws ConfigurationNotFoundException {
+	public String getDefaultConfigurationValue(String configurationKey) {
 		return getConfigurationValue(null, configurationKey);
 	}
 	
@@ -42,9 +41,8 @@ public class ConfigurationData extends File {
 	 * @param environment String the environment in which the test is running (e.g. dev, qa, sit)
 	 * @param configurationKey String the name of the setting to retrieve
 	 * @return String the configuration value
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public String getConfigurationValue(String environment, String configurationKey) throws ConfigurationNotFoundException {
+	public String getConfigurationValue(String environment, String configurationKey) {
 		String configurationValue = null;
 		boolean defaultChecked = false;
 		// This is here in case something falls through, but there are checks when we get the environment to

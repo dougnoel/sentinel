@@ -8,7 +8,6 @@ import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.filemanagers.DownloadManager;
@@ -74,10 +73,8 @@ public class WebDriverFactory {
      * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
-     * @throws WebDriverException if error thrown while creating WebDriver instance
-     * @throws ConfigurationNotFoundException if a needed configuration value cannot be found
      */
-    public static WebDriver instantiateWebDriver() throws WebDriverException, ConfigurationNotFoundException {
+    public static WebDriver instantiateWebDriver() {
         // Ensure we only have one instance of this class, so that we always return the
         // same driver.
         if (instance == null) {
@@ -87,7 +84,7 @@ public class WebDriverFactory {
         //Saucelabs Driver setup
         String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	return driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
+        	return SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         }
 
         // Set a Download Directory if one was specified on the command line
@@ -135,9 +132,8 @@ public class WebDriverFactory {
     /**
      * Returns a sanitized version of the operating system set in the config file or on the command line.
      * @return String a sanitized string containing the operating system
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    protected static String getOperatingSystem() throws ConfigurationNotFoundException {
+    protected static String getOperatingSystem() {
     	//TODO: Add auto detection
     	//TODO Make this useable by Saucelabs driver
     	String operatingSystem = ConfigurationManager.getProperty("os");
@@ -153,9 +149,8 @@ public class WebDriverFactory {
     /**
      * Returns an error message string 
      * @return String error message
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    protected static String getMissingOSConfigurationErrorMessage() throws ConfigurationNotFoundException {
+    protected static String getMissingOSConfigurationErrorMessage() {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
@@ -164,9 +159,8 @@ public class WebDriverFactory {
     /**
      * Returns an error message string 
      * @return String error message
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static String getOSNotCompatibleWithBrowserErrorMessage() throws ConfigurationNotFoundException {
+    private static String getOSNotCompatibleWithBrowserErrorMessage() {
     	String operatingSystem = ConfigurationManager.getProperty("os");
     	String browser = ConfigurationManager.getProperty("browser");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
@@ -176,9 +170,8 @@ public class WebDriverFactory {
     /**
      * Returns a sanitized version of the browser set in the config file or on the command line.
      * @return String a sanitized string containing the browser
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static String getBrowserName() throws ConfigurationNotFoundException {
+    private static String getBrowserName() {
     	//TODO: Add auto detection
     	//TODO Make this useable by Saucelabs driver
     	String browser;
@@ -201,10 +194,8 @@ public class WebDriverFactory {
     /**
      * Creates an IE WebDriver and returns it.
      * @return WebDriver an IE WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static WebDriver createInternetExplorerDriver() throws WebDriverException, ConfigurationNotFoundException {
+    private static WebDriver createInternetExplorerDriver() {
     	String driverPath = getDriverPath();
     	String errorMessage;
         switch (getOperatingSystem()) {
@@ -243,10 +234,8 @@ public class WebDriverFactory {
     /**
      * Creates a Safari WebDriver and returns it.
      * @return WebDriver a Safari WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static WebDriver createSafariDriver() throws WebDriverException, ConfigurationNotFoundException {
+    private static WebDriver createSafariDriver() {
         switch (getOperatingSystem()) {
         case LINUX:
         case WINDOWS:

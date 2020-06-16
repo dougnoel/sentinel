@@ -3,10 +3,12 @@ package com.dougnoel.sentinel.steps;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 
-import com.dougnoel.sentinel.elements.Link;
-import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -25,16 +27,19 @@ public class PDFSteps {
      * </ul>
      * @param linkName String The text of the Download link. NOT a PageElement object name.
      * @param extension String Extension type (.txt/.pdf/.etc) of the file being downloaded.
-     * @throws Throwable Passes through any errors to the executing code.
+     * @throws InterruptedException Passes through any errors to the executing code.
      */
     @When("^I open the (.*?)( pdf)? in a new tab$")
-    public static void i_open_the_document_with_extension_in_a_new_tab(String linkName, String extension) throws Throwable {
+    public static void openPDFInNewTab(String linkName, String extension) throws InterruptedException {
     	if (extension == null) {
         	extension = "pdf";
         	getElement(linkName).click();
         } else {
         	extension = StringUtils.strip(extension);
-           new Link(SelectorType.PARTIALTEXT, linkName).click();
+        	//TODO: Unit test. Also, maybe make this easier to do?
+        	Map<String,String> linkLocator = new HashMap<>();
+        	linkLocator.put("PARTIALTEXT", linkName);
+        	new PageElement("Link", linkLocator).click();
         }
         PageManager.waitForPageLoad();
         PageManager.switchToNewWindow();

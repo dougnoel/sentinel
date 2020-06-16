@@ -9,7 +9,6 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import com.dougnoel.sentinel.configurations.TimeoutManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
 import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
@@ -46,14 +45,10 @@ public class PageManager {
 	 * <b>NOTE:</b> This function is currently only intended for generic step
 	 * definitions, as it makes the code complex to write otherwise.
 	 * 
-	 * @param pageName String Must be an exact string match (including case) to the
-	 *                 Page Object name (e.g. BLAMarketingPortalPage).
-	 * @return Page Returns a reference to the page in case you want to use it
-	 *         immediately.
-	 * @throws PageNotFoundException if page could not be set
-	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
+	 * @param pageName String Must be an exact string match (including case) to the Page Object name (e.g. LoginPage).
+	 * @return Page Returns a reference to the page in case you want to use it immediately.
 	 */
-	public static Page setPage(String pageName) throws PageNotFoundException, ConfigurationNotFoundException {
+	public static Page setPage(String pageName) {
 		// Ensure we only have one instance of this class, so that we always
 		// return the same driver.
 		if (instance == null)
@@ -68,9 +63,8 @@ public class PageManager {
 	 * This method returns the current Page Object stored in the Page Manager.
 	 * 
 	 * @return Page the Page Object
-	 * @throws PageNotFoundException if the page cannot be found
 	 */
-	public static Page getPage() throws PageNotFoundException {
+	public static Page getPage() {
 		if (instance == null)
 			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
 		if(page == null) {
@@ -168,6 +162,27 @@ public class PageManager {
 		return page;
 	}
 
+    /**
+     * Maximizes the browser window. Stores the current window size and position so
+     * you can return to the existing settings.
+     * 
+     * @return Page - Returns a page object for chaining.
+     */
+    public Page maximizeWindow() {
+        driver().manage().window().maximize();
+        return page;
+    }
+
+    /**
+     * Returns the title of the current web page we are on. Useful for debugging and
+     * assertions.
+     * 
+     * @return String
+     */
+    public String getPageTitle() {
+        return driver().getTitle();
+    }
+    
 	/**
 	 * Switches focus of the WebDriver to a new window assuming there was only one
 	 * before. Finds the handle and passes that to overloaded switchToNewWindow()
@@ -178,10 +193,8 @@ public class PageManager {
 	 * 
 	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
 	 * @return String the window handle we are switching to
-	 * @throws NoSuchWindowException if only one window is open or if the parent
-	 *                               window can not be found
 	 */
-	public static String switchToNewWindow() throws NoSuchWindowException {
+	public static String switchToNewWindow() {
 		String newHandle = null;
 		Set<String> handles = driver().getWindowHandles();
 		if (handles.size() == 1) {
@@ -211,9 +224,8 @@ public class PageManager {
 	 * 
 	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
 	 * @param index String the window to which we want to switch
-	 * @throws NoSuchWindowException if the expected window is already closed
 	 */
-	public static void switchToNewWindow(String index) throws NoSuchWindowException {
+	public static void switchToNewWindow(String index) {
 		try {
 			driver().switchTo().window(index);
 			log.trace("Switched to new window {}", index);
@@ -241,10 +253,8 @@ public class PageManager {
 
 	/**
 	 * Switches focus of the WebDriver to an iFrame.
-	 * 
-	 * @throws NoSuchFrameException if no frame is found
 	 */
-	public static void switchToIFrame() throws NoSuchFrameException {
+	public static void switchToIFrame() {
 		try {
 			driver().switchTo().frame(0);
 			log.trace("Switched to iFrame on current page");
@@ -263,13 +273,11 @@ public class PageManager {
 	 * has access to the driver object..
 	 * 
 	 * @return String the URL of currently active window
-	 * @throws URLNotFoundException if URL is not found, or if exception thrown
-	 *                              while retrieving the url
 	 */
-	public static String getCurrentUrl() throws URLNotFoundException {
+	public static String getCurrentUrl() {
 		String currentUrl = null;
 		try {
-			currentUrl = page.getCurrentUrl();
+			currentUrl = driver().getCurrentUrl();
 			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
 			String errorMessage = SentinelStringUtils.format(
@@ -294,7 +302,7 @@ public class PageManager {
 	 * @see PageManager#isPageLoaded()
 	 * 
 	 * @return boolean always returns true, will throw exception if page does not load
-	 * @throws InterruptedException if exception if thrown during Thread.sleep() action
+	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
 		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());

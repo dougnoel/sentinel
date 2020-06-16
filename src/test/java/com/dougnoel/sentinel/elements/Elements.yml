@@ -1,0 +1,39 @@
+elements:
+  generic:
+    name: "lastName"
+    css: "lastName"
+    xpath: "lastName"
+  checkbox:
+    elementType: Checkbox
+    xpath: "firstName"
+  textbox:
+    elementType: Textbox
+    name: "lastName"
+  dropdown:
+    elementType: Dropdown
+    id: "email"
+  material_ui_select:
+    elementType: MaterialUISelect
+    name: "confirmPassword"
+  prime_ng_dropdown:
+    elementType: PrimeNGDropdown
+    name: "register"
+  select:
+    elementType: SelectElement
+    name: "firstName"
+  prime_ng_radio_button:
+    elementType: PrimeNGRadioButton
+    name: "lastName"
+  radiobutton:
+    elementType: Radiobutton
+    id: "email"
+  ngx_data_table:
+    elementType: NGXDataTable
+    name: "confirmPassword"
+  table:
+    elementType: Table
+    name: "register"
+  bad_selector:
+     bad: "blah"
+  bad_element:
+     id:

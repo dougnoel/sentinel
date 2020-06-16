@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -20,10 +19,8 @@ public class FirefoxDriverFactory {
     /**
      * Creates a Firefox WebDriver and returns it.
      * @return WebDriver a Firefox WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    protected static WebDriver createFirefoxDriver() throws WebDriverException, ConfigurationNotFoundException {
+    protected static WebDriver createFirefoxDriver() {
     	setFirefoxDriverPath();
         try {
         	return new FirefoxDriver();
@@ -41,10 +38,8 @@ public class FirefoxDriverFactory {
     
     /**
      * Sets the path for the ChromeDriver based on operating system. Uses a custom driver if it is set as a configuration.
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static void setFirefoxDriverPath() throws WebDriverException, ConfigurationNotFoundException {
+    private static void setFirefoxDriverPath() {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{

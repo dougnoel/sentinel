@@ -35,10 +35,9 @@ public class TableVerificationSteps {
      * 
      * @param expectedNumberOfRows int The number of rows your are expecting.
      * @param elementName String (Table name) This should be the name of the table element to count.
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I see (\\d+) rows in the (.*)$")
-    public static void i_see_x_rows_in_a_table(int expectedNumberOfRows, String elementName) throws Throwable {
+    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String elementName) {
         int numberOfRows = getElementAsTable(elementName).getNumberOfRows();
         String expectedResult = SentinelStringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
         assertTrue(expectedResult, numberOfRows == expectedNumberOfRows);
@@ -47,6 +46,7 @@ public class TableVerificationSteps {
     /**
      * Compares the current page we are on with the page stored in
      * memory given the page number and Table element object page for the current page.
+     * TODO: Add negative case
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
@@ -56,11 +56,10 @@ public class TableVerificationSteps {
      * </ul>
      * @param pageNumber int Page we are on to use as a key to retrieve data.
      * @param tableName String the name of the table element on the page object
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I should be shown the (\\d+)(?:st|nd|rd|th) page of results from the (.*)$")
-    public static void i_should_be_shown_the_x_page_of_results(int pageNumber, String tableName) throws Throwable {
-        assert ((boolean) getElementAsTable(tableName).compareWithStoredTable(pageNumber) == false);
+    public static void compareTables(int pageNumber, String tableName) {
+    	assertTrue(getElementAsTable(tableName).compareWithStoredTable(pageNumber));
     }
     
     /**
@@ -75,11 +74,9 @@ public class TableVerificationSteps {
      * @param columnName String name of the column to verify
      * @param isMultiCells String if table has more than 1 row
      * @param tableName String name of the table to search
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) column(s)? in the (.*?) contains? unique values$")
-	public static void i_verify_the_column_in_the_table_contains_unique_text(String columnName, String isMultiCells,
-			String tableName) throws Throwable {
+	public static void verifyUniqueColumnText(String columnName, String isMultiCells, String tableName) {
 		if (isMultiCells != null) {		
 			assertTrue(getElementAsTable(tableName).verifyRowCellsAreUnique(columnName));
 		} else {
@@ -98,10 +95,9 @@ public class TableVerificationSteps {
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void i_verify_the_table_contains_the_column(String tableName, String columnName) throws Throwable {
+    public static void verifyColumnExists(String tableName, String columnName) {
         assertTrue(getElementAsTable(tableName).verifyColumnExists(columnName));
     }
     
@@ -117,10 +113,9 @@ public class TableVerificationSteps {
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
      * @param key String the key to retrieve the text to match from the configuration manager
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
-    public static void i_verify_the_column_in_the_table_contains_the_text_for_the_stored_value(String columnName, String tableName, String key) throws Throwable {
+    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
         String textToMatch = ConfigurationManager.getValue(key);
         assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
     }
@@ -141,10 +136,9 @@ public class TableVerificationSteps {
      * @param tableName String Name of the table containing the column
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param textToMatch String the text to look for in the column
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify( all the cells in)? the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
-    public static void i_verify_the_column_in_the_table_contains_text(String allCells, String columnName, String tableName, String assertion, String textToMatch) throws Throwable {
+    public static void verifyTextAppearsInColumn(String allCells, String columnName, String tableName, String assertion, String textToMatch) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean orMatch = StringUtils.isEmpty(allCells);
         
@@ -179,10 +173,9 @@ public class TableVerificationSteps {
      * @param columnName String the name of the column to verify
      * @param tableName String the name of the table containing the column
      * @param sortOrder String ascending or descending
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the cells in the (.*?) column in the (.*?) are sorted in (ascending|descending) order$")
-    public static void i_verify_the_cells_in_the_column_in_the_table_are_sorted(String columnName, String tableName, String sortOrder) throws Throwable {
+    public static void VerifyColumnSort(String columnName, String tableName, String sortOrder) {
         boolean sortAscending = StringUtils.equals(sortOrder, "ascending");
         
         String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));

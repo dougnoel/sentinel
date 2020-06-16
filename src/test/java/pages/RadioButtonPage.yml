@@ -1,2 +1,21 @@
 urls:
-  base: https://dougnoel.github.io/sentinel/test/radiobutton.html
+  default: https://dougnoel.github.io/sentinel/test/radiobutton.html
+elements:
+  male_radio_button:
+    elementType: Radiobutton
+    id: "male"
+  female_radio_button:
+    elementType: Radiobutton
+    id: "female"
+  other_radio_button:
+    elementType: Radiobutton
+    id: "other"
+  zero_to_thirty_radio_button:
+    elementType: Radiobutton
+    id: "age1"
+  thirty_one_to_sixty_radio_button:
+    elementType: Radiobutton
+    id: "age2"
+  sixty_one_to_one_hundred_radio_button:
+    elementType: Radiobutton
+    id: "age3"

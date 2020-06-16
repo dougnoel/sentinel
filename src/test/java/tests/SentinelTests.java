@@ -22,7 +22,7 @@ import io.cucumber.junit.Cucumber;
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 	, strict = true
-//  , tags = { "@16" }
+//  , tags = { "@19" }
 )
 
 public class SentinelTests {

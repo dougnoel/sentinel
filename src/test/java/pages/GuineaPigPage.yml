@@ -1,2 +1,15 @@
 urls:
-  base: https://saucelabs.com/test/guinea-pig
+  default: https://saucelabs.com/test/guinea-pig
+elements:
+  example_link:
+    elementType: Link
+    text: "i am a link"
+  invisible_div:
+    elementType: Div
+    id: "invisible div"
+  example_div:
+    elementType: Div
+    id: "i_am_an_id"
+  fake_div:
+    elementType: Div
+    id: "fake div"

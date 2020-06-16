@@ -27,11 +27,9 @@ public class TableSteps {
      * @param key String the key used to retrieve the value
      * @param tableName String the name of the table to search
      * @param elementName String the name of the element to click
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I find the (.*?) link in the row of the (.*?) containing the (.*?) value and click it$")
-    public static void i_find_the_row_matching_the_text_stored_for_the_element_in_the_table_and_click_an_associated_link(
-            String elementName, String tableName, String key) throws Throwable {
+    public static void clickAssociatedLinkInTable(String elementName, String tableName, String key) {
         String text = ConfigurationManager.getValue(key);
         getElementAsTable(tableName).clickElementInRowThatContains(text, elementName);
     }
@@ -53,11 +51,9 @@ public class TableSteps {
      * @param elementToClick String the text or xpath used to find the item you want to click upon
      * @param matchLocatorType String the type of locator the next value will be: text or xpath
      * @param elementToMatch String the text or xpath of the value that will ensure you are in the correct row
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
-    public static void i_find_the_table_and_click_the_link_associated_with_the_locator(
-    		String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) throws Throwable {
+    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {
     	By clickLocator;
     	if ( StringUtils.equals(clickLocatorType, "xpath") ) {
     		clickLocator = By.xpath(elementToClick);
@@ -70,7 +66,6 @@ public class TableSteps {
     	} else {
     		matchLocator = By.xpath("//*[contains(text(),'" + elementToMatch + "')]");
     	}
-    	
     	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
     }
     
@@ -88,11 +83,9 @@ public class TableSteps {
      * @param tableName String the name of the table to search
      * @param clickLocatorType String the type of locator the next value will be: text, xpath, value for (stored value)
      * @param elementToClick  String the text, xpath or stored value used to find the item you want to click upon
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I find the (\\d+|la)(?:st|nd|rd|th) row in the (.*?) and click the (text|xpath|value for) (.*?)$")
-    public static void i_find_the_ordinal_row_in_the_table_and_click_an_associated_link(
-    		String ordinal, String tableName, String clickLocatorType, String elementToClick) throws Throwable {
+    public static void clickAssociatedLinkInTable(String ordinal, String tableName, String clickLocatorType, String elementToClick) {
     	By clickLocator;
     	int ordinalRow;
     	switch (clickLocatorType) {
@@ -111,7 +104,6 @@ public class TableSteps {
     	} else {
     		ordinalRow = Integer.parseInt(ordinal);
     	}
-    	
     	getElementAsTable(tableName).clickElementInRowThatContains(ordinalRow, clickLocator);
     }
     
@@ -126,10 +118,9 @@ public class TableSteps {
      * </ul>
      * @param pageNumber int Page we are on to store as a key in a hash.
      * @param tableName String the name of the table element on the page object
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I view the (\\d+)(?:st|nd|rd|th) page of results from the (.*)$")
-    public static void i_view_the_x_page_of_results(int pageNumber, String tableName) throws Throwable {
+    public static void storeTableValues(int pageNumber, String tableName) {
         getElementAsTable(tableName).storeTable(pageNumber);
     }
     

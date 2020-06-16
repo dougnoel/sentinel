@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 public class SauceLabsDriverFactory {
@@ -20,9 +19,8 @@ public class SauceLabsDriverFactory {
     /**
      * Creates a single threaded Saucelabs WebDriver.
      * @return WebDriver a Saucelabs WebDriver
-     * @throws ConfigurationNotFoundException if a requested configuration property has not been set
      */
-    protected static WebDriver createSaucelabsDriver() throws ConfigurationNotFoundException {
+    protected static WebDriver createSaucelabsDriver() {
         URL sauceLabsUrl;
 		try {
 			sauceLabsUrl = new URL("https://ondemand.saucelabs.com:443/wd/hub");

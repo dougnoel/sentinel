@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +27,9 @@ public class PageData {
 	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
 	// user account data TODO: Annotate corretly.
-	public Map<String,Map<String,Map<String,String>>> accounts;	
+	public Map<String,Map<String,Map<String,String>>> accounts;
+	public Map<String,Map<String,String>> elements;
+	public String include;
 
 	/**
 	 * Returns PageData for the given fileName as a string.
@@ -34,11 +37,9 @@ public class PageData {
 	 * @see PageData#loadYaml(File)
 	 * @param fileName String the name of the page configuration file
 	 * @return PageData the configured PageData 
-	 * @throws ConfigurationParseException if error occurs when parsing page configuration data
-	 * @throws ConfigurationMappingException if error occurs when mapping page configuration data
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
-	public static PageData loadYaml(String fileName) throws ConfigurationParseException, ConfigurationMappingException, IOException{
+	public static PageData loadYaml(String fileName) throws IOException{
 		return loadYaml(new File(fileName));
 	}
 	
@@ -47,11 +48,9 @@ public class PageData {
 	 * 
 	 * @param fileName File the File object to which the configurations will be mapped.
 	 * @return PageData the configured PageData
-	 * @throws ConfigurationParseException if error occurs when parsing page configuration data
-	 * @throws ConfigurationMappingException if error occurs when mapping page configuration data
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
-	public static PageData loadYaml(File fileName) throws ConfigurationParseException, ConfigurationMappingException, IOException{
+	public static PageData loadYaml(File fileName) throws IOException{
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		PageData pageData = null;
@@ -84,6 +83,29 @@ public class PageData {
     		return accounts.get(env).get(account);
     	}
     	return null;
+    }
+    
+    /**
+     * Returns an element if it exists in a page object.
+     * @param elementName the name of the element in the page object under the 'elements' section
+     * @return Map&lt;String, String&gt; the locators for an element
+     */
+    public Map<String,String> getElement(String elementName) {
+    	if (elements.containsKey(elementName)) {
+    		return elements.get(elementName);
+    	}
+    	return null;
+    }
+    
+    /**
+     * Returns any page parts to search for elements
+     * @return String[] list of page parts
+     */
+    public String[] getPageParts() {
+    	if (StringUtils.isNotBlank(include)) {
+    		return include.toString().trim().split(",");
+    	}
+    	return new String[0];
     }
     
     public boolean containsUrl(String env) {

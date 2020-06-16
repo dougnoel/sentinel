@@ -1,31 +1,26 @@
 package com.dougnoel.sentinel.elements;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
-import com.dougnoel.sentinel.elements.dropdowns.PageSelectElement;
+import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.exceptions.NoSuchElementException;
-import com.dougnoel.sentinel.exceptions.PageNotFoundException;
-import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.pages.Page;
+import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Retrieves as an element as a  PageElement or as one of the following types:
- * 		- Button, Checkbox, Div, Dropdown, GoogleMap, Link, Radio, Select, Span, Table, Textbox
+ * Checkbox, Dropdown, Radiobutton, Select, Table, or Textbox.
  * 
- * To return as the desired type, we call getElement which returns a PageElement, and the element is then typecast as the desired element.
+ * To return as the desired type, we call getElement which returns a PageElement, and the element is 
+ * cast as the desired element.
  *
  */
-public abstract class ElementFunctions {
-    private static final Logger log = LogManager.getLogger(ElementFunctions.class); 
+public class ElementFunctions {
+	private static final Logger log = LogManager.getLogger(ElementFunctions.class.getName()); // Create a logger.
 
     private ElementFunctions() {
     	// Exists to defeat instantiation.
@@ -36,174 +31,113 @@ public abstract class ElementFunctions {
      * 
      * @param elementName String name of requested element
      * @return PageElement the requested element
-     * @throws PageNotFoundException if no page object found or defined.
-     * @throws NoSuchElementException if element is not found or defined.
      */
-    public static PageElement getElement(String elementName) throws NoSuchElementException, PageNotFoundException {
-        Page page = PageManager.getPage();
-        elementName = elementName.replaceAll("\\s+", "_").toLowerCase();
-        Method pageElementMethod = null;
-        try { // Create a Method object to store the PageElement we want to exercise
-            pageElementMethod = page.getClass().getMethod(elementName);
-        } catch (NoSuchMethodException e) {
-            String errorMessage = SentinelStringUtils.format("Element {} is not defined for the page object {}. Make sure you have spelled the page object name correctly in your Cucumber step definition and in the page object.", elementName, page
-                    .getClass().getSimpleName());
-            log.error(errorMessage);
-            throw new NoSuchElementException(errorMessage, e);
-        }
-        PageElement element = null;
-        try {  // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
-            element = (PageElement) pageElementMethod.invoke(page);
-            log.trace("PageElement Name: {}", pageElementMethod.getName());
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-        	String errorMessage = SentinelStringUtils.format("PageElement {} could not be found on Page {}. Please ensure the element is defined on the page.", pageElementMethod.getName(), page.getName());
-        	log.error(errorMessage);
-        	throw new NoSuchElementException(errorMessage);
-        } 
-
-        return element;
+    public static PageElement getElement(String elementName) {
+        return PageManager.getPage().getElement(elementName);
     }
 
     /**
-     * Returns the Button associated with the element name on the currently active
-     * page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Button the button associated with the element name on the currently active page
-     * @throws PageNotFoundException if the page cannot be found
-     * @throws NoSuchElementException if the element cannot be found 
-     */
-    public static Button getElementAsButton(String elementName) throws SentinelException {
-        return (Button) getElement(elementName);
-    }
-
-    /**
-     * Returns the Checkbox associated with the element name on the currently active
-     * page.
+     * Returns the Checkbox associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
      * @return Checkbox the checkbox associated with the element name on the currently active page
-     * @throws PageNotFoundException if the page cannot be found
-     * @throws NoSuchElementException if the element cannot be found
      */
-    public static Checkbox getElementAsCheckbox(String elementName) throws SentinelException {
-        return (Checkbox) getElement(elementName);
+    public static Checkbox getElementAsCheckbox(String elementName) {
+		try {
+			return (Checkbox) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Checkbox.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
-     * Returns the Div associated with the element name on the currently active
-     * page.
+     * Returns the Dropdown associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
-     * @return Div the div associated with the element name on the currently active page
-     * @throws PageNotFoundException if the page cannot be found
-     * @throws NoSuchElementException if the element cannot be found
+     * @return Dropdown the drop down associated with the element name on the currently active page
      */
-    public static Div getElementAsDiv(String elementName) throws SentinelException {
-        return (Div) getElement(elementName);
+    public static Dropdown getElementAsDropdown(String elementName) { 
+		try {
+			return (Dropdown) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Dropdown.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
-     * Returns the Dropdown associated with the element name on the currently active
-     * page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Dropdown the dropdown associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
-     */
-    public static Dropdown getElementAsDropdown(String elementName) throws SentinelException {  	
-        return (Dropdown) getElement(elementName);
-    }
-
-    /**
-     * Returns the GoogleMap associated with the element name on the currently
-     * active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return GoogleMap the GoogleMap associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
-     */
-    public static GoogleMap getElementAsGoogleMap(String elementName) throws SentinelException {
-        return (GoogleMap) getElement(elementName);
-    }
-
-    /**
-     * Returns the Link associated with the element name on the currently active
-     * page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Link the link associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
-     */
-    public static Link getElementAsLink(String elementName) throws SentinelException {
-        return (Link) getElement(elementName);
-    }
-
-    /**
-     * Returns the PageSelectElement associated with the element name on the
-     * currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return PageSelectElement the select element associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
-     */
-    public static PageSelectElement getElementAsSelectElement(String elementName) throws SentinelException {
-        return (PageSelectElement) getElement(elementName);
-    }
-
-    /**
-     * Returns the Radiobutton associated with the element name on the currently
-     * active page.
+     * Returns the Radio button associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
      * @return Radio the radio button associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
      */
-    public static Radiobutton getElementAsRadiobutton(String elementName) throws SentinelException {
-        return (Radiobutton) getElement(elementName);
+    public static Radiobutton getElementAsRadiobutton(String elementName) {
+		try {
+			return (Radiobutton) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Radiobutton.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
-
+    
     /**
-     * Returns the Span associated with the element name on the currently active
-     * page.
+     * Returns the PageSelectElement associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
-     * @return Span the span associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
+     * @return PageSelectElement the select element associated with the element name on the currently active page
      */
-    public static Span getElementAsSpan(String elementName) throws SentinelException {
-        return (Span) getElement(elementName);
+    public static SelectElement getElementAsSelectElement(String elementName) {
+		try {
+			return (SelectElement) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, SelectElement.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
-     * Returns the Table associated with the element name on the currently active
-     * page.
+     * Returns the Table associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
      * @return Table the table associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
      */
-    public static Table getElementAsTable(String elementName) throws SentinelException {
-        return (Table) getElement(elementName);
+    public static Table getElementAsTable(String elementName) {
+		try {
+			return (Table) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Table.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
-     * Returns the Textbox associated with the element name on the currently active
-     * page.
+     * Returns the Textbox associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
      * @return Textbox the text box associated with the element name on the currently active page
-     * @throws NoSuchElementException if the element cannot be found
-     * @throws PageNotFoundException if the page cannot be found
      */
-    public static Textbox getElementAsTextbox(String elementName) throws SentinelException {
-        return (Textbox) getElement(elementName);
+    public static Textbox getElementAsTextbox(String elementName) {
+		try {
+			return (Textbox) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Textbox.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
+    }
+    
+    /**
+     * Returns an error message that is clearer than a casting error.
+     * @param elementName the element that was improperly used
+     * @return String the error message to pass to the user
+     */
+    private static String getClassCastExceptionErrorMessage(String elementName, String className) {
+		return SentinelStringUtils.format("\"{}\" was not created as a {}. Update the {}.yml page object and try again.", elementName, className, PageManager.getPage().getName());
     }
 }

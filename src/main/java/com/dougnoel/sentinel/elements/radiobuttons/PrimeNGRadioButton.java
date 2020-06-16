@@ -1,10 +1,10 @@
 package com.dougnoel.sentinel.elements.radiobuttons;
 
+import java.util.Map;
+
 import org.openqa.selenium.By;
 
 import com.dougnoel.sentinel.elements.PageElement;
-import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 
 /**
  * Implementation of an NGPrime Radio Button.
@@ -19,15 +19,22 @@ import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
  */
 public class PrimeNGRadioButton extends Radiobutton {
 
-	public PrimeNGRadioButton(SelectorType selectorType, String selectorValue) {
-		super(selectorType, selectorValue);
+	/**
+	 * Implementation of a Radiobutton to initialize how an element is going to be found when it is worked on by the 
+	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
+	 * 
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
+	 */
+	public PrimeNGRadioButton(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
 	}
 	
 	/**
 	 * Overrides the click method to send it to the correct part of the radio button.
 	 */
 	@Override
-	public PageElement click() throws ElementNotFoundException {
+	public PageElement click() {
 		element().findElement(By.xpath("//input")).click();
 		return this;
 	}
@@ -36,7 +43,7 @@ public class PrimeNGRadioButton extends Radiobutton {
 	 * Overrides the isSelected method to send it to the correct part of the radio button.
 	 */
 	@Override
-	public boolean isSelected() throws ElementNotFoundException {
+	public boolean isSelected() {
 		return element().findElement(By.xpath("//input")).isSelected();
 	}
 }

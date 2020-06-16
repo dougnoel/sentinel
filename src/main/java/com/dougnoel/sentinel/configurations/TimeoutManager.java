@@ -67,7 +67,7 @@ public class TimeoutManager {
 			timeout = Long.parseLong(timeoutProp);
 			log.info("Timeout property set to {}.", timeoutProp);
 		} else {
-			log.info("No timeout property set, using the default timeout value of {}. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", timeout);
+			log.debug("No timeout property set, using the default timeout value of {}. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", timeout);
 		}
 		return timeout;
 	}
@@ -84,7 +84,7 @@ public class TimeoutManager {
 		String unit = StringUtils.capitalize(ConfigurationManager.getOptionalProperty("timeunit"));
 
 		if(StringUtils.isEmpty(unit)) {
-			log.info("No timeunit property set, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS");
+			log.debug("No timeunit property set, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS");
 			return TimeUnit.SECONDS;
 		}
 		log.info("Timeunit property set to {}.", unit);

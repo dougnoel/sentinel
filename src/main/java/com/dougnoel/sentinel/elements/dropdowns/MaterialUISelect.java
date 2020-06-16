@@ -1,12 +1,11 @@
 package com.dougnoel.sentinel.elements.dropdowns;
 
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 
 /**
  * Implementation of an Material-UI Select.
@@ -23,24 +22,23 @@ public class MaterialUISelect extends JSDropdownElement {
 	private static final Logger log = LogManager.getLogger(MaterialUISelect.class.getName());
 
 	/**
-	 * Implementation of a WebElement to initialize how an element is going to be found when it is worked on by the 
+	 * Implementation of a JSDropdownElement to initialize how an element is going to be found when it is worked on by the 
 	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
 	 * 
-	 * @param selectorType SelectorType
-	 * @param selectorValue String
+	 * @param elementName String the name of the element
+	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
 	 */
-	public MaterialUISelect(SelectorType selectorType, String selectorValue) {
-		super(selectorType, selectorValue);
+	public MaterialUISelect(String elementName, Map<String,String> selectors) {
+		super(elementName, selectors);
 	}
 
 	/**
 	 * Returns a WebElement for an option with the given text.
 	 * @param selectionText String the text to be selected
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
 	@Override
-    protected WebElement getOption(String selectionText) throws ElementNotFoundException{
+    protected WebElement getOption(String selectionText) {
     	String xPath = "//div[contains(@class, 'MuiPopover-root')]/div[3]/ul/li[contains(text(),'" + selectionText + "')]";
     	log.trace("Looking for the value in the dropdown at position {} using {}", selectionText, xPath);
     	this.click();
@@ -51,10 +49,9 @@ public class MaterialUISelect extends JSDropdownElement {
      * Returns a WebElement for an option with the given index.
      * @param index int the index of the option, starting with 1
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
      */
 	@Override
-    protected WebElement getOption(int index) throws ElementNotFoundException{
+    protected WebElement getOption(int index) {
     	String xPath = "//div[contains(@class, 'MuiPopover-root')]/div[3]/ul/li[" + Integer.toString(index) + "]";
     	log.trace("Looking for the value in the dropdown at position {} using {}", index, xPath);
     	this.click();

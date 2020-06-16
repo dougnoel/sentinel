@@ -31,4 +31,7 @@ public enum SelectorType {
 	VALUE, 	//Used for PageSelectElement Only
 	XYZ,
 	XPATH;
+	public static SelectorType of(String name) {
+		return valueOf(name.toUpperCase());
+	}
 }
