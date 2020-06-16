@@ -162,6 +162,29 @@ public class PageManager {
 		return page;
 	}
 
+    /**
+     * Maximizes the browser window. Stores the current window size and position so
+     * you can return to the existing settings.
+     * 
+     * TODO: Move this higher up and out of individual page objects.
+     * 
+     * @return Page - Returns a page object for chaining.
+     */
+    public Page maximizeWindow() {
+        driver().manage().window().maximize();
+        return page;
+    }
+
+    /**
+     * Returns the title of the current web page we are on. Useful for debugging and
+     * assertions.
+     * 
+     * @return String
+     */
+    public String getPageTitle() {
+        return driver().getTitle();
+    }
+    
 	/**
 	 * Switches focus of the WebDriver to a new window assuming there was only one
 	 * before. Finds the handle and passes that to overloaded switchToNewWindow()
@@ -256,7 +279,7 @@ public class PageManager {
 	public static String getCurrentUrl() {
 		String currentUrl = null;
 		try {
-			currentUrl = page.getCurrentUrl();
+			currentUrl = driver().getCurrentUrl();
 			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
 			String errorMessage = SentinelStringUtils.format(

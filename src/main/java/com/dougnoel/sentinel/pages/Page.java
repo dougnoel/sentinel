@@ -68,39 +68,6 @@ public class Page {
         elements = new HashMap<>();
     }
 
-    /**
-     * Maximizes the browser window. Stores the current window size and position so
-     * you can return to the existing settings.
-     * 
-     * TODO: Move this higher up and out of individual page objects.
-     * 
-     * @return Page - Returns a page object for chaining.
-     */
-    public Page maximizeWindow() {
-        driver.manage().window().maximize();
-        return this;
-    }
-
-    /**
-     * Returns the title of the current web page we are on. Useful for debugging and
-     * assertions.
-     * 
-     * @return String
-     */
-    public String getPageTitle() {
-        return driver.getTitle();
-    }
-
-    /**
-     * Returns the URL of the current web page we are on. Useful for debugging and
-     * assertions.
-     * 
-     * @return String
-     */
-    public String getCurrentUrl() {
-        return driver.getCurrentUrl();
-    }
-
     public URL getUrl() {
         return url;
     }
