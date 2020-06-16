@@ -2,7 +2,10 @@ package com.dougnoel.sentinel.elements.tables;
 
 import java.util.Map;
 
-import com.dougnoel.sentinel.enums.TableType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 
 /**
  * Implements an ngx-datatable WebElement. Contains functionality for counting values, finding values inside a table, and other
@@ -10,6 +13,7 @@ import com.dougnoel.sentinel.enums.TableType;
  */
 
 public class NGXDataTable extends Table {
+	private static final Logger log = LogManager.getLogger(NGXDataTable.class.getName()); // Create a logger.
 
 	/**
 	 * Creates an NGX-DataTable object overriding the Table creator and setting the values necessary for this object to work correctly.
@@ -19,12 +23,25 @@ public class NGXDataTable extends Table {
 	 */
 	public NGXDataTable(String elementName, Map<String,String> selectors) {
 		super(elementName, selectors);
-		tableType = TableType.NGXDATATABLE;
 		tableHeaderTag = "datatable-header-cell";
 		tableRowTag = "datatable-body-row";
 		tableCellDataTag = "datatable-body-cell";
 		tableDataCellLocator = "//span";
 		tableSiblingCellLocator = "//../../..//*";
+	}
+	
+	/**
+	 * Returns number of row elements from getOrCreateRowElements
+	 * 
+	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateRowElements()
+	 * @return int the number of row elements
+	 * @throws ElementNotFoundException if an element is not found
+	 */
+	@Override
+	public int getNumberOfRows() {
+		final int numberOfRows = getOrCreateRowElements().size();
+		log.trace("Number of rows found: {}", numberOfRows);
+		return numberOfRows;
 	}
 	
 }

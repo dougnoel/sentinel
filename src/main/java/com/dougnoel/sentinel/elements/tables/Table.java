@@ -12,7 +12,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.elements.PageElement;
-import com.dougnoel.sentinel.enums.TableType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
@@ -33,7 +32,6 @@ public class Table extends PageElement {
 	protected Map<String, ArrayList<String>> columns = new HashMap<>(); // All text values of every column
 	protected Map<Integer, List<ArrayList<String>>> tables = new HashMap<>(); // Way to hold values of the same table on multiple pages.
 	
-	protected TableType tableType = TableType.HTML;
 	protected String tableHeaderTag = "th";
 	protected String tableRowTag = "tr";
 	protected String tableCellDataTag = "td";
@@ -192,9 +190,6 @@ public class Table extends PageElement {
 		//Selenium counts a <th> tag as a <td> tag and returns it.
 		final int numberOfRows = getOrCreateRowElements().size();
 		log.trace("Number of rows found: {}", numberOfRows);
-		if (tableType == TableType.NGXDATATABLE) {
-			return numberOfRows;
-		}
 		return numberOfRows - 1;
 	}
 

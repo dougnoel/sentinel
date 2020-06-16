@@ -9,7 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.en.When;
@@ -37,10 +36,9 @@ public class TextSteps {
      * @param text String the text to enter into the element
      * @param elementName String the name of the element into which to enter text
      * @param storageName String an additional modifier for storing data
-	 * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I randomly enter (.*) in the (.*)(?: for the (.*))$")
-    public static void enterRandomText(String text, String elementName, String storageName) throws SentinelException {
+    public static void enterRandomText(String text, String elementName, String storageName) {
         text = text + RandomStringUtils.randomAlphanumeric(16);
         enterText(text, elementName);
         if (storageName != null) {
@@ -55,9 +53,8 @@ public class TextSteps {
      * 
      * @param text String the text to enter into the element
      * @param elementName String the name of the element into which to enter text
-     * @throws SentinelException Throwable this exists so that any uncaught exceptions result in the test failing
      */
-    public static void enterRandomText(String text, String elementName) throws SentinelException {
+    public static void enterRandomText(String text, String elementName) {
     	enterRandomText(text, elementName, null);
     }
 
@@ -81,10 +78,9 @@ public class TextSteps {
      * 
      * @param text String the text to enter into the element
      * @param elementName String the name of the element into which to enter text
-     * @throws SentinelException  this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I enter (.*) in the (.*)$")
-    public static void enterText(String text, String elementName) throws SentinelException {
+    public static void enterText(String text, String elementName) {
         getElementAsTextbox(elementName).type(text);
         ConfigurationManager.setValue(elementName, text);
     }
@@ -117,10 +113,9 @@ public class TextSteps {
      * 
      * @param text String the text to enter
      * @param elementName String the name of the element into which to enter text
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I inject (.*) in the (.*)$")
-    public static void injectText(String text, String elementName) throws SentinelException {
+    public static void injectText(String text, String elementName) {
         getElementAsTextbox(elementName).javaScriptSendKeys(text);
         ConfigurationManager.setValue(elementName, text);
     }
@@ -139,10 +134,9 @@ public class TextSteps {
      * </ul>
      * @param key String the key used to retrieve the value
      * @param elementName String the name of the element into which to enter text
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I reuse the (.*) text in the (.*)$")
-    public static void enterStoredText(String key, String elementName) throws SentinelException {
+    public static void enterStoredText(String key, String elementName) {
         String text = ConfigurationManager.getValue(key);
         enterText(text, elementName);
     }
