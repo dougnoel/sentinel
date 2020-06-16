@@ -86,7 +86,7 @@ public class PageElement {
 				try {
 					this.selectors.put(SelectorType.of(locatorType), locatorValue);
 				} catch (IllegalArgumentException e) {
-					String errorMessage = SentinelStringUtils.format("{} is not a valid locator type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
+					String errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
 					log.error(errorMessage);
 					throw new NoSuchSelectorException(errorMessage);
 				}
@@ -137,7 +137,8 @@ public class PageElement {
 			case XPATH:
 				return By.xpath(selectorValue);
 			default:
-				String errorMessage = SentinelStringUtils.format("Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.", selectorType);
+				String errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
+				
 				log.error(errorMessage);
 				throw new NoSuchSelectorException(errorMessage);
 			}
