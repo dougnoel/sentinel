@@ -35,7 +35,6 @@ public class NGXDataTable extends Table {
 	 * 
 	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateRowElements()
 	 * @return int the number of row elements
-	 * @throws ElementNotFoundException if an element is not found
 	 */
 	@Override
 	public int getNumberOfRows() {

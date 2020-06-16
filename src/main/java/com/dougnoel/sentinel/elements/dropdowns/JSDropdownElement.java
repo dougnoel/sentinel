@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-
 /**
  * A number of angular and react libraries make their own dropdowns that are do not use
  * select elements. This class creates a base for implementing various javascript
@@ -32,7 +30,6 @@ public abstract class JSDropdownElement extends Dropdown {
 	 * Returns a WebElement for an option with the given text.
 	 * @param selectionText String the text to be selected
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
     protected abstract WebElement getOption(String selectionText);
     
@@ -40,7 +37,6 @@ public abstract class JSDropdownElement extends Dropdown {
      * Returns a WebElement for an option with the given index.
      * @param index int the index of the option, starting with 1
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
      */
     protected abstract WebElement getOption(int index);
     
@@ -48,7 +44,6 @@ public abstract class JSDropdownElement extends Dropdown {
      * Selects an option from a drop down using the text value of the item to select.
      * @param selectionText the value to select
      * @return PageSelectElement for object chaining
-     * @throws ElementNotFoundException if the element cannot be found
      */
     @Override
     public SelectElement select(String selectionText) {
@@ -60,7 +55,6 @@ public abstract class JSDropdownElement extends Dropdown {
      * Selects an option from a drop down using the ordinal value of the item to select.
      * @param index the index to select
      * @return PageSelectElement for object chaining
-     * @throws ElementNotFoundException if the element cannot be found
      */
     @Override
     public SelectElement select(int index) {
@@ -72,7 +66,6 @@ public abstract class JSDropdownElement extends Dropdown {
      * Gets the value of the item at the given index.
      * @param index the index to inspect, starting with 1
      * @return String the text value of the option at the given index
-     * @throws ElementNotFoundException if the element cannot be found
      */
     @Override
     public String getText(int index) {
@@ -82,7 +75,6 @@ public abstract class JSDropdownElement extends Dropdown {
     /**
      * Gets the text of the first item currently selected.
      * @return String the text value of the selected option
-     * @throws ElementNotFoundException if the element cannot be found
      */
     @Override
     public String getSelectedText() {

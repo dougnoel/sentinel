@@ -7,8 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-
 /**
  * Implementation of an Material-UI Select.
  * @see <a href="https://material-ui.com/components/selects/">Material-UI Select</a>
@@ -38,7 +36,6 @@ public class MaterialUISelect extends JSDropdownElement {
 	 * Returns a WebElement for an option with the given text.
 	 * @param selectionText String the text to be selected
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
 	@Override
     protected WebElement getOption(String selectionText) {
@@ -52,7 +49,6 @@ public class MaterialUISelect extends JSDropdownElement {
      * Returns a WebElement for an option with the given index.
      * @param index int the index of the option, starting with 1
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
      */
 	@Override
     protected WebElement getOption(int index) {

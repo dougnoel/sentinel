@@ -2,8 +2,6 @@ package com.dougnoel.sentinel.elements;
 
 import java.util.Map;
 
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-
 /**
  * Textbox implementation of a PageElement.
  */
@@ -26,7 +24,6 @@ public class Textbox extends PageElement {
 	 * <b>Alias For:</b> sendKeys(text)
 	 * @param text String (text to type)
 	 * @return PageElement (for chaining)
-	 * @throws ElementNotFoundException if the element is not found
 	 */
 	public PageElement type(String text) {
         return this.sendKeys(text);
@@ -35,7 +32,6 @@ public class Textbox extends PageElement {
 	/**
 	 * Gets the value entered into the textbox and returns it as a String.
 	 * @return String The value entered into the textbox.
-	 * @throws ElementNotFoundException if the eleemnt is not found
 	 */
 	@Override
 	public String getText() {

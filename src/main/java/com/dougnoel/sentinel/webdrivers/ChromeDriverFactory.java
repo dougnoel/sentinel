@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -23,10 +22,8 @@ public class ChromeDriverFactory {
     /**
      * Creates a Chrome WebDriver and returns it.
      * @return WebDriver a Chrome WebDriver object
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    protected static WebDriver createChromeDriver() throws WebDriverException, ConfigurationNotFoundException {
+    protected static WebDriver createChromeDriver() {
     	setChromeDriverPath();
         setChromeDownloadDirectory("downloads");
         try {
@@ -45,10 +42,8 @@ public class ChromeDriverFactory {
     
     /**
      * Sets the path for the ChromeDriver based on operating system. Uses a custom driver if it is set as a configuration.
-     * @throws WebDriverException if the WebDriver creation fails
-     * @throws ConfigurationNotFoundException if the configuration data cannot be read
      */
-    private static void setChromeDriverPath() throws WebDriverException, ConfigurationNotFoundException {
+    private static void setChromeDriverPath() {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{

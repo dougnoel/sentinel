@@ -22,7 +22,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
@@ -194,7 +193,6 @@ public class PageElement {
 	 *            String (keys to type)
 	 * @return PageElement (for chaining)
 	 * @throws AWTException if the key cannot be pressed.
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
 	public PageElement pressKeys(String text) throws AWTException {
 		// Ensure that the element has focus.

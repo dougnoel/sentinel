@@ -8,7 +8,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.TimeoutManager;
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 
 /**
  * Implementation of an NGPrime Dropdown.
@@ -41,7 +40,6 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 * Returns a WebElement for an option with the given text.
 	 * @param selectionText String the text to be selected
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
 	 */
 	@Override
     protected WebElement getOption(String selectionText) {
@@ -57,7 +55,6 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * Returns a WebElement for an option with the given index.
      * @param index int the index of the option, starting with 1
 	 * @return WebElement the element representing the option
-	 * @throws ElementNotFoundException if the element cannot be found
      */
 	@Override
     protected WebElement getOption(int index) {
@@ -74,7 +71,6 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * Gets the value of the item at the given index.
      * @param index the index to inspect, starting with 1
      * @return String the text value of the option at the given index
-     * @throws ElementNotFoundException if the element cannot be found
      */
 	@Override
     public String getText(int index) {
@@ -84,7 +80,6 @@ public class PrimeNGDropdown extends JSDropdownElement {
     /**
      * Gets the text of the first item currently selected.
      * @return String the text value of the selected option
-     * @throws ElementNotFoundException if the element cannot be found
      */
 	@Override
     public String getSelectedText() {
