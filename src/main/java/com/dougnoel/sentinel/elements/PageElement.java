@@ -23,8 +23,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.dougnoel.sentinel.configurations.TimeoutManager;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
+import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
+import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -81,7 +83,13 @@ public class PageElement {
 		this.selectors = new EnumMap<>(SelectorType.class);
 		selectors.forEach((locatorType, locatorValue) -> {
 			if (!"elementType".equalsIgnoreCase(locatorType)) {
-				this.selectors.put(SelectorType.of(locatorType), locatorValue);
+				try {
+					this.selectors.put(SelectorType.of(locatorType), locatorValue);
+				} catch (IllegalArgumentException e) {
+					String errorMessage = SentinelStringUtils.format("{} is not a valid locator type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
+					log.error(errorMessage);
+					throw new NoSuchSelectorException(errorMessage);
+				}
 			}
 		});
 		this.elementType = elementType;
@@ -89,6 +97,10 @@ public class PageElement {
 		this.driver = WebDriverFactory.getWebDriver();
 	}
 	
+	/**
+	 * Returns the name of the element as it is stored in the yaml file.
+	 * @return String the name of the element
+	 */
 	public String getName() {
 		return name;
 	}
@@ -108,26 +120,31 @@ public class PageElement {
 	}
 	
 	private By createByLocator(SelectorType selectorType, String selectorValue) {
-		switch (selectorType) {
-		case CLASS:
-			return By.className(selectorValue);
-		case CSS:
-			return By.cssSelector(selectorValue);
-		case ID:
-			return By.id(selectorValue);
-		case NAME:
-			return By.name(selectorValue);
-		case PARTIALTEXT:
-			return By.partialLinkText(selectorValue);
-		case TEXT:
-			return By.linkText(selectorValue);
-		case XPATH:
-			return By.xpath(selectorValue);
-		default:
-			String errorMessage = SentinelStringUtils.format(
-					"Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.",
-					selectorType);
-			throw new NoSuchSelectorException(errorMessage);
+		try {
+			switch (selectorType) {
+			case CLASS:
+				return By.className(selectorValue);
+			case CSS:
+				return By.cssSelector(selectorValue);
+			case ID:
+				return By.id(selectorValue);
+			case NAME:
+				return By.name(selectorValue);
+			case PARTIALTEXT:
+				return By.partialLinkText(selectorValue);
+			case TEXT:
+				return By.linkText(selectorValue);
+			case XPATH:
+				return By.xpath(selectorValue);
+			default:
+				String errorMessage = SentinelStringUtils.format("Unhandled selector type \"{}\" passed to Page Element base class. Could not resolve the reference. Refer to the Javadoc for valid options.", selectorType);
+				log.error(errorMessage);
+				throw new NoSuchSelectorException(errorMessage);
+			}
+		} catch (IllegalArgumentException e) {
+			String errorMessage = SentinelStringUtils.format("{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType, selectorValue, getName(), PageManager.getPage().getName());
+			log.error(errorMessage);
+			throw new MalformedSelectorException(errorMessage, e);
 		}
 	}
 	

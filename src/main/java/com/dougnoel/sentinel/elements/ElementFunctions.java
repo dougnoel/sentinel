@@ -1,10 +1,15 @@
 package com.dougnoel.sentinel.elements;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.Table;
+import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
  * Retrieves as an element as a  PageElement or as one of the following types:
@@ -15,6 +20,7 @@ import com.dougnoel.sentinel.pages.PageManager;
  *
  */
 public class ElementFunctions {
+	private static final Logger log = LogManager.getLogger(ElementFunctions.class.getName()); // Create a logger.
 
     private ElementFunctions() {
     	// Exists to defeat instantiation.
@@ -37,7 +43,13 @@ public class ElementFunctions {
      * @return Checkbox the checkbox associated with the element name on the currently active page
      */
     public static Checkbox getElementAsCheckbox(String elementName) {
-        return (Checkbox) getElement(elementName);
+		try {
+			return (Checkbox) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Checkbox.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
@@ -46,8 +58,14 @@ public class ElementFunctions {
      * @param elementName String the name of the element to be returned
      * @return Dropdown the drop down associated with the element name on the currently active page
      */
-    public static Dropdown getElementAsDropdown(String elementName) {  	
-        return (Dropdown) getElement(elementName);
+    public static Dropdown getElementAsDropdown(String elementName) { 
+		try {
+			return (Dropdown) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Dropdown.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
@@ -57,7 +75,13 @@ public class ElementFunctions {
      * @return Radio the radio button associated with the element name on the currently active page
      */
     public static Radiobutton getElementAsRadiobutton(String elementName) {
-        return (Radiobutton) getElement(elementName);
+		try {
+			return (Radiobutton) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Radiobutton.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
     
     /**
@@ -67,7 +91,13 @@ public class ElementFunctions {
      * @return PageSelectElement the select element associated with the element name on the currently active page
      */
     public static SelectElement getElementAsSelectElement(String elementName) {
-        return (SelectElement) getElement(elementName);
+		try {
+			return (SelectElement) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, SelectElement.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
@@ -77,7 +107,13 @@ public class ElementFunctions {
      * @return Table the table associated with the element name on the currently active page
      */
     public static Table getElementAsTable(String elementName) {
-        return (Table) getElement(elementName);
+		try {
+			return (Table) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Table.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
     }
 
     /**
@@ -87,6 +123,21 @@ public class ElementFunctions {
      * @return Textbox the text box associated with the element name on the currently active page
      */
     public static Textbox getElementAsTextbox(String elementName) {
-        return (Textbox) getElement(elementName);
+		try {
+			return (Textbox) getElement(elementName);
+		} catch (ClassCastException e) {
+			String errorMessage = getClassCastExceptionErrorMessage(elementName, Textbox.class.getSimpleName());
+			log.error(errorMessage);
+			throw new ElementTypeMismatchException(errorMessage);
+		}
+    }
+    
+    /**
+     * Returns an error message that is clearer than a casting error.
+     * @param elementName the element that was improperly used
+     * @return String the error message to pass to the user
+     */
+    private static String getClassCastExceptionErrorMessage(String elementName, String className) {
+		return SentinelStringUtils.format("\"{}\" was not created as a {}. Update the {}.yml page object and try again.", elementName, className, PageManager.getPage().getName());
     }
 }
