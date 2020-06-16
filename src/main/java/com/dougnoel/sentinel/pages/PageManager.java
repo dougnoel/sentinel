@@ -281,6 +281,7 @@ public class PageManager {
 	 * @see PageManager#isPageLoaded()
 	 * 
 	 * @return boolean always returns true, will throw exception if page does not load
+	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
 		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());

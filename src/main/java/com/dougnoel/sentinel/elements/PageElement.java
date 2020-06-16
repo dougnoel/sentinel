@@ -70,10 +70,8 @@ public class PageElement {
 	 * found when it is worked on by the WebDriver class. Takes a reference to the
 	 * WebDriver class that will be exercising its functionality.
 	 * 
-	 * @param selectorType
-	 *            SelectorType
-	 * @param selectorValue
-	 *            String
+	 * @param elementName String the element name
+	 * @param selectors Map the various selectors to iterate through to find the element
 	 */
 	public PageElement(String elementName, Map<String,String> selectors) {
 		this("PageElement", elementName, selectors);
