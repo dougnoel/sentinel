@@ -1,0 +1,7 @@
+urls:
+   default: localhost
+accounts:
+   default:
+      testuser:
+         username: testuser
+         password: PoorPassword
