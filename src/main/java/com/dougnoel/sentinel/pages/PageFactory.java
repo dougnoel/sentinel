@@ -3,7 +3,7 @@ package com.dougnoel.sentinel.pages;
 import java.util.HashMap;
 /**
  * The Page Factory is a factory method that simply takes a string containing the name of a 
- * Page Object and returns the object to be worked on. It handles searching packages for page definitions.
+ * Page Object and returns the object to be worked on.
  */
 public class PageFactory {
 	private static HashMap<String, Page> pages = new HashMap<>();	
