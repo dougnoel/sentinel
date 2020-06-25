@@ -16,17 +16,17 @@ public class DatabaseFactory {
 	 * Returns the Database Object for the database name. This allows us to operate on datbases
 	 * without knowing they exist when we write step definitions.
 	 * 
-	 * @param databaseName String the name of the database object
+	 * @param databaseConnectionName String the name of the database object
 	 * @return Database the database object
 	 */
-	public static Database buildOrRetrieveDatabase(String databaseName) {
-		Database database = databases.get(databaseName);
+	public static Database buildOrRetrieveDatabaseConnection(String databaseConnectionName) {
+		Database database = databases.get(databaseConnectionName);
 		if (database != null) {
 			return database;
 		} else {
-			database = new Database(databaseName);
+			database = new Database(databaseConnectionName);
 		}
-		databases.put(databaseName, database);
+		databases.put(databaseConnectionName, database);
 		return database;
 	}
 }
