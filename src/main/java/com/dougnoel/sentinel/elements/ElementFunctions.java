@@ -135,6 +135,7 @@ public class ElementFunctions {
     /**
      * Returns an error message that is clearer than a casting error.
      * @param elementName the element that was improperly used
+     * @param className the page object name
      * @return String the error message to pass to the user
      */
     private static String getClassCastExceptionErrorMessage(String elementName, String className) {

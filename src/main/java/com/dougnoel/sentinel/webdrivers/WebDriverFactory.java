@@ -84,7 +84,7 @@ public class WebDriverFactory {
         //Saucelabs Driver setup
         String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	return SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
+        	return driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         }
 
         // Set a Download Directory if one was specified on the command line
