@@ -5,8 +5,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-
 /**
  * Implements an ngx-datatable WebElement. Contains functionality for counting values, finding values inside a table, and other
  * management issues, such as finding a value in the same row.
