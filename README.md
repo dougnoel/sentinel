@@ -361,8 +361,12 @@ Every method should have a Javadoc comment describing what it does, its paramete
 For more information, refer to [Configuring a publishing source for your GitHub Pages site](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
 Additional information can be found under [About GitHub Pages and Jekyll](https://help.github.com/en/github/working-with-github-pages/about-github-pages-and-jekyll) and the [GitHub Pages site](https://pages.github.com/).
 
-### 6.2 Built With
+### 6.2 [Changelog](CHANGELOG.md)
+The changelog is generated using [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator).
 
+`github_changelog_generator -u dougnoel -p sentinel --token <token>`
+
+### 6.3 Built With
 * [Cucumber](https://cucumber.io/) - BDD Testing Framework
 * [Cucumber Extent Reporter](https://grasshopper.tech/1697/) Interface between Cucumber Results and Extent Reports.
 * [Commons Lang](https://commons.apache.org/proper/commons-lang/) - Apache Commons Lang 3 for common Java language options
@@ -379,8 +383,7 @@ Additional information can be found under [About GitHub Pages and Jekyll](https:
 * [Traprange](https://github.com/thoqbk/traprange) - Independent library developed using PDFBox to deal with tables in PDFs.
 * [Unirest](http://unirest.io/java.html) - A simple API library used for the API testing functionality.
 
-### 6.3 Web Drivers
-
+### 6.4 Web Drivers
 The web drivers are stored in src/main/resources/drivers/[os] to make sure there is only one place to fix driver compatibility issues. Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also reduces the learning curve for using Sentinel.
 NOTE: All drivers are 64-bit versions. If you need to test on an old 32-bit browser, you will need to replace the drivers provided with a 32-bit driver. See the driver creators for support.
 
@@ -389,7 +392,7 @@ NOTE: All drivers are 64-bit versions. If you need to test on an old 32-bit brow
 * [IE Driver](http://selenium-release.storage.googleapis.com/index.html) 3.9 (2018-02-05) - Driver for automating IE. (*This driver version matches the selenium version being used and NOT the IE Version.*)
 * [Safari](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) - Safari driver is embedded in Safari.
 
-### 6.4 Saucelabs
+### 6.5 Saucelabs
 Sentinel is setup to use [Saucelabs](https://saucelabs.com/) for remote execution. This is the recommended way to execute test in your build pipeline, because you then do not need to setup an execution server.
 
 ## 7.0 Versioning
