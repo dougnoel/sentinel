@@ -28,8 +28,8 @@ public class SauceLabsDriverFactory {
 			throw new MalformedURLException(e);
 		}
         
-		String browser = ConfigurationManager.getProperty("browser");
-		String operatingSystem = ConfigurationManager.getProperty("os");
+		String browser = ConfigurationManager.getBrowserName();
+		String operatingSystem = ConfigurationManager.getOperatingSystem();
 		
         MutableCapabilities options = new MutableCapabilities();
         options.setCapability("platform", operatingSystem);
@@ -41,8 +41,8 @@ public class SauceLabsDriverFactory {
         	options.setCapability("version", "latest");
         }
         
-        options.setCapability("username", ConfigurationManager.getProperty("saucelabsUserName"));
-        options.setCapability("accesskey", ConfigurationManager.getProperty("saucelabsAccessKey"));
+        options.setCapability("username", ConfigurationManager.getOptionalProperty("saucelabsUserName"));
+        options.setCapability("accesskey", ConfigurationManager.getOptionalProperty("saucelabsAccessKey"));
         
         setSaucelabsTestNameProperty(options);
         

@@ -92,7 +92,7 @@ public class WebDriverFactory {
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
 
-        String browser = getBrowserName();
+        String browser = ConfigurationManager.getBrowserName();
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
@@ -130,28 +130,11 @@ public class WebDriverFactory {
     }
     
     /**
-     * Returns a sanitized version of the operating system set in the config file or on the command line.
-     * @return String a sanitized string containing the operating system
-     */
-    protected static String getOperatingSystem() {
-    	//TODO: Add auto detection
-    	//TODO Make this useable by Saucelabs driver
-    	String operatingSystem = ConfigurationManager.getProperty("os");
-        operatingSystem = operatingSystem.replaceAll("\\s+", "").toLowerCase();
-        if (operatingSystem.equals("macintosh") || operatingSystem.equals("osx"))
-            operatingSystem = MAC;
-        else if (operatingSystem.equals("win"))
-            operatingSystem = WINDOWS;
-        
-        return operatingSystem;
-    }
-    
-    /**
      * Returns an error message string 
      * @return String error message
      */
     protected static String getMissingOSConfigurationErrorMessage() {
-    	String operatingSystem = ConfigurationManager.getProperty("os");
+    	String operatingSystem = ConfigurationManager.getOptionalProperty("os");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
     }
@@ -161,26 +144,10 @@ public class WebDriverFactory {
      * @return String error message
      */
     private static String getOSNotCompatibleWithBrowserErrorMessage() {
-    	String operatingSystem = ConfigurationManager.getProperty("os");
-    	String browser = ConfigurationManager.getProperty("browser");
+    	String operatingSystem = ConfigurationManager.getOptionalProperty("os");
+    	String browser = ConfigurationManager.getOptionalProperty("browser");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
     	
-    }
-    
-    /**
-     * Returns a sanitized version of the browser set in the config file or on the command line.
-     * @return String a sanitized string containing the browser
-     */
-    private static String getBrowserName() {
-    	//TODO: Add auto detection
-    	//TODO Make this useable by Saucelabs driver
-    	String browser;
-		browser = ConfigurationManager.getProperty("browser");
-        // Make sure whatever string we are passed is all lower case and all spaces are removed.
-        browser = browser.replaceAll("\\s+", "").toLowerCase();
-        if (browser.equals("ie"))
-            browser = "internetexplorer";
-        return browser;
     }
     
     /**
@@ -198,7 +165,7 @@ public class WebDriverFactory {
     private static WebDriver createInternetExplorerDriver() {
     	String driverPath = getDriverPath();
     	String errorMessage;
-        switch (getOperatingSystem()) {
+        switch (ConfigurationManager.getOperatingSystem()) {
         case LINUX:
         case MAC:
         	errorMessage = getOSNotCompatibleWithBrowserErrorMessage();
@@ -236,7 +203,7 @@ public class WebDriverFactory {
      * @return WebDriver a Safari WebDriver object
      */
     private static WebDriver createSafariDriver() {
-        switch (getOperatingSystem()) {
+        switch (ConfigurationManager.getOperatingSystem()) {
         case LINUX:
         case WINDOWS:
             throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
