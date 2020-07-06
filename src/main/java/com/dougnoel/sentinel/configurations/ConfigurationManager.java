@@ -47,6 +47,9 @@ public class ConfigurationManager {
 	private static ConfigurationData sentinelConfigurations = null;
 	
 	private static final String DEFAULT = "default";
+    private static final String LINUX = "linux";
+    private static final String MAC = "mac";
+    private static final String WINDOWS = "windows";
 
 	private ConfigurationManager() {
 		// Exists only to defeat instantiation.
@@ -147,18 +150,6 @@ public class ConfigurationManager {
 			throw new ConfigurationNotFoundException(errorMessage);
 		}
 		return systemProperty;
-	}
-	
-	/**
-	 * Returns the name of all the folders to be searched for page objects.
-	 * 
-	 * @return String[] the list of page object folders
-	 */
-	public static String[] getPageObjectPackageList() {
-		String pageObjectPackages = getProperty("pageObjectPackages");
-
-		log.trace("pageObjectPackages: {}", pageObjectPackages);
-		return StringUtils.split(pageObjectPackages, ',');
 	}
 
 	/**
@@ -360,4 +351,56 @@ public class ConfigurationManager {
 	public static String getConfigurationNotFoundErrorMessage(String configurtaionValue) {
 		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.",configurtaionValue,configurtaionValue,configurtaionValue);
 	}
+	
+    /**
+     * Returns a sanitized version of the browser set in the config file or on the command line.
+     * @return String a sanitized string containing the browser
+     */
+    public static String getBrowserName() {
+    	//TODO Make this useable by Saucelabs driver
+    	String browser;
+		browser = ConfigurationManager.getOptionalProperty("browser");
+		if (browser == null) {
+			browser = "chrome";
+			log.info("Chrome browser being used as default.");
+		}
+        // Make sure whatever string we are passed is all lower case and all spaces are removed.
+        browser = browser.replaceAll("\\s+", "").toLowerCase();
+        if (browser.equals("ie"))
+            browser = "internetexplorer";
+        return browser;
+    }
+    
+    /**
+     * Returns a sanitized version of the operating system set in the config file or on the command line.
+     * @return String a sanitized string containing the operating system
+     */
+    public static String getOperatingSystem() {
+    	String operatingSystem = ConfigurationManager.getOptionalProperty("os");
+    	if (operatingSystem == null) {
+    		operatingSystem = detectOperatingSystem();
+    	}
+        
+        return operatingSystem;
+    }
+    
+    /**
+     * Returns the simple operating system of windows, mac or linux. Returns the full os name if none of
+     * those are matched.
+     * @return String operating system
+     */
+    private static String detectOperatingSystem() {
+    	String os = System.getProperty("os.name").toLowerCase();
+    	log.info("Operating system auto-detected: {}", os);
+    	if (os.indexOf("win") >=0) {
+    		return WINDOWS;
+    	}
+    	if (os.indexOf("mac") >= 0) {
+    		return MAC;
+    	}
+    	if (os.indexOf("nux") >= 0) {
+    		return LINUX;
+    	}
+    	return os;
+    }
 }

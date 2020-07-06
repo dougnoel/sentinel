@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.apis;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 
 /**
@@ -57,17 +56,10 @@ public class APIFactory {
 	 * @return API the specific page object cast as a generic page object
 	 * @throws ConfigurationNotFoundException if the value is not found in the configuration file
 	 */
-	public static API buildAPI(String apiName) throws ConfigurationNotFoundException {
+	public static API buildAPI(String apiName) {
 		API api = null;
-		String[] pageObjectPackagesList = ConfigurationManager.getPageObjectPackageList();
 
-		for (String apiObjectPackage : pageObjectPackagesList) {
-			log.trace("apiObjectPackage: {}", apiObjectPackage);
-			api = findAPIInPackage(apiName, apiObjectPackage);
-			if (api != null) {
-				break; // If we have a page object, stop searching.
-			}
-		}
+		api = findAPIInPackage(apiName, "apis");
 		if(api == null) {
 			throw new ConfigurationNotFoundException("The API you want to test could not be built. At least one Page object package is required to run a test. Please add a pageObjectPackages property to your conf/sentinel.yml configuration file and try again.");
 		}
