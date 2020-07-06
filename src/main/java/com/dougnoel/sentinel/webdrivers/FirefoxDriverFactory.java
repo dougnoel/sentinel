@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -43,7 +44,7 @@ public class FirefoxDriverFactory {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{
-	        switch (WebDriverFactory.getOperatingSystem()) {
+	        switch (ConfigurationManager.getOperatingSystem()) {
 	        case "linux":
 	            driverPath = "src/main/resources/drivers/linux/geckodriver";
 	            break;
