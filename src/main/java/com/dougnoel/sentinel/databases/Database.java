@@ -12,6 +12,7 @@ import java.sql.Statement;
 public class Database {
 
     protected String databaseConnectionName;
+    protected String currentDatabaseName;
     protected Connection conn = null;
     
     public Database(String databaseConnectionName) {
@@ -19,8 +20,16 @@ public class Database {
     	loadDriver();
     }
 
-    public String getName() {
+    public String getConnectionName() {
         return databaseConnectionName;
+    }
+    
+    public void setCurrentDatabaseName(String currentDatabaseName) {
+    	this.currentDatabaseName = currentDatabaseName;
+    }
+    
+    public String getCurrentDatabaseName() {
+    	return currentDatabaseName;
     }
     
     @SuppressWarnings("deprecation")
@@ -38,27 +47,30 @@ public class Database {
     public void getConnection() {
 	    try {
 	        conn =
-	           DriverManager.getConnection("jdbc:mysql://localhost/test?" +
-	                                       "user=minty&password=greatsqldb");
+	           DriverManager.getConnection("jdbc:mysql://" + 
+	        		   						databaseConnectionName + "/" + 
+	        		   						currentDatabaseName + "?" +
+	        		   						"user=testuser&password=PoorPassword" +
+	                                       	"&serverTimezone=UTC&useLegacyDatetimeCode=false");
 	
 	        // Do something with the Connection
 	
 	    } catch (SQLException ex) {
 	        // handle any errors
-	        System.out.println("SQLException: " + ex.getMessage());
-	        System.out.println("SQLState: " + ex.getSQLState());
-	        System.out.println("VendorError: " + ex.getErrorCode());
+	        System.out.println("getConnection SQLException: " + ex.getMessage());
+	        System.out.println("getConnection SQLState: " + ex.getSQLState());
+	        System.out.println("getConnection VendorError: " + ex.getErrorCode());
 	    }
     }
     
     public String query(String queryString) {
     	getConnection();
 	    Statement stmt = null;
-	    ResultSet rs = null;
+	    ResultSet resultSet = null;
 	    String result = "";
 	    try {
 	        stmt = conn.createStatement();
-	        rs = stmt.executeQuery(queryString);
+	        resultSet = stmt.executeQuery(queryString);
 
 	        // or alternatively, if you don't know ahead of time that
 	        // the query will be a SELECT...
@@ -67,13 +79,25 @@ public class Database {
 //	            rs = stmt.getResultSet();
 //	        }
 
-	        result = rs.getString(1);
+//	        ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+//	        final int columnCount = resultSetMetaData.getColumnCount();
+//
+//	        while (resultSet.next()) {
+//	            Object[] values = new Object[columnCount];
+//	            for (int i = 1; i <= columnCount; i++) {
+//	                values[i - 1] = resultSet.getObject(i);
+//	            }
+//	            result += values;
+//	        }
+	        
+	        resultSet.next();
+	        result = resultSet.getString(1);
 	    }
 	    catch (SQLException ex){
 	        // handle any errors
-	        System.out.println("SQLException: " + ex.getMessage());
-	        System.out.println("SQLState: " + ex.getSQLState());
-	        System.out.println("VendorError: " + ex.getErrorCode());
+	        System.out.println("query SQLException: " + ex.getMessage());
+	        System.out.println("query SQLState: " + ex.getSQLState());
+	        System.out.println("query VendorError: " + ex.getErrorCode());
 	    }
 	    finally {
 	        // it is a good idea to release
@@ -81,12 +105,12 @@ public class Database {
 	        // in reverse-order of their creation
 	        // if they are no-longer needed
 
-	        if (rs != null) {
+	        if (resultSet != null) {
 	            try {
-	                rs.close();
+	            	resultSet.close();
 	            } catch (SQLException sqlEx) { } // ignore
 
-	            rs = null;
+	            resultSet = null;
 	        }
 
 	        if (stmt != null) {

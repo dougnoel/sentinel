@@ -9,19 +9,26 @@ import org.apache.logging.log4j.Logger;
  */
 public class DatabaseManager {
 	private static final Logger log = LogManager.getLogger(DatabaseManager.class);
-	private static Database database = null;
-	private static String databaseInUse = null;
+	private static Database databaseConnection = null;
 
 	private DatabaseManager() {
 		// Exists only to defeat instantiation.
 	}
 
-	public static void setDatabase(String databaseName) {
-		DatabaseManager.database = DatabaseFactory.buildOrRetrieveDatabaseConnection(databaseName);
+	public static void setDatabaseConnection(String databaseName) {
+		DatabaseManager.databaseConnection = DatabaseFactory.buildOrRetrieveDatabaseConnection(databaseName);
 	}
 	
-	public static void useDatabase(String databaseName) {
-		DatabaseManager.databaseInUse = databaseName;
+	public static void useDatabase(String currentDatabaseName) {
+		getCurrentDatabaseConnection().setCurrentDatabaseName(currentDatabaseName);
+	}
+	
+	public static Database getCurrentDatabaseConnection() {
+		return databaseConnection;
+	}
+	
+	public static String getDatabaseInUse() {
+		return getCurrentDatabaseConnection().getCurrentDatabaseName();
 	}
 
 }

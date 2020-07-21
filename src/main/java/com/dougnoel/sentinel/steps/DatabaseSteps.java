@@ -3,6 +3,8 @@ package com.dougnoel.sentinel.steps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.databases.Database;
+import com.dougnoel.sentinel.databases.DatabaseFactory;
 import com.dougnoel.sentinel.databases.DatabaseManager;
 
 import io.cucumber.java.en.Given;
@@ -21,21 +23,30 @@ import io.cucumber.java.en.When;
 public class DatabaseSteps {
     private static final Logger log = LogManager.getLogger(DatabaseSteps.class.getName()); // Create a logger.
     
-    @Given("I connect to the {string}")
+    @Given("^I connect to the (.*?) Database$")
     public void setDatabase(String databaseName) {
-    	String normalizedDatabaseName = databaseName.replaceAll("\\s", "") + "Page";
-    	DatabaseManager.setDatabase(normalizedDatabaseName);
-        log.debug("Current Connection {}", normalizedDatabaseName);
+    	String normalizedDatabaseName = databaseName.replaceAll("\\s", "") + "Database";
+    	DatabaseManager.setDatabaseConnection("localhost");
+//    	DatabaseManager.setDatabaseConnection(normalizedDatabaseName);
+        log.debug("Current Database Connection: {}", normalizedDatabaseName);
     }
 
     @Given("I use the {string} database")
     public void useDatabase(String databaseName) {
     	DatabaseManager.useDatabase(databaseName);
-    	log.debug("Current Database {}", databaseName);
+    	log.debug("Current Database In Use: {}", databaseName);
     }
     
     @When("I submit the query")
-    public void i_submit_the_query(String queryString) {
+    public void submitQuery(String queryString) {
+//    	DatabaseManager.setDatabaseConnection("LocalHostMySQLDatabase");
+//    	DatabaseManager.setDatabaseConnection("localhost");
+    	DatabaseManager.useDatabase("test_db");
+        Database db = DatabaseManager.getCurrentDatabaseConnection();
+        db.loadDriver();
+        db.getConnection();
+        String out = db.query(queryString);
+        System.out.println("Output from DB: " + out);
         //Connect to DB
     	//Select the database
     	//Run the Query
