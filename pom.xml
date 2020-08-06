@@ -154,6 +154,7 @@
             <show>${maven-javadoc-plugin.show}</show>
             <nohelp>${maven-javadoc-plugin.nohelp}</nohelp>
             <source>8</source>
+            <detectJavaApiLink>false</detectJavaApiLink>
           </configuration>
           <executions>
 			<execution>
