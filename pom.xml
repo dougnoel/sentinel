@@ -67,7 +67,7 @@
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <!-- <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version> see https://stackoverflow.com/questions/56212981/eclipse-showing-maven-configuration-problem-unknown -->
 
-    <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
     <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
     <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
 
