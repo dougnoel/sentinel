@@ -22,7 +22,7 @@ import io.cucumber.junit.Cucumber;
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 	, strict = true
-  , tags = { "not @new-tours and not @sql" }
+  , tags = { "not @new-tours" }
 )
 
 public class SentinelTests {
