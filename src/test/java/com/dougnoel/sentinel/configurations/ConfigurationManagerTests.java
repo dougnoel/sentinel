@@ -31,9 +31,8 @@ public class ConfigurationManagerTests {
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
 		System.setProperty("env", STAGE);
-		System.setProperty("pageObjectPackages", "com.demoaut");
 		driver = WebDriverFactory.instantiateWebDriver();
-		PageManager.setPage("NewToursLoginPage");
+		PageManager.setPage("MockTestPage");
 	}
 	
 	@Before
