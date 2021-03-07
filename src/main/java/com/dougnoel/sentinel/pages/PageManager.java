@@ -326,7 +326,7 @@ public class PageManager {
 			driver().findElement(By.tagName("body"));
 		} catch (TimeoutException e) {
 			throw new TimeoutException(
-					"This page timed out before it could finish loading. Please increae the timeout, ensure the page you are loading exists, or check your internet connection and try agin.");
+					"This page timed out before it could finish loading. Please increase the timeout, ensure the page you are loading exists, or check your internet connection and try agin.");
 		}
 		// if we've gotten this far, we haven't timed out so return the
 		// document.readyState check
