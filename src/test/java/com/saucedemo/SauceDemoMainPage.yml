@@ -1,0 +1,11 @@
+include: SauceDemoMenuPage
+elements:
+  product_sort_dropdown:
+    elementType: Dropdown
+    xpath: "//div[@id='inventory_filter_container']/select"
+  first_item_name:
+    elementType: Div
+    xpath: "//div[@class='inventory_list']/div[1]/div[@class='inventory_item_label']/a/div"
+  sauce_labs_backpack_link:
+     elementType: Div
+     text: "Sauce Labs Backpack"
