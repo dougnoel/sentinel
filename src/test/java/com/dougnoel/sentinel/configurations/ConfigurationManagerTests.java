@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.configurations;
 import static org.junit.Assert.*;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -17,10 +16,9 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class ConfigurationManagerTests {
 	private static WebDriver driver;
-	
+	private static String originalEnvironment = null;
 	private static final String STAGE = "stage";
 	private static final String DEV = "dev";
-	private static final String PROD = "prod";
 	private static final String DEFAULT = "default";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
@@ -30,19 +28,15 @@ public class ConfigurationManagerTests {
 	
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
-		System.setProperty("env", STAGE);
-		System.setProperty("pageObjectPackages", "com.demoaut");
+		originalEnvironment = ConfigurationManager.getEnvironment();
+		ConfigurationManager.setEnvironment(STAGE);
 		driver = WebDriverFactory.instantiateWebDriver();
-		PageManager.setPage("NewToursLoginPage");
-	}
-	
-	@Before
-	public void setUpBeforeEachTest() {
-		System.setProperty("env", STAGE);
+		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
+		ConfigurationManager.setEnvironment(originalEnvironment);
 		driver.close();
 	}
 
@@ -101,12 +95,6 @@ public class ConfigurationManagerTests {
 	@Test
 	public void loadStageUrlUsingDefault() throws SentinelException {
 		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", ConfigurationManager.getUrl("DefaultUrls"));
-	}
-	
-	@Test
-	public void loadProdUrl() throws SentinelException {
-		System.setProperty("env", PROD);
-		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", ConfigurationManager.getUrl("DefaultUrls"));
 	}
 	
 	@Test

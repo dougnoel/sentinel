@@ -42,6 +42,8 @@ public class ConfigurationManager {
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
 	private static ConfigurationManager instance = null;
 	
+	private static String env = null;
+	
 	private static Properties appProps = new Properties();
 	
 	private static ConfigurationData sentinelConfigurations = null;
@@ -50,6 +52,7 @@ public class ConfigurationManager {
     private static final String LINUX = "linux";
     private static final String MAC = "mac";
     private static final String WINDOWS = "windows";
+    private static final String BROWSER = "browser";
 
 	private ConfigurationManager() {
 		// Exists only to defeat instantiation.
@@ -153,15 +156,34 @@ public class ConfigurationManager {
 	}
 
 	/**
-	 * Returns the system environment, returns an exception if no env if found, forcing the user to set the env.
+	 * Returns the system environment.
+	 * If no environment is set, a warning message is logged and a default value of "localhost" is set.
 	 * 
 	 * @return String text of system env info
 	 */
-	public static String getEnvironment()  {
-		String env = System.getProperty("env");
-		if (env == null)
-			throw new ConfigurationNotFoundException("Enviroment is not set, please restart your test and pass -Denv=\"<your environment>\"");
+	public static String getEnvironment() {
+		if (env == null) {
+			env = System.getProperty("env");
+			if (env == null) {
+				env = "localhost";
+				String warningMessage = "localhost env being used by default. " + 
+						ConfigurationManager.getConfigurationNotFoundErrorMessage("env");
+				log.warn(warningMessage);
+			}
+		}
 		return env;
+	}
+	
+	/**
+	 * Setter intended only for unit testing. Sets the stored value and also the System Property.
+	 * @param env String env to set, null to clear
+	 */
+	protected static void setEnvironment(String env) {
+		ConfigurationManager.env = env;
+		if (env == null)
+			System.clearProperty("env");
+		else
+			System.setProperty("env", env);
 	}
 
 	/**
@@ -349,7 +371,7 @@ public class ConfigurationManager {
 	}
 	
 	public static String getConfigurationNotFoundErrorMessage(String configurtaionValue) {
-		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.",configurtaionValue,configurtaionValue,configurtaionValue);
+		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.", configurtaionValue, configurtaionValue, configurtaionValue);
 	}
 	
     /**
@@ -359,10 +381,12 @@ public class ConfigurationManager {
     public static String getBrowserName() {
     	//TODO Make this useable by Saucelabs driver
     	String browser;
-		browser = ConfigurationManager.getOptionalProperty("browser");
+		browser = ConfigurationManager.getOptionalProperty(BROWSER);
 		if (browser == null) {
 			browser = "chrome";
-			log.info("Chrome browser being used as default.");
+			String infoMessage = "Chrome browser being used by default. " + 
+					ConfigurationManager.getConfigurationNotFoundErrorMessage(BROWSER);
+			log.info(infoMessage);
 		}
         // Make sure whatever string we are passed is all lower case and all spaces are removed.
         browser = browser.replaceAll("\\s+", "").toLowerCase();
@@ -391,7 +415,9 @@ public class ConfigurationManager {
      */
     private static String detectOperatingSystem() {
     	String os = System.getProperty("os.name").toLowerCase();
-    	log.info("Operating system auto-detected: {}", os);
+		String infoMessage = SentinelStringUtils.format("Operating system auto-detected: {} ", os) + 
+				ConfigurationManager.getConfigurationNotFoundErrorMessage("os");
+    	log.info(infoMessage);
     	if (os.indexOf("win") >=0) {
     		return WINDOWS;
     	}

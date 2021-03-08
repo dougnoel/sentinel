@@ -1,0 +1,41 @@
+urls:
+   default: https://www.saucedemo.com/
+   demo: http://localhost:3001
+accounts:
+   default:
+      StandardUser:
+         username: standard_user
+         password: secret_sauce
+      LockedOutUser:
+         username: locked_out_user
+         password: secret_sauce
+      ProblemUser:
+         username: problem_user
+         password: secret_sauce
+      PreformanceGlitchUser:
+         username: performance_glitch_user
+         password: secret_sauce
+   stage:
+      default:
+         username: DefaultUser
+         password: MyPassw0rd
+      StageUser:
+         username: StageUserName
+         password: BadPassw0rd
+elements:
+  username_field:
+    elementType: Textbox
+    id: user-name
+    name: user-name
+    xpath: "//input[@data-test='username']"
+  password_field:
+    elementType: Textbox
+    css: "#password"
+    id: "password"
+    xpath: "//input[@placeholder='Password']"
+  login_button:
+    id: "login-button"
+    xpath: "//input[@value='LOGIN']"
+  error_message:
+    xpath: "//div[@id='login_button_container']/div/form/h3"
+    xpath: "//h3[@data-test='error']"

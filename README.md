@@ -21,7 +21,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them:
  * Integrated Development Environment (Eclipse Suggested)
- * Java 8 (1.8) (Java 9 and later are NOT supported by Cucumber)
+ * Java 11 or later required
  * Maven (2.5.4 or later)
 
 ### 1.2 Installation
@@ -329,6 +329,9 @@ mvn release:perform
 ```
 
 After deployment, follow the [Sonatype Instructions for releasing a deployment](https://central.sonatype.org/pages/releasing-the-deployment.html).
+
+#### 5.3.1 Install GPG Key
+To create a GPG Key, you need a tool. The following tool for Mac has a UI [https://gpgtools.org/](https://gpgtools.org/). When creating a key, you must use the Advanced Settings and follow the instructions above.
 
 ## 6.0 Additional Documentation & Resources
 

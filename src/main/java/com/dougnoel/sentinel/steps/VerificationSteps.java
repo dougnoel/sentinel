@@ -62,10 +62,9 @@ public class VerificationSteps {
      * 
      * @param elementName String Element to check
      * @param assertion String "does" or does not" for true or false
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*?)( does not)?(?: does)? exists?$")
-    public static void i_verify_an_element_exists(String elementName, String assertion) throws Throwable {
+    public static void verifyElementExists(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}exist.",
                 elementName, (negate ? "not " : ""));
@@ -91,10 +90,9 @@ public class VerificationSteps {
      * </ul>
      * @param elementName String Element to check
      * @param assertion String "" or " not" for true or false
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*) is( not)? (?:checked|selected)$")
-    public static void i_verify_the_element_is_selected(String elementName, String assertion) throws Throwable {
+    public static void verifyElementIsSelected(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {} selected.",
                 elementName, (negate ? "not be" : "be"));
@@ -117,11 +115,9 @@ public class VerificationSteps {
      * @param elementName String element to inspect
      * @param assertion String if not null we expect this be true
      * @param attribute String class attribute to verify
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*) (?:has)?(does not have)? the attribute (.*)$")
-    public static void i_verify_an_element_has_an_attribute(String elementName, String assertion, String attribute)
-            throws Throwable {
+    public static void verifyElementHasAttribute(String elementName, String assertion, String attribute) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have the attribute \"{}\".",
                 elementName, (negate ? "" : "not "), attribute);
@@ -142,12 +138,11 @@ public class VerificationSteps {
      * <li>I verify the second li element in the accordion is active</li>
      * <li>I verify the password field is not active</li>
      * </ul>
-      * @param elementName String  the element to inspect for the active class
+     * @param elementName String  the element to inspect for the active class
      * @param assertion String if not null we expect this be true
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*) is( not)? active$")
-    public static void i_verify_an_element_is_active(String elementName, String assertion) throws Throwable {
+    public static void verifyElementIsActive(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be active.",
                 elementName, (negate ? "" : "not "));
@@ -170,10 +165,9 @@ public class VerificationSteps {
      * </ul>
      * @param elementName String the name of the element
      * @param assertion String if not null we expect this be true
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*?) is( not)? enabled$")
-    public static void i_verify_an_element_is_enabled(String elementName, String assertion) throws Throwable {
+    public static void verifyElementIsEnabled(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be enabled.",
                 elementName, (negate ? "not " : ""));
@@ -194,10 +188,9 @@ public class VerificationSteps {
      * </ul>
      * @param elementName String the name of the element
      * @param assertion String if the assertion is not empty we expect it to be hidden
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*?) is( not)? hidden$")
-    public static void i_verify_an_element_is_hidden(String elementName, String assertion) throws Throwable {
+    public static void verifyElementIsHidden(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion); // is hidden = empty, so negate is false
         String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
                 : "hidden"));
@@ -217,10 +210,10 @@ public class VerificationSteps {
      * <li>I am shown the member portal pop-up overlay</li>
      * </ul>
      * @param pageName String the name of the place to redirect to
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws InterruptedException if the thread gets interrupted while sleeping
      */
     @Then("^I am (?:redirected to|shown) the (.*) (?:(?:P|p)age|(?:O|o)verlay)$")
-    public static void i_am_redirected_to_the_page(String pageName) throws Throwable {
+    public static void redirectedToPage(String pageName) throws InterruptedException {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         PageManager.waitForPageLoad();
@@ -236,10 +229,10 @@ public class VerificationSteps {
      * <li>I see a new tab open with the Google Maps page</li>
      * </ul>
      * @param pageName String the page to open
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws InterruptedException if the thread gets interrupted while sleeping
      */
     @Then("^I see a new tab open with the (.*) Page$")
-    public static void i_see_a_new_tab_open_with_the_foo_Page(String pageName) throws Throwable {
+    public static void openNewTab(String pageName) throws InterruptedException {
         PageManager.switchToNewWindow();
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
@@ -256,10 +249,9 @@ public class VerificationSteps {
      * </ul>
      * @param linkName String The text of the link. NOT a PageElement object name.
      * @param url String the URL expected to be loaded.
-     * @throws Throwable Passes through any errors to the executing code.
      */
     @Then("^I open the (.*?) link in a new tab and verify the URL that loads is (.*?)$")
-    public static void i_open_the_link_in_a_new_tab_and_verify_the_url(String linkName, String url) throws Throwable {
+    public static void openLinkAndVerifyURL(String linkName, String url) {
             WebDriverFactory.getWebDriver().findElement(By.linkText(linkName)).sendKeys(Keys.RETURN);
             PageManager.switchToNewWindow();
             String newUrl = PageManager.getCurrentUrl();
@@ -275,16 +267,15 @@ public class VerificationSteps {
      * <li>I should see the Provider Search iframe</li>
      * <li>I should see the Facebook iframe</li>
      * </ul>
-     * @see com.dougnoel.sentinel.steps.VerificationSteps#i_verify_an_element_exists(String, String)
+     * @see com.dougnoel.sentinel.steps.VerificationSteps#verifyElementExists(String, String)
      * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
      * @param iFrameName String the name of the iframe element on the page object.
-     * @throws Throwable Passes through any errors to the executing code.
      */
     @Then("^I should see the (.*) iframe$")
-    public static void i_should_see_content_in_the_x_iframe(String iFrameName) throws Throwable {
+    public static void switchToIFrame(String iFrameName) {
 
         // Make sure the content is loaded in the i frame
-        VerificationSteps.i_verify_an_element_exists(iFrameName, "");
+        VerificationSteps.verifyElementExists(iFrameName, "");
         PageManager.switchToIFrame();
 
     }

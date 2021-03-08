@@ -1,0 +1,27 @@
+urls:
+   default: http://newtours.demoaut.com/
+accounts:
+   default:
+      RegularUser:
+         username: test
+         password: test
+      BadUser:
+         username: test
+         password: test
+   stage:
+      default:
+         username: DefaultUser
+         password: MyPassw0rd
+      StageUser:
+         username: StageUserName
+         password: BadPassw0rd
+include: NewToursMenuPage
+elements:
+  username_field:
+    elementType: Textbox
+    name: "userName"
+  password_field:
+    elementType: Textbox
+    name: "password"
+  sign_in_button:
+    name: "login"
