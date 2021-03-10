@@ -22,13 +22,38 @@ public class ChromeDriverFactory {
 	
     /**
      * Creates a Chrome WebDriver and returns it.
-     * @return WebDriver a Chrome WebDriver object
+     * @return WebDriver as a Chrome WebDriver object
      */
     protected static WebDriver createChromeDriver() {
     	setChromeDriverPath();
         setChromeDownloadDirectory("downloads");
         try {
         	return new ChromeDriver();
+        }
+		catch (IllegalStateException e) {
+			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			log.error(errorMessage);
+			throw new WebDriverNotExecutableException(errorMessage, e);
+		}
+        catch (org.openqa.selenium.WebDriverException e) {
+        	log.error(e.getMessage());
+        	throw new WebDriverException(e);
+        }
+    }
+
+    /**
+     * Creates a Headless Chrome WebDriver and returns it.
+     * @return WebDriver as a Headless Chrome WebDriver object
+     */
+    protected static WebDriver createHeadlessChromeDriver() {
+    	setChromeDriverPath();
+        setChromeDownloadDirectory("downloads");
+        try {
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--headless");
+            return new ChromeDriver(options);
         }
 		catch (IllegalStateException e) {
 			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());

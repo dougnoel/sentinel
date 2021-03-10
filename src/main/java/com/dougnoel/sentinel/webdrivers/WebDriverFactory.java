@@ -98,7 +98,11 @@ public class WebDriverFactory {
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	driver = ChromeDriverFactory.createChromeDriver();
+        	String headless = ConfigurationManager.getOptionalProperty("headless");
+        	if (headless == null || headless.equalsIgnoreCase("false"))
+        		driver = ChromeDriverFactory.createChromeDriver();
+        	else
+        		driver = ChromeDriverFactory.createHeadlessChromeDriver();
             break;
         case "firefox":
         	driver = FirefoxDriverFactory.createFirefoxDriver();
