@@ -22,7 +22,7 @@ jobs:
         java-version: 11
     - name: Install Google Chrome # Using shell script to install Google Chrome
       run: |
-       chmod +x ./scripts/InstallChrome.sh
+       chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
     - name: Build with Maven
       run: mvn -B package -Dheadless --file pom.xml
