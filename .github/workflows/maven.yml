@@ -38,9 +38,10 @@ jobs:
       run: |
        chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
+    - name: Build with Maven and Run Unit Tests 
+      run: mvn -B package -Dheadless --file pom.xml
     - name: Build with Maven and Analyze
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless
-#      run: mvn -B package -Dheadless --file pom.xml
+      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
