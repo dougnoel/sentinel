@@ -259,6 +259,28 @@ To update Chrome, first determine your version of Chrome:
 
 *NOTE: You may need to update the version for other operating systems if your co-workers or CI/CD pipeline use different operating systems.*
 
+### How do I run chrome in headless mode?
+If you want to run chrome as a headless browser, you can change that either on the command line or in the sentinel.yml configuration file. On the command line you would use `-Dheadless` to use chrome in headless mode. This is the equivalent of passing `-Dheadless=true`. Alternately if headless is turned on in the configuration file and you need to override it, you can pass `-Dheadless=false` on the command line.
+
+Perhaps your in your CI/CD pipeline, your dev environment is the only one not setup for browser compatibility, and you want to run the tests there as headless. In that case you could set a value in the configuration file like so:
+
+```
+configurations:
+  dev:
+  	headless: true
+```
+
+It's also possible that you need every environment except localhost to run headless. In this case you could setup the configuration file like so:
+
+```
+configurations:
+  default:
+  	headless: true
+  localhost:
+  	headless: false
+```
+*NOTE: Passing in a value on the command line will always override whatever is in the configuration file.*
+
 ## 5.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
