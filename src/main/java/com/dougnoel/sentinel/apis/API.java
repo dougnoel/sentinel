@@ -15,9 +15,9 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 public abstract class API {
 	private static final Logger log = LogManager.getLogger(API.class.getName()); // Create a logger.
 	
-    static protected final AuthenticationType JWT = AuthenticationType.JWT;
-    static protected final AuthenticationType AUTH_KEY = AuthenticationType.AUTH_KEY;
-    static protected final AuthenticationType NONE = AuthenticationType.NONE;
+	protected static final AuthenticationType JWT = AuthenticationType.JWT;
+	protected static final AuthenticationType AUTH_KEY = AuthenticationType.AUTH_KEY;
+	protected static final AuthenticationType NONE = AuthenticationType.NONE;
     
 	protected AuthenticationType authenticationType = NONE;
 	Object authToken = null;
@@ -80,6 +80,7 @@ public abstract class API {
 		case AUTH_KEY:
 			//TODO: Implement Auth Token setting
 			log.error("Auth Token capture is not yet implemented.");
+			break;
 		case NONE:
 			break;
 		}
