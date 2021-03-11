@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.apis;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import org.apache.http.client.ClientProtocolException;
 
 /**
  * An abstract class that defines an action for an API object.
@@ -17,7 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 public abstract class Action {
 	protected String endpoint = null;
 	
-	public Action(String endpoint) {
+	protected Action(String endpoint) {
 		this.endpoint = endpoint;
 	}
 		
@@ -36,9 +35,8 @@ public abstract class Action {
 	 * @param request Request the Sentinel Request object to create and send the request
 	 * @param api API the Sentinel API object to make a call against, which contains the URL to use
 	 * @return Response the Sentinel Response object returned for evaluation
-	 * @throws ClientProtocolException if the HttpClient execution fails
 	 * @throws IOException if the HttpClient execution fails or reading the response IOStream fails
 	 * @throws URISyntaxException if building the URI fails
 	 */
-	public abstract Response sendRequest(Request request, API api) throws ClientProtocolException, IOException, URISyntaxException;
+	public abstract Response sendRequest(Request request, API api) throws IOException, URISyntaxException;
 }

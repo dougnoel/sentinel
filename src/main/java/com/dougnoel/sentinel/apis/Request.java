@@ -32,7 +32,8 @@ public class Request {
 	}
 	
 	public String buildRequest() {
-		return jsonRequest = getHeaders() + getRequestParameters();
+		jsonRequest = getHeaders() + getRequestParameters();
+		return jsonRequest;
 	}
 	
 	public String getRequest() {

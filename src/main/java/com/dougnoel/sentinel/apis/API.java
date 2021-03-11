@@ -24,7 +24,7 @@ public abstract class API {
 	
 	protected URL url = null;
 	
-	public API() {
+	protected API() {
 	}
 
     public String getName() {
