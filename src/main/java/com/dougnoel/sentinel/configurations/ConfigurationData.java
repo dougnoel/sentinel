@@ -18,7 +18,7 @@ public class ConfigurationData extends File {
 	private static final long serialVersionUID = 3930207641065895241L;
 	
 	@JsonProperty("configurations")
-	public Map<String, Map<String, String>> configurations;
+	private Map<String, Map<String, String>> configurations;
 	
 	@JsonCreator
     public ConfigurationData() throws FileNotFoundException {
