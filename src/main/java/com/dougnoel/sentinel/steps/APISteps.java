@@ -30,7 +30,8 @@ public class APISteps {
 	protected Scenario scenario = null;
 	protected String uid = null;
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
-
+	private static final String RESPONSE_DEBUG = "Response: {}";
+	
     @Before
     public void before(Scenario scenario) {
         this.scenario = scenario;
@@ -80,7 +81,7 @@ public class APISteps {
 		Response response = ResponseManager.getResponse(uid);
 		// Assert the response is not null
 		assertTrue(response != null);
-		log.trace("Response: {}", response.getResponse());
+		log.trace(RESPONSE_DEBUG, response.getResponse());
 	}
 	
 	@Then("^I verify a response was received$")
@@ -89,7 +90,7 @@ public class APISteps {
 		Response response = ResponseManager.getResponse(uid);
 		// Assert the response is not null
 		assertTrue(response != null);
-		log.info("Response: {}", response.getResponse());
+		log.info(RESPONSE_DEBUG, response.getResponse());
 	}
 	
 	@Given("^I make a GET request to the (.*?) API using the (.*?) endpoint$")
@@ -109,7 +110,7 @@ public class APISteps {
 		//Get the response from the response manager
 		Response response = ResponseManager.getResponse(uid); //4
 		// Output the response
-		log.info("Response: {}", response.getResponse()); //4
+		log.info(RESPONSE_DEBUG, response.getResponse()); //4
 	}
 	
 //	
