@@ -85,8 +85,9 @@ public class DownloadManager {
      * file is downloaded.
      * 
      * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the file download is interrupted
      */
-    public static String monitorDownload() {
+    public static String monitorDownload() throws InterruptedException {
         return monitorDownload(downloadDirectory, fileExtension);
     }
 
@@ -100,8 +101,9 @@ public class DownloadManager {
      * @param downloadDir String path to the download directory.
      * @param fileExtension String extension of the file type you are expecting to be  downloaded.
      * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the thread is interrupted during download
      */
-    public static String monitorDownload(String downloadDir, String fileExtension) {
+    public static String monitorDownload(String downloadDir, String fileExtension) throws InterruptedException {
         String downloadedFileName = null;
         boolean valid = true;
         boolean found = false;
@@ -151,6 +153,7 @@ public class DownloadManager {
 
         catch (InterruptedException e) {
             log.error("Interrupted error - {}", e.getMessage());
+            throw e;
         } catch (NullPointerException e) {
             log.error("Download operation timed out.. Expected file was not downloaded");
         } catch (Exception e) {
@@ -208,7 +211,8 @@ public class DownloadManager {
             String errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
         } finally {
-        	file.close();
+        	if (file != null)
+        		file.close();
         }
 
         try {
@@ -262,22 +266,18 @@ public class DownloadManager {
      * @param pageStart int Number of the page on the pdf to start looking for the text  (inclusive).
      * @param pageEnd int Number of the page on the pdf to stop looking for the text     (inclusive).
      * @return boolean true if the text was found, false if it was not.
-     * @throws IOException Throws an error if the PDF file cannot be opened.
      */
-    public static boolean verifyTextInDownloadedPDF(String expectedText, File pdfFile, int pageStart, int pageEnd)
-            throws IOException {
+    public static boolean verifyTextInDownloadedPDF(String expectedText, File pdfFile, int pageStart, int pageEnd) {
 
         boolean flag = false;
 
         PDFTextStripper pdfStripper = null;
-        FileInputStream fis = null;
         PDDocument pdDoc = null;
         String parsedText = null;
 
-        try {
-            fis = new FileInputStream(pdfFile);
-            BufferedInputStream file = new BufferedInputStream(fis);
-
+        try ( FileInputStream fis = new FileInputStream(pdfFile);
+              BufferedInputStream file = new BufferedInputStream(fis); ) {
+        	
             pdfStripper = new PDFTextStripper();
             pdfStripper.setStartPage(pageStart);
             pdfStripper.setEndPage(pageEnd);
@@ -292,10 +292,8 @@ public class DownloadManager {
             } catch (Exception e1) {
                 log.error(e1);
             }
-        } finally {
-        	fis.close();
         }
-
+        
         log.trace("PDF Parsed Text: \n{}", parsedText);
 
         if (parsedText != null && parsedText.contains(expectedText)) {
