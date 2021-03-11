@@ -22,7 +22,7 @@ public abstract class JSDropdownElement extends Dropdown {
 	 * @param elementName String the name of the element
 	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
 	 */
-	public JSDropdownElement(String elementName, Map<String,String> selectors) {
+	protected JSDropdownElement(String elementName, Map<String,String> selectors) {
 		super(elementName, selectors);
 	}
 
