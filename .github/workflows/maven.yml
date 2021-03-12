@@ -38,9 +38,9 @@ jobs:
       run: |
        chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
-    - name: Build with Maven and Analyze
+    - name: Build with Maven and Analyze with Jacoco
       run: mvn -B clean verify org.jacoco:jacoco-maven-plugin:prepare-agent -Dheadless
-    - name: Build with Maven and Analyze
+    - name: Build with Maven and Analyze with Sonar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
