@@ -72,14 +72,17 @@ public class TextVerificationSteps {
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
     public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
+        String partialMatchText = partialMatch ? "contain" : "exactly match";
+        
         if (elementName.contains("URL")) {
             verifyURLTextContains(text);
         } else {
             String elementText = getElement(elementName).getText();
             String expectedResult = SentinelStringUtils.format(
                     "Expected the {} element to {}{} the text {}. The element contained the text: {}",
-                    elementName, (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, elementText
+                    elementName, negateText, partialMatchText, text, elementText
                             .replace("\n", " "));
             log.trace(expectedResult);
             if (partialMatch) {
