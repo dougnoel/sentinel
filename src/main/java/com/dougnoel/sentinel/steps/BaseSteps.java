@@ -75,6 +75,8 @@ public class BaseSteps {
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
+    	Double totalWaitTime = Double.valueOf(ConfigurationManager.getValue("totalWaitTime"));
+    	ConfigurationManager.setValue("totalWaitTime", String.valueOf(seconds + totalWaitTime));
         TimeoutManager.wait(seconds);
         log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, (seconds * 1000));
     }

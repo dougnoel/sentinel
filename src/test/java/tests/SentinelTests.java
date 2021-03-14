@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -35,7 +36,11 @@ public class SentinelTests {
 
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
-        log.info("Driver: {}", WebDriverFactory.getWebDriver());
+        String totalWaitTime = ConfigurationManager.getValue("totalWaitTime");
+        if (totalWaitTime != null) {
+        	log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues");
+        }
+    	log.info("Driver: {}", WebDriverFactory.getWebDriver());
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
         	PageManager.quit();
         }
