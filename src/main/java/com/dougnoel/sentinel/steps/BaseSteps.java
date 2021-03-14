@@ -24,7 +24,7 @@ import io.cucumber.java.en.When;
  */
 public class BaseSteps {
     private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
-
+    
     @Before
     public static void before(Scenario scenario) {
         log.trace("Scenario ID: {} Scenario Name: {}", scenario.getId(), scenario.getName());
