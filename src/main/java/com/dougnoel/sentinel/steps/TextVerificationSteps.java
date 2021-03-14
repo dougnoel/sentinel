@@ -67,10 +67,9 @@ public class TextVerificationSteps {
      * @param assertion String Evaluated as a boolean, where null = false and any text = true.
      * @param matchType String whether we are doing an exact match or a partial match
      * @param text String The text to verify exists in the element.
-     * @throws Throwable Throws any errors passed to it.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) throws Throwable {
+    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
@@ -133,10 +132,9 @@ public class TextVerificationSteps {
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
      * @param textToMatch String Text to match
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) throws Throwable {
+    public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
         String expectedResult = SentinelStringUtils.format(
@@ -170,10 +168,9 @@ public class TextVerificationSteps {
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
      * @param key String the key to retrieve the text to match from the configuration manager
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
-    public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) throws Throwable {
+    public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
         String textToMatch = ConfigurationManager.getValue(key);
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
