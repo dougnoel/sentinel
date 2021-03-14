@@ -48,8 +48,7 @@ public abstract class API {
 		try {
 			uri = url.toURI();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getReason());
 		}
 		return uri;
 	}
