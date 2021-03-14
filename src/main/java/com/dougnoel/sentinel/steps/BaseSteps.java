@@ -43,10 +43,9 @@ public class BaseSteps {
      * </ul>
      * 
      * @param elementName String the name of the element to click
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I click (?:the|a|an) (.*?)$")
-    public static void click(String elementName) throws SentinelException {
+    public static void click(String elementName) {
         getElement(elementName).click();
     }
 

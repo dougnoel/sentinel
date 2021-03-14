@@ -30,10 +30,9 @@ public class TextVerificationSteps {
      * </ul>
      * @param elementName String name of the element to verify.
      * @param assertion Sting if this is not empty, we expect it to be true.
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*?)( is not)?(?: is)? empty?$")
-    public static void i_verify_an_element_text(String elementName, String assertion) throws Throwable {
+    public static void verifyElementTextIsEmpty(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be empty.",
                 elementName, (negate ? "not " : ""));
@@ -71,11 +70,11 @@ public class TextVerificationSteps {
      * @throws Throwable Throws any errors passed to it.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void i_verify_the_element_contains_the_text(String elementName, String assertion, String matchType, String text) throws Throwable {
+    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
         if (elementName.contains("URL")) {
-            i_verify_the_URL_contains_the_text(text);
+            verifyURLTextContains(text);
         } else {
             String elementText = getElement(elementName).getText();
             String expectedResult = SentinelStringUtils.format(
@@ -104,9 +103,8 @@ public class TextVerificationSteps {
      * text in the URL.
 	 *
      * @param text String text to verify in the URL
-     * @throws Throwable Throws any errors passed to it.
      */
-    private static void i_verify_the_URL_contains_the_text(String text) throws Throwable {
+    private static void verifyURLTextContains(String text) {
         String currentUrl = PageManager.getCurrentUrl();
         String expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
@@ -135,7 +133,7 @@ public class TextVerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public static void i_verify_the_selection_contains_the_text(String elementName, String assertion, String textToMatch) throws Throwable {
+    public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) throws Throwable {
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
         String expectedResult = SentinelStringUtils.format(
@@ -172,10 +170,10 @@ public class TextVerificationSteps {
      * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
-    public static void i_verify_the_selection_contains_the_previously_entered_value(String elementName, String assertion, String key) throws Throwable {
+    public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) throws Throwable {
         String textToMatch = ConfigurationManager.getValue(key);
         boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
+        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
         String expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
