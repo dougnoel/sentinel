@@ -4,6 +4,9 @@ import static com.dougnoel.sentinel.apis.ActionFunctions.getAction;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,8 +26,6 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
-
 
 public class APISteps {
 	protected Scenario scenario = null;
@@ -59,14 +60,14 @@ public class APISteps {
      * @throws SentinelException if the API cannot be set
      */
 	@Given("^I use the (.*?) API$")
-	public void i_use_an_API(String apiName) throws SentinelException  {
+	public void setAPI(String apiName) {
 		apiName = cleanAPIName(apiName);
         log.debug("API Name: {} UID: {}", apiName, uid);
         APIManager.setAPI(uid, apiName);
 	}
 	
 	@When("^I send a request to the (.*?) endpoint$")
-	public void i_send_a_request_to_the_endpoint(String endpoint) throws Throwable {
+	public void sendRequest(String endpoint) throws IOException, URISyntaxException {
 		// Get an API from the API Manager
 		API api = APIManager.getAPI(uid); //3
 		// Get an Request from the Request Manager
@@ -76,7 +77,7 @@ public class APISteps {
 	}
 	
 	@Then("^I verify a (success) response code was received$")
-	public void i_verify_the_response_code(String expectedResponse) throws Throwable {
+	public void verifyResponseCode(String expectedResponse) {
 		//Get the response from the response manager
 		Response response = ResponseManager.getResponse(uid);
 		// Assert the response is not null
@@ -85,7 +86,7 @@ public class APISteps {
 	}
 	
 	@Then("^I verify a response was received$")
-	public void i_validate_the_response() throws Throwable {
+	public void validateResponse() {
 		//Get the response from the response manager
 		Response response = ResponseManager.getResponse(uid);
 		// Assert the response is not null
@@ -94,7 +95,7 @@ public class APISteps {
 	}
 	
 	@Given("^I make a GET request to the (.*?) API using the (.*?) endpoint$")
-	public void i_make_a_GET_request_to_an_API(String apiName, String endpoint) throws Throwable {
+	public void getRequest(String apiName, String endpoint) throws IOException, URISyntaxException {
 		// Get the API name
 		apiName = cleanAPIName(apiName); //1
 		// Set the API
@@ -113,62 +114,20 @@ public class APISteps {
 		log.info(RESPONSE_DEBUG, response.getResponse()); //4
 	}
 	
-//	
-//	@Given("^I make a POST request to the (.*?) with the data (.*?)$")
-//	public void i_make_a_POST_request_to_an_API_with_data(String APIName, String data) throws Throwable {
-//		APIManager.doPostAndPrintResultToConsole(APIName, data);
-//	}
-	
 	@Given("^I add a header key called (.*) with value (.*) to the request")
-	public void i_add_header_pairs_to_request(String headerKey, String headerValue) {
+	public void addHeader(String headerKey, String headerValue) {
 		RequestManager.addHeader(uid, headerKey, headerValue);
-	}
-
-	@Given("^My request it (not) authenticated ?:with (a jwt|an auth_token)")
-	public void i_add_authorization(String noAuth, String token) {
-//		if(noAuth == null) {
-//			API.authenticationType = token;
-//		} else {
-//			API.authenticantionType = "NONE";
-//		}
-	}
-
-	@Given("^I have a (GET|POST|PUT) HTTP Request")
-	public void i_make_a_request(String RequestType) {
-//		switch(RequestType) {
-//			case "GET":
-//				return new GET();
-//			case "POST":
-//				return new POST();
-//			case "PUT":
-//				return new PUT();
-//			default:
-//				throw new RuntimeException("Invalid request type passed to function. Please choose GET, POST, or PUT as your request type");
-//		}
-//		
-	}
-	
-	@When("^I send the request$") 
-	public void i_send_the_request(){
-//		request.sendRequest();
-	}
-	
-	@When("^I (check|verify|expect) response from GET List$")
-	public void i_verify_response_from_GET_list() {
-		//assertTrue(response, expectedResponse)
 	}
 	
 	@When("^I verify the response code equals (\\d{3})$")
-	public void i_verify_the_response_code_equals(int statusCode) {
+	public void verifyResponseCodeEquals(int statusCode) {
 		Integer responseCode = ResponseManager.getResponse(uid).getResponseCode();
 		log.trace("I verify response code value: {}", responseCode);
 		assertTrue(statusCode == responseCode);
 	}
 	
 	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public void i_verify_the_response_contains_the_text(String assertion, String matchType,
-            String text)
-            throws Throwable {
+    public void verifyResponseContains(String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
 
