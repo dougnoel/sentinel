@@ -7,12 +7,12 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 public class Response {
 	
-	protected HttpResponse response;
+	protected HttpResponse httpResponse;
 	protected String jsonResponse;
 	
 	public Response(HttpResponse httpResponse) throws IOException {
-		this.response = httpResponse;
-		this.jsonResponse = SentinelStringUtils.inputStreamToString(response.getEntity().getContent()); //This has to be done when we first get the response because once we read the stream, it is gone.
+		this.httpResponse = httpResponse;
+		this.jsonResponse = SentinelStringUtils.inputStreamToString(this.httpResponse.getEntity().getContent()); //This has to be done when we first get the response because once we read the stream, it is gone.
 	}
 	
 	public void addJsonResponse(String jsonResponse) {
@@ -24,7 +24,7 @@ public class Response {
 	}
 	
 	public Integer getResponseCode() {
-		return response.getStatusLine().getStatusCode();
+		return httpResponse.getStatusLine().getStatusCode();
 	}
 	
 }

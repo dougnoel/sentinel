@@ -38,8 +38,8 @@ jobs:
       run: |
        chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
-    - name: Build with Maven and Analyze
+    - name: Build with Maven and Analyze with Sonar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless
+      run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless

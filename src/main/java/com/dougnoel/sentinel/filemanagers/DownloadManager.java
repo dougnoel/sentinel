@@ -85,8 +85,10 @@ public class DownloadManager {
      * file is downloaded.
      * 
      * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the file download is interrupted
+     * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload() {
+    public static String monitorDownload() throws InterruptedException, IOException {
         return monitorDownload(downloadDirectory, fileExtension);
     }
 
@@ -100,62 +102,51 @@ public class DownloadManager {
      * @param downloadDir String path to the download directory.
      * @param fileExtension String extension of the file type you are expecting to be  downloaded.
      * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the thread is interrupted during download
+     * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload(String downloadDir, String fileExtension) {
+    public static String monitorDownload(String downloadDir, String fileExtension) throws InterruptedException, IOException {
         String downloadedFileName = null;
         boolean valid = true;
-        boolean found = false;
-
+        
         // default timeout in seconds
         long timeOut = 20;
-        try {
-            Path downloadFolderPath = Paths.get(downloadDir);
-            WatchService watchService = FileSystems.getDefault().newWatchService();
-            downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            long startTime = System.currentTimeMillis();
-            do {
-                WatchKey watchKey;
-                watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
-                long currentTime = (System.currentTimeMillis() - startTime) / 1000;
-                if (currentTime > timeOut) {
-                    log.error("Download operation timed out.. Expected file was not downloaded");
-                    return downloadedFileName;
-                }
+        Path downloadFolderPath = Paths.get(downloadDir);
+        WatchService watchService = FileSystems.getDefault().newWatchService();
+        downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+        long startTime = System.currentTimeMillis();
+        do {
+            WatchKey watchKey;
+            watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
+            long currentTime = (System.currentTimeMillis() - startTime) / 1000;
+            if (currentTime > timeOut) {
+                log.error("Download operation timed out.. Expected file was not downloaded");
+                return downloadedFileName;
+            }
 
-                for (WatchEvent<?> event : watchKey.pollEvents()) {
-                    WatchEvent.Kind<?> kind = event.kind();
-                    if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-                        String fileName = event.context().toString();
-                        log.debug("New File Created: {}", fileName);
-                        if (fileName.endsWith(fileExtension)) {
-                            downloadedFileName = fileName;
-                            log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
-                            Thread.sleep(100);
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (found) {
-                    return downloadedFileName;
-                } else {
-                    currentTime = (System.currentTimeMillis() - startTime) / 1000;
-                    if (currentTime > timeOut) {
-                        log.error("Failed to download expected file");
+            for (WatchEvent<?> event : watchKey.pollEvents()) {
+                WatchEvent.Kind<?> kind = event.kind();
+                if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+                    String fileName = event.context().toString();
+                    log.debug("New File Created: {}", fileName);
+                    if (fileName.endsWith(fileExtension)) {
+                        downloadedFileName = fileName;
+                        log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
+                        Thread.sleep(100);
                         return downloadedFileName;
                     }
-                    valid = watchKey.reset();
                 }
-            } while (valid);
-        }
-
-        catch (InterruptedException e) {
-            log.error("Interrupted error - {}", e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Download operation timed out.. Expected file was not downloaded");
-        } catch (Exception e) {
-            log.error("Error occured - {}", e.getMessage());
-        }
+            }
+            
+            currentTime = (System.currentTimeMillis() - startTime) / 1000;
+            if (currentTime > timeOut) {
+                log.error("Failed to download expected file");
+                return downloadedFileName;
+            }
+            valid = watchKey.reset();
+            
+        } while (valid);
+        
         return downloadedFileName;
     }
 
@@ -208,7 +199,8 @@ public class DownloadManager {
             String errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
         } finally {
-        	file.close();
+        	if (file != null)
+        		file.close();
         }
 
         try {
@@ -262,22 +254,18 @@ public class DownloadManager {
      * @param pageStart int Number of the page on the pdf to start looking for the text  (inclusive).
      * @param pageEnd int Number of the page on the pdf to stop looking for the text     (inclusive).
      * @return boolean true if the text was found, false if it was not.
-     * @throws IOException Throws an error if the PDF file cannot be opened.
      */
-    public static boolean verifyTextInDownloadedPDF(String expectedText, File pdfFile, int pageStart, int pageEnd)
-            throws IOException {
+    public static boolean verifyTextInDownloadedPDF(String expectedText, File pdfFile, int pageStart, int pageEnd) {
 
         boolean flag = false;
 
         PDFTextStripper pdfStripper = null;
-        FileInputStream fis = null;
         PDDocument pdDoc = null;
         String parsedText = null;
 
-        try {
-            fis = new FileInputStream(pdfFile);
-            BufferedInputStream file = new BufferedInputStream(fis);
-
+        try ( FileInputStream fis = new FileInputStream(pdfFile);
+              BufferedInputStream file = new BufferedInputStream(fis); ) {
+        	
             pdfStripper = new PDFTextStripper();
             pdfStripper.setStartPage(pageStart);
             pdfStripper.setEndPage(pageEnd);
@@ -292,10 +280,8 @@ public class DownloadManager {
             } catch (Exception e1) {
                 log.error(e1);
             }
-        } finally {
-        	fis.close();
         }
-
+        
         log.trace("PDF Parsed Text: \n{}", parsedText);
 
         if (parsedText != null && parsedText.contains(expectedText)) {

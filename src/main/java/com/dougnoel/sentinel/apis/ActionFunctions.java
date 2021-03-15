@@ -13,6 +13,10 @@ public abstract class ActionFunctions {
 
 	private static final Logger log = LogManager.getLogger(ActionFunctions.class);
 	
+	private ActionFunctions() {
+		//Exists to defeat instantiation.
+	}
+	
     /**
      * Returns a PageElement object for a given elementName string from current page. Gets current page reference, replaces page name space characters qith '_'
      * 
@@ -32,8 +36,8 @@ public abstract class ActionFunctions {
     	API api = APIManager.getAPI(uid);
         actionName = actionName.replaceAll("\\s+", "_").toLowerCase();
         Method actionMethod = null;
-        try { // Create a Method object to store the Action we want to exercise;
-        	actionMethod = api.getClass().getMethod(actionName);
+        try { 
+        	actionMethod = api.getClass().getMethod(actionName); // Create a Method object to store the Action we want to exercise
         } catch (NoSuchMethodException e) {
             String errorMessage = SentinelStringUtils.format("Action {} is not defined for the API object {}. Make sure you have spelled the API name correctly in your Cucumber step definition and in the API object.", 
             		actionName, api.getName());
@@ -41,8 +45,8 @@ public abstract class ActionFunctions {
             throw new NoSuchActionException(errorMessage, e);
         }
         Action action = null;
-        try {  // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
-        	action = (Action) actionMethod.invoke(api);
+        try {
+        	action = (Action) actionMethod.invoke(api); // Invoke the creation of the PageElement and return it into a variable if no exception is thrown.
             log.trace("PageElement Name: {}", actionMethod.getName());
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         	String errorMessage = SentinelStringUtils.format("Action {} could not be found in API {}. Please ensure the Action is defined on the page.", actionMethod.getName(), api.getName());

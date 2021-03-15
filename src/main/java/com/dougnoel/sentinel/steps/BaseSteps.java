@@ -24,7 +24,7 @@ import io.cucumber.java.en.When;
  */
 public class BaseSteps {
     private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
-
+    
     @Before
     public static void before(Scenario scenario) {
         log.trace("Scenario ID: {} Scenario Name: {}", scenario.getId(), scenario.getName());
@@ -43,10 +43,9 @@ public class BaseSteps {
      * </ul>
      * 
      * @param elementName String the name of the element to click
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I click (?:the|a|an) (.*?)$")
-    public static void click(String elementName) throws SentinelException {
+    public static void click(String elementName) {
         getElement(elementName).click();
     }
 
@@ -76,6 +75,8 @@ public class BaseSteps {
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
+    	Double totalWaitTime = Double.valueOf(ConfigurationManager.getValue("totalWaitTime"));
+    	ConfigurationManager.setValue("totalWaitTime", String.valueOf(seconds + totalWaitTime));
         TimeoutManager.wait(seconds);
         log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, (seconds * 1000));
     }

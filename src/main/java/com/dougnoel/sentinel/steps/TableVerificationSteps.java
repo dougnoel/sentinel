@@ -175,7 +175,7 @@ public class TableVerificationSteps {
      * @param sortOrder String ascending or descending
      */
     @Then("^I verify the cells in the (.*?) column in the (.*?) are sorted in (ascending|descending) order$")
-    public static void VerifyColumnSort(String columnName, String tableName, String sortOrder) {
+    public static void verifyColumnSort(String columnName, String tableName, String sortOrder) {
         boolean sortAscending = StringUtils.equals(sortOrder, "ascending");
         
         String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));

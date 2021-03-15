@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseManager {
-	private static Map<String, Response> responses = new HashMap<String, Response>();
+	private static Map<String, Response> responses = new HashMap<>();
 	
 	private ResponseManager() {
 		// Exists only to defeat instantiation.

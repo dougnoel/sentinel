@@ -4,7 +4,7 @@ import io.cucumber.java.Scenario;
 
 public class Feature {
 	
-	private Feature(Scenario scenario) {
+	private Feature() {
 		//Exists to defeat instantiation
 	}
 

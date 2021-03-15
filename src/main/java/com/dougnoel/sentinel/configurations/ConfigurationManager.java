@@ -48,6 +48,7 @@ public class ConfigurationManager {
 	
 	private static ConfigurationData sentinelConfigurations = null;
 	
+	private static final String CONFIG_FILEPATH = "conf/sentinel.yml";
 	private static final String DEFAULT = "default";
     private static final String LINUX = "linux";
     private static final String MAC = "mac";
@@ -87,16 +88,16 @@ public class ConfigurationManager {
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
 			} catch (JsonParseException e) {
-				String errorMessage = SentinelStringUtils.format("Configuration file {} is not a valid YAML file. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", sentinelConfigurations.getAbsolutePath(), configurationKey, configurationKey);
+				String errorMessage = SentinelStringUtils.format("Configuration file {} is not a valid YAML file. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
 				throw new ConfigurationParseException(errorMessage, e);
 			} catch (JsonMappingException e) {
-				String errorMessage = SentinelStringUtils.format("Configuration file {} has incorrect formatting and cannot be read. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", sentinelConfigurations.getAbsolutePath(), configurationKey, configurationKey);
+				String errorMessage = SentinelStringUtils.format("Configuration file {} has incorrect formatting and cannot be read. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
 				throw new ConfigurationMappingException(errorMessage, e);
 			} catch (java.io.FileNotFoundException e) {
-				String errorMessage = SentinelStringUtils.format("Configuration file {} cannot be found in the specified location. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", "conf/sentinel.yml", configurationKey, configurationKey);
+				String errorMessage = SentinelStringUtils.format("Configuration file {} cannot be found in the specified location. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
 				throw new FileNotFoundException(errorMessage, e);
 			} catch (java.io.IOException e) {
-				String errorMessage = SentinelStringUtils.format("Configuration file {} cannot be opened in the specified location. Could not load the {} property. Please fix the file read properties or pass the property in on the commandline using the -D{}= option.", "conf/sentinel.yml", configurationKey, configurationKey);
+				String errorMessage = SentinelStringUtils.format("Configuration file {} cannot be opened in the specified location. Could not load the {} property. Please fix the file read properties or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
 				throw new IOException(errorMessage, e);
 			}
 		}

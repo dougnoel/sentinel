@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RequestManager {
-	private static Map<String, Request> requests = new HashMap<String, Request>();
+	private static Map<String, Request> requests = new HashMap<>();
 	
 	private RequestManager() {
 		// Exists only to defeat instantiation.
