@@ -39,26 +39,12 @@ public class VerificationSteps {
      * </ul>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I verify the &lt;element&gt; &lt;Assertion&gt; exist
+     * I verify the &lt;element&gt; &lt;Assertion&gt; exists
      * <p>
-     * Examples:
-     * &lt;table summary="Examples"&gt;
-     * &lt;tr&gt;
-     * &lt;td&gt;| element&lt;/td&gt;
-     * &lt;td&gt;| Assertion&lt;/td&gt;
-     * &lt;td&gt;|&lt;/td&gt;
-     * &lt;/tr&gt;
-     * &lt;tr&gt;
-     * &lt;td&gt;| first dropdown&lt;/td&gt;
-     * &lt;td&gt;| does&lt;/td&gt;
-     * &lt;td&gt;|&lt;/td&gt;
-     * &lt;/tr&gt;
-     * &lt;tr&gt;
-     * &lt;td&gt;| second dropdown&lt;/td&gt;
-     * &lt;td&gt;| does not&lt;/td&gt;
-     * &lt;td&gt;|&lt;/td&gt;
-     * &lt;/tr&gt;
-     * &lt;/table&gt;
+     * Examples:<br>
+     *   | element         | Assertion |<br>
+     *   | first dropdown  | does      |<br>
+     *   | second dropdown | does not  |
      * 
      * @param elementName String Element to check
      * @param assertion String "does" or does not" for true or false
