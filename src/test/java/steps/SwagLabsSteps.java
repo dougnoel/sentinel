@@ -10,7 +10,7 @@ public class SwagLabsSteps {
 	@Given("I login to the {} Page as {}")
 	public void i_login_to_the_Page_as_user(String pageName, String account) throws Throwable {
 	    // Given I am on the Sauce Demo Login Page
-		BaseSteps.naviagteToPage(pageName);
+		BaseSteps.navigateToPage(pageName);
 	  	// And I fill the account information for account StandardUser into the Username field and the Password field
 		AccountSteps.fillAccountInfoIntoUsernameAndPasswordFields(account, "Username field", "Password field");
 	  	// And I click the Login Button

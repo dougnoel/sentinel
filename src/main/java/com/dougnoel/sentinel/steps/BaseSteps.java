@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.configurations.TimeoutManager;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -97,10 +96,9 @@ public class BaseSteps {
      * @param pageName String Page Object Name
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
      * @param arguments String the literal string to append to the default URL.
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public static void navigateToPage(String pageName, String hasArguments, String arguments) throws SentinelException  {   	
+    public static void navigateToPage(String pageName, String hasArguments, String arguments) {   	
     	pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         String baseUrl = ConfigurationManager.getUrl();
@@ -115,9 +113,8 @@ public class BaseSteps {
      * Overloaded method for navigating to a page object's url based on the current environment, 
      * so that nulls do not need to be passed. Intended for use in creating complex Cucumber steps definitions.
      * @param pageName String Page Object Name
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    public static void naviagteToPage(String pageName) throws SentinelException {
+    public static void navigateToPage(String pageName) {
     	navigateToPage(pageName, null, null);
     }
     
@@ -127,9 +124,8 @@ public class BaseSteps {
      * for use in creating complex Cucumber steps definitions.
      * @param pageName String Page Object Name
      * @param arguments String the literal string to append to the default URL.
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    public static void naviagteToPage(String pageName, String arguments) throws SentinelException {
+    public static void navigateToPage(String pageName, String arguments) {
     	navigateToPage(pageName, "has arguments", arguments);
     }
  
