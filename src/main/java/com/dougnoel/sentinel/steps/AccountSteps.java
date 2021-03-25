@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import io.cucumber.java.en.When;
 
 public class AccountSteps {
@@ -25,8 +25,8 @@ public class AccountSteps {
      */
     @When("I fill the account information for account {} into the {} and the {}")
     public static void fillAccountInfoIntoUsernameAndPasswordFields(String account, String usernameField, String passwordField) {
-    	TextSteps.enterText(ConfigurationManager.getAccountInformation(account, USERNAME), usernameField);
-    	TextSteps.enterText(ConfigurationManager.getAccountInformation(account, PASSWORD), passwordField);          
+    	TextSteps.enterText(Configuration.accountInformation(account, USERNAME), usernameField);
+    	TextSteps.enterText(Configuration.accountInformation(account, PASSWORD), passwordField);          
     }
 
     /**
@@ -44,8 +44,8 @@ public class AccountSteps {
      */
     @When("I fill the account information into the {} and the {}")
     public static void fillAccountInfoIntoUsernameAndPasswordFields(String usernameField, String passwordField) {
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, USERNAME), usernameField);
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, PASSWORD), passwordField);            
+        TextSteps.enterText(Configuration.accountInformation(DEFAULT, USERNAME), usernameField);
+        TextSteps.enterText(Configuration.accountInformation(DEFAULT, PASSWORD), passwordField);            
     }
     
     /**
@@ -63,7 +63,7 @@ public class AccountSteps {
      */
     @When("I fill the password for account {} into the {}")
     public static void fillPasswordField(String account, String passwordField) {
-        	TextSteps.enterText(ConfigurationManager.getAccountInformation(account, PASSWORD), passwordField);         
+        	TextSteps.enterText(Configuration.accountInformation(account, PASSWORD), passwordField);         
     }
 
     /**
@@ -80,7 +80,7 @@ public class AccountSteps {
      */
     @When("I fill the password into the {}")
     public static void fillPasswordField(String passwordField) {
-    	TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, PASSWORD), passwordField);
+    	TextSteps.enterText(Configuration.accountInformation(DEFAULT, PASSWORD), passwordField);
     }
     
     /**
@@ -98,7 +98,7 @@ public class AccountSteps {
      */
     @When("I fill the username for account {} into the {}")
     public static void fillUsernameField(String account, String usernameField) {
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(account, USERNAME), usernameField);
+        TextSteps.enterText(Configuration.accountInformation(account, USERNAME), usernameField);
     }
  
     /**
@@ -115,6 +115,6 @@ public class AccountSteps {
      */
     @When("I fill the username into the {}")
     public static void fillUsernameField(String usernameField) {
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, USERNAME), usernameField);
+        TextSteps.enterText(Configuration.accountInformation(DEFAULT, USERNAME), usernameField);
     }
 }

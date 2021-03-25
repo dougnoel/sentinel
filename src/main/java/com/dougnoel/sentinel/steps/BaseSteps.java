@@ -3,8 +3,8 @@ package com.dougnoel.sentinel.steps;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.configurations.TimeoutManager;
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -74,9 +74,9 @@ public class BaseSteps {
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
-    	Double totalWaitTime = Double.valueOf(ConfigurationManager.getValue("totalWaitTime"));
-    	ConfigurationManager.setValue("totalWaitTime", String.valueOf(seconds + totalWaitTime));
-        TimeoutManager.wait(seconds);
+    	double totalWaitTime = Configuration.toDouble("totalWaitTime");
+    	Configuration.update("totalWaitTime", seconds + totalWaitTime);
+        Time.wait(seconds);
         log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, (seconds * 1000));
     }
 
@@ -101,11 +101,11 @@ public class BaseSteps {
     public static void navigateToPage(String pageName, String hasArguments, String arguments) {   	
     	pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
-        String baseUrl = ConfigurationManager.getUrl();
+        String baseUrl = Configuration.url();
         if (hasArguments != null) {
             baseUrl += arguments;
         }
-        log.debug("Loading {} for the {} in the {} environment.", baseUrl, pageName, ConfigurationManager.getEnvironment());
+        log.debug("Loading {} for the {} in the {} environment.", baseUrl, pageName, Configuration.environment());
         PageManager.openPage(baseUrl);
     }
     

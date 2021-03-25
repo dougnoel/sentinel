@@ -7,7 +7,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 import org.openqa.selenium.safari.SafariDriver;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.filemanagers.DownloadManager;
@@ -82,24 +82,24 @@ public class WebDriverFactory {
         }
         
         //Saucelabs Driver setup
-        String saucelabsUserName = ConfigurationManager.getOptionalProperty("saucelabsUserName");
+        String saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
         	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         	return driver;
         }
 
         // Set a Download Directory if one was specified on the command line
-        String downloadDirectory = ConfigurationManager.getOptionalProperty("download");
+        String downloadDirectory = Configuration.toString("download");
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
 
-        String browser = ConfigurationManager.getBrowserName();
+        String browser = Configuration.browser();
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	String headless = ConfigurationManager.getOptionalProperty("headless");
+        	String headless = Configuration.toString("headless");
         	if (headless == null || headless.equalsIgnoreCase("false"))
         		driver = ChromeDriverFactory.createChromeDriver();
         	else
@@ -139,7 +139,7 @@ public class WebDriverFactory {
      * @return String error message
      */
     protected static String getMissingOSConfigurationErrorMessage() {
-    	String operatingSystem = ConfigurationManager.getOptionalProperty("os");
+    	String operatingSystem = Configuration.toString("os");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
     }
@@ -149,8 +149,8 @@ public class WebDriverFactory {
      * @return String error message
      */
     private static String getOSNotCompatibleWithBrowserErrorMessage() {
-    	String operatingSystem = ConfigurationManager.getOptionalProperty("os");
-    	String browser = ConfigurationManager.getOptionalProperty("browser");
+    	String operatingSystem = Configuration.toString("os");
+    	String browser = Configuration.toString("browser");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
     	
     }
@@ -160,7 +160,7 @@ public class WebDriverFactory {
      * @return String the driver path if it exists, otherwise null
      */
     protected static String getDriverPath() {
-    	return ConfigurationManager.getOptionalProperty("driver");
+    	return Configuration.toString("driver");
     }
     
     /**
@@ -170,7 +170,7 @@ public class WebDriverFactory {
     private static WebDriver createInternetExplorerDriver() {
     	String driverPath = getDriverPath();
     	String errorMessage;
-        switch (ConfigurationManager.getOperatingSystem()) {
+        switch (Configuration.operatingSystem()) {
         case LINUX:
         case MAC:
         	errorMessage = getOSNotCompatibleWithBrowserErrorMessage();
@@ -208,7 +208,7 @@ public class WebDriverFactory {
      * @return WebDriver a Safari WebDriver object
      */
     private static WebDriver createSafariDriver() {
-        switch (ConfigurationManager.getOperatingSystem()) {
+        switch (Configuration.operatingSystem()) {
         case LINUX:
         case WINDOWS:
             throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());

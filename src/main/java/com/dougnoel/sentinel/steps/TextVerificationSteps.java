@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -171,7 +171,7 @@ public class TextVerificationSteps {
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
     public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
-        String textToMatch = ConfigurationManager.getValue(key);
+        String textToMatch = Configuration.toString(key);
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
         String expectedResult = SentinelStringUtils.format(

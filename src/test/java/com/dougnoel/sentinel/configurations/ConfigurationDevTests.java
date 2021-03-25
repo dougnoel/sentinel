@@ -12,7 +12,7 @@ import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-public class ConfigurationManagerDevTests {
+public class ConfigurationDevTests {
 	private static WebDriver driver;
 	private static String originalEnvironment = null;
 	private static final String DEV = "dev";
@@ -23,25 +23,25 @@ public class ConfigurationManagerDevTests {
 	
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
-		originalEnvironment = ConfigurationManager.getEnvironment();
-		ConfigurationManager.setEnvironment(DEV);
+		originalEnvironment = Configuration.environment();
+		Configuration.environment(DEV);
 		driver = WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
-		ConfigurationManager.setEnvironment(originalEnvironment);
+		Configuration.environment(originalEnvironment);
 		driver.close();
 	}
 	
 	@Test
 	public void loadValueForNonExistentEnvironment() throws SentinelException {
-		assertEquals("Expecting the default env RegularUser password", "test", ConfigurationManager.getAccountInformation(REGULARUSER, PASSWORD));
+		assertEquals("Expecting the default env RegularUser password", "test", Configuration.accountInformation(REGULARUSER, PASSWORD));
 	}
 	
 	@Test(expected = ConfigurationNotFoundException.class)
 	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() throws SentinelException {
-		ConfigurationManager.getAccountInformation(DOESNOTEXIST, USERNAME);
+		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
 	}	
 }

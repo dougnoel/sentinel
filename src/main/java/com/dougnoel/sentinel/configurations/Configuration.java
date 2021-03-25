@@ -36,11 +36,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  *  searching directories, and class getter and setter method.
  *  
  */
-public class ConfigurationManager {
-	private static final Logger log = LogManager.getLogger(ConfigurationManager.class); // Create a logger.
+public class Configuration {
+	private static final Logger log = LogManager.getLogger(Configuration.class);
 
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
-	private static ConfigurationManager instance = null;
 	
 	private static String env = null;
 	
@@ -55,29 +54,18 @@ public class ConfigurationManager {
     private static final String WINDOWS = "windows";
     private static final String BROWSER = "browser";
 
-	private ConfigurationManager() {
+	private Configuration() {
 		// Exists only to defeat instantiation.
-	}
-	/**
-	 * Returns instance of ConfigurationManager
-	 * 
-	 * @return ConfigurationManager the instance of this class
-	 */
-	public static ConfigurationManager getInstance() {
-		if (instance == null) {
-			instance = new ConfigurationManager();
-		}
-		return instance;
 	}
 	
 	/**
-	 * Returns the configuration value for the given configuration property and the given environment from the ConfigurationData class.
+	 * Returns the configuration value for the given configuration property and the given environment from 
+	 * the ConfigurationData class.
 	 * 
 	 * @param configurationKey String the key for the requested configuration property
 	 * @return String the configuration value
 	 */
-	private static String getOrCreateConfigurationData(String configurationKey) {	
-		//First we see if the property is set on the maven commandline or in code.
+	private static String getOrCreateConfigurationData(String configurationKey) {
 		String data = System.getProperty(configurationKey);
 		if (data != null) {
 			return data;
@@ -102,73 +90,126 @@ public class ConfigurationManager {
 			}
 		}
 	 
-		return sentinelConfigurations.getConfigurationValue(getEnvironment(), configurationKey);	
+		return sentinelConfigurations.getConfigurationValue(environment(), configurationKey);	
 	}
 	
 	/**
-	 * Returns the configuration property for the given key from the helper function which interfaces with the
-	 * ConfigurationData object if it exists. If it does not exist, it is created by the helper function. If
-	 * the value is not found anywhere, the ConfigurationNotFound error is suppressed and a null is returned
-	 * instead of halting the progress of the program. If the configuration file is not found, we likewise
-	 * suppress the FileNotFoundException and return null.
+	 * Returns the configuration for a given property as a String value. It has the following precedence
+	 * for searching for a value:
+	 * <ol>
+	 * <li>A value stored at runtime.</li>
+	 * <li>A value set on the command line.</li>
+	 * <li>A value set in the configuration file.</li>
+	 * </ol>
+	 * The first time it is run, the value found will be stored for future calls. If no value is found,
+	 * null is returned.
 	 * 
-	 * @param property String the requested configuration property key
-	 * @return String the requested configuration property key or null if nothing is found
+	 * @param property String the requested configuration property
+	 * @return String the value of the requested configuration property (null if nothing is found)
 	 */
-	public static String getOptionalProperty(String property) {
-		try {
-			String systemProperty = System.getProperty(property);
-			if(systemProperty == null) {
-				systemProperty = getOrCreateConfigurationData(property);
-			}		
-			return systemProperty;
-		} catch (ConfigurationNotFoundException e) {
-			log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
-			return null; //If the configuration value is not found, we do not need to throw an exception.
-		}
-	}
-	
-	/**
-	 * Returns the configuration property for the given key from the helper function which interfaces with the
-	 * ConfigurationData object if it exists. If it does not exist, it is created by the helper function.
-	 * 
-	 * @see ConfigurationManager#getOrCreateConfigurationData(String)
-	 * @param property String the requested configuration property key
-	 * @return String the configuration property value
-	 */
-	public static String getProperty(String property)  {
-		String systemProperty = System.getProperty(property);
-		if(systemProperty == null) {
+	public static String toString(String property) {
+		String propertyValue = appProps.getProperty(property);
+		
+		if(propertyValue == null) {
 			try {
-				systemProperty = getOrCreateConfigurationData(property);
+				propertyValue = System.getProperty(property);
+				if(propertyValue == null) {
+					propertyValue = getOrCreateConfigurationData(property);
+				}
+				else {
+					appProps.setProperty(property, propertyValue);
+				}
+				return propertyValue;
 			} catch (ConfigurationNotFoundException e) {
-				log.error(e.getMessage(),Arrays.toString(e.getStackTrace()));
-				throw e;
+				log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
+				return null;
 			}
 		}
-		//Checked a second time, because this option is assumed to not be optional.
-		//TODO: Rename this method to getRequiredProperty and have it call getOptionalProperty to reduce the number of checks we make.
-		if(systemProperty == null) {
-			String errorMessage = ConfigurationManager.getConfigurationNotFoundErrorMessage(property);
-			log.error(errorMessage);
-			throw new ConfigurationNotFoundException(errorMessage);
+		
+		return propertyValue;
+	}
+	
+	/**
+	 * Updates a configuration value once runtime has started. This should never be used in a Cucumber runner
+	 * as it will mask any values in the configuration file and on the command line.
+	 * 
+	 * @param property String the property to update
+	 * @param value String the value to be used
+	 */
+	public static void update(String property, String value) {
+		if (value != null )
+			appProps.setProperty(property, value);
+		else
+			appProps.remove(property);
+	}
+	
+	/**
+	 * Returns the given configuration value stored in the passed property as a Double, or 0.0 if nothing is
+	 * found.
+	 * 
+	 * @param property String the requested configuration property key
+	 * @return Double the requested value as a Double or 0.0 if nothing valid is found
+	 */
+	public static Double toDouble(String property) {
+		try {
+			return Double.valueOf(toString(property));
+		} catch (Exception e) {
+			log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
+			return 0.0;
 		}
-		return systemProperty;
 	}
 
+	/**
+	 * Updates a configuration value once runtime has started. This should never be used in a Cucumber runner
+	 * as it will mask any values in the configuration file and on the command line.
+	 * 
+	 * @param property String the property to update
+	 * @param value Double the value to be used
+	 */
+	public static void update(String property, double value) {
+		update(property, String.valueOf(value));
+	}
+	
+	/**
+	 * Returns the given configuration value stored in the passed property as a Long, or 0L if nothing is
+	 * found.
+	 * 
+	 * @param property String the requested configuration property key
+	 * @return Double the requested value as a Double or 0.0 if nothing valid is found
+	 */
+	public static Long toLong(String property) {
+		try {
+			return Long.valueOf(toString(property));
+		} catch (Exception e) {
+			log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
+			return 0L;
+		}
+	}
+
+	/**
+	 * Updates a configuration value once runtime has started. This should never be used in a Cucumber runner
+	 * as it will mask any values in the configuration file and on the command line.
+	 * 
+	 * @param property String the property to update
+	 * @param value Long the value to be used
+	 */
+	public static void update(String property, long value) {
+		update(property, String.valueOf(value));
+	}
+	
 	/**
 	 * Returns the system environment.
 	 * If no environment is set, a warning message is logged and a default value of "localhost" is set.
 	 * 
 	 * @return String text of system env info
 	 */
-	public static String getEnvironment() {
+	public static String environment() {
 		if (env == null) {
 			env = System.getProperty("env");
 			if (env == null) {
 				env = "localhost";
 				String warningMessage = "localhost env being used by default. " + 
-						ConfigurationManager.getConfigurationNotFoundErrorMessage("env");
+						Configuration.configurationNotFoundErrorMessage("env");
 				log.warn(warningMessage);
 			}
 		}
@@ -179,8 +220,8 @@ public class ConfigurationManager {
 	 * Setter intended only for unit testing. Sets the stored value and also the System Property.
 	 * @param env String env to set, null to clear
 	 */
-	protected static void setEnvironment(String env) {
-		ConfigurationManager.env = env;
+	protected static void environment(String env) {
+		Configuration.env = env;
 		if (env == null)
 			System.clearProperty("env");
 		else
@@ -188,12 +229,12 @@ public class ConfigurationManager {
 	}
 
 	/**
-	 * Returns the YAML config file path in the project for a given page object.
+	 * Returns the file path for a given page object.
 	 * 
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
 	 */
-	public static File getPageObjectConfigPath(String pageName)  {
+	private static File findPageObjectFilePath(String pageName)  {
 		String filename = pageName + ".yml";
 		File result = searchDirectory(new File("src/"), filename);
 
@@ -214,7 +255,7 @@ public class ConfigurationManager {
 	 * @param fileName String the full name of the file with extension to find
 	 * @return File the file that is found, null if nothing is found
 	 */
-	public static File searchDirectory(File directory, String fileName) {
+	protected static File searchDirectory(File directory, String fileName) {
 		log.trace("Searching directory {}", directory.getAbsoluteFile());
 		File searchResult = null;
 		if (directory.canRead()) {
@@ -238,7 +279,7 @@ public class ConfigurationManager {
 	/**
 	 * Returns page data through yaml instructions to a config path in given pageName string. 
 	 * 
-	 * @see com.dougnoel.sentinel.configurations.ConfigurationManager#getPageObjectConfigPath(String)
+	 * @see com.dougnoel.sentinel.configurations.Configuration#findPageObjectFilePath(String)
 	 * @param pageName String the name of the page for which the data is retrieved
 	 * @return PageData the class for the data on desired page
 	 * @throws ConfigurationNotFoundException if a configuration option cannot be loaded
@@ -247,7 +288,7 @@ public class ConfigurationManager {
 	private static PageData loadPageData(String pageName) {
 		PageData pageData = null;
 		try {
-			pageData = PageData.loadYaml(getPageObjectConfigPath(pageName));
+			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
 		} catch (java.nio.file.AccessDeniedException e) {
 			String errorMessage = SentinelStringUtils.format("Could not access the file {}.yml. Please ensure the file can be read by the current user and is not password protected.", pageName);
 			log.error(errorMessage);
@@ -275,8 +316,8 @@ public class ConfigurationManager {
 	 * @throws PageNotFoundException if page is not found
 	 * @throws URLNotFoundException if url is not found for the page
 	 */
-	public static String getUrl()  {
-		return getUrl(PageManager.getPage().getName());
+	public static String url()  {
+		return url(PageManager.getPage().getName());
 	}
 	
 	/**
@@ -285,10 +326,10 @@ public class ConfigurationManager {
 	 * @param pageName String the name of the page from which the url is retrieved
 	 * @return String baseUrl the url for the given page and current environment
 	 */
-	public static String getUrl(String pageName) {
+	protected static String url(String pageName) {
 		String baseURL = null;
 		PageData pageData = loadPageData(pageName);
-		String env = ConfigurationManager.getEnvironment();
+		String env = Configuration.environment();
 
 		if (pageData.containsUrl(env)) {
 			baseURL = pageData.getUrl(env);
@@ -317,9 +358,9 @@ public class ConfigurationManager {
 	 * @param key String username or password
 	 * @return String requested username or password
 	 */
-	public static String getAccountInformation(String account, String key) {
+	public static String accountInformation(String account, String key) {
 		String pageName = PageManager.getPage().getName();
-		String env = getEnvironment();
+		String env = environment();
 		PageData pageData = loadPageData(pageName);
 		Map <String,String> accountData = pageData.getAccount(env, account);
 		if (Objects.equals(accountData, null)) {
@@ -337,41 +378,14 @@ public class ConfigurationManager {
 	}
 	
 	public static Map <String,String> getElement(String elementName, String pageName) {
-		return PAGE_DATA.computeIfAbsent(pageName, ConfigurationManager::loadPageData).getElement(elementName);
+		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
 	}
 
 	public static String[] getPageParts(String pageName) {
-		return PAGE_DATA.computeIfAbsent(pageName, ConfigurationManager::loadPageData).getPageParts();
+		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getPageParts();
 	}
 	
-	/**
-	 * Stores values in a property object for quick and dirty dependency injection.
-	 * Replaces space chars with '_' char, makes key all lowercase, and logs action.
-	 * 
-	 * @param key String the key to set
-	 * @param value String the value to set
-	 */
-	public static void setValue(String key, String value) {
-		key = key.replaceAll("\\s+", "_").toLowerCase();
-		appProps.setProperty(key, value);
-		log.trace("Stored key/value pair: {}/{}", key, value);
-	}
-
-	/**
-	 * Retrieves values between steps during quick and dirty dependency injection.
-	 * Replaces space chars with '_' char, makes key all lowercase, and logs action.
-	 *
-	 * @param key String the item to get 
-	 * @return String the value for the given key
-	 */
-	public static String getValue(String key) {
-		key = key.replaceAll("\\s+", "_").toLowerCase();
-		String value = appProps.getProperty(key);
-		log.trace("Retrieved key/value pair: {}/{}", key, value);
-		return value;
-	}
-	
-	public static String getConfigurationNotFoundErrorMessage(String configurtaionValue) {
+	private static String configurationNotFoundErrorMessage(String configurtaionValue) {
 		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.", configurtaionValue, configurtaionValue, configurtaionValue);
 	}
 	
@@ -379,14 +393,13 @@ public class ConfigurationManager {
      * Returns a sanitized version of the browser set in the config file or on the command line.
      * @return String a sanitized string containing the browser
      */
-    public static String getBrowserName() {
-    	//TODO Make this useable by Saucelabs driver
+    public static String browser() {
     	String browser;
-		browser = ConfigurationManager.getOptionalProperty(BROWSER);
+		browser = Configuration.toString(BROWSER);
 		if (browser == null) {
 			browser = "chrome";
 			String infoMessage = "Chrome browser being used by default. " + 
-					ConfigurationManager.getConfigurationNotFoundErrorMessage(BROWSER);
+					Configuration.configurationNotFoundErrorMessage(BROWSER);
 			log.info(infoMessage);
 		}
         // Make sure whatever string we are passed is all lower case and all spaces are removed.
@@ -400,8 +413,8 @@ public class ConfigurationManager {
      * Returns a sanitized version of the operating system set in the config file or on the command line.
      * @return String a sanitized string containing the operating system
      */
-    public static String getOperatingSystem() {
-    	String operatingSystem = ConfigurationManager.getOptionalProperty("os");
+    public static String operatingSystem() {
+    	String operatingSystem = Configuration.toString("os");
     	if (operatingSystem == null) {
     		operatingSystem = detectOperatingSystem();
     	}
@@ -414,10 +427,10 @@ public class ConfigurationManager {
      * those are matched.
      * @return String operating system
      */
-    private static String detectOperatingSystem() {
+    protected static String detectOperatingSystem() {
     	String os = System.getProperty("os.name").toLowerCase();
-		String infoMessage = SentinelStringUtils.format("Operating system auto-detected: {} ", os) + 
-				ConfigurationManager.getConfigurationNotFoundErrorMessage("os");
+		String infoMessage = SentinelStringUtils.format("Operating system auto-detected: \"{}\". ", os) + 
+				Configuration.configurationNotFoundErrorMessage("os");
     	log.info(infoMessage);
     	if (os.indexOf("win") >=0) {
     		return WINDOWS;

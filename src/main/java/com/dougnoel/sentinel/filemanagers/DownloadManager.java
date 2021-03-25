@@ -25,7 +25,7 @@ import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
@@ -384,7 +384,7 @@ public class DownloadManager {
      * @return String the download directory path
      */
     public static String createDownloadDirectory() {
-    	String downloadDirectory = ConfigurationManager.getOptionalProperty("downloadDirectory");
+    	String downloadDirectory = Configuration.toString("downloadDirectory");
     	if (downloadDirectory == null) {
     		downloadDirectory = "../../Downloads";
     	}

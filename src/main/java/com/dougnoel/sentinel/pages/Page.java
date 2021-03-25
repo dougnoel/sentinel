@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Checkbox;
 import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.elements.Textbox;
@@ -86,9 +86,9 @@ public class Page {
 	}
 	
 	private Map<String, String> findElement(String elementName, String pageName) {
-		Map<String, String> elementData = ConfigurationManager.getElement(elementName, pageName);
+		Map<String, String> elementData = Configuration.getElement(elementName, pageName);
 		if (elementData == null) {
-			for (String page : ConfigurationManager.getPageParts(pageName)) {
+			for (String page : Configuration.getPageParts(pageName)) {
 				elementData = findElement(elementName, page);
 				if (elementData != null) {
 					break;

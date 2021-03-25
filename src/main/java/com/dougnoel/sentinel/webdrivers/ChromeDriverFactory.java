@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -73,7 +73,7 @@ public class ChromeDriverFactory {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{
-	        switch (ConfigurationManager.getOperatingSystem()) {
+	        switch (Configuration.operatingSystem()) {
 	        case "linux":
 	            driverPath = "src/main/resources/drivers/linux/chromedriver";
 	            break;

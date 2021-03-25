@@ -7,7 +7,7 @@ import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 public class SauceLabsDriverFactory {
@@ -28,21 +28,21 @@ public class SauceLabsDriverFactory {
 			throw new MalformedURLException(e);
 		}
         
-		String browser = ConfigurationManager.getBrowserName();
-		String operatingSystem = ConfigurationManager.getOperatingSystem();
+		String browser = Configuration.browser();
+		String operatingSystem = Configuration.operatingSystem();
 		
         MutableCapabilities options = new MutableCapabilities();
         options.setCapability("platform", operatingSystem);
         options.setCapability("browserName", browser);
-        String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion");
+        String browserVersion = Configuration.toString("browserVersion");
         if (browserVersion != null) {
         	options.setCapability("version", browserVersion);
         } else {
         	options.setCapability("version", "latest");
         }
         
-        options.setCapability("username", ConfigurationManager.getOptionalProperty("saucelabsUserName"));
-        options.setCapability("accesskey", ConfigurationManager.getOptionalProperty("saucelabsAccessKey"));
+        options.setCapability("username", Configuration.toString("saucelabsUserName"));
+        options.setCapability("accesskey", Configuration.toString("saucelabsAccessKey"));
         
         setSaucelabsTestNameProperty(options);
         
@@ -60,7 +60,7 @@ public class SauceLabsDriverFactory {
      * @param options MutableCapabilities the MutableCapabilities object in which to set the properties
      */
     private static void setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
-        String saucelabsProperty = ConfigurationManager.getOptionalProperty(saucelabsPropertyName);
+        String saucelabsProperty = Configuration.toString(saucelabsPropertyName);
         
         if (StringUtils.isNotEmpty(saucelabsProperty)) {
         	options.setCapability(saucelabsPropertyName, saucelabsProperty);
@@ -74,11 +74,11 @@ public class SauceLabsDriverFactory {
     private static void setSaucelabsTestNameProperty(MutableCapabilities options)
     {
         String testName = "";
-        String jobName = ConfigurationManager.getOptionalProperty("name");
+        String jobName = Configuration.toString("name");
         if (jobName != null) {
         	testName += "Name: " + jobName + " ";
         }
-        String tags = ConfigurationManager.getOptionalProperty("tags");
+        String tags = Configuration.toString("tags");
         if (tags != null) {
         	testName += "Tags: " + tags + " ";
         }
@@ -86,7 +86,7 @@ public class SauceLabsDriverFactory {
         if (userName != null) {
         	testName += "User: " + userName + " ";
         }
-        String build = ConfigurationManager.getOptionalProperty("build");
+        String build = Configuration.toString("build");
         if (build != null) {
         	testName += "Build: " + build + " ";
         }

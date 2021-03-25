@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
@@ -116,7 +116,7 @@ public class TableVerificationSteps {
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
     public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
-        String textToMatch = ConfigurationManager.getValue(key);
+        String textToMatch = Configuration.toString(key);
         assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
     }
     

@@ -8,7 +8,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.en.When;
@@ -44,7 +44,7 @@ public class TextSteps {
         if (storageName != null) {
             elementName = storageName + " " + elementName;
         }
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
     
     /**
@@ -82,7 +82,7 @@ public class TextSteps {
     @When("^I enter (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
         getElementAsTextbox(elementName).type(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
 
     /**
@@ -117,7 +117,7 @@ public class TextSteps {
     @When("^I inject (.*) in the (.*)$")
     public static void injectText(String text, String elementName) {
         getElementAsTextbox(elementName).javaScriptSendKeys(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
     
     /**
@@ -137,7 +137,7 @@ public class TextSteps {
      */
     @When("^I reuse the (.*) text in the (.*)$")
     public static void enterStoredText(String key, String elementName) {
-        String text = ConfigurationManager.getValue(key);
+        String text = Configuration.toString(key);
         enterText(text, elementName);
     }
 

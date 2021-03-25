@@ -8,12 +8,13 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import com.dougnoel.sentinel.configurations.TimeoutManager;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
 import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * The Page Manager is a singleton class that manages what page the test is on.
@@ -30,8 +31,11 @@ public class PageManager {
 	private static String parentHandle = null;
 
 	protected static WebDriver driver() {
-		return page.driver;
-	} // Get the driver for the current page.
+		if (page == null)
+			return WebDriverFactory.getWebDriver();
+		else
+			return page.driver;
+	}
 
 	private PageManager() {
 		// Exists only to defeat instantiation.
@@ -67,7 +71,7 @@ public class PageManager {
 	public static Page getPage() {
 		if (instance == null)
 			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
-		if(page == null) {
+		if (page == null) {
 			throw new PageNotFoundException("We could not find the Page you are looking for. Please check the pageObjectPackages configuration in conf/sentinel.yml and make sure it includes directory containing your page object.");
 		}
 		return page;
@@ -305,7 +309,7 @@ public class PageManager {
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
-		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());
+		driver().manage().timeouts().pageLoadTimeout(Time.out(), Time.unit());
 		while (!isPageLoaded()) {
 			Thread.sleep(20);
 		}

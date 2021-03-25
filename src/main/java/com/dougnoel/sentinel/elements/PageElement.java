@@ -20,7 +20,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.dougnoel.sentinel.configurations.TimeoutManager;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
@@ -160,7 +160,7 @@ public class PageElement {
 	protected WebElement element() {
 		WebElement element = null;
 		long startTime = System.currentTimeMillis(); //fetch starting time
-		while((System.currentTimeMillis()-startTime) < TimeoutManager.getDefaultTimeout() * 1000) {
+		while((System.currentTimeMillis()-startTime) < Time.out() * 1000) {
     	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
     	    	log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
     	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
@@ -250,7 +250,7 @@ public class PageElement {
 	 * @return PageElement (for chaining)
 	 */
 	public PageElement click() {
-		long waitTime = TimeoutManager.getDefaultTimeout();
+		long waitTime = Time.out();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
 		} catch (WebDriverException e) {

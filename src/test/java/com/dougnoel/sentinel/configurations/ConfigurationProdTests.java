@@ -7,24 +7,24 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 
-public class ConfigurationManagerProdTests {
+public class ConfigurationProdTests {
 	private static String originalEnvironment = null;
 	private static final String PROD = "prod";
 	
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
-		originalEnvironment = ConfigurationManager.getEnvironment();
-		ConfigurationManager.setEnvironment(PROD);
+		originalEnvironment = Configuration.environment();
+		Configuration.environment(PROD);
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
-		ConfigurationManager.setEnvironment(originalEnvironment);
+		Configuration.environment(originalEnvironment);
 	}
 	
 	@Test
 	public void loadProdUrl() throws SentinelException {
-		ConfigurationManager.setEnvironment(PROD);
-		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", ConfigurationManager.getUrl("DefaultUrls"));
+		Configuration.environment(PROD);
+		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", Configuration.url("DefaultUrls"));
 	}
 }
