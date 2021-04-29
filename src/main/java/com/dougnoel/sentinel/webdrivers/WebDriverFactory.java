@@ -1,12 +1,14 @@
 package com.dougnoel.sentinel.webdrivers;
 
+import java.net.URL;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
-
 import com.dougnoel.sentinel.configurations.ConfigurationManager;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
@@ -92,32 +94,57 @@ public class WebDriverFactory {
         String downloadDirectory = ConfigurationManager.getOptionalProperty("download");
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
-
-        String browser = ConfigurationManager.getBrowserName();
-
-        // Initialize the driver object based on the browser and operating system (OS).
-        // Throw an error if the value isn't found.   	
-    	switch (browser) {
-        case "chrome":
-        	String headless = ConfigurationManager.getOptionalProperty("headless");
-        	if (headless == null || headless.equalsIgnoreCase("false"))
-        		driver = ChromeDriverFactory.createChromeDriver();
-        	else
-        		driver = ChromeDriverFactory.createHeadlessChromeDriver();
-            break;
-        case "firefox":
-        	driver = FirefoxDriverFactory.createFirefoxDriver();
-            break;
-        case "internetexplorer":
-        	driver = createInternetExplorerDriver();
-            break;
-        case "safari":
-        	driver = createSafariDriver();
-            break;
-        default:
-            throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
+        
+        String runOnGrid = ConfigurationManager.getOptionalProperty("runOnGrid");
+    	String browser = ConfigurationManager.getBrowserName();
+    	
+        if (runOnGrid != null && runOnGrid.equals("true")) {
+        	String gridUrl = ConfigurationManager.getOptionalProperty("gridUrl");
+        	String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion");
+        	
+        	//use full browser version from grid in yml or command line e.g: 88.0.4324.96
+        	driver = instantiateRemoteWebDriver(browser, browserVersion, gridUrl);
+        }else {
+            // Initialize the driver object based on the browser and operating system (OS).
+            // Throw an error if the value isn't found.   	
+        	switch (browser) {
+            case "chrome":
+            	String headless = ConfigurationManager.getOptionalProperty("headless");
+            	if (headless == null || headless.equalsIgnoreCase("false"))
+            		driver = ChromeDriverFactory.createChromeDriver();
+            	else
+            		driver = ChromeDriverFactory.createHeadlessChromeDriver();
+                break;
+            case "firefox":
+            	driver = FirefoxDriverFactory.createFirefoxDriver();
+                break;
+            case "internetexplorer":
+            	driver = createInternetExplorerDriver();
+                break;
+            case "safari":
+            	driver = createSafariDriver();
+                break;
+            default:
+                throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
+            }
         }
 
+        
+
+        return driver;
+    }
+    
+    private static WebDriver instantiateRemoteWebDriver(String browser, String browserVersion, String gridUrl) {
+
+    	DesiredCapabilities capability = new DesiredCapabilities();
+    	capability.setCapability("browserName", browser);
+    	capability.setCapability("browserVersion", browserVersion);
+    	
+        try {
+            driver = new RemoteWebDriver(new URL(gridUrl), capability);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return driver;
     }
 
