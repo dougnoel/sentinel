@@ -105,7 +105,7 @@ public class BaseSteps {
         if (hasArguments != null) {
             baseUrl += arguments;
         }
-        log.debug("Loading {} for the {} in the {} environment.", baseUrl, pageName, Configuration.environment());
+        log.debug("Using the url {} for the {} page.", baseUrl, pageName);
         PageManager.openPage(baseUrl);
     }
     

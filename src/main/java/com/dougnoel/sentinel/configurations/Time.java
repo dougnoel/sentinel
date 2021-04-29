@@ -84,7 +84,7 @@ public class Time {
 		case "NANOSECONDS":
 			return TimeUnit.NANOSECONDS;
 		default:
-			log.error("Timeunit property improperly set as {}, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS", Configuration.toString("timeunit"));
+			log.error("Timeunit property improperly set as {}, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS", unit);
 			Configuration.update(TIMEUNIT, SECONDS);
 			return TimeUnit.SECONDS;
 		}
