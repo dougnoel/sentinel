@@ -39,7 +39,7 @@ public class DownloadManager {
 
     private static String downloadDirectory = createDownloadDirectory();
 
-    // TODO: Create a list to store all the downloaded files. This will allow us to clean them all up at the end of a run.
+    private DownloadManager(){}
 
     /**
      * Returns true if the file exists in the directory, given a filename and a path.
