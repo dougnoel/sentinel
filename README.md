@@ -1,6 +1,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.dougnoel/sentinel/badge.svg)](https://search.maven.org/artifact/com.dougnoel/sentinel)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![codebeat badge](https://codebeat.co/badges/3d631b66-b308-43cd-87f1-626fde5851ca)](https://codebeat.co/projects/github-com-dougnoel-sentinel-master)
+[![codebeat badge](https://codebeat.co/badges/3d631b66-b308-43cd-87f1-626fde5851ca)](https://codebeat.co/projects/github-com-dougnoel-sentinel-master) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=security_rating)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=dougnoel_sentinel&metric=coverage)](https://sonarcloud.io/dashboard?id=dougnoel_sentinel)
 
 # Sentinel - Selenium Automation Framework in Java
 
