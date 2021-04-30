@@ -18,6 +18,7 @@ public class GridWebDriverFactory {
         var browserVersion = Configuration.toString("browserVersion");
     	if (browserVersion != null) 
     	    capability.setCapability("browserVersion", browserVersion);
+    	
     	URL url;
         try {
 			url = new URL(gridUrl);
