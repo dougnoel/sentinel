@@ -102,7 +102,7 @@ public class Page {
 		Map<String, String> elementData = findElement(elementName, getName());
 		
 		if (elementData == null) {
-			String errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
+			var errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
 			throw new ElementNotFoundException(errorMessage);
 		}
 		

@@ -31,10 +31,10 @@ public class SauceLabsDriverFactory {
 		String browser = Configuration.browser();
 		String operatingSystem = Configuration.operatingSystem();
 		
-        MutableCapabilities options = new MutableCapabilities();
+        var options = new MutableCapabilities();
         options.setCapability("platform", operatingSystem);
         options.setCapability("browserName", browser);
-        String browserVersion = Configuration.toString("browserVersion");
+        var browserVersion = Configuration.toString("browserVersion");
         if (browserVersion != null) {
         	options.setCapability("version", browserVersion);
         } else {
@@ -60,7 +60,7 @@ public class SauceLabsDriverFactory {
      * @param options MutableCapabilities the MutableCapabilities object in which to set the properties
      */
     private static void setOptionalSaucelabsProperty(String saucelabsPropertyName, MutableCapabilities options) {
-        String saucelabsProperty = Configuration.toString(saucelabsPropertyName);
+    	var saucelabsProperty = Configuration.toString(saucelabsPropertyName);
         
         if (StringUtils.isNotEmpty(saucelabsProperty)) {
         	options.setCapability(saucelabsPropertyName, saucelabsProperty);
@@ -73,20 +73,20 @@ public class SauceLabsDriverFactory {
      */
     private static void setSaucelabsTestNameProperty(MutableCapabilities options)
     {
-        String testName = "";
-        String jobName = Configuration.toString("name");
+    	var testName = "";
+    	var jobName = Configuration.toString("name");
         if (jobName != null) {
         	testName += "Name: " + jobName + " ";
         }
-        String tags = Configuration.toString("tags");
+        var tags = Configuration.toString("tags");
         if (tags != null) {
         	testName += "Tags: " + tags + " ";
         }
-        String userName = System.getProperty("user.name");
+        var userName = System.getProperty("user.name");
         if (userName != null) {
         	testName += "User: " + userName + " ";
         }
-        String build = Configuration.toString("build");
+        var build = Configuration.toString("build");
         if (build != null) {
         	testName += "Build: " + build + " ";
         }

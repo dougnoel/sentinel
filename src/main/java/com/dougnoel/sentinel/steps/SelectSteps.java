@@ -65,7 +65,7 @@ public class SelectSteps {
      */
     @When("^I select the (\\d+)(?:st|nd|rd|th) option (?:in|from) the (.*)$")
     public static void selectOrdinalItemFromElement(String ordinal, String elementName) throws SentinelException {
-        int index = Integer.parseInt(ordinal);
+    	var index = Integer.parseInt(ordinal);
         String text = getElementAsSelectElement(elementName).select(index).getText(index);
         Configuration.update(elementName, text);
     }

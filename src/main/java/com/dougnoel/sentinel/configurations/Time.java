@@ -61,7 +61,7 @@ public class Time {
 	 * @return java.util.concurrent.TimeUnit the Time Unit
 	 */
 	public static TimeUnit unit() {
-		String unit = StringUtils.upperCase(Configuration.toString(TIMEUNIT));
+		var unit = StringUtils.upperCase(Configuration.toString(TIMEUNIT));
 
 		if(StringUtils.isEmpty(unit)) {
 			log.debug("No timeunit property set, using the default timeunit of SECONDS. This can be set in the sentinel.yml config file with a 'timeunit=' property or on the command line with the switch '-Dtimeunit='. Allowed values are: DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS");

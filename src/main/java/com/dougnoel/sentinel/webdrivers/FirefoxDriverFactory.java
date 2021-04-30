@@ -27,7 +27,7 @@ public class FirefoxDriverFactory {
         	return new FirefoxDriver();
         }
 		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			var errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}

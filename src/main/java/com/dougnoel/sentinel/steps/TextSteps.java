@@ -137,7 +137,7 @@ public class TextSteps {
      */
     @When("^I reuse the (.*) text in the (.*)$")
     public static void enterStoredText(String key, String elementName) {
-        String text = Configuration.toString(key);
+    	var text = Configuration.toString(key);
         enterText(text, elementName);
     }
 
@@ -155,7 +155,7 @@ public class TextSteps {
     @When("^I press the (escape|enter|return|tab) key$")
     public static void keyPress(String keyName) {
     	keyName = keyName.toUpperCase();
-        WebDriver driver = WebDriverFactory.getWebDriver();
+    	var driver = WebDriverFactory.getWebDriver();
         WebElement element = driver.findElement(By.tagName("Body"));
         element.sendKeys(Keys.valueOf(keyName));
     }

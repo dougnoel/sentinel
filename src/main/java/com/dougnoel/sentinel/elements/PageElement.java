@@ -86,7 +86,7 @@ public class PageElement {
 				try {
 					this.selectors.put(SelectorType.of(locatorType), locatorValue);
 				} catch (IllegalArgumentException e) {
-					String errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
+					var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
 					log.error(errorMessage);
 					throw new NoSuchSelectorException(errorMessage);
 				}
@@ -137,13 +137,13 @@ public class PageElement {
 			case XPATH:
 				return By.xpath(selectorValue);
 			default:
-				String errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
+				var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
 				
 				log.error(errorMessage);
 				throw new NoSuchSelectorException(errorMessage);
 			}
 		} catch (IllegalArgumentException e) {
-			String errorMessage = SentinelStringUtils.format("{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType, selectorValue, getName(), PageManager.getPage().getName());
+			var errorMessage = SentinelStringUtils.format("{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType, selectorValue, getName(), PageManager.getPage().getName());
 			log.error(errorMessage);
 			throw new MalformedSelectorException(errorMessage, e);
 		}
@@ -169,7 +169,7 @@ public class PageElement {
     	    	}
     	    }
         }
-		String errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
+		var errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 				elementType, getName(), selectors);
 		throw new NoSuchElementException(errorMessage);
 	}
@@ -219,7 +219,7 @@ public class PageElement {
 		}
 
 		// Iterate through the string and press every key
-		Robot robot = new Robot();
+		var robot = new Robot();
 		robot.delay(1000);
 		char[] chars = text.toCharArray();
 
@@ -258,7 +258,7 @@ public class PageElement {
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
 				executor.executeScript("arguments[0].click();", element());
 			} catch (Exception e2) {
-				String errorMessage = SentinelStringUtils.format(
+				var errorMessage = SentinelStringUtils.format(
 						"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
 								elementType, getName(), selectors, waitTime);
 				log.error(errorMessage);
@@ -312,7 +312,7 @@ public class PageElement {
 	 * @return boolean true if the element is enabled within the number of seconds indicated; otherwise returns false.
 	 */
 	public boolean isEnabled(int seconds) {
-		int retries = 0;
+		var retries = 0;
 		while (true) {
 			try {
 				return new WebDriverWait(driver, seconds).until(ExpectedConditions.elementToBeClickable(element()))
@@ -365,7 +365,7 @@ public class PageElement {
 	 * @return boolean true if the element is displayed within the number of seconds indicated; otherwise returns false.
 	 */
 	public boolean isDisplayed(int seconds) {
-		int retries = 0;
+		var retries = 0;
 		while (true) {
 			try {
 				return new WebDriverWait(driver, seconds).until(ExpectedConditions.visibilityOf(element()))

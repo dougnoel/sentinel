@@ -82,14 +82,14 @@ public class WebDriverFactory {
         }
         
         //Saucelabs Driver setup
-        String saucelabsUserName = Configuration.toString("saucelabsUserName");
+        var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
         	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
         	return driver;
         }
 
         // Set a Download Directory if one was specified on the command line
-        String downloadDirectory = Configuration.toString("download");
+        var downloadDirectory = Configuration.toString("download");
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
 
@@ -99,7 +99,7 @@ public class WebDriverFactory {
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	String headless = Configuration.toString("headless");
+        	var headless = Configuration.toString("headless");
         	if (headless == null || headless.equalsIgnoreCase("false"))
         		driver = ChromeDriverFactory.createChromeDriver();
         	else
@@ -128,7 +128,7 @@ public class WebDriverFactory {
      */
     public static WebDriver getWebDriver()  {
         if (instance == null) {
-        	String errorMessage = "WebDriver has not been created. Call WebDriver.instantiateWebDriver() before calling WebDriver.getWebDriver";
+        	var errorMessage = "WebDriver has not been created. Call WebDriver.instantiateWebDriver() before calling WebDriver.getWebDriver";
         	log.error(errorMessage);
         }
         return driver;
@@ -139,7 +139,7 @@ public class WebDriverFactory {
      * @return String error message
      */
     protected static String getMissingOSConfigurationErrorMessage() {
-    	String operatingSystem = Configuration.toString("os");
+    	var operatingSystem = Configuration.toString("os");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
         
     }
@@ -149,8 +149,8 @@ public class WebDriverFactory {
      * @return String error message
      */
     private static String getOSNotCompatibleWithBrowserErrorMessage() {
-    	String operatingSystem = Configuration.toString("os");
-    	String browser = Configuration.toString("browser");
+    	var operatingSystem = Configuration.toString("os");
+    	var browser = Configuration.toString("browser");
     	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
     	
     }
@@ -187,7 +187,7 @@ public class WebDriverFactory {
             throw new WebDriverException(errorMessage);
     	}
         System.setProperty("webdriver.ie.driver", driverPath);
-    	InternetExplorerOptions options = new InternetExplorerOptions();
+        var options = new InternetExplorerOptions();
     	options.ignoreZoomSettings();
     	try {
     		return new InternetExplorerDriver(options);

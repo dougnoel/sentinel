@@ -34,7 +34,7 @@ public class TextVerificationSteps {
     @Then("^I verify (?:the|a|an) (.*?)( is not)?(?: is)? empty?$")
     public static void verifyElementTextIsEmpty(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be empty.",
+        var expectedResult = SentinelStringUtils.format("Expected the element {} to {}be empty.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
             assertFalse(expectedResult, getElement(elementName).getText().isEmpty());
@@ -79,7 +79,7 @@ public class TextVerificationSteps {
             verifyURLTextContains(text);
         } else {
             String elementText = getElement(elementName).getText();
-            String expectedResult = SentinelStringUtils.format(
+            var expectedResult = SentinelStringUtils.format(
                     "Expected the {} element to {}{} the text {}. The element contained the text: {}",
                     elementName, negateText, partialMatchText, text, elementText
                             .replace("\n", " "));
@@ -108,7 +108,7 @@ public class TextVerificationSteps {
      */
     private static void verifyURLTextContains(String text) {
         String currentUrl = PageManager.getCurrentUrl();
-        String expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
+        var expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));
     }
@@ -137,7 +137,7 @@ public class TextVerificationSteps {
     public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
-        String expectedResult = SentinelStringUtils.format(
+        var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);
@@ -171,10 +171,10 @@ public class TextVerificationSteps {
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
     public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
-        String textToMatch = Configuration.toString(key);
+    	var textToMatch = Configuration.toString(key);
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
-        String expectedResult = SentinelStringUtils.format(
+        var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);

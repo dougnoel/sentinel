@@ -202,12 +202,12 @@ public class PageManager {
 		String newHandle = null;
 		Set<String> handles = driver().getWindowHandles();
 		if (handles.size() == 1) {
-			String errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
+			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
 		if (parentHandle == null) {
-			String errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
+			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
@@ -234,7 +234,7 @@ public class PageManager {
 			driver().switchTo().window(index);
 			log.trace("Switched to new window {}", index);
 		} catch (org.openqa.selenium.NoSuchWindowException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -263,7 +263,7 @@ public class PageManager {
 			driver().switchTo().frame(0);
 			log.trace("Switched to iFrame on current page");
 		} catch (org.openqa.selenium.NoSuchFrameException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"No iFrames were found on the current page. Ensure you have the correct page open, and please try again. {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -284,7 +284,7 @@ public class PageManager {
 			currentUrl = driver().getCurrentUrl();
 			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
 					page.getName(), e.getMessage());
 			log.error(errorMessage);
