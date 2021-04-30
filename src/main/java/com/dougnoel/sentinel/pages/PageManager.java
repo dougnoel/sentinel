@@ -117,20 +117,6 @@ public class PageManager {
 	}
 
 	/**
-	 * Navigates to the given URL.
-	 * <p>
-	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
-	 * existing page, and if so, passing that off as the new page object.
-	 * 
-	 * @param url String the uniform resource locator
-	 * @return Page the current page object for chaining
-	 */
-	public static Page navigateTo(String url) {
-		driver().navigate().to(url);
-		return page;
-	}
-
-	/**
 	 * Emulate clicking the browser's forward button.
 	 * <p>
 	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
