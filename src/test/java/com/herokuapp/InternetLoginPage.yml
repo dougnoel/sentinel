@@ -1,0 +1,13 @@
+accounts:
+  default:
+    default:
+      username: DefaultUser
+      password: MyPassw0rd
+elements:
+  username_field:
+    elementType: Textbox
+    name: username
+  password_field:
+    elementType: Textbox
+    name: "password"
+    id: "password"

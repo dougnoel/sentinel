@@ -4,7 +4,7 @@ import java.net.URL;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 public class GridWebDriverFactory {
@@ -12,7 +12,7 @@ public class GridWebDriverFactory {
 	protected static WebDriver createGridDriver(String browser, String gridUrl) {
     	DesiredCapabilities capability = new DesiredCapabilities();
     	capability.setCapability("browserName", browser);
-        String browserVersion = ConfigurationManager.getOptionalProperty("browserVersion");
+        String browserVersion = Configuration.toString("browserVersion");
     	if (browserVersion != null) 
     	    capability.setCapability("browserVersion", browserVersion);
     	

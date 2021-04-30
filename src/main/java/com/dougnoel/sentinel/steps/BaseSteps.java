@@ -3,9 +3,8 @@ package com.dougnoel.sentinel.steps;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.configurations.TimeoutManager;
-import com.dougnoel.sentinel.exceptions.SentinelException;
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -75,9 +74,9 @@ public class BaseSteps {
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
-    	Double totalWaitTime = Double.valueOf(ConfigurationManager.getValue("totalWaitTime"));
-    	ConfigurationManager.setValue("totalWaitTime", String.valueOf(seconds + totalWaitTime));
-        TimeoutManager.wait(seconds);
+    	double totalWaitTime = Configuration.toDouble("totalWaitTime");
+    	Configuration.update("totalWaitTime", seconds + totalWaitTime);
+        Time.wait(seconds);
         log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, (seconds * 1000));
     }
 
@@ -97,17 +96,16 @@ public class BaseSteps {
      * @param pageName String Page Object Name
      * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
      * @param arguments String the literal string to append to the default URL.
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public static void navigateToPage(String pageName, String hasArguments, String arguments) throws SentinelException  {   	
+    public static void navigateToPage(String pageName, String hasArguments, String arguments) {   	
     	pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
-        String baseUrl = ConfigurationManager.getUrl();
+        String baseUrl = Configuration.url();
         if (hasArguments != null) {
             baseUrl += arguments;
         }
-        log.debug("Loading {} for the {} in the {} environment.", baseUrl, pageName, ConfigurationManager.getEnvironment());
+        log.debug("Using the url {} for the {} page.", baseUrl, pageName);
         PageManager.openPage(baseUrl);
     }
     
@@ -115,9 +113,8 @@ public class BaseSteps {
      * Overloaded method for navigating to a page object's url based on the current environment, 
      * so that nulls do not need to be passed. Intended for use in creating complex Cucumber steps definitions.
      * @param pageName String Page Object Name
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    public static void naviagteToPage(String pageName) throws SentinelException {
+    public static void navigateToPage(String pageName) {
     	navigateToPage(pageName, null, null);
     }
     
@@ -127,9 +124,8 @@ public class BaseSteps {
      * for use in creating complex Cucumber steps definitions.
      * @param pageName String Page Object Name
      * @param arguments String the literal string to append to the default URL.
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    public static void naviagteToPage(String pageName, String arguments) throws SentinelException {
+    public static void navigateToPage(String pageName, String arguments) {
     	navigateToPage(pageName, "has arguments", arguments);
     }
  
