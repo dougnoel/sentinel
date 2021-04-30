@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
@@ -34,31 +33,13 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 public class DownloadManager {
     private static final Logger log = LogManager.getLogger(DownloadManager.class.getName()); // Create a logger.
 
-    private static DownloadManager instance = null;
-
     private static String filename = null; // Current filename
     private static String fileExtension = "pdf"; // Current file extension - Default of pdf
     private static File file = null; // Current file
 
     private static String downloadDirectory = createDownloadDirectory();
 
-    // Create a list to store all the downloaded files
-    // This will allow us to clean them all up at the end of a run.
-
-    protected DownloadManager() {
-        // Exists only to defeat instantiation.
-    }
-
-    /**
-     * Creates instance of Singleton class.
-     * @return DownloadManager instance of this class
-     */
-    public static DownloadManager getInstance() {
-        if (instance == null)
-            instance = new DownloadManager();
-
-        return instance;
-    }
+    // TODO: Create a list to store all the downloaded files. This will allow us to clean them all up at the end of a run.
 
     /**
      * Returns true if the file exists in the directory, given a filename and a path.

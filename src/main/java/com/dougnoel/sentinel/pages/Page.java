@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.pages;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,34 +45,14 @@ public class Page {
 
     protected WebDriver driver;
 
-    protected URL url;
-    
     protected Map<String,PageElement> elements;
     
     private String pageName;
-
-    /**
-     * Initializes a WebDriver object for operating on page elements, and sets the
-     * base URL for the page.
-     */
-    public Page() {
-    	this.pageName = this.getClass().getSimpleName();
-        driver = WebDriverFactory.getWebDriver();
-        elements = new HashMap<>();
-    }
     
     public Page(String pageName) {
     	this.pageName = pageName;
         driver = WebDriverFactory.getWebDriver();
         elements = new HashMap<>();
-    }
-
-    public URL getUrl() {
-        return url;
-    }
-
-    public void setUrl(URL url) {
-        this.url = url;
     }
 
     public String getName() {
