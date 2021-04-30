@@ -5,10 +5,9 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTextbo
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.en.When;
@@ -44,18 +43,7 @@ public class TextSteps {
         if (storageName != null) {
             elementName = storageName + " " + elementName;
         }
-        ConfigurationManager.setValue(elementName, text);
-    }
-    
-    /**
-     * Overloaded method for entering random text in a text box, so that nulls do not need to be passed. 
-     * Intended for use in creating complex Cucumber steps definitions.
-     * 
-     * @param text String the text to enter into the element
-     * @param elementName String the name of the element into which to enter text
-     */
-    public static void enterRandomText(String text, String elementName) {
-    	enterRandomText(text, elementName, null);
+        Configuration.update(elementName, text);
     }
 
     /**
@@ -82,7 +70,7 @@ public class TextSteps {
     @When("^I enter (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
         getElementAsTextbox(elementName).type(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
 
     /**
@@ -117,7 +105,7 @@ public class TextSteps {
     @When("^I inject (.*) in the (.*)$")
     public static void injectText(String text, String elementName) {
         getElementAsTextbox(elementName).javaScriptSendKeys(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
     
     /**
@@ -137,7 +125,7 @@ public class TextSteps {
      */
     @When("^I reuse the (.*) text in the (.*)$")
     public static void enterStoredText(String key, String elementName) {
-        String text = ConfigurationManager.getValue(key);
+    	var text = Configuration.toString(key);
         enterText(text, elementName);
     }
 
@@ -155,7 +143,7 @@ public class TextSteps {
     @When("^I press the (escape|enter|return|tab) key$")
     public static void keyPress(String keyName) {
     	keyName = keyName.toUpperCase();
-        WebDriver driver = WebDriverFactory.getWebDriver();
+    	var driver = WebDriverFactory.getWebDriver();
         WebElement element = driver.findElement(By.tagName("Body"));
         element.sendKeys(Keys.valueOf(keyName));
     }

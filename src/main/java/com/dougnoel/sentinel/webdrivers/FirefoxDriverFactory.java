@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -27,7 +27,7 @@ public class FirefoxDriverFactory {
         	return new FirefoxDriver();
         }
 		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			var errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
@@ -44,7 +44,7 @@ public class FirefoxDriverFactory {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{
-	        switch (ConfigurationManager.getOperatingSystem()) {
+	        switch (Configuration.operatingSystem()) {
 	        case "linux":
 	            driverPath = "src/main/resources/drivers/linux/geckodriver";
 	            break;

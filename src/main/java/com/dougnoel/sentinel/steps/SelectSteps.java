@@ -2,7 +2,7 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelectElement;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 
 import io.cucumber.java.en.When;
@@ -40,7 +40,7 @@ public class SelectSteps {
     @When("^I select (?!the)(.*?) (?:in|from) the (.*)$")
     public static void selectItemFromElement(String text, String elementName) throws SentinelException {
         getElementAsSelectElement(elementName).select(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
 
 	/**
@@ -65,9 +65,9 @@ public class SelectSteps {
      */
     @When("^I select the (\\d+)(?:st|nd|rd|th) option (?:in|from) the (.*)$")
     public static void selectOrdinalItemFromElement(String ordinal, String elementName) throws SentinelException {
-        int index = Integer.parseInt(ordinal);
+    	var index = Integer.parseInt(ordinal);
         String text = getElementAsSelectElement(elementName).select(index).getText(index);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
 
 }

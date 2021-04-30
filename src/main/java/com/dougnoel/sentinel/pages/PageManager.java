@@ -8,12 +8,13 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import com.dougnoel.sentinel.configurations.TimeoutManager;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
 import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * The Page Manager is a singleton class that manages what page the test is on.
@@ -30,8 +31,11 @@ public class PageManager {
 	private static String parentHandle = null;
 
 	protected static WebDriver driver() {
-		return page.driver;
-	} // Get the driver for the current page.
+		if (page == null)
+			return WebDriverFactory.getWebDriver();
+		else
+			return page.driver;
+	}
 
 	private PageManager() {
 		// Exists only to defeat instantiation.
@@ -67,7 +71,7 @@ public class PageManager {
 	public static Page getPage() {
 		if (instance == null)
 			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
-		if(page == null) {
+		if (page == null) {
 			throw new PageNotFoundException("We could not find the Page you are looking for. Please check the pageObjectPackages configuration in conf/sentinel.yml and make sure it includes directory containing your page object.");
 		}
 		return page;
@@ -110,20 +114,6 @@ public class PageManager {
 	 */
 	public static void quit() {
 		driver().quit();
-	}
-
-	/**
-	 * Navigates to the given URL.
-	 * <p>
-	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
-	 * existing page, and if so, passing that off as the new page object.
-	 * 
-	 * @param url String the uniform resource locator
-	 * @return Page the current page object for chaining
-	 */
-	public static Page navigateTo(String url) {
-		driver().navigate().to(url);
-		return page;
 	}
 
 	/**
@@ -198,12 +188,12 @@ public class PageManager {
 		String newHandle = null;
 		Set<String> handles = driver().getWindowHandles();
 		if (handles.size() == 1) {
-			String errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
+			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
 		if (parentHandle == null) {
-			String errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
+			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
@@ -230,7 +220,7 @@ public class PageManager {
 			driver().switchTo().window(index);
 			log.trace("Switched to new window {}", index);
 		} catch (org.openqa.selenium.NoSuchWindowException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -259,7 +249,7 @@ public class PageManager {
 			driver().switchTo().frame(0);
 			log.trace("Switched to iFrame on current page");
 		} catch (org.openqa.selenium.NoSuchFrameException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"No iFrames were found on the current page. Ensure you have the correct page open, and please try again. {}",
 					e.getMessage());
 			log.error(errorMessage);
@@ -280,7 +270,7 @@ public class PageManager {
 			currentUrl = driver().getCurrentUrl();
 			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
 					page.getName(), e.getMessage());
 			log.error(errorMessage);
@@ -305,7 +295,7 @@ public class PageManager {
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
-		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());
+		driver().manage().timeouts().pageLoadTimeout(Time.out(), Time.unit());
 		while (!isPageLoaded()) {
 			Thread.sleep(20);
 		}

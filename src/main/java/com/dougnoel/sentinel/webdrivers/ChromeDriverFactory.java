@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -31,7 +31,7 @@ public class ChromeDriverFactory {
         	return new ChromeDriver();
         }
 		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			var errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
@@ -49,14 +49,14 @@ public class ChromeDriverFactory {
     	setChromeDriverPath();
         setChromeDownloadDirectory("downloads");
         try {
-            ChromeOptions options = new ChromeOptions();
+        	var options = new ChromeOptions();
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--headless");
             return new ChromeDriver(options);
         }
 		catch (IllegalStateException e) {
-			String errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
+			var errorMessage = SentinelStringUtils.format(WebDriverFactory.DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
 			log.error(errorMessage);
 			throw new WebDriverNotExecutableException(errorMessage, e);
 		}
@@ -73,7 +73,7 @@ public class ChromeDriverFactory {
     	String driverPath = WebDriverFactory.getDriverPath();
     	if (driverPath == null)
     	{
-	        switch (ConfigurationManager.getOperatingSystem()) {
+	        switch (Configuration.operatingSystem()) {
 	        case "linux":
 	            driverPath = "src/main/resources/drivers/linux/chromedriver";
 	            break;
@@ -97,7 +97,7 @@ public class ChromeDriverFactory {
     private static void setChromeDownloadDirectory(String filePath) {
         HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("download.default_directory", filePath);
-        ChromeOptions options = new ChromeOptions();
+        var options = new ChromeOptions();
         options.setExperimentalOption("prefs", chromePrefs);
     }
 }
