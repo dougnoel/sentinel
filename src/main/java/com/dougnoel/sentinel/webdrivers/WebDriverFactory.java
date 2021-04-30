@@ -94,6 +94,13 @@ public class WebDriverFactory {
             DownloadManager.setDownloadDirectory(downloadDirectory);
 
         String browser = ConfigurationManager.getBrowserName();
+        
+        //Grid Driver setup
+        String gridUrl = ConfigurationManager.getOptionalProperty("gridUrl");
+        if (gridUrl != null) {
+        	driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+        	return driver;
+        }
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
