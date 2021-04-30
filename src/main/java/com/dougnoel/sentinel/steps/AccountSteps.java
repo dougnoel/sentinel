@@ -44,8 +44,8 @@ public class AccountSteps {
      */
     @When("I fill the account information into the {} and the {}")
     public static void fillAccountInfoIntoUsernameAndPasswordFields(String usernameField, String passwordField) {
-        TextSteps.enterText(Configuration.accountInformation(DEFAULT, USERNAME), usernameField);
-        TextSteps.enterText(Configuration.accountInformation(DEFAULT, PASSWORD), passwordField);            
+    	fillUsernameField(usernameField);
+    	fillPasswordField(passwordField);         
     }
     
     /**
@@ -80,7 +80,7 @@ public class AccountSteps {
      */
     @When("I fill the password into the {}")
     public static void fillPasswordField(String passwordField) {
-    	TextSteps.enterText(Configuration.accountInformation(DEFAULT, PASSWORD), passwordField);
+    	fillPasswordField(DEFAULT, passwordField);
     }
     
     /**
@@ -115,6 +115,6 @@ public class AccountSteps {
      */
     @When("I fill the username into the {}")
     public static void fillUsernameField(String usernameField) {
-        TextSteps.enterText(Configuration.accountInformation(DEFAULT, USERNAME), usernameField);
+    	fillUsernameField(DEFAULT, usernameField);
     }
 }

@@ -45,17 +45,6 @@ public class TextSteps {
         }
         Configuration.update(elementName, text);
     }
-    
-    /**
-     * Overloaded method for entering random text in a text box, so that nulls do not need to be passed. 
-     * Intended for use in creating complex Cucumber steps definitions.
-     * 
-     * @param text String the text to enter into the element
-     * @param elementName String the name of the element into which to enter text
-     */
-    public static void enterRandomText(String text, String elementName) {
-    	enterRandomText(text, elementName, null);
-    }
 
     /**
      * Enters the text into a text box that matches the given elementName as defined on the 

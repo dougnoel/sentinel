@@ -1,3 +1,8 @@
+accounts:
+  default:
+    default:
+      username: DefaultUser
+      password: MyPassw0rd
 elements:
   username_field:
     elementType: Textbox
