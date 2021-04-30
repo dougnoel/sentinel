@@ -4,3 +4,6 @@ elements:
   city_dropdown:
     elementType: PrimeNGDropdown
     xpath: "//p-dropdown[1]"
+  country_dropdown:
+    elementType: PrimeNGDropdown
+    xpath: "//p-dropdown[4]"

@@ -1,0 +1,9 @@
+elements:
+  username_field:
+    elementType: Textbox
+    id: username
+    name: username
+  password_field:
+    elementType: Textbox
+    name: "password"
+    id: "password"
