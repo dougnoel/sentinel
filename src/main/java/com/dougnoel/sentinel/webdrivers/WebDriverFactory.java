@@ -93,10 +93,10 @@ public class WebDriverFactory {
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
         
-        String browser = Configuration.browser();
+        var browser = Configuration.browser();
         
         //Grid Driver setup
-        String gridUrl = Configuration.toString("gridUrl");
+        var gridUrl = Configuration.toString("gridUrl");
         if (gridUrl != null) {
         	driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
         	return driver;

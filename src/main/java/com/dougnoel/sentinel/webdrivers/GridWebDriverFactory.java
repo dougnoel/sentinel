@@ -9,10 +9,14 @@ import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 public class GridWebDriverFactory {
 	
+	private GridWebDriverFactory() {
+		
+	}
+	
 	protected static WebDriver createGridDriver(String browser, String gridUrl) {
-    	DesiredCapabilities capability = new DesiredCapabilities();
+    	var capability = new DesiredCapabilities();
     	capability.setCapability("browserName", browser);
-        String browserVersion = Configuration.toString("browserVersion");
+        var browserVersion = Configuration.toString("browserVersion");
     	if (browserVersion != null) 
     	    capability.setCapability("browserVersion", browserVersion);
     	
