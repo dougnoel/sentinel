@@ -110,7 +110,7 @@ public class DownloadManager {
         
         // default timeout in seconds
         long timeOut = 20;
-        Path downloadFolderPath = Paths.get(downloadDir);
+        var downloadFolderPath = Paths.get(downloadDir);
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
         long startTime = System.currentTimeMillis();
