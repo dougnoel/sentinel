@@ -26,12 +26,17 @@ public class WebDriverFactoryTest {
 		}
 	}
 	
-	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void invalidBrowserVersionTest() {
+	@Test
+	public void nullBrowserVersionTest() {
 		var browser = "chrome";
-		System.setProperty("browserVersion","123");
 		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-		GridWebDriverFactory.createGridDriver(browser, gridUrl);
+		System.clearProperty("browserVersion");
+		var driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+		try {
+			assertNotNull(driver);
+		}finally {
+			driver.quit();
+		}
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.MalformedURLException.class)
