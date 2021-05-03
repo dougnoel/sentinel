@@ -12,7 +12,7 @@ public class WebDriverFactoryTest {
 		var gridUrl = "http://gridrul.com";
 		var driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
 		 
-		assertTrue(driver == null);
+		assertNull(driver);
 	}
 	
 	@Test(expected = org.openqa.selenium.remote.UnreachableBrowserException.class)
@@ -21,7 +21,7 @@ public class WebDriverFactoryTest {
 		var gridUrl = "http://hub.technologynursery.org:4444/wd/hub";
 		var driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
 		 
-		assertTrue(driver != null);
+		assertNotNull(driver);
 	}
 	
 }
