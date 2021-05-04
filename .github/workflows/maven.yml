@@ -38,12 +38,6 @@ jobs:
       run: |
        chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
-    - name: Install Opera # Using shell script to install Opera
-      run: |
-       chmod +x ./src/test/resources/scripts/InstallOpera.sh
-        ./src/test/resources/scripts/InstallOpera.sh
-    - name: Setup Firefox
-      uses: browser-actions/setup-firefox@latest
     - name: Build with Maven and Analyze with Sonar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
