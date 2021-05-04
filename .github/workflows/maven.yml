@@ -42,10 +42,8 @@ jobs:
       run: |
        chmod +x ./src/test/resources/scripts/InstallOpera.sh
         ./src/test/resources/scripts/InstallOpera.sh
-    - name: Install Mozilla Firefox # Using shell script to install Firefox
-      run: |
-       chmod +x ./src/test/resources/scripts/InstallFirefox.sh
-        ./src/test/resources/scripts/InstallFirefox.sh
+    - name: Setup Firefox
+      uses: browser-actions/setup-firefox@latest
     - name: Build with Maven and Analyze with Sonar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
