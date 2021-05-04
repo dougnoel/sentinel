@@ -415,15 +415,16 @@ The changelog is generated using [github_changelog_generator](https://github.com
 * [Swagger Parser](https://github.com/swagger-api/swagger-parser) - Reads Swagger API files, allowing us to use them as API Objects.
 * [Traprange](https://github.com/thoqbk/traprange) - Independent library developed using PDFBox to deal with tables in PDFs.
 * [Unirest](http://unirest.io/java.html) - A simple API library used for the API testing functionality.
+* [WebDriverManager](https://github.com/bonigarcia/webdrivermanager) 4.4.1 - Automatically detects browser versions and downloads the correct drivers.
 
 ### 6.4 Web Drivers
-The web drivers are stored in src/main/resources/drivers/[os] to make sure there is only one place to fix driver compatibility issues. Chrome auto updates, and so is the one that will go of date most often. While we could pull the driver from a path and let each implementation install the drivers, this can become problematic in CI/CD environments where we do not control the system. This also reduces the learning curve for using Sentinel.
-NOTE: All drivers are 64-bit versions. If you need to test on an old 32-bit browser, you will need to replace the drivers provided with a 32-bit driver. See the driver creators for support.
-
-* [Chromedriver](http://chromedriver.chromium.org/) 83.0.4103.39 (2020-05-05) - Driver for automating Google Chrome.
-* [Geckodriver](https://github.com/mozilla/geckodriver/releases) v0.26.0 (Oct 11 2019) - Driver for automating Mozilla Firefox.
-* [IE Driver](http://selenium-release.storage.googleapis.com/index.html) 3.9 (2018-02-05) - Driver for automating IE. (*This driver version matches the selenium version being used and NOT the IE Version.*)
-* [Safari](https://webkit.org/blog/6900/webdriver-support-in-safari-10/) - Safari driver is embedded in Safari.
+All web drivers are managed by [WebDriverManager](https://github.com/bonigarcia/webdrivermanager). Both the operating system and browser are automatically detected and the appropriate web driver is downloaded. Downloaded drivers are cached on individual boxes. The following browsers are supported:
+* Chrome ([Chromedriver](http://chromedriver.chromium.org/))
+* Edge ([Edgedriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/))
+* Firefox ([Geckodriver](https://github.com/mozilla/geckodriver/releases))
+* Internet Explorer ([IE Driver](http://selenium-release.storage.googleapis.com/index.html))
+* Opera ([OperaChromiumDriver](https://github.com/operasoftware/operachromiumdriver/releases))
+* Safari ([Safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/))
 
 ### 6.5 Saucelabs
 Sentinel is setup to use [Saucelabs](https://saucelabs.com/) for remote execution. This is the recommended way to execute test in your build pipeline, because you then do not need to setup an execution server.
