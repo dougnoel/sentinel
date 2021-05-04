@@ -282,11 +282,10 @@ configurations:
 *NOTE: Passing in a value on the command line will always override whatever is in the configuration file.*
 
 ### How do I run code coverage for my unit tests using Jacoco? ###
-The first command will run code coverage. The second will open up the results in your default browser.
+This script will run code coverage and then open up the results in your default browser. The results will not open if there are build failures.
 
 ```
-mvn org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report
-open target/site/jacoco/index.html
+src/test/resources/scripts/UnitTests.sh
 
 ```
 

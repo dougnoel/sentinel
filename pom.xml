@@ -96,6 +96,7 @@
     <sauce_junit.version>2.1.21</sauce_junit.version>
     <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.0.14</swagger-parser.version>
+    <webdrivermanager.version>4.4.1</webdrivermanager.version>
     
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
@@ -357,7 +358,7 @@
 			</build>
 		</profile>
 	</profiles>
-
+<!-- ************************ DEPENDENCIES ************************ -->
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -519,6 +520,12 @@
         <version>${swagger-parser.version}</version>
       </dependency>
 
+	  <dependency>
+		<groupId>io.github.bonigarcia</groupId>
+		<artifactId>webdrivermanager</artifactId>
+		<version>${webdrivermanager.version}</version>
+	  </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -667,7 +674,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- <scope>test</scope> -->
       <!-- junit should usually be test scope unless this is a dedicated test library -->
     </dependency>
 
@@ -675,6 +681,13 @@
       <groupId>com.saucelabs</groupId>
       <artifactId>sauce_junit</artifactId>
     </dependency>
+    
+    <!-- Typically WebDriverManager is in a test scope, but it needs to be bundled with the jar -->
+    <dependency>
+	  <groupId>io.github.bonigarcia</groupId>
+	  <artifactId>webdrivermanager</artifactId>
+	</dependency>
+    
   </dependencies>
   <description>A Selenium framework that implements the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.</description>
 </project>

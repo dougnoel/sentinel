@@ -1,74 +1,40 @@
 package com.dougnoel.sentinel.webdrivers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.HashMap;
+
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.exceptions.WebDriverNotExecutableException;
 import com.dougnoel.sentinel.exceptions.WebDriverException;
 import com.dougnoel.sentinel.filemanagers.DownloadManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+
 /**
  * This object factory is used to keep up with driver versions for all browsers.
- * All the browser drivers can be found in the root of the project under the
- * drivers/[os]/ paths.
- * <p>
- * The purpose of this class is to use the
- * <a href="https://en.wikipedia.org/wiki/Factory_method_pattern">Factory Design
- * Pattern</a> to encapsulate the creation of drivers for various browsers and
- * share that functionality across projects. All drivers are stored as part of
- * the project and updated from one central repository. Pulling the latest code
- * from git will ensure you have the latest browser drivers and that you do not
- * need to spend time keeping them up to date. All drivers are assumed to be
- * 64-bit. Chromedriver and Internet Explorer drivers for Windows are 32-bit.
- * <p>
- * <b>Supported Browsers:</b>
- * <ul>
- * <li>Chrome
- * (<a href="http://chromedriver.chromium.org/downloads">Chromedriver</a>
- * 2.3.8)</li>
- * <li>Firefox
- * (<a href="https://github.com/mozilla/geckodriver/releases">Geckodriver</a>
- * 0.20.1)</li>
- * <li>Internet Explorer
- * (<a href="https://www.seleniumhq.org/download/">Internet Explorer Driver
- * Server</a> 3.12.0)</li>
- * <li>Safari (Safaridriver 10) (Comes installed on OS X)
- * </ul>
- * <p>
- * <b>Supported Operating Systems:</b>
- * <ul>
- * <li>Linux (Chrome/Firefox)</li>
- * <li>OS X (Chrome/Firefox/Safari)</li>
- * <li>Windows (Chrome/Firefox/Internet Explorer</li>
- * </ul>
+ * For a list of supported browsers and operating systems, see the readme.
  */
 public class WebDriverFactory {
-    private static final Logger log = LogManager.getLogger(WebDriverFactory.class); // Create a logger.
     private static WebDriver driver = null;
-
     private static WebDriverFactory instance = null;
-    
-    private static final String LINUX = "linux";
-    private static final String MAC = "mac";
-    private static final String WINDOWS = "windows";
-    protected static final String DRIVERNOTFOUNDERRORMESSAGEPATTERN = "The driver does not have execute permissions or cannot be found. Make sure it is in the correct location. On linux/mac run chmod +x on the driver. If you passed in a location using the -Ddriver= command, ensure the path is correct and the driver is executable.\n{}";
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
     }
     
-    //TODO: Add all of the valid browser options and make them match saucelabs options
     /**
      * Creates and returns a useable WebDriver.
      * We use this factory method to handle keeping up with driver versions for all
-     * browsers. All the browser drivers can be found in the root of the project
-     * under the drivers/[os]/ paths. The browser can be set in the config file or a system
+     * browsers. The browser can be set in the config file or a system
      * variable. See the README for more information.
      * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
      *         WebDriver</a> object for the specified browser and operating system
@@ -84,14 +50,9 @@ public class WebDriverFactory {
         //Saucelabs Driver setup
         var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
+        	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
         	return driver;
         }
-
-        // Set a Download Directory if one was specified on the command line
-        var downloadDirectory = Configuration.toString("download");
-        if (downloadDirectory != null)
-            DownloadManager.setDownloadDirectory(downloadDirectory);
 
         String browser = Configuration.browser();
 
@@ -99,20 +60,37 @@ public class WebDriverFactory {
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
+        	var chromeOptions = new ChromeOptions();
+        	setChromeDownloadDirectory(chromeOptions);
         	var headless = Configuration.toString("headless");
-        	if (headless == null || headless.equalsIgnoreCase("false"))
-        		driver = ChromeDriverFactory.createChromeDriver();
-        	else
-        		driver = ChromeDriverFactory.createHeadlessChromeDriver();
+        	if (headless != null && !headless.equalsIgnoreCase("false")) {
+        		chromeOptions.addArguments("--no-sandbox");
+        		chromeOptions.addArguments("--disable-dev-shm-usage");
+        		chromeOptions.addArguments("--headless");        		
+        	}
+        	WebDriverManager.chromedriver().setup();
+        	driver = new ChromeDriver(chromeOptions);
             break;
+        case "edge":
+        	WebDriverManager.edgedriver().setup();
+        	driver = new EdgeDriver();
+        	break;
         case "firefox":
-        	driver = FirefoxDriverFactory.createFirefoxDriver();
+    		WebDriverManager.firefoxdriver().setup();
+    		driver = new FirefoxDriver();
             break;
         case "internetexplorer":
-        	driver = createInternetExplorerDriver();
+            var ieOptions = new InternetExplorerOptions();
+        	ieOptions.ignoreZoomSettings();
+        	WebDriverManager.iedriver().setup();
+        	driver = new InternetExplorerDriver(ieOptions);
             break;
+        case "opera":
+        	WebDriverManager.operadriver().setup();
+        	driver = new OperaDriver();
+        	break;
         case "safari":
-        	driver = createSafariDriver();
+        	driver = new SafariDriver();
             break;
         default:
             throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
@@ -122,102 +100,32 @@ public class WebDriverFactory {
     }
 
     /**
-     * Returns the WebDriver instance. This will silently log an error if the WebDriver has not been instantiated yet.
+     * Returns the WebDriver instance. This will silently instatntiate the WebDriver if that has not been done yet.
      * 
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver()  {
         if (instance == null) {
-        	var errorMessage = "WebDriver has not been created. Call WebDriver.instantiateWebDriver() before calling WebDriver.getWebDriver";
-        	log.error(errorMessage);
+        	instantiateWebDriver();
         }
         return driver;
     }
     
     /**
-     * Returns an error message string 
-     * @return String error message
+     * Sets the download directory for chromedriver. Cannot be used with Saucelabs.
+     * @param options ChromeOptions object to set
      */
-    protected static String getMissingOSConfigurationErrorMessage() {
-    	var operatingSystem = Configuration.toString("os");
-    	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadocs for valid options.", operatingSystem);
+    private static void setChromeDownloadDirectory(ChromeOptions options) {
+        // Set a Download Directory if one was specified on the command line
+        var downloadDirectory = Configuration.toString("download");
+        if (downloadDirectory != null)
+            DownloadManager.setDownloadDirectory(downloadDirectory);
+        else
+        	DownloadManager.setDownloadDirectory("downloads");
         
-    }
-    
-    /**
-     * Returns an error message string 
-     * @return String error message
-     */
-    private static String getOSNotCompatibleWithBrowserErrorMessage() {
-    	var operatingSystem = Configuration.toString("os");
-    	var browser = Configuration.toString("browser");
-    	return SentinelStringUtils.format("Invalid operating system '{}' passed to WebDriverFactory for the {} driver. Refer to the Javadocs for valid options.", operatingSystem, browser);
-    	
-    }
-    
-    /**
-     * Returns the driver path if it exists, otherwise null.
-     * @return String the driver path if it exists, otherwise null
-     */
-    protected static String getDriverPath() {
-    	return Configuration.toString("driver");
-    }
-    
-    /**
-     * Creates an IE WebDriver and returns it.
-     * @return WebDriver an IE WebDriver object
-     */
-    private static WebDriver createInternetExplorerDriver() {
-    	String driverPath = getDriverPath();
-    	String errorMessage;
-        switch (Configuration.operatingSystem()) {
-        case LINUX:
-        case MAC:
-        	errorMessage = getOSNotCompatibleWithBrowserErrorMessage();
-        	log.error(errorMessage);
-            throw new WebDriverException(errorMessage);
-        case WINDOWS:
-        	if (driverPath == null) {
-        		driverPath = "src\\main\\resources\\drivers\\windows\\IEDriverServer.exe";
-        	}
-            break;
-        default:
-        	errorMessage = getMissingOSConfigurationErrorMessage();
-        	log.error(errorMessage);
-            throw new WebDriverException(errorMessage);
-    	}
-        System.setProperty("webdriver.ie.driver", driverPath);
-        var options = new InternetExplorerOptions();
-    	options.ignoreZoomSettings();
-    	try {
-    		return new InternetExplorerDriver(options);
-    	}
-		catch (IllegalStateException e) {
-			errorMessage = SentinelStringUtils.format(DRIVERNOTFOUNDERRORMESSAGEPATTERN, e.getMessage());
-			log.error(errorMessage);
-			throw new WebDriverNotExecutableException(errorMessage, e);
-		}
-        catch (org.openqa.selenium.WebDriverException e) {
-        	log.error(e.getMessage());
-        	throw new WebDriverException(e);
-        }
+        HashMap<String, Object> chromePrefs = new HashMap<>();
+        chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
+        options.setExperimentalOption("prefs", chromePrefs);
     }
 
-    /**
-     * Creates a Safari WebDriver and returns it.
-     * @return WebDriver a Safari WebDriver object
-     */
-    private static WebDriver createSafariDriver() {
-        switch (Configuration.operatingSystem()) {
-        case LINUX:
-        case WINDOWS:
-            throw new WebDriverException(getOSNotCompatibleWithBrowserErrorMessage());
-        case MAC:
-            // Nothing to do here, as Apple has already set this up on macs.
-            break;
-        default:
-            throw new WebDriverException(getMissingOSConfigurationErrorMessage());
-        }
-        return new SafariDriver();
-    }
 }

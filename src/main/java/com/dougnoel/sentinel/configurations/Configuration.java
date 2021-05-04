@@ -137,10 +137,17 @@ public class Configuration {
 	 * @param value String the value to be used
 	 */
 	public static void update(String property, String value) {
-		if (value != null )
 			appProps.setProperty(property, value);
-		else
-			appProps.remove(property);
+	}
+	
+	/**
+	 * Clears a configuration value once runtime has started. This should never be used in a Cucumber runner
+	 * as it will mask any values in the configuration file and on the command line. 
+	 * 
+	 * @param property String the property to clear
+	 */
+	public static void clear(String property) {
+		appProps.remove(property);
 	}
 	
 	/**
