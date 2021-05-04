@@ -102,6 +102,10 @@ public class WebdriverFactoryBadBrowserNameTest {
 	
 	@Test
 	public void passOperaBrowser() {
+		if (Configuration.toString("headless") != null) {
+			Assert.assertTrue("Cannot test Opera in headless mode.", true);
+			return;
+		}
 		System.setProperty("browser", "opera");
 		Configuration.update("browser", "opera");
 		var driver = WebDriverFactory.instantiateWebDriver();
@@ -111,6 +115,10 @@ public class WebdriverFactoryBadBrowserNameTest {
 	
 	@Test
 	public void passFirefoxBrowser() {
+		if (Configuration.toString("headless") != null) {
+			Assert.assertTrue("Cannot test firefox in headless mode.", true);
+			return;
+		}
 		System.setProperty("browser", "firefox");
 		Configuration.update("browser", "firefox");
 		var driver = WebDriverFactory.instantiateWebDriver();
