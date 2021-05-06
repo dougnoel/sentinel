@@ -53,8 +53,15 @@ public class WebDriverFactory {
         	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
         	return driver;
         }
-
-        String browser = Configuration.browser();
+        
+        var browser = Configuration.browser();
+        
+        //Grid Driver setup
+        var gridUrl = Configuration.toString("gridUrl");
+        if (gridUrl != null) {
+        	driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+        	return driver;
+        }
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
