@@ -92,8 +92,15 @@ public class WebDriverFactory {
         var downloadDirectory = Configuration.toString("download");
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
-
-        String browser = Configuration.browser();
+        
+        var browser = Configuration.browser();
+        
+        //Grid Driver setup
+        var gridUrl = Configuration.toString("gridUrl");
+        if (gridUrl != null) {
+        	driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+        	return driver;
+        }
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
