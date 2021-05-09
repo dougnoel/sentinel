@@ -17,25 +17,5 @@ public class Checkbox extends PageElement {
 	public Checkbox(String elementName, Map<String,String> selectors) {
 		super(elementName, selectors);
 	}
-	
-	/**
-	 * Check a Checkbox PageElement. Created as an alias for click.
-	 * <p>
-	 * <b>Alias For:</b> PageElement.click()
-	 * @return PageElement (for chaining)
-	 */
-	public PageElement check() {
-		return this.click();
-	}
-		
-	/**
-	 * Un-check a Checkbox PageElement. Created as an alias for clear.
-	 * <p>
-	 * <b>Alias For:</b> PageElement.clear()
-	 * @return PageElement (for chaining)
-	 */
-	public PageElement uncheck() {
-		return this.clear();
-	}
 
 }
