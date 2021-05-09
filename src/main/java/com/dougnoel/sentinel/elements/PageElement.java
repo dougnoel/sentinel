@@ -267,6 +267,16 @@ public class PageElement {
 		}
 		return this;
 	}
+	
+	/**
+	 * Drags the current element on top of the target element.
+	 * @param target PageElement the element the target is being dragged and dropped onto 
+	 * @return PageElement (for chaining)
+	 */
+	public PageElement dragAndDrop(PageElement target) {
+		new Actions(driver).dragAndDrop(this.toWebElement(), target.toWebElement()).build().perform();
+		return this;
+	}
 
 	/**
 	 * Clear a PageElement. Clears text in a text box. Un-checks check boxes. Clears
