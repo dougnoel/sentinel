@@ -20,9 +20,10 @@ These instructions will get you a copy of the project up and running on your loc
 ### 1.1 Prerequisites
 
 What things you need to install the software and how to install them:
- * Integrated Development Environment (Eclipse Suggested)
- * Java 11 or later required
+ * Java (11 or later) NOTE: Java 16 does not currently work.
  * Maven (2.5.4 or later)
+ * Integrated Development Environment (Eclipse Suggested)
+ * Google Chrome (suggested)
 
 ### 1.2 Installation
 These instructions assume you are using Eclipse.
@@ -42,31 +43,22 @@ git clone https://github.com/dougnoel/sentinel.git
 3. Wait for the status bar in the lower right-hand corner to finish before continuing.
 
 ### Running the Tests
-On the command line type: `mvn test -Denv=dev browser=chrome os=mac` or if you have your `sentinel.yml` created in conf, you can just run `mvn test -Denv=dev`
+On the command line type: `mvn test`.
 
 In Eclipse:
 1. Expand **src/test/java/ -> tests**
 2. Right-click on **SentinelTests.java** and select **Run As... -> JUnit Test**
-3. The test will fail because no environment is set.
-4. Go to **Run -> Run configurations...**
-2. Under JUnit, select **SentinelTests** and in the **Name:** box to the right change the name to *vSentinelTests - Dev**.
-4. Click on the **(x)= Arguments** tab.
-5. In the **VM arguments:** box add a space after the existing arguments (-ea may be the only argument) and then put `-Denv=dev`
-6. Click the **Apply** button.
-7. Click the **Close** button.
-8. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select **SentinelTests - Dev**.
 
-## 2.0 - 4.0
-These sections have been moved to the [sentinel.example Project](https://github.com/dougnoel/sentinel.example). Please refer to that Readme for how to create and execute tests.
+## 2.0 Frequently Asked Questions (FAQs)
 
-## 3.0 Release Notes
-
-### 1.0.4
-
-**Bug Fixes:**
-- Waits using the Cucumber step `I wait x seconds` were always waiting at least one second. They will now wait the actual amount of time they ar intended to wait.
-
-## 4.0 Frequently Asked Questions (FAQs)
+### How do I add command line options in Eclipse when running tests?
+1. Go to **Run -> Run configurations...**
+2. Under JUnit, select **SentinelTests** and in the **Name:** box to the right change the name to reflect the changes you are making.
+3. Click on the **(x)= Arguments** tab.
+4. In the **VM arguments:** box add a space after the existing arguments (-ea may be the only argument) and then put `-Dkey=value` For example to pass a different browser than chrome use `-Dbrowser=edge`.
+5. Click the **Apply** button.
+6. Click the **Close** button.
+7. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select **SentinelTests - Dev**.
 
 ### How do I change the default timeout?
 All timeouts default to 10 seconds, however you can change that either on the command line or in the sentinel.yml configuration file. For example if you want to double it to 20 seconds you would use `-Dtimeout=20`. If you wanted it to fail fast after only half a second you could use `-Dtimeout=500 -Dtimeunit=MILLISECONDS`. If you really wanted to extend the time, you could extend it to a minute using `-Dtimeout=1 -Dtimeunit=MINUTES`.
@@ -117,7 +109,7 @@ mvn test -Denv=stage
 7. Click the **Close** button.
 8. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select your new test runner (**SentinelTests - Stage**, etc).
 
-### I only have one environment, can I hardcode it?
+### I only have one environment, can I hard code it?
 Yes, you can but be aware this will affect not only your local, but anyone who pulls the code to run tests, as well as you CI/CD pipeline. You are better off configuring a test runner for each environment or passing it in on the command line. However if you need it, here's how:
 
 1. Open SentinelTests.java
@@ -160,7 +152,7 @@ urls:
 If you passed the **prod** environment using the above configuration, you would get `http://myurl.com`. If you passed the **stage** environment, it would load the default and replace the name resulting in `http://stage.myurl.com`.
 
 ### None of my elements can be found! What's going on?
-You need to ensure that you are telling the framework what page you are on. It keeps track of that by the `I am on the Page Name Page` steps. If you do not expect to be on a particular page, then the framework assumes you are still on the last page you started on, or no page if you have not told it you expect to be on your page. Defining page objects is an exercise that is helpful for us as people to be able to grasp a whole web site, but it means nothing to a computer. DEfine your page objects in such a way that people can understand the distinctions.
+You need to ensure that you are telling the framework what page you are on. It keeps track of that by the `I am on the Page Name Page` and `I am redirected to the Page Name Page` steps. If you do not expect to be on a particular page, then the framework assumes you are still on the last page you started on, or no page if you have not told it you expect to be on your page. Defining page objects is an exercise that is helpful for us as people to be able to grasp a whole web site, but it means nothing to a computer. DEfine your page objects in such a way that people can understand the distinctions.
 
 ### How do I set default username and password account info across environments?
 If you have the same test account across multiple environments, you can easily set them all at the same time. For example, your dev, qa and stage environments might share the same identification provider. Lets say there is a standard user and an admin user. You could set their values for all environments like so:
@@ -256,11 +248,11 @@ src/test/resources/scripts/UnitTests.sh
 
 ```
 
-## 5.0 Deployment
+## 3.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
 
-### 5.1 Building a Jar File
+### 3.1 Building a Jar File
 
 To build a file for release, open up the pom.xml and change the version number using [Semantic Versioning](http://semver.org/) to the next release number. Alternately an X.X.X-SNAPSHOT version can be created.
 
@@ -283,7 +275,7 @@ If you want to do this all in one step without generating a jar, just run:
 mvn install
 ```
 
-### 5.2 Deploy a Snapshot
+### 3.2 Deploy a Snapshot
 If you want to deploy a snapshot version for use by people, use:
 
 ```
@@ -307,7 +299,7 @@ As long as you are setup to deploy to Maven central (see Section 5.3 below), to 
   </repositories>
   ```
 
-### 5.3 Deploy to Maven Central
+### 3.3 Deploy to Maven Central
 [Instructions for Deploying to Maven Central](https://dzone.com/articles/publish-your-artifacts-to-maven-central)
 Here is an article on [encrypting the PGP password in settings.xml](http://maven.apache.org/guides/mini/guide-encryption.html). This [git project](https://github.com/tdf/odftoolkit) also shows an example of how to push to Maven Central.
 
@@ -327,15 +319,15 @@ mvn release:perform
 
 After deployment, follow the [Sonatype Instructions for releasing a deployment](https://central.sonatype.org/pages/releasing-the-deployment.html).
 
-#### 5.3.1 Install GPG Key
+#### 3.3.1 Install GPG Key
 To create a GPG Key, you need a tool. The following tool for Mac has a UI [https://gpgtools.org/](https://gpgtools.org/). When creating a key, you must use the Advanced Settings and follow the instructions above.
 
-## 6.0 Additional Documentation & Resources
+## 4.0 Additional Documentation & Resources
 
-### 6.1 Javadocs
+### 4.1 Javadocs
 Sentinel comes with Javadocs which describe its classes in great detail. This includes examples of how you can use the generic Cucumber steps that are already included. The [Sentinel Javadocs](https://dougnoel.github.io/sentinel/) are updated on github with every new version.
 
-#### 6.1.1 Generating Javadocs
+#### 4.1.1 Generating Javadocs
 The Javadocs can also be easily generated by running the following command.
 
 ```
@@ -353,20 +345,20 @@ git checkout -- docs/test/table.html
 
 Every method should have a Javadoc comment describing what it does, its parameters, what it returns (if not void), and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](https://github.com/liferay/liferay-portal/blob/master/readme/ADVANCED_JAVADOC_GUIDELINES.markdown) for writing Javadoc contents.
 
-#### 6.1.2 Publishing Javadocs to Github
+#### 4.1.2 Publishing Javadocs to Github
 1. Make sure you have updated the version in the pomfile if necessary (pom.xml)
-2. Copy the files from target/site/apidocs to docs/
+2. Copy the files from target/apidocs to docs/ (NOTE: The folder `docs/test` is used for unit testing and is not generated by Javadocs.)
 3. Commit the changes and merge them with master. The files will be pulled from the docs folder and published on [https://dougnoel.github.io/sentinel/](https://dougnoel.github.io/sentinel/)
 
 For more information, refer to [Configuring a publishing source for your GitHub Pages site](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
 Additional information can be found under [About GitHub Pages and Jekyll](https://help.github.com/en/github/working-with-github-pages/about-github-pages-and-jekyll) and the [GitHub Pages site](https://pages.github.com/).
 
-### 6.2 [Changelog](CHANGELOG.md)
+### 4.2 [Changelog](CHANGELOG.md)
 The changelog is generated using [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator).
 
 `github_changelog_generator -u dougnoel -p sentinel --token <token>`
 
-### 6.3 Built With
+### 4.3 Built With
 * [Cucumber](https://cucumber.io/) - BDD Testing Framework
 * [Cucumber Extent Reporter](https://grasshopper.tech/1697/) Interface between Cucumber Results and Extent Reports.
 * [Commons Lang](https://commons.apache.org/proper/commons-lang/) - Apache Commons Lang 3 for common Java language options
@@ -384,7 +376,7 @@ The changelog is generated using [github_changelog_generator](https://github.com
 * [Unirest](http://unirest.io/java.html) - A simple API library used for the API testing functionality.
 * [WebDriverManager](https://github.com/bonigarcia/webdrivermanager) 4.4.1 - Automatically detects browser versions and downloads the correct drivers.
 
-### 6.4 Web Drivers
+### 4.4 Web Drivers
 All web drivers are managed by [WebDriverManager](https://github.com/bonigarcia/webdrivermanager). Both the operating system and browser are automatically detected and the appropriate web driver is downloaded. Downloaded drivers are cached on individual boxes. The following browsers are supported:
 * Chrome ([Chromedriver](http://chromedriver.chromium.org/))
 * Edge ([Edgedriver](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/))
@@ -393,21 +385,21 @@ All web drivers are managed by [WebDriverManager](https://github.com/bonigarcia/
 * Opera ([OperaChromiumDriver](https://github.com/operasoftware/operachromiumdriver/releases))
 * Safari ([Safaridriver](https://webkit.org/blog/6900/webdriver-support-in-safari-10/))
 
-### 6.5 Saucelabs
+### 4.5 Saucelabs
 Sentinel is setup to use [Saucelabs](https://saucelabs.com/) for remote execution. This is the recommended way to execute test in your build pipeline, because you then do not need to setup an execution server.
 
-## 7.0 Versioning
+## 5.0 Versioning
 
 We use [Semantic Versioning](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/dougnoel/sentinel/tags). 
 
-## 8.0 Authors
+## 6.0 Authors
 
 * **Doug Noël** - *Architect* - Initial work.
 
-## 9.0 License
+## 7.0 License
 
 This project is licensed under the Apache Commons 2.0 License - see the [LICENSE.md](LICENSE.md) file for details
 
-## 10.0 Acknowledgments
+## 8.0 Acknowledgments
 
 * Some design choices inspired by [Cheezy's Page Object gem](https://github.com/cheezy/page-object).
