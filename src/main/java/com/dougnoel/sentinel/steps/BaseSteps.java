@@ -47,6 +47,25 @@ public class BaseSteps {
     public static void click(String elementName) {
         getElement(elementName).click();
     }
+    
+    /**
+     * Drags the current element on top of the target element.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I drag from source element on top of the target element</li>
+     * <li>I drag the source element on top of the target element</li>
+     * <li>I drag a source element on top of the target element</li>
+     * </ul>
+     * @param sourceElementName String the name of the source element to drag
+     * @param targetElementName String the name of the target element to drag
+     */
+    
+    @When("I drag (?:from|the|a) (.*) on top of the (.*)$")
+    public void dragAndDropToObject(String sourceElementName, String targetElementName) {
+    	getElement(sourceElementName).dragAndDrop(getElement(targetElementName));
+    	
+    }
 
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
