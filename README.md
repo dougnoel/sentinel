@@ -256,6 +256,18 @@ src/test/resources/scripts/UnitTests.sh
 
 ```
 
+### How to navigate to step definition file from feature file scenario step ###
+Press CTRL + Click on feature file scenario, This should navigate to associated step defintion, but if this does not work, the follow below steps: 
+1. On Eclipse go to Help
+2. Select Eclipse Marketplace
+3. Search for cucumber
+4. result should return Cucumber eclipse plugin and Natural plugin
+5. If none of them are installed then install only Cucumber eclipse plugin
+6. If both are installed then uninstall Natural plugin and keep Cucumber plugin installed
+7. After install the plugin, Right click on the Project --> Configure  --> Convert to Cucumber project
+8. Open any feature file: Right click on feature file and select cucumber editor
+9. Now CTRL + Click should navigate to step definition file. Enjoy coding :)
+
 ## 5.0 Deployment
 
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
