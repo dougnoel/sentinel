@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -66,6 +67,23 @@ public class BaseSteps {
     	getElement(sourceElementName).dragAndDrop(getElement(targetElementName));
     	
     }
+    
+    /**
+     * Drags the source element to the target element.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I drag and drop from source element to target element</li>
+     * <li>I drag and drop the source element to target element</li>    
+     * </ul>
+     * @param source String the name of the source element to drag
+     * @param target String the name of the target element to drag
+     */
+    
+    @When("I drag and drop (?:from|the|a) (.*) to (.*)$")
+    public static void dragAndDropToTargetElement(String source, String target) {      	
+    	PageElement.dragAndDropToTarget(getElement(source).toWebElement(), getElement(target).toWebElement());    
+    }  
 
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.

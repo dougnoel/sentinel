@@ -3,6 +3,11 @@ package com.dougnoel.sentinel.elements;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
@@ -277,6 +282,47 @@ public class PageElement {
 		new Actions(driver).dragAndDrop(this.toWebElement(), target.toWebElement()).build().perform();
 		return this;
 	}
+	
+	/**
+	 * Reads the file from a given path.
+	 * @param path
+	 * @return 
+	 */
+	
+	public static String readFile(String path, Charset encoding)
+	{ 
+
+		byte[] encoded = null;
+		try {
+			encoded = Files.readAllBytes(Paths.get(path));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return new String(encoded, encoding);
+	}
+	
+	/**
+	 * Executes the script via executeScript calling executeDrageAndDrop() function on a source element passing the target element as a dropTarget
+	 * @param source,target 
+	 * @return 
+	 */
+	
+	  public static void dragAndDropToTarget(WebElement source, WebElement target) {
+	        
+          
+	        String filePath = System.getProperty("user.dir")+"\\src\\main\\java\\DragDrop.js";
+	        System.out.println("js file path "+filePath);
+	        String script="";
+	        script = readFile(filePath, StandardCharsets.UTF_8);
+	        script = script + "executeDrageAndDrop(arguments[0], arguments[1])";
+	        JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
+
+	        executor.executeScript(script, source, target);
+	      
+	      
+	}
+	  
 
 	/**
 	 * Clear a PageElement. Clears text in a text box. Un-checks check boxes. Clears
