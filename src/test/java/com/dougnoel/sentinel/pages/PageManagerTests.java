@@ -1,7 +1,5 @@
 package com.dougnoel.sentinel.pages;
 
-import java.util.Iterator;
-import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,28 +23,7 @@ public class PageManagerTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		
-		try {
-	        Set<String> windows = driver.getWindowHandles();
-	        Iterator<String> iter = windows.iterator();
-	        String[] winNames = new String[windows.size()];
-	        int i = 0;
-	        while (iter.hasNext()) {
-	            winNames[i] = iter.next();
-	            i++;
-	        }
-	        if(winNames.length > 1) {
-	            for(i = winNames.length; i > 1; i--) {
-	                driver.switchTo().window(winNames[i - 1]);
-	                driver.close();
-	            }
-	        }
-	        driver.switchTo().window(winNames[0]);
-	        driver.close();
-	    }
-	    catch(Exception e){         
-	        e.printStackTrace();
-	    }
+		driver.quit();
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.NoSuchWindowException.class)

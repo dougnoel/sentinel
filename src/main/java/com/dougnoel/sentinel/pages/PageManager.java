@@ -189,20 +189,19 @@ public class PageManager {
 		String newHandle = null;
 		parentHandle = driver().getWindowHandle();
 		Set<String> handles = driver().getWindowHandles();
+		if (handles.size() == 1) {
+			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
+			log.error(errorMessage);
+			throw new NoSuchWindowException(errorMessage);
+		}
 		if (parentHandle == null) {
 			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
-		if (handles.size() == 1) {
-			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
-			log.error(errorMessage);
-			throw new NoSuchWindowException(errorMessage);
-		} else {
-			for (String handle : handles) {
-				if (!handle.equals(parentHandle)) {
-					newHandle = handle;
-				}
+		for (String handle : handles) {
+			if (!handle.equals(parentHandle)) {
+				newHandle = handle;
 			}
 		}
 		switchToNewWindow(newHandle);
