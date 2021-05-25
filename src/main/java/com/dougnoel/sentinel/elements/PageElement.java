@@ -284,6 +284,17 @@ public class PageElement {
 	}
 	
 	/**
+	 * Drags the current element on top of the target element via executing the drag and drop helper.js file
+	 * @param target PageElement the element the target is being dragged and dropped onto 
+	 * @return PageElement (for chaining)
+	 */
+	
+	public PageElement dragAndDropToTarget(PageElement target) {
+		dragAndDropToTarget(this.toWebElement(), target.toWebElement());
+		return this;
+	}
+	
+	/**
 	 * Reads the file from a given path.
 	 * @param path
 	 * @return 
@@ -303,26 +314,23 @@ public class PageElement {
 	}
 	
 	/**
-	 * Executes the script via executeScript calling executeDrageAndDrop() function on a source element passing the target element as a dropTarget
+	 * Executes the script byt calling executeDrageAndDrop() function on a source element passing the target element as a dropTarget
 	 * @param source,target 
-	 * @return 
+	 * @return PageElement (for chaining)
 	 */
 	
-	  public static void dragAndDropToTarget(WebElement source, WebElement target) {
-	        
+	  public PageElement dragAndDropToTarget(WebElement source, WebElement target) {		  
           
-	        String filePath = System.getProperty("user.dir")+"\\src\\main\\java\\DragDrop.js";
-	        System.out.println("js file path "+filePath);
-	        String script="";
-	        script = readFile(filePath, StandardCharsets.UTF_8);
-	        script = script + "executeDrageAndDrop(arguments[0], arguments[1])";
-	        JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
+	      String filePath = System.getProperty("user.dir")+"\\src\\main\\resources\\DragDrop.js";
+	      System.out.println("js file path "+filePath);
+	      String script="";
+	      script = readFile(filePath, StandardCharsets.UTF_8);
+	      script = script + "executeDrageAndDrop(arguments[0], arguments[1])";
+	      JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
 
-	        executor.executeScript(script, source, target);
-	      
-	      
-	}
-	  
+	      executor.executeScript(script, source, target);
+	      return this;	      
+	}	  
 
 	/**
 	 * Clear a PageElement. Clears text in a text box. Un-checks check boxes. Clears

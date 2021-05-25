@@ -9,7 +9,6 @@ Feature: 201 Heroku App Drag and Drop
   @201A  
   Scenario: 201A Successfully Dragged A to B
   	Given I am on the Internet Herokuapp Page
-  	When I click a drag and drop link  
-  	And I wait 2 seconds	 
+  	When I click a drag and drop link    	
   	Then I am redirected to the Drag And Drop Page
   	When I drag and drop from source element to target element

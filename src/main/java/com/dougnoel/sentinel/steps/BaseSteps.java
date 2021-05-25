@@ -79,11 +79,11 @@ public class BaseSteps {
      * @param source String the name of the source element to drag
      * @param target String the name of the target element to drag
      */
-    
+        
     @When("I drag and drop (?:from|the|a) (.*) to (.*)$")
     public static void dragAndDropToTargetElement(String source, String target) {      	
-    	PageElement.dragAndDropToTarget(getElement(source).toWebElement(), getElement(target).toWebElement());    
-    }  
+    	getElement(source).dragAndDropToTarget(getElement(target));
+    } 
 
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
