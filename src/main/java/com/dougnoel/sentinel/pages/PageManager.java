@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.pages;
 
+import java.util.ArrayList;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -169,7 +170,7 @@ public class PageManager {
      * 
      * @return String
      */
-    public String getPageTitle() {
+    public static String getPageTitle() {
         return driver().getTitle();
     }
     
@@ -186,20 +187,22 @@ public class PageManager {
 	 */
 	public static String switchToNewWindow() {
 		String newHandle = null;
+		parentHandle = driver().getWindowHandle();
 		Set<String> handles = driver().getWindowHandles();
-		if (handles.size() == 1) {
-			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
-			log.error(errorMessage);
-			throw new NoSuchWindowException(errorMessage);
-		}
 		if (parentHandle == null) {
 			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
-		for (String handle : handles) {
-			if (!handle.equals(parentHandle)) {
-				newHandle = handle;
+		if (handles.size() == 1) {
+			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
+			log.error(errorMessage);
+			throw new NoSuchWindowException(errorMessage);
+		} else {
+			for (String handle : handles) {
+				if (!handle.equals(parentHandle)) {
+					newHandle = handle;
+				}
 			}
 		}
 		switchToNewWindow(newHandle);
