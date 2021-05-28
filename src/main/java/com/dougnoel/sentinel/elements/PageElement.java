@@ -199,6 +199,16 @@ public class PageElement {
 
 		return this;
 	}
+	
+	/**
+	 * Moves the mouse to the middle of the element.	
+	 * @return PageElement (for chaining)
+	 */
+	
+	public PageElement mouseOver() {
+		new Actions(driver).moveToElement(this.toWebElement()).build().perform();
+		return this;		
+	}
 
 	/**
 	 * Press keys with focus on a PageElement. This is useful when type() or

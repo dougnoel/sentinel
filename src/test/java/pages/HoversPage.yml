@@ -1,0 +1,14 @@
+urls:
+   default: http://the-internet.herokuapp.com/hovers
+   demo: http://localhost:3001
+hovers_link:
+    elementType: Link
+    text: "Hovers"
+user_div:
+    xpath: "(//img[@alt='User Avatar'])[1]"
+user2:
+    elementType: Div
+    xpath: "(//img[@alt='User Avatar'])[2]"
+user3:
+    elementType: Div
+    xpath: "(//img[@alt='User Avatar'])[3]"

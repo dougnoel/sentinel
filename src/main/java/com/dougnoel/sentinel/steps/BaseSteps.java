@@ -3,9 +3,15 @@ package com.dougnoel.sentinel.steps;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
+
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -46,7 +52,36 @@ public class BaseSteps {
     @When("^I click (?:the|a|an) (.*?)$")
     public static void click(String elementName) {
         getElement(elementName).click();
-    }
+    }    
+
+    /**
+     * Moves the mouse to the middle of the element
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>When I mouse over element</li>
+     * </ul> 
+     * @param elementName String the target element to move to
+     */
+    
+    @When("I mouse over (.*)$") 
+    public void mouseoveronTarget(String elementName) {    
+    	log.debug("Element name: '{}'", elementName);
+    	PageElement temp = getElement(elementName);
+    	temp.mouseOver();
+    }   
+    
+    @When("I hover on Target")
+    public void hover() {     	
+    	WebDriverFactory.instantiateWebDriver();    	
+    	WebDriver driver = WebDriverFactory.getWebDriver();    	
+    	driver.get("http://the-internet.herokuapp.com/hovers");    	
+    	System.out.println(driver);    
+    	
+		new Actions(driver).moveToElement(driver.findElement(By.xpath("(//img[@alt='User Avatar'])[1]")))
+		.build()
+		.perform();  		
+    }    
 
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
