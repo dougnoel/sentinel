@@ -1,11 +1,8 @@
 package tests;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -28,11 +25,6 @@ import io.cucumber.junit.Cucumber;
 
 public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
-    
-    @BeforeClass
-    public static void setUpBeforeClass() throws IOException, SentinelException {
-        WebDriverFactory.instantiateWebDriver();
-    }
 
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
