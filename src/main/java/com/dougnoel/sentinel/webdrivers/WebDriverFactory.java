@@ -85,6 +85,7 @@ public class WebDriverFactory {
         var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
         	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement.
+        	System.out.println("test");
         	return driver;
         }
 
