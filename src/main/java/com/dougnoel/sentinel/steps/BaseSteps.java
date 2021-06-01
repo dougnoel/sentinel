@@ -64,24 +64,11 @@ public class BaseSteps {
      * @param elementName String the target element to move to
      */
     
-    @When("I mouse over (.*)$") 
+     @When("^I mouse over (.*?)$") 
     public void mouseoveronTarget(String elementName) {    
     	log.debug("Element name: '{}'", elementName);
-    	PageElement temp = getElement(elementName);
-    	temp.mouseOver();
-    }   
-    
-    @When("I hover on Target")
-    public void hover() {     	
-    	WebDriverFactory.instantiateWebDriver();    	
-    	WebDriver driver = WebDriverFactory.getWebDriver();    	
-    	driver.get("http://the-internet.herokuapp.com/hovers");    	
-    	System.out.println(driver);    
-    	
-		new Actions(driver).moveToElement(driver.findElement(By.xpath("(//img[@alt='User Avatar'])[1]")))
-		.build()
-		.perform();  		
-    }    
+    	getElement(elementName).mouseOver();
+    }       
 
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
