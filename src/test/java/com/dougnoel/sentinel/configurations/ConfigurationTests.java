@@ -119,14 +119,14 @@ public class ConfigurationTests {
 	public void iePassedAsBrowser() throws SentinelException {
 		Configuration.update("browser", "ie");
 		assertEquals("Expecting ie to be converted to internetexplorer.", "internetexplorer", Configuration.browser());
-		Configuration.clear("browser");
+		Configuration.update("browser", null);
 	}
 
 	@Test
 	public void windowsPassedAsOS() throws SentinelException {
 		Configuration.update("os", WINDOWS);
 		assertEquals("Expecting os to be set to windows.", WINDOWS, Configuration.operatingSystem());
-		Configuration.clear("os");
+		Configuration.update("os", null);
 	}
 	
 	@Test

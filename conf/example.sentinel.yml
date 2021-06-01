@@ -12,7 +12,7 @@ configurations:
     os: "Windows 10"
     browser: "chrome"
     browserVersion: "latest"
-    chromeBrowserBinary: "my/path/here/executableName.exe"
+    driver: "src/main/resources/drivers/mac/chromedriver"
     saucelabsUserName: "username"
     saucelabsAccessKey: "apikey"
     parent-tunnel: "tunnelname"

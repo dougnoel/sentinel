@@ -25,7 +25,6 @@ public class ConfigurationDevTests {
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(DEV);
-		System.setProperty("download", "downloads");
 		driver = WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("MockTestPage");
 	}
