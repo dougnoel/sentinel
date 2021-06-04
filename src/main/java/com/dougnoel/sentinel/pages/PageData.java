@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -91,8 +92,14 @@ public class PageData {
      * @return Map&lt;String, String&gt; the locators for an element
      */
     public Map<String,String> getElement(String elementName) {
-    	if (elements.containsKey(elementName)) {
-    		return elements.get(elementName);
+    	String pageName = PageManager.getPage().getName();
+    	if(elements!=null && !elements.isEmpty()) {
+    		if (elements.containsKey(elementName)) {
+        		return elements.get(elementName);
+        	}
+    	} else {
+    		var errorMessage = SentinelStringUtils.format("There is no elements section defined in the page object {}. Please make sure that elements defined are under an \"elements:\" section. Refer to the Readme for more information.", pageName);
+			throw new ConfigurationParseException(errorMessage);
     	}
     	return null;
     }
