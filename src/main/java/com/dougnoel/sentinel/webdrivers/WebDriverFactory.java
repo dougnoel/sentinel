@@ -53,28 +53,29 @@ public class WebDriverFactory {
         	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
         	return driver;
         }
-
-        String browser = Configuration.browser();
+        
+        var browser = Configuration.browser();
+        
+        //Grid Driver setup
+        var gridUrl = Configuration.toString("gridUrl");
+        if (gridUrl != null) {
+        	driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+        	return driver;
+        }
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	var chromeOptions = new ChromeOptions();
-        	setChromeDownloadDirectory(chromeOptions);
-        	var headless = Configuration.toString("headless");
-        	if (headless != null && !headless.equalsIgnoreCase("false")) {
-        		chromeOptions.addArguments("--no-sandbox");
-        		chromeOptions.addArguments("--disable-dev-shm-usage");
-        		chromeOptions.addArguments("--headless");        		
-        	}
-        	WebDriverManager.chromedriver().setup();
-        	driver = new ChromeDriver(chromeOptions);
+        	driver = createChromeDriver();
             break;
         case "edge":
         	WebDriverManager.edgedriver().setup();
         	driver = new EdgeDriver();
         	break;
+        case "customChrome":
+        	driver = createCustomChromeDriver();
+            break;
         case "firefox":
     		WebDriverManager.firefoxdriver().setup();
     		driver = new FirefoxDriver();
@@ -116,7 +117,6 @@ public class WebDriverFactory {
      * @param options ChromeOptions object to set
      */
     private static void setChromeDownloadDirectory(ChromeOptions options) {
-        // Set a Download Directory if one was specified on the command line
         var downloadDirectory = Configuration.toString("download");
         if (downloadDirectory != null)
             DownloadManager.setDownloadDirectory(downloadDirectory);
@@ -126,6 +126,34 @@ public class WebDriverFactory {
         HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
         options.setExperimentalOption("prefs", chromePrefs);
+    }
+    
+    /**
+     * Creates a ChromeDriver. Makes it headless if the -Dheadless flag is set.
+     * @return WebDriver ChromeDrvier
+     */
+    private static WebDriver createChromeDriver() {
+    	var chromeOptions = new ChromeOptions();
+    	setChromeDownloadDirectory(chromeOptions);
+    	var headless = Configuration.toString("headless");
+    	if (headless != null && !headless.equalsIgnoreCase("false")) {
+    		chromeOptions.addArguments("--no-sandbox");
+    		chromeOptions.addArguments("--disable-dev-shm-usage");
+    		chromeOptions.addArguments("--headless");        		
+    	}
+    	WebDriverManager.chromedriver().setup();
+    	return new ChromeDriver(chromeOptions);
+    }
+    
+    /**
+     * Creates a ChromeDriver using a custom Chrome executable. The path for that executable must be set using the -DchromeBrowserBinary configuration option.
+     * @return WebDriver ChromeDrvier
+     */
+    private static WebDriver createCustomChromeDriver() {
+    	var chromeOptions = new ChromeOptions();
+    	chromeOptions.setBinary(Configuration.toString("chromeBrowserBinary"));
+    	WebDriverManager.chromedriver().setup();
+    	return new ChromeDriver(chromeOptions);
     }
 
 }
