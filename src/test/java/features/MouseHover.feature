@@ -7,11 +7,13 @@ Feature: Heroku App Mouse Hover
   And Mouse Hover on User1, Uesr2,User3
 
   @197A
-  Scenario: Successfully was able to Mouse Over on User1, User2, User3
+  Scenario: Successfully was able to Mouse Over on User1
     Given I am on the Internet Herokuapp Page
      When I click the hovers link   
      Then I am redirected to the Hovers Page
      When I mouse over User Div
+     Then I wait 3 seconds
+      And I verify the tooltip contains the text "name: user1"
      
     
  
