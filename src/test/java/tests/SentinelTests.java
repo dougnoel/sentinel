@@ -3,6 +3,7 @@ package tests;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -20,12 +21,17 @@ import io.cucumber.junit.Cucumber;
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 	, strict = true
-//  , tags = { "@text" }
+//  , tags = { "@216" }
 )
 
 public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
 
+	@BeforeClass
+	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
+		WebDriverFactory.instantiateWebDriver();
+	}
+	
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
         String totalWaitTime = Configuration.toString("totalWaitTime");

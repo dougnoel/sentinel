@@ -77,7 +77,7 @@ public class VerificationSteps {
      * @param elementName String Element to check
      * @param assertion String "" or " not" for true or false
      */
-    @Then("^I verify the (.*) is( not)? (?:checked|selected)$")
+    @Then("^I verify(?: the)? (.*) is (not |un)?(?:checked|selected)$")
     public static void verifyElementIsSelected(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {} selected.",

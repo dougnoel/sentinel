@@ -25,6 +25,7 @@ import io.cucumber.java.en.When;
  * browser interaction.
  */
 public class BaseSteps {
+
 	private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
 
 	@Before
@@ -203,6 +204,5 @@ public class BaseSteps {
 			PageManager.refresh();
 			break;
 		}
-	}
-
+	}   
 }
