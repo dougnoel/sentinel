@@ -1,7 +1,7 @@
 #Author: Doug Noël
 @example @dropdown
 Feature: Dropdown Tests
-  Testing the Table Page Object Functionality
+  Testing the Dropdown Object Functionality
 	
   @22
   Scenario: 22 Prime NG Dropdown
