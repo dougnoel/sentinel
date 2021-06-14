@@ -1,6 +1,5 @@
 urls:
-   default: http://the-internet.herokuapp.com/hovers
-   demo: http://localhost:3001
+   default: http://the-internet.herokuapp.com/hovers  
 elements: 
   user_div:
    xpath: "(//img[@alt='User Avatar'])[1]"  

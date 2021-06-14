@@ -208,4 +208,5 @@ public class TextVerificationSteps {
 			assertTrue(expectedResult, selectedText.contains(textToMatch));
 		}
 	}
+
 }
