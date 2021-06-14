@@ -31,6 +31,7 @@ public class SentinelTests {
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
 		WebDriverFactory.instantiateWebDriver();
 	}
+	
     @AfterClass
     public static void tearDownAfterClass() throws SentinelException {
         String totalWaitTime = Configuration.toString("totalWaitTime");
