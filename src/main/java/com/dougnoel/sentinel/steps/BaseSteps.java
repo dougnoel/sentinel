@@ -43,7 +43,7 @@ public class BaseSteps {
      * 
      * @param elementName String the name of the element to click
      */
-    @When("^I click (?:the|a|an) (.*?)$")
+    @When("^I click (?:the|a|an|on) (.*?)$")
     public static void click(String elementName) {
         getElement(elementName).click();
     }
