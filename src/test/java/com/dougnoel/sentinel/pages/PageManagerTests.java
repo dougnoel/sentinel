@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.pages;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
@@ -17,8 +18,6 @@ public class PageManagerTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		driver = WebDriverFactory.instantiateWebDriver();
-		pageElement = PageManager.setPage("SampleTestPage");
-        baseUrl = Configuration.url();
 	}
 
 	@AfterClass
@@ -33,15 +32,27 @@ public class PageManagerTests {
 	
 	@Test
 	public void getWindowHandleInNewWindow() {
+		pageElement = PageManager.setPage("HomePage");
+		baseUrl = Configuration.url();
 		PageManager.openPage(baseUrl);
 		pageElement.getElement("open_new_window").click();
 		PageManager.switchToNewWindow();
+		pageElement = PageManager.setPage("OpenNewWindowPage");
+		String expectedVal = "A New Popup Window";
+		String actualVal = pageElement.getElement("header_text1").getText();
+		Assert.assertTrue(actualVal.equals(expectedVal));
 	}
 	
 	@Test
 	public void getWindowHandleInNewTab() {
+		pageElement = PageManager.setPage("HomePage");
+		baseUrl = Configuration.url();
 		PageManager.openPage(baseUrl);
 		pageElement.getElement("open_new_tab").click();
 		PageManager.switchToNewWindow();
+		pageElement = PageManager.setPage("OpenNewTabPage");
+		String expectedVal = "Window Opened in a New Tab";
+		String actualVal = pageElement.getElement("header_text2").getText();
+		Assert.assertTrue(actualVal.equals(expectedVal));
 	}
 }
