@@ -3,11 +3,13 @@ package com.dougnoel.sentinel.pages;
 import java.io.IOException;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class PageDataTests {
@@ -27,21 +29,18 @@ public class PageDataTests {
 	@Test
 	public void validateElementsExistsInYml() {
 		PageManager.setPage("PageObjStructure1");
-		String pageName = PageManager.getPage().getName();
-		Configuration.getElement("user_div", pageName);
+		Assert.assertFalse(Configuration.getElement("male_radio_button", PageManager.getPage().getName()).isEmpty());		
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
 	public void validateElementsDoesntExistsInYml() {
 		PageManager.setPage("PageObjStructure2");
-		String pageName = PageManager.getPage().getName();
-		Configuration.getElement("user_div", pageName);
+		Configuration.getElement("male_radio_button", PageManager.getPage().getName());
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
 	public void validateElementsEmptyInYml() throws IOException {
 		PageManager.setPage("PageObjStructure3");
-		String pageName = PageManager.getPage().getName();
-		Configuration.getElement("user_div", pageName);
+		Configuration.getElement("male_radio_button", PageManager.getPage().getName());
 	}
 }
