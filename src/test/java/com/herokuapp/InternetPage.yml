@@ -4,3 +4,6 @@ elements:
   form_authentication_link:
     elementType: Link
     text: "Form Authentication"
+  checkboxes_link:
+    elementType: Link
+    text: Checkboxes
