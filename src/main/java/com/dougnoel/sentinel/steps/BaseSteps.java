@@ -1,8 +1,10 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -171,5 +173,21 @@ public class BaseSteps {
             break;
         }
     }
+    
+    /**
+	 * Moves the mouse to the middle of the element
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>When I mouse over element</li>
+	 * </ul>
+	 * 
+	 * @param elementName String the target element to move to
+	 */
+	@When("^I mouse over (.*?)$")
+	public void mouseoveronTarget(String elementName) {
+		log.debug("Element name: '{}'", elementName);
+		getElement(elementName).mouseOverText();			
+	}	
     
 }

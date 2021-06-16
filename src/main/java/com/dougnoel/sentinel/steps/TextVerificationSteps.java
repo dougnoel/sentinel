@@ -68,10 +68,12 @@ public class TextVerificationSteps {
      * @param matchType String whether we are doing an exact match or a partial match
      * @param text String The text to verify exists in the element.
      */
-    @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) {
+    @Then("^I verify the (.*?)( tooltip)?( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
+    public static void verifyElementTextContains(String elementName, String assertion, String tooltip, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
+        boolean hasTooltip = !StringUtils.isEmpty(tooltip);
         String negateText = negate ? "not " : "";
+        String hasTooltipText = hasTooltip ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
         String partialMatchText = partialMatch ? "contain" : "exactly match";
         
@@ -81,17 +83,17 @@ public class TextVerificationSteps {
             String elementText = getElement(elementName).getText();
             var expectedResult = SentinelStringUtils.format(
                     "Expected the {} element to {}{} the text {}. The element contained the text: {}",
-                    elementName, negateText, partialMatchText, text, elementText
+                    elementName, negateText, hasTooltipText, partialMatchText, text, elementText
                             .replace("\n", " "));
             log.trace(expectedResult);
             if (partialMatch) {
-                if (negate) {
+                if (negate && hasTooltip) {
                     assertFalse(expectedResult, elementText.contains(text));
                 } else {
                     assertTrue(expectedResult, elementText.contains(text));
                 }
             } else {
-                if (negate) {
+                if (negate && hasTooltip) {
                     assertFalse(expectedResult, StringUtils.equals(elementText, text));
                 } else {
                     assertTrue(expectedResult, StringUtils.equals(elementText, text));
