@@ -1,7 +1,0 @@
-urls:
-   default: http://the-internet.herokuapp.com/hovers  
-elements: 
-  user_profile:
-   xpath: "(//img[@alt='User Avatar'])[1]"  
-  tooltip:
-   xpath: "//div[@class='figcaption']/h5"   
