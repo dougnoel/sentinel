@@ -488,9 +488,10 @@ public class PageElement {
 	 * 
 	 * @return The value of the text
 	 */
-	public String mouseOverText() {
-		String value = mouseOver(this).getText();		
-		return value;
+	public String getMouseOverText() {
+		 mouseOver(this);
+		 String value = driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();		 
+			 return value;				
 	}	
 	
 }
