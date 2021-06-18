@@ -491,8 +491,7 @@ public class PageElement {
 	 */
 	public String getMouseOverText() {
 		 mouseOver(this);
-		 String value = driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();		 
-			 return value;				
+		 return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}	
 	
 }
