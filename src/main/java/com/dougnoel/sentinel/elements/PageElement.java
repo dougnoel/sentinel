@@ -476,6 +476,7 @@ public class PageElement {
 	/**
 	 * Moves the mouse to the middle of the element.
 	 * 
+	 * @param target String the element we are moving the mouse over
 	 * @return PageElement (for chaining)
 	 */
 	public PageElement mouseOver(PageElement target) {
@@ -486,7 +487,7 @@ public class PageElement {
 	/**
 	 * This method is used to get the text on mouse hover
 	 * 
-	 * @return The value of the text
+	 * @return The value of the tooltip text
 	 */
 	public String getMouseOverText() {
 		 mouseOver(this);
