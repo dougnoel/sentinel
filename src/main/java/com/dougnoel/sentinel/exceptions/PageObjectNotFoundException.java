@@ -3,7 +3,7 @@ package com.dougnoel.sentinel.exceptions;
 public class PageObjectNotFoundException extends PageNotFoundException {
 
     /**
-     * 
+     * If a page object yaml file cannot be found this exception is thrown.
      */
     private static final long serialVersionUID = 7430222770522100336L;
 
