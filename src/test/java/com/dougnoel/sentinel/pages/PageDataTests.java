@@ -1,5 +1,7 @@
 package com.dougnoel.sentinel.pages;
 
+import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+
 import java.io.IOException;
 
 import org.junit.AfterClass;
@@ -9,11 +11,11 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class PageDataTests {
 
+	private final static String ELEMENT_NAME = "male_radio_button";
 	private static WebDriver driver;
 
 	@BeforeClass
@@ -27,20 +29,33 @@ public class PageDataTests {
 	}
 	
 	@Test
-	public void validateElementsExistsInYml() {
-		PageManager.setPage("PageObjStructure1");
-		Assert.assertFalse(Configuration.getElement("male_radio_button", PageManager.getPage().getName()).isEmpty());		
+	public void validateElementExistsInYaml() {
+		PageManager.setPage("CorrectPageObject");
+		Assert.assertNotNull("Expected page element to contain data.", Configuration.getElement(ELEMENT_NAME, "CorrectPageObject"));
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
-	public void validateElementsDoesntExistsInYml() {
-		PageManager.setPage("PageObjStructure2");
-		Configuration.getElement("male_radio_button", PageManager.getPage().getName());
+	public void validateElementDoesNotExistsInYaml() {
+		PageManager.setPage("IncorrectLocatorOffsetPageObject");
+		getElement(ELEMENT_NAME);
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
-	public void validateElementsEmptyInYml() throws IOException {
-		PageManager.setPage("PageObjStructure3");
-		Configuration.getElement("male_radio_button", PageManager.getPage().getName());
+	public void validateElementIsEmptyInYaml() throws IOException {
+		PageManager.setPage("IncorrectElementOffsetPageObject");
+		getElement(ELEMENT_NAME);
 	}
+	
+	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
+	public void validateSectionMissingInYaml() throws IOException {
+		PageManager.setPage("MissingElementsSectionPageObject");
+		getElement(ELEMENT_NAME);
+	}
+
+	@Test
+	public void validateIncludeIsBlank() {
+		PageManager.setPage("PageWithBlankInclude");
+		Assert.assertNotNull("Expected text to be male when the include list is empty.", Configuration.getElement(ELEMENT_NAME, "PageWithBlankInclude"));
+	}
+	
 }
