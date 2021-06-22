@@ -7,3 +7,9 @@ elements:
   checkboxes_link:
     elementType: Link
     text: Checkboxes
+  drag_and_drop_link:
+    elementType: Link
+    text: "Drag and Drop"   
+  hovers_link:
+    elementType: Link
+    text: "Hovers" 

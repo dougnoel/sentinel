@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.5-SNAPSHOT</version>
+  <version>1.0.6-SNAPSHOT</version>
   <name>sentinel</name>
   <url>https://github.com/dougnoel/sentinel</url>
 
@@ -92,7 +92,7 @@
     <log4j2.version>2.12.1</log4j2.version>
     <lombok.version>1.18.8</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
-    <pdfbox.version>2.0.16</pdfbox.version>
+    <pdfbox.version>2.0.24</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
     <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.0.14</swagger-parser.version>
