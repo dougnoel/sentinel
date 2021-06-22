@@ -367,7 +367,7 @@ Additional information can be found under [About GitHub Pages and Jekyll](https:
 ### 4.2 [Changelog](CHANGELOG.md)
 The changelog is generated using [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator).
 
-`github_changelog_generator -u dougnoel -p sentinel --token <token>`
+`github_changelog_generator -u dougnoel -p sentinel --token`
 
 ### 4.3 Built With
 * [Cucumber](https://cucumber.io/) - BDD Testing Framework

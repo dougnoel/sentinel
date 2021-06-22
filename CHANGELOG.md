@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Add unit tests for checkboxes [\#216](https://github.com/dougnoel/sentinel/issues/216)
 - Create a Selenium Grid Driver [\#209](https://github.com/dougnoel/sentinel/issues/209)
 - Implement Edge browser driver [\#206](https://github.com/dougnoel/sentinel/issues/206)
 - Add a total wait time warning. [\#198](https://github.com/dougnoel/sentinel/issues/198)
@@ -16,8 +17,18 @@
 
 - Cucumber Wait step is throwing a Null Pointer Exception [\#204](https://github.com/dougnoel/sentinel/issues/204)
 
+**Closed issues:**
+
+- README is very outdated [\#221](https://github.com/dougnoel/sentinel/issues/221)
+
 **Merged pull requests:**
 
+- Bump httpclient from 4.5.10 to 4.5.13 [\#238](https://github.com/dougnoel/sentinel/pull/238) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Updated jacoco version to latest. [\#237](https://github.com/dougnoel/sentinel/pull/237) ([dougnoel](https://github.com/dougnoel))
+- 197 add an on hover test step1 [\#235](https://github.com/dougnoel/sentinel/pull/235) ([dougnoel](https://github.com/dougnoel))
+- added instructions to navigate from scenario to step def [\#229](https://github.com/dougnoel/sentinel/pull/229) ([mdsapon](https://github.com/mdsapon))
+- Updated README.md, CHANGELOG.md and Javadocs. [\#226](https://github.com/dougnoel/sentinel/pull/226) ([dougnoel](https://github.com/dougnoel))
+- Added Checkbox unit tests and modified language in cucumber steps. [\#217](https://github.com/dougnoel/sentinel/pull/217) ([dougnoel](https://github.com/dougnoel))
 - 193 implement webdrivermanager [\#215](https://github.com/dougnoel/sentinel/pull/215) ([dougnoel](https://github.com/dougnoel))
 - Added script to support selenium grid [\#212](https://github.com/dougnoel/sentinel/pull/212) ([mdsapon](https://github.com/mdsapon))
 - 204 cucumber wait [\#208](https://github.com/dougnoel/sentinel/pull/208) ([dougnoel](https://github.com/dougnoel))

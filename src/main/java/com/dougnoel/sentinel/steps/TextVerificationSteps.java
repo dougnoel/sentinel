@@ -183,5 +183,34 @@ public class TextVerificationSteps {
         } else {
             assertTrue(expectedResult, selectedText.contains(textToMatch));
         }
-    }
+    } 
+    
+   /**
+    * Used to verify that on mouse over an element contains certain text. 
+    * <b>Gherkin Examples:</b>
+    * <ul>
+    * <li>I verify the mouse over has the value "Username"</li>
+    * <li>I verify the mouse over does not have the value "VA"</li>
+    * <li>I verify the mouse over have the value "name: user1"</li> 
+    * </ul> 
+    * @param elementName String The name of the element to be evaluated as defined in the page object.
+    * @param assertion String Evaluated as a boolean, where null = false and any text = true. 
+    * @param textToMatch String The text to verify exists in the element.
+    */
+    
+    @Then("^I verify the (.*?)( does not)? (?:has|have) the value \"([^\"]*)\"$")
+	public static void toolTipText(String elementName, String assertion, String textToMatch) {		
+		String value = getElement(elementName).getMouseOverText();
+		boolean negate = !StringUtils.isEmpty(assertion);	
+		var expectedResult = SentinelStringUtils.format(
+                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
+                elementName, (negate ? "not " : ""), textToMatch, value.replace("\n", " "));
+		log.trace(expectedResult);
+		if (negate) {
+			assertFalse(expectedResult, value.contains(textToMatch));
+		} else {
+			assertTrue(expectedResult, value.contains(textToMatch));
+		}		
+	}
+    
 }

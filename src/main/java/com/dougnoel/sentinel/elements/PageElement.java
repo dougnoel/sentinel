@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -471,5 +472,26 @@ public class PageElement {
 
 		return false;
 	}
+	
+	/**
+	 * Moves the mouse to the middle of the element.
+	 * 
+	 * @param target String the element we are moving the mouse over
+	 * @return PageElement (for chaining)
+	 */
+	public PageElement mouseOver(PageElement target) {
+		new Actions(driver).moveToElement(target.toWebElement()).build().perform();
+		return this;
+	}
 
+	/**
+	 * This method is used to get the text on mouse hover
+	 * 
+	 * @return The value of the tooltip text
+	 */
+	public String getMouseOverText() {
+		 mouseOver(this);
+		 return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
+	}	
+	
 }
