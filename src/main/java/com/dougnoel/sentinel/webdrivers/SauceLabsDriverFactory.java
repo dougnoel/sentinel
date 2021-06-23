@@ -10,6 +10,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
+/**
+ * @author dougnoel
+ *
+ * Creates drivers for saucelabs.
+ */
 public class SauceLabsDriverFactory {
 
 	private SauceLabsDriverFactory() {
