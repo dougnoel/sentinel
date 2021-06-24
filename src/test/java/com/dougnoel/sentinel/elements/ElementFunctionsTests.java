@@ -154,4 +154,5 @@ public class ElementFunctionsTests {
 		ElementFunctions.getElement("bad_element").click();
 		
 	}
+	
 }
