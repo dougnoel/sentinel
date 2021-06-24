@@ -2,8 +2,8 @@ urls:
    default: https://www.encodedna.com/javascript/demo/open-new-window-using-javascript-method.htm
 elements:
   open_new_window:
-    elementType: Input
+    elementType: Button
     xpath: "//input[@onclick='newWindow()']"
   open_new_tab:
-    elementType: Input
+    elementType: Button
     xpath: "//input[@onclick='newTab()']"
