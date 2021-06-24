@@ -1,0 +1,11 @@
+urls:
+   default: http://the-internet.herokuapp.com/drag_and_drop
+elements:
+  box_a:
+    id: column-a 
+  box_b:
+    id: column-b
+  column_b_div:
+    xpath: "//div[@id='column-b']/header"
+    
+ 

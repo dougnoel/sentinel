@@ -30,3 +30,4 @@ function executeDrageAndDrop(element, target) {
     var dragEndEvent = customEvent('dragend');
     dispatchEvent(element, dragEndEvent, dropEvent.dataTransfer);
 }
+executeDrageAndDrop(arguments[0], arguments[1])

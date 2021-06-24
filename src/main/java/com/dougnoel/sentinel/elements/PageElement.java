@@ -4,10 +4,6 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
@@ -32,6 +28,7 @@ import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -273,65 +270,6 @@ public class PageElement {
 		}
 		return this;
 	}
-	
-	/**
-	 * Drags the current element on top of the target element.
-	 * @param target PageElement the element the target is being dragged and dropped onto 
-	 * @return PageElement (for chaining)
-	 */
-	public PageElement dragAndDrop(PageElement target) {
-		new Actions(driver).dragAndDrop(this.toWebElement(), target.toWebElement()).build().perform();
-		return this;
-	}
-	
-	/**
-	 * Drags the current element on top of the target element via executing the drag and drop helper.js file
-	 * @param target PageElement the element the target is being dragged and dropped onto 
-	 * @return PageElement (for chaining)
-	 */
-	
-	public PageElement dragAndDropToTarget(PageElement target) {
-		dragAndDropToTarget(this.toWebElement(), target.toWebElement());
-		return this;
-	}
-	
-	/**
-	 * Reads the file from a given path.
-	 * @param path
-	 * @return 
-	 */
-	
-	public static String readFile(String path, Charset encoding)
-	{ 
-
-		byte[] encoded = null;
-		try {
-			encoded = Files.readAllBytes(Paths.get(path));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    return new String(encoded, encoding);
-	}
-	
-	/**
-	 * Executes the script byt calling executeDrageAndDrop() function on a source element passing the target element as a dropTarget
-	 * @param source,target 
-	 * @return PageElement (for chaining)
-	 */
-	
-	  public PageElement dragAndDropToTarget(WebElement source, WebElement target) {		  
-          
-	      String filePath = System.getProperty("user.dir")+"\\src\\main\\resources\\DragDrop.js";
-	      System.out.println("js file path "+filePath);
-	      String script="";
-	      script = readFile(filePath, StandardCharsets.UTF_8);
-	      script = script + "executeDrageAndDrop(arguments[0], arguments[1])";
-	      JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
-
-	      executor.executeScript(script, source, target);
-	      return this;	      
-	}	  
 
 	/**
 	 * Clear a PageElement. Clears text in a text box. Un-checks check boxes. Clears
@@ -349,6 +287,20 @@ public class PageElement {
 		return this;
 	}
 
+	/**
+	 * Drags the current element on top of the target element.
+	 * @param target PageElement the element the target is being dragged and dropped onto
+	 * @return PageElement (for chaining)
+	 * @throws IOException if the drag and drop javascript file cannot be loaded
+	 */
+	public PageElement dragAndDrop(PageElement target) throws IOException {
+	    String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
+	    
+	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
+	    executor.executeScript(script, this.toWebElement(), target.toWebElement());
+	    return this;	      
+	}	  
+	
 	/**
 	 * Returns true if the element is enabled within 10 seconds; otherwise returns
 	 * false.

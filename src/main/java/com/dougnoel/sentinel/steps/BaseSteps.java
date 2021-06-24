@@ -2,12 +2,13 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.elements.PageElement;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -52,40 +53,23 @@ public class BaseSteps {
     }
     
     /**
-     * Drags the current element on top of the target element.
+     * Drags the first element onto the second element.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I drag from source element on top of the target element</li>
-     * <li>I drag the source element on top of the target element</li>
-     * <li>I drag a source element on top of the target element</li>
+     * <li>I drag Box A onto Box B</li>
+     * <li>I drag the first name to the answer box</li>
+     * <li>I drag an animal icon into a habitat icon</li>
      * </ul>
      * @param sourceElementName String the name of the source element to drag
-     * @param targetElementName String the name of the target element to drag
+     * @param targetElementName String the name of the target element the source is being dragged to
+     * @throws IOException if the javascript drag and drop file cannot be loaded
      */
     
-    @When("I drag (?:from|the|a) (.*) on top of the (.*)$")
-    public void dragAndDropToObject(String sourceElementName, String targetElementName) {
-    	getElement(sourceElementName).dragAndDrop(getElement(targetElementName));
-    	
+    @When("I drag (?:the |an? )?(.*?) (?:on|in)?to (?:the |an? )?(.*?)$")
+    public void dragAndDropToObject(String source, String target) throws IOException {
+    	getElement(source).dragAndDrop(getElement(target));	
     }
-    
-    /**
-     * Drags the source element to the target element.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I drag and drop from source element to target element</li>
-     * <li>I drag and drop the source element to target element</li>    
-     * </ul>
-     * @param source String the name of the source element to drag
-     * @param target String the name of the target element to drag
-     */
-        
-    @When("I drag and drop (?:from|the|a) (.*) to (.*)$")
-    public static void dragAndDropToTargetElement(String source, String target) {      	
-    	getElement(source).dragAndDropToTarget(getElement(target));
-    } 
 
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
