@@ -61,8 +61,8 @@ public class BaseSteps {
      * <li>I drag the first name to the answer box</li>
      * <li>I drag an animal icon into a habitat icon</li>
      * </ul>
-     * @param sourceElementName String the name of the source element to drag
-     * @param targetElementName String the name of the target element the source is being dragged to
+     * @param source String the name of the source element to drag
+     * @param target String the name of the target element the source is being dragged to
      * @throws IOException if the javascript drag and drop file cannot be loaded
      */
     
