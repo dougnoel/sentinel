@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.elements;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -285,6 +287,20 @@ public class PageElement {
 		return this;
 	}
 
+	/**
+	 * Drags the current element on top of the target element.
+	 * @param target PageElement the element the target is being dragged and dropped onto
+	 * @return PageElement (for chaining)
+	 * @throws IOException if the drag and drop javascript file cannot be loaded
+	 */
+	public PageElement dragAndDrop(PageElement target) throws IOException {
+	    String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
+	    
+	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
+	    executor.executeScript(script, this.toWebElement(), target.toWebElement());
+	    return this;	      
+	}	  
+	
 	/**
 	 * Returns true if the element is enabled within 10 seconds; otherwise returns
 	 * false.

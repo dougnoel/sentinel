@@ -17,11 +17,11 @@ import io.cucumber.junit.CucumberOptions;
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true
 	, features = "src/test/java/features"
-	, glue = { "stepdefinitions", "com.dougnoel.sentinel.steps", "steps" }
+	, glue = { "com.dougnoel.sentinel.steps", "steps" }
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 	, strict = true
-  // , tags = { "@197" }
+//   , tags = { "@201" }
 )
 
 public class SentinelTests {

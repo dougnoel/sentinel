@@ -2,6 +2,8 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,6 +50,25 @@ public class BaseSteps {
     @When("^I click (?:the|a|an|on) (.*?)$")
     public static void click(String elementName) {
         getElement(elementName).click();
+    }
+    
+    /**
+     * Drags the first element onto the second element.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I drag Box A onto Box B</li>
+     * <li>I drag the first name to the answer box</li>
+     * <li>I drag an animal icon into a habitat icon</li>
+     * </ul>
+     * @param source String the name of the source element to drag
+     * @param target String the name of the target element the source is being dragged to
+     * @throws IOException if the javascript drag and drop file cannot be loaded
+     */
+    
+    @When("I drag (?:the |an? )?(.*?) (?:on|in)?to (?:the |an? )?(.*?)$")
+    public void dragAndDropToObject(String source, String target) throws IOException {
+    	getElement(source).dragAndDrop(getElement(target));	
     }
 
     /**
