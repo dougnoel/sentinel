@@ -21,7 +21,7 @@ public class FileManager {
 	 */
 	
 	public static String loadJavascript(String path) throws IOException {
-		path = path.replaceAll("\\/", File.separator);
+		path = path.replace("/", File.separator);
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 	    return new String(encoded, StandardCharsets.UTF_8);
 	}
