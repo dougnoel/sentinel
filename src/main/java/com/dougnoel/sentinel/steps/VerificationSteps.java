@@ -7,12 +7,8 @@ import static org.junit.Assert.assertTrue;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
-
 import io.cucumber.java.en.Then;
 
 /**
@@ -203,45 +199,6 @@ public class VerificationSteps {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         PageManager.waitForPageLoad();
-    }
-    
-    /**
-     * Opens the given pageName in a new window
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I see a new tab open with the Home page</li>
-     * <li>I see a new tab open with the Login page</li>
-     * <li>I see a new tab open with the Google Maps page</li>
-     * </ul>
-     * @param pageName String the page to open
-     * @throws InterruptedException if the thread gets interrupted while sleeping
-     */
-    @Then("^I see a new tab open with the (.*) Page$")
-    public static void openNewTab(String pageName) throws InterruptedException {
-        PageManager.switchToNewWindow();
-        pageName = pageName.replaceAll("\\s", "") + "Page";
-        PageManager.setPage(pageName);
-        PageManager.waitForPageLoad();
-    }
-       
-    /**
-     * Verifies that a URL loads in a new window when a named link is clicked.|<p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I open the google link in a new tab and verify the url that loads is http://google.com</li>
-     * <li>I open the ESPN link in a new tab for verfiy the url is http://go.espn.com</li>
-     * <li>I open the Pharmacy Benefits link in a new window and verify the url is https://testsite.com/pharamacy_benefits</li>
-     * </ul>
-     * @param linkName String The text of the link. NOT a PageElement object name.
-     * @param url String the URL expected to be loaded.
-     */
-    @Then("^I open the (.*?) link in a new tab and verify the URL that loads is (.*?)$")
-    public static void openLinkAndVerifyURL(String linkName, String url) {
-            WebDriverFactory.getWebDriver().findElement(By.linkText(linkName)).sendKeys(Keys.RETURN);
-            PageManager.switchToNewWindow();
-            String newUrl = PageManager.getCurrentUrl();
-            assertTrue(newUrl.contains(url));
     }
     
     /**

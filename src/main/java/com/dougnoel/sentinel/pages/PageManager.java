@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.pages;
 
-import java.util.ArrayList;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +29,7 @@ public class PageManager {
 	private static PageManager instance = null;
 	// Page handle for the first window opened.
 	private static String parentHandle = null;
+	private static String parentPage = null;
 
 	protected static WebDriver driver() {
 		if (page == null)
@@ -184,10 +184,12 @@ public class PageManager {
 	 * 
 	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
 	 * @return String the window handle we are switching to
+	 * @throws InterruptedException if page doesn't load
 	 */
-	public static String switchToNewWindow() {
+	public static String switchToNewWindow(String pageName) throws InterruptedException {
 		String newHandle = null;
 		parentHandle = driver().getWindowHandle();
+		parentPage = PageManager.getPage().getName();
 		Set<String> handles = driver().getWindowHandles();
 		if (handles.size() == 1) {
 			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
@@ -204,7 +206,7 @@ public class PageManager {
 				newHandle = handle;
 			}
 		}
-		switchToNewWindow(newHandle);
+		switchToNewWindow(pageName, newHandle);
 		return newHandle;
 	}
 
@@ -216,10 +218,13 @@ public class PageManager {
 	 * 
 	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
 	 * @param index String the window to which we want to switch
+	 * @throws InterruptedException if page doesn't load
 	 */
-	public static void switchToNewWindow(String index) {
+	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
 		try {
 			driver().switchTo().window(index);
+	        setPage(pageName);
+	        waitForPageLoad();
 			log.trace("Switched to new window {}", index);
 		} catch (org.openqa.selenium.NoSuchWindowException e) {
 			var errorMessage = SentinelStringUtils.format(
@@ -236,10 +241,13 @@ public class PageManager {
 	 * closed after a test is complete.
 	 * 
 	 * @return String the handle of the parent window to which we are returning
+	 * @throws InterruptedException if page does not load
 	 */
-	public static String closeChildWindow() {
+	public static String closeChildWindow() throws InterruptedException {
 		close();
 		driver().switchTo().window(parentHandle);
+        setPage(parentPage);
+        waitForPageLoad();
 		return parentHandle;
 	}
 

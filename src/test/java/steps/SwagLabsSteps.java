@@ -7,7 +7,7 @@ import com.dougnoel.sentinel.steps.VerificationSteps;
 import io.cucumber.java.en.Given;
 
 public class SwagLabsSteps {
-	@Given("I login to the {} Page as {}")
+	@Given("I login to the {} as {}")
 	public void i_login_to_the_Page_as_user(String pageName, String account) throws Throwable {
 	    // Given I am on the Sauce Demo Login Page
 		BaseSteps.navigateToPage(pageName);

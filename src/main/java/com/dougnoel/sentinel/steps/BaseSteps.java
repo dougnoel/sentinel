@@ -111,59 +111,37 @@ public class BaseSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I navigate to the Login Page</li>
-     * <li>I am on the Main page</li>
-     * <li>I remain on the popup page</li>
-     * <li>I navigate to the Documents page using the argument ?docYear=2003</li>
-     * <li>I am on the Home Page using the arguments ?firstname=bob{@literal &}lastname=smith</li>
+     * <li>I am on the Main Page</li>
+     * <li>I remain on the PopUp Page</li>
      * </ul>
      * @param pageName String Page Object Name
-     * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
-     * @param arguments String the literal string to append to the default URL.
      */
-    @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public static void navigateToPage(String pageName, String hasArguments, String arguments) {   	
-    	pageName = pageName.replaceAll("\\s", "") + "Page";
-        PageManager.setPage(pageName);
-        String baseUrl = Configuration.url();
-        if (hasArguments != null) {
-            baseUrl += arguments;
-        }
-        log.debug("Using the url {} for the {} page.", baseUrl, pageName);
-        PageManager.openPage(baseUrl);
-    }
-    
-    /**
-     * Overloaded method for navigating to a page object's url based on the current environment, 
-     * so that nulls do not need to be passed. Intended for use in creating complex Cucumber steps definitions.
-     * @param pageName String Page Object Name
-     */
+    @Given("^I (?:navigate to|am on|remain on) the (.*?)$")
     public static void navigateToPage(String pageName) {
-    	navigateToPage(pageName, null, null);
+    	navigateToPageWithArguments("", pageName);
     }
     
     /**
-     * Overloaded method for navigating to a page object's url based on the current environment, and taking a 
-     * query string argument it will append to the request. Used so that nulls do not need to be passed. Intended 
-     * for use in creating complex Cucumber steps definitions.
-     * @param pageName String Page Object Name
-     * @param arguments String the literal string to append to the default URL.
-     */
-    public static void navigateToPage(String pageName, String arguments) {
-    	navigateToPage(pageName, "has arguments", arguments);
-    }
- 
-    /**
-     * Closes the child browser tab or window
+     * Loads a page based on the environment you are currently testing. The url is set in the page object yaml file.
+     * Refer to the documentation in the sentinel.example project for more information. You cannot load a URL
+     * directly, because once there you would not be able to do anything.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I close the browser tab</li>
-     * <li>I close the browser window"</li>
+     * <li>I pass the argument "?docYear=2003" to the Documents Page</li>
+     * <li>I pass the arguments "?firstname=bob{@literal &}lastname=smith" to the Users Page</li>
+     * <li>I pass the arguments "/apples/oranges" to the Fruits Page</li>
      * </ul>
+     * @param arguments String the literal string to append to the default URL.
+     * @param pageName String Page Object Name
      */
-    @When("^I close the browser (?:tab|window)$")
-    public static void closeBrowserWindow() {
-        PageManager.closeChildWindow();
+    @Given("^I pass the arguments? \"([^\"]*)\" to the (.*?)$")
+    public static void navigateToPageWithArguments(String arguments, String pageName) {
+    	PageManager.setPage(pageName);
+    	String baseUrl = Configuration.url();
+    	baseUrl += arguments;
+    	log.debug("Loading the the {} page using the url: {}", pageName, baseUrl);
+        PageManager.openPage(baseUrl);
     }
     
     /**
