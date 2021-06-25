@@ -1,6 +1,6 @@
 #Author: Doug Noël
 @example @checkbox @216
-Feature: Checkbox Tests
+Feature: 216 Checkbox Tests
   As a developer I want to know that checkbox functionality is working whenever I run unit tests.
 	
   @216A

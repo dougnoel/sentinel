@@ -240,6 +240,17 @@ configurations:
 ```
 *NOTE: Passing in a value on the command line will always override whatever is in the configuration file.*
 
+### How do I run only certain tests?
+If you want to run specific tagged tests, you can do so by passing in cucumber arguments on the command line. E.G. `mvn -Dcucumber.options="--tags @106" test`
+
+You can also do so by customizing a Run Configuration.
+1. Go to Run -> Run Configurations...
+2. Make a copy of Sentinel Tests
+3. Click on the arguments tab.
+4. Change the VM arguments from `-ea` to something like `-ea -Dcucumber.options="--tags @106"` replacing the tag(s) you want to use with your tag.
+
+For more information on command line options you can use for cucumber, you may refer to [this article](https://www.toolsqa.com/selenium-cucumber-framework/run-cucumber-test-from-command-line-terminal/).
+
 ### How do I run code coverage for my unit tests using Jacoco? ###
 This script will run code coverage and then open up the results in your default browser. The results will not open if there are build failures.
 

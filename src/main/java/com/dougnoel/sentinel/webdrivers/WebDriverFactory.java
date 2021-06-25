@@ -105,11 +105,19 @@ public class WebDriverFactory {
      * 
      * @return WebDriver the created Selenium WebDriver
      */
-    public static WebDriver getWebDriver()  {
+    public static WebDriver getWebDriver() {
         if (instance == null || driver == null) {
         	instantiateWebDriver();
         }
         return driver;
+    }
+    
+    /**
+     * Quits the driver and sets the driver instance back to null.
+     */
+    public static void quit() {
+    	getWebDriver().quit();
+    	driver = null;
     }
     
     /**

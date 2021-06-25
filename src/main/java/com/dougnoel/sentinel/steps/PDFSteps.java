@@ -42,7 +42,7 @@ public class PDFSteps {
         	new PageElement("Link", linkLocator).click();
         }
         PageManager.waitForPageLoad();
-        PageManager.switchToNewWindow();
+        PageManager.switchToNewWindow(PageManager.getPage().getName()); //TODO: This is a hack workaround to keep this step working. There needs to be a more elegant solution.
         String pdfUrl = PageManager.getCurrentUrl();
         String expectedResult = SentinelStringUtils.format("Expected URL \"{}\" to contain the .{} extension.", pdfUrl,
                 extension);
