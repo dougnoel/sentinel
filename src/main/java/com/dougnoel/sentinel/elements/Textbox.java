@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Textbox implementation of a PageElement.
  */
-public class Textbox extends PageElement {
+public class Textbox extends Element {
 
 	/**
 	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
@@ -25,7 +25,7 @@ public class Textbox extends PageElement {
 	 * @param text String (text to type)
 	 * @return PageElement (for chaining)
 	 */
-	public PageElement type(String text) {
+	public Element type(String text) {
         return this.sendKeys(text);
 	}
 

@@ -38,14 +38,14 @@ public class ElementFunctionsTests {
 
 	@Test
 	public void createDefaultElement() {
-		PageElement element = ElementFunctions.getElement("generic");
-		assertTrue("Expecting PageElement class.", element instanceof PageElement);
+		Element element = ElementFunctions.getElement("generic");
+		assertTrue("Expecting PageElement class.", element instanceof Element);
 		assertEquals("Expecting Default Name.", "generic", element.getName());
 	}
 	
 	@Test
 	public void createCheckBox() {
-		PageElement element = ElementFunctions.getElementAsCheckbox("checkbox");
+		Element element = ElementFunctions.getElementAsCheckbox("checkbox");
 		assertTrue("Expecting Checkbox class.", element instanceof Checkbox);
 		assertEquals("Expecting Checkbox Name.", "checkbox", element.getName());
 	}
@@ -57,7 +57,7 @@ public class ElementFunctionsTests {
 
 	@Test
 	public void createTextBox() {
-		PageElement element = ElementFunctions.getElementAsTextbox("textbox");
+		Element element = ElementFunctions.getElementAsTextbox("textbox");
 		assertTrue("Expecting Textbox class.", element instanceof Textbox);
 		assertEquals("Expecting Textbox Name.", "textbox", element.getName());
 	}
@@ -69,7 +69,7 @@ public class ElementFunctionsTests {
 
 	@Test
 	public void createDropDown() {
-		PageElement element = ElementFunctions.getElementAsDropdown("dropdown");
+		Element element = ElementFunctions.getElementAsDropdown("dropdown");
 		assertTrue("Expecting Dropdown class.", element instanceof Dropdown);
 		assertEquals("Expecting Dropdown Name.", "dropdown", element.getName());
 	}
@@ -81,21 +81,21 @@ public class ElementFunctionsTests {
 	
 	@Test
 	public void createMaterialUISelect() {
-		PageElement element = ElementFunctions.getElement("material_ui_select");
+		Element element = ElementFunctions.getElement("material_ui_select");
 		assertTrue("Expecting MaterialUISelect class.", element instanceof MaterialUISelect);
 		assertEquals("Expecting MaterialUISelect Name.", "material_ui_select", element.getName());
 	}
 
 	@Test
 	public void createPrimeNGDropdown() {
-		PageElement element = ElementFunctions.getElement("prime_ng_dropdown");
+		Element element = ElementFunctions.getElement("prime_ng_dropdown");
 		assertTrue("Expecting PrimeNGDropdown class.", element instanceof PrimeNGDropdown);
 		assertEquals("Expecting PrimeNGDropdown Name.", "prime_ng_dropdown", element.getName());
 	}
 	
 	@Test
 	public void createSelect() {
-		PageElement element = ElementFunctions.getElementAsSelectElement("select");
+		Element element = ElementFunctions.getElementAsSelectElement("select");
 		assertTrue("Expecting SelectElement class.", element instanceof SelectElement);
 		assertEquals("Expecting SelectElement Name.", "select", element.getName());
 	}
@@ -107,14 +107,14 @@ public class ElementFunctionsTests {
 	
 	@Test
 	public void createPrimeNGRadioButton() {
-		PageElement element = ElementFunctions.getElement("prime_ng_radio_button");
+		Element element = ElementFunctions.getElement("prime_ng_radio_button");
 		assertTrue("Expecting PrimeNGRadioButton class.", element instanceof PrimeNGRadioButton);
 		assertEquals("Expecting PrimeNGRadioButton Name.", "prime_ng_radio_button", element.getName());
 	}
 	
 	@Test
 	public void createRadioButton() {
-		PageElement element = ElementFunctions.getElementAsRadiobutton("radiobutton");
+		Element element = ElementFunctions.getElementAsRadiobutton("radiobutton");
 		assertTrue("Expecting Radiobutton class.", element instanceof Radiobutton);
 		assertEquals("Expecting Radiobutton Name.", "radiobutton", element.getName());
 	}
@@ -126,14 +126,14 @@ public class ElementFunctionsTests {
 	
 	@Test
 	public void createNGXDataTable() {
-		PageElement element = ElementFunctions.getElement("ngx_data_table");
+		Element element = ElementFunctions.getElement("ngx_data_table");
 		assertTrue("Expecting NGXDataTable class.", element instanceof NGXDataTable);
 		assertEquals("Expecting NGXDataTable Name.", "ngx_data_table", element.getName());
 	}
 	
 	@Test
 	public void createTable() {
-		PageElement element = ElementFunctions.getElementAsTable("table");
+		Element element = ElementFunctions.getElementAsTable("table");
 		assertTrue("Expecting Table class.", element instanceof Table);
 		assertEquals("Expecting Table Name.", "table", element.getName());
 	}

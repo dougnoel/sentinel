@@ -32,7 +32,7 @@ public class ElementFunctions {
      * @param elementName String name of requested element
      * @return PageElement the requested element
      */
-    public static PageElement getElement(String elementName) {
+    public static Element getElement(String elementName) {
         return PageManager.getPage().getElement(elementName);
     }
 

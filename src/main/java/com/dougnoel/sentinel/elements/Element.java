@@ -62,8 +62,8 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * calling objects that get called often.</li>
  * </ul>
  */
-public class PageElement {
-	private static final Logger log = LogManager.getLogger(PageElement.class.getName()); // Create a logger.
+public class Element {
+	private static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
 
 	protected Map<SelectorType,String> selectors;
 	protected String name;
@@ -78,11 +78,11 @@ public class PageElement {
 	 * @param elementName String the element name
 	 * @param selectors Map the various selectors to iterate through to find the element
 	 */
-	public PageElement(String elementName, Map<String,String> selectors) {
+	public Element(String elementName, Map<String,String> selectors) {
 		this("PageElement", elementName, selectors);
 	}
 	
-	public PageElement(String elementType, String elementName, Map<String,String> selectors) {
+	public Element(String elementType, String elementName, Map<String,String> selectors) {
 		this.selectors = new EnumMap<>(SelectorType.class);
 		selectors.forEach((locatorType, locatorValue) -> {
 			if (!"elementType".equalsIgnoreCase(locatorType)) {
@@ -189,14 +189,14 @@ public class PageElement {
 	 *            String (text to type)
 	 * @return PageElement (for chaining)
 	 */
-	public PageElement sendKeys(String text) {
+	public Element sendKeys(String text) {
 		element().click();
 		element().clear();
 		element().sendKeys(text);
 		return this;
 	}
 
-	public PageElement javaScriptSendKeys(String text) {
+	public Element javaScriptSendKeys(String text) {
 		JavascriptExecutor jse = (JavascriptExecutor) driver;
 		jse.executeScript("arguments[0].value='" + text + "';", element());
 
@@ -213,7 +213,7 @@ public class PageElement {
 	 * @return PageElement (for chaining)
 	 * @throws AWTException if the key cannot be pressed.
 	 */
-	public PageElement pressKeys(String text) throws AWTException {
+	public Element pressKeys(String text) throws AWTException {
 		// Ensure that the element has focus.
 		if ("input".equals(element().getTagName())) {
 			element().sendKeys("");
@@ -252,7 +252,7 @@ public class PageElement {
 	 * 
 	 * @return PageElement (for chaining)
 	 */
-	public PageElement click() {
+	public Element click() {
 		long waitTime = Time.out();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
@@ -282,7 +282,7 @@ public class PageElement {
 	 * 
 	 * @return PageElement (for chaining)
 	 */
-	public PageElement clear() {
+	public Element clear() {
 		element().clear();
 		return this;
 	}
@@ -293,7 +293,7 @@ public class PageElement {
 	 * @return PageElement (for chaining)
 	 * @throws IOException if the drag and drop javascript file cannot be loaded
 	 */
-	public PageElement dragAndDrop(PageElement target) throws IOException {
+	public Element dragAndDrop(Element target) throws IOException {
 	    String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
 	    
 	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
@@ -428,11 +428,10 @@ public class PageElement {
 	}
 
 	/**
-	 * Returns the WebElement wrapped inside the PageElement so that it can be acted
-	 * upon inside of step definitions.
+	 * Returns the WebElement wrapped inside the PageElement.
 	 * @return org.openqa.selenium.WebElement
 	 */
-	public WebElement toWebElement() {
+	private WebElement toWebElement() {
 		return element();
 	}
 
@@ -495,7 +494,7 @@ public class PageElement {
 	 * @param target String the element we are moving the mouse over
 	 * @return PageElement (for chaining)
 	 */
-	public PageElement mouseOver(PageElement target) {
+	public Element mouseOver(Element target) {
 		new Actions(driver).moveToElement(target.toWebElement()).build().perform();
 		return this;
 	}

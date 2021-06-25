@@ -2,12 +2,12 @@ package com.dougnoel.sentinel.elements.radiobuttons;
 
 import java.util.Map;
 
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 
 /**
  * Radio button implementation of a PageSelectElement.
  */
-public class Radiobutton extends PageElement {
+public class Radiobutton extends Element {
 
 	/**
 	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 

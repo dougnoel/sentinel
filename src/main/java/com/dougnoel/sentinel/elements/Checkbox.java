@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Check box implementation of a PageElement.
  */
-public class Checkbox extends PageElement {
+public class Checkbox extends Element {
 
 	/**
 	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 

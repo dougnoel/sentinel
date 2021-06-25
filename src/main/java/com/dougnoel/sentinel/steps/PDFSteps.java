@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -39,7 +39,7 @@ public class PDFSteps {
         	//TODO: Unit test. Also, maybe make this easier to do?
         	Map<String,String> linkLocator = new HashMap<>();
         	linkLocator.put("PARTIALTEXT", linkName);
-        	new PageElement("Link", linkLocator).click();
+        	new Element("Link", linkLocator).click();
         }
         PageManager.waitForPageLoad();
         PageManager.switchToNewWindow(PageManager.getPage().getName()); //TODO: This is a hack workaround to keep this step working. There needs to be a more elegant solution.

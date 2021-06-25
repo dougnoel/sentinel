@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.openqa.selenium.support.ui.Select;
 
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -12,7 +12,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 /**
  * Extends PageElement. Is intended to be a a base class for Dropdown.
  */
-public class SelectElement extends PageElement {
+public class SelectElement extends Element {
 
 	/**
 	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
