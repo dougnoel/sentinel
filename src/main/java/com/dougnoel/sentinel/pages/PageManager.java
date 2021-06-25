@@ -183,7 +183,6 @@ public class PageManager {
 	 * <b>Preconditions:</b> Expects a new tab or window to have just been opened,
 	 * and for there to be only two.
 	 * 
-	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
 	 * @return String the window handle we are switching to
 	 * @throws InterruptedException if page doesn't load
 	 */
@@ -217,7 +216,6 @@ public class PageManager {
 	 * sentinel.pages.PageManager#switchToNewWindow() and passes the
 	 * index. This will allow for more fine grained control at a later date.
 	 * 
-	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
 	 * @param index String the window to which we want to switch
 	 * @throws InterruptedException if page doesn't load
 	 */
