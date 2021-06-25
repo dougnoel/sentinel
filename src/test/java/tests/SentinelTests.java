@@ -10,16 +10,17 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import com.dougnoel.sentinel.utilities.*;
 import io.cucumber.junit.CucumberOptions;
+
 import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true
 	, features = "src/test/java/features"
-	, glue = { "stepdefinitions", "com.dougnoel.sentinel.steps", "steps" }
+	, glue = { "com.dougnoel.sentinel.steps", "steps" }
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 	, strict = true
-  //, tags = { "@47" }
 )
 
 public class SentinelTests {
@@ -31,7 +32,7 @@ public class SentinelTests {
         if(Configuration.toString("addVideoToReport")!=null)
             SentinelScreenRecorder.startRecording("extent-cucumber");
     }
-    
+
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         String totalWaitTime = Configuration.toString("totalWaitTime");

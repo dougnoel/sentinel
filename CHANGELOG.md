@@ -2,7 +2,47 @@
 
 ## [Unreleased](https://github.com/dougnoel/sentinel/tree/HEAD)
 
-[Full Changelog](https://github.com/dougnoel/sentinel/compare/sentinel-1.0.3...HEAD)
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.5...HEAD)
+
+**Implemented enhancements:**
+
+- Add unit tests for checkboxes [\#216](https://github.com/dougnoel/sentinel/issues/216)
+- Create a Selenium Grid Driver [\#209](https://github.com/dougnoel/sentinel/issues/209)
+- Implement Edge browser driver [\#206](https://github.com/dougnoel/sentinel/issues/206)
+- Add a total wait time warning. [\#198](https://github.com/dougnoel/sentinel/issues/198)
+- Implement webdrivermanager [\#193](https://github.com/dougnoel/sentinel/issues/193)
+- Fix deployment to Maven Central and Update Documentation [\#178](https://github.com/dougnoel/sentinel/issues/178)
+
+**Fixed bugs:**
+
+- Cucumber Wait step is throwing a Null Pointer Exception [\#204](https://github.com/dougnoel/sentinel/issues/204)
+
+**Closed issues:**
+
+- README is very outdated [\#221](https://github.com/dougnoel/sentinel/issues/221)
+
+**Merged pull requests:**
+
+- Bump httpclient from 4.5.10 to 4.5.13 [\#238](https://github.com/dougnoel/sentinel/pull/238) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Updated jacoco version to latest. [\#237](https://github.com/dougnoel/sentinel/pull/237) ([dougnoel](https://github.com/dougnoel))
+- 197 add an on hover test step1 [\#235](https://github.com/dougnoel/sentinel/pull/235) ([dougnoel](https://github.com/dougnoel))
+- added instructions to navigate from scenario to step def [\#229](https://github.com/dougnoel/sentinel/pull/229) ([mdsapon](https://github.com/mdsapon))
+- Updated README.md, CHANGELOG.md and Javadocs. [\#226](https://github.com/dougnoel/sentinel/pull/226) ([dougnoel](https://github.com/dougnoel))
+- Added Checkbox unit tests and modified language in cucumber steps. [\#217](https://github.com/dougnoel/sentinel/pull/217) ([dougnoel](https://github.com/dougnoel))
+- 193 implement webdrivermanager [\#215](https://github.com/dougnoel/sentinel/pull/215) ([dougnoel](https://github.com/dougnoel))
+- Added script to support selenium grid [\#212](https://github.com/dougnoel/sentinel/pull/212) ([mdsapon](https://github.com/mdsapon))
+- 204 cucumber wait [\#208](https://github.com/dougnoel/sentinel/pull/208) ([dougnoel](https://github.com/dougnoel))
+- Removing deprecated code. [\#200](https://github.com/dougnoel/sentinel/pull/200) ([dougnoel](https://github.com/dougnoel))
+- Removed all API functionality to redo it. Fixed PrimeNGDropdown selec… [\#199](https://github.com/dougnoel/sentinel/pull/199) ([dougnoel](https://github.com/dougnoel))
+- Sonarcloud [\#194](https://github.com/dougnoel/sentinel/pull/194) ([dougnoel](https://github.com/dougnoel))
+- Create maven.yml [\#191](https://github.com/dougnoel/sentinel/pull/191) ([dougnoel](https://github.com/dougnoel))
+- Javadoc update [\#190](https://github.com/dougnoel/sentinel/pull/190) ([dougnoel](https://github.com/dougnoel))
+- Removed deprecated Extent Report config file. [\#188](https://github.com/dougnoel/sentinel/pull/188) ([dougnoel](https://github.com/dougnoel))
+- 1.0.5 doc update [\#187](https://github.com/dougnoel/sentinel/pull/187) ([dougnoel](https://github.com/dougnoel))
+
+## [1.0.5](https://github.com/dougnoel/sentinel/tree/1.0.5) (2020-08-06)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/sentinel-1.0.3...1.0.5)
 
 **Implemented enhancements:**
 
@@ -25,6 +65,7 @@
 - Combine click scripts [\#31](https://github.com/dougnoel/sentinel/issues/31)
 - Put Sentinel on Maven Central [\#30](https://github.com/dougnoel/sentinel/issues/30)
 - Write Unit tests [\#29](https://github.com/dougnoel/sentinel/issues/29)
+- Auto-detect local operating system [\#25](https://github.com/dougnoel/sentinel/issues/25)
 - Turn Page Objects into YAML files [\#23](https://github.com/dougnoel/sentinel/issues/23)
 - Ability to use NGPrime Dropdowns [\#22](https://github.com/dougnoel/sentinel/issues/22)
 
@@ -43,6 +84,7 @@
 
 **Closed issues:**
 
+- Create a Changelog [\#166](https://github.com/dougnoel/sentinel/issues/166)
 - Add stripTrailing\(\) back in [\#144](https://github.com/dougnoel/sentinel/issues/144)
 - Replace .newInstance\(\) with .getDeclaredConstructor\(\).newInstance\(\) [\#138](https://github.com/dougnoel/sentinel/issues/138)
 - Refactor getElement\(\) [\#122](https://github.com/dougnoel/sentinel/issues/122)
@@ -58,6 +100,11 @@
 
 **Merged pull requests:**
 
+- Update to pom.xml to try and get Javadocs working on some versions of… [\#172](https://github.com/dougnoel/sentinel/pull/172) ([dougnoel](https://github.com/dougnoel))
+- Removed failing test for dropdown text verification for NGPrime. Chan… [\#171](https://github.com/dougnoel/sentinel/pull/171) ([dougnoel](https://github.com/dougnoel))
+- Update POM version to 1.0.5. [\#170](https://github.com/dougnoel/sentinel/pull/170) ([dougnoel](https://github.com/dougnoel))
+- 25 auto detect os [\#168](https://github.com/dougnoel/sentinel/pull/168) ([dougnoel](https://github.com/dougnoel))
+- Auto Generated Changelog. [\#167](https://github.com/dougnoel/sentinel/pull/167) ([dougnoel](https://github.com/dougnoel))
 - Removed Codacy badge because it wasn't working. [\#163](https://github.com/dougnoel/sentinel/pull/163) ([dougnoel](https://github.com/dougnoel))
 - Removed orphaned code that was searching the filesystem to no benefit… [\#162](https://github.com/dougnoel/sentinel/pull/162) ([dougnoel](https://github.com/dougnoel))
 - 23 turn page objects into yaml files [\#161](https://github.com/dougnoel/sentinel/pull/161) ([dougnoel](https://github.com/dougnoel))

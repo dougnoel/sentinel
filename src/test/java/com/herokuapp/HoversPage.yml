@@ -1,0 +1,6 @@
+urls:
+   default: http://the-internet.herokuapp.com/hovers  
+elements: 
+  mouse_over:
+   xpath: "(//img[@alt='User Avatar'])[1]" 
+     

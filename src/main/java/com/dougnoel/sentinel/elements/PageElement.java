@@ -3,9 +3,11 @@ package com.dougnoel.sentinel.elements;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -26,6 +28,7 @@ import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -285,6 +288,20 @@ public class PageElement {
 	}
 
 	/**
+	 * Drags the current element on top of the target element.
+	 * @param target PageElement the element the target is being dragged and dropped onto
+	 * @return PageElement (for chaining)
+	 * @throws IOException if the drag and drop javascript file cannot be loaded
+	 */
+	public PageElement dragAndDrop(PageElement target) throws IOException {
+	    String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
+	    
+	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
+	    executor.executeScript(script, this.toWebElement(), target.toWebElement());
+	    return this;	      
+	}	  
+	
+	/**
 	 * Returns true if the element is enabled within 10 seconds; otherwise returns
 	 * false.
 	 * 
@@ -471,5 +488,26 @@ public class PageElement {
 
 		return false;
 	}
+	
+	/**
+	 * Moves the mouse to the middle of the element.
+	 * 
+	 * @param target String the element we are moving the mouse over
+	 * @return PageElement (for chaining)
+	 */
+	public PageElement mouseOver(PageElement target) {
+		new Actions(driver).moveToElement(target.toWebElement()).build().perform();
+		return this;
+	}
 
+	/**
+	 * This method is used to get the text on mouse hover
+	 * 
+	 * @return The value of the tooltip text
+	 */
+	public String getMouseOverText() {
+		 mouseOver(this);
+		 return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
+	}	
+	
 }
