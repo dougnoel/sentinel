@@ -114,7 +114,8 @@ public class PageManager {
 	 * used at the end of tests only.
 	 */
 	public static void quit() {
-		driver().quit();
+		WebDriverFactory.quit();
+		
 	}
 
 	/**
