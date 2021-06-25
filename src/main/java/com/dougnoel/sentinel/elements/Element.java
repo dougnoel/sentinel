@@ -297,7 +297,7 @@ public class Element {
 	    String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
 	    
 	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
-	    executor.executeScript(script, this.toWebElement(), target.toWebElement());
+	    executor.executeScript(script, this.element(), target.element());
 	    return this;	      
 	}	  
 	
@@ -428,14 +428,6 @@ public class Element {
 	}
 
 	/**
-	 * Returns the WebElement wrapped inside the PageElement.
-	 * @return org.openqa.selenium.WebElement
-	 */
-	private WebElement toWebElement() {
-		return element();
-	}
-
-	/**
 	 * Verifies if the element has a class value.
 	 * <p>
 	 * <b>Examples:</b>
@@ -495,7 +487,7 @@ public class Element {
 	 * @return PageElement (for chaining)
 	 */
 	public Element mouseOver(Element target) {
-		new Actions(driver).moveToElement(target.toWebElement()).build().perform();
+		new Actions(driver).moveToElement(target.element()).build().perform();
 		return this;
 	}
 
