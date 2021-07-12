@@ -39,7 +39,7 @@ public class ElementFunctionsTests {
 	@Test
 	public void createDefaultElement() {
 		Element element = ElementFunctions.getElement("generic");
-		assertTrue("Expecting PageElement class.", element instanceof Element);
+		assertTrue("Expecting Element class.", element instanceof Element);
 		assertEquals("Expecting Default Name.", "generic", element.getName());
 	}
 	

@@ -52,6 +52,10 @@ public class Time {
 		return timeout;
 	}
 	
+	public static long toMilliseconds() {
+		return out() * 1000;
+	}
+	
 	/**
 	 * Returns the timeunit property if it is set for implicit waits, otherwise returns the default
 	 * TimeUnit.SECONDS.

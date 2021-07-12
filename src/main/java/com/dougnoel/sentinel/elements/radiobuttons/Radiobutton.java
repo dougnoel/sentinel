@@ -10,7 +10,7 @@ import com.dougnoel.sentinel.elements.Element;
 public class Radiobutton extends Element {
 
 	/**
-	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
+	 * Implementation of a Element to initialize how an element is going to be found when it is worked on by the 
 	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
 	 * 
 	 * @param elementName String the name of the element

@@ -48,7 +48,7 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * Every time we use an element on the page, we look for it at the time we are
  * using it.
  * <p>
- * <b>Note:</b> Renamed from WebElement to PageElement to avoid name space
+ * <b>Note:</b> Renamed from WebElement to Element to avoid name space
  * conflicts with selenium's WebElement object when Selenium's WebElement type
  * was needed as a return type for the element() function.
  * <p>
@@ -79,7 +79,7 @@ public class Element {
 	 * @param selectors Map the various selectors to iterate through to find the element
 	 */
 	public Element(String elementName, Map<String,String> selectors) {
-		this("PageElement", elementName, selectors);
+		this("Element", elementName, selectors);
 	}
 	
 	public Element(String elementType, String elementName, Map<String,String> selectors) {
@@ -178,7 +178,7 @@ public class Element {
 	}
 
 	/**
-	 * Type text into a PageElement.
+	 * Type text into a Element.
 	 * <p>
 	 * <b>Aliases:</b>
 	 * <ul>
@@ -187,7 +187,7 @@ public class Element {
 	 * 
 	 * @param text
 	 *            String (text to type)
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
 	public Element sendKeys(String text) {
 		element().click();
@@ -204,13 +204,13 @@ public class Element {
 	}
 
 	/**
-	 * Press keys with focus on a PageElement. This is useful when type() or
+	 * Press keys with focus on a Element. This is useful when type() or
 	 * sendKeys isn't working due to a mask or hidden field being employed to grab
 	 * key press events and operate on each one.
 	 * 
 	 * @param text
 	 *            String (keys to type)
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 * @throws AWTException if the key cannot be pressed.
 	 */
 	public Element pressKeys(String text) throws AWTException {
@@ -238,7 +238,7 @@ public class Element {
 	}
 
 	/**
-	 * Click a PageElement.
+	 * Click a Element.
 	 * <p>
 	 * This function waits up to 10 seconds in 500 millisecond increments to see if
 	 * the element is visible. This wait ensures that context-switching, such as
@@ -250,7 +250,7 @@ public class Element {
 	 * <li>Radiobutton.select()</li>
 	 * </ul>
 	 * 
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
 	public Element click() {
 		long waitTime = Time.out();
@@ -272,7 +272,7 @@ public class Element {
 	}
 
 	/**
-	 * Clear a PageElement. Clears text in a text box. Un-checks check boxes. Clears
+	 * Clear a Element. Clears text in a text box. Un-checks check boxes. Clears
 	 * radio button choices.
 	 * <p>
 	 * <b>Aliases:</b>
@@ -280,7 +280,7 @@ public class Element {
 	 * <li>Checkbox.uncheck()</li>
 	 * </ul>
 	 * 
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
 	public Element clear() {
 		element().clear();
@@ -289,8 +289,8 @@ public class Element {
 
 	/**
 	 * Drags the current element on top of the target element.
-	 * @param target PageElement the element the target is being dragged and dropped onto
-	 * @return PageElement (for chaining)
+	 * @param target Element the element the target is being dragged and dropped onto
+	 * @return Element (for chaining)
 	 * @throws IOException if the drag and drop javascript file cannot be loaded
 	 */
 	public Element dragAndDrop(Element target) throws IOException {
@@ -484,7 +484,7 @@ public class Element {
 	 * Moves the mouse to the middle of the element.
 	 * 
 	 * @param target String the element we are moving the mouse over
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
 	public Element mouseOver(Element target) {
 		new Actions(driver).moveToElement(target.element()).build().perform();

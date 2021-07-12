@@ -25,7 +25,7 @@ public class PDFSteps {
      * <li>I open the pdf in a new tab"</li>
      * <li>I open the .md file in a new tab</li>
      * </ul>
-     * @param linkName String The text of the Download link. NOT a PageElement object name.
+     * @param linkName String The text of the Download link. NOT a Element object name.
      * @param extension String Extension type (.txt/.pdf/.etc) of the file being downloaded.
      * @throws InterruptedException Passes through any errors to the executing code.
      */

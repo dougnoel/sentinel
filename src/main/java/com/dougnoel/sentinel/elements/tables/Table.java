@@ -279,7 +279,7 @@ public class Table extends Element {
 	
 	/**
 	 * Returns a WebElement found inside the indicated row using the locator passed.
-	 * TODO: Fix this so that it uses PageElements
+	 * TODO: Fix this so that it uses Elements
 	 * 
 	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
 	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element

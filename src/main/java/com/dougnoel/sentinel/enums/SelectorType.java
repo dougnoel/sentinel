@@ -4,7 +4,7 @@ package com.dougnoel.sentinel.enums;
  * A list of ways to identify web elements on a web page. Stored in an enum to prevent user error in calling methods.
  * Also stores ways to find a select option in a select element.
  * <p>
- * <b>Valid PageElement Options:</b>
+ * <b>Valid Element Options:</b>
  * <ul>
  * <li>CSS - WebDriver Find Element By CSS</li>
  * <li>ID - WebDriver Find Element By Id</li>
@@ -27,8 +27,8 @@ public enum SelectorType {
 	INDEX, 	// Used for PageSelectElement Only
 	NAME,
 	PARTIALTEXT,
-	TEXT, 	// Used for both PageElement and PageSelect Element
-	VALUE, 	//Used for PageSelectElement Only
+	TEXT, 	// Used for both Element and Select Element
+	VALUE, 	//Used for Select Element Only
 	XYZ,
 	XPATH;
 	public static SelectorType of(String name) {

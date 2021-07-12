@@ -36,7 +36,7 @@ public class BaseSteps {
     /**
      * Clicks the element that matches the given elementName as defined on the current Page object. The page object and driver object are defined by the
      * WebDriverFactory and PageFactory objects. The derived Page Object (extends
-     * Page) should define a method named [element name]_[element type] returning a PageElement object (e.g. login_button).
+     * Page) should define a method named [element name]_[element type] returning a Element object (e.g. login_button).
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
