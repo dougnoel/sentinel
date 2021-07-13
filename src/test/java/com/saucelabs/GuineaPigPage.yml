@@ -3,7 +3,7 @@ urls:
 elements:
   example_link:
     elementType: Link
-    text: "i am a link"
+    partialtext: "i am a link"
   invisible_div:
     elementType: Div
     id: "invisible div"

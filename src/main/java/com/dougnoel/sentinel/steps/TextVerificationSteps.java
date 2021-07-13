@@ -200,7 +200,7 @@ public class TextVerificationSteps {
     
     @Then("^I verify the (.*?)( does not)? (?:has|have) the value \"([^\"]*)\"$")
 	public static void toolTipText(String elementName, String assertion, String textToMatch) {		
-		String value = getElement(elementName).getMouseOverText();
+		String value = getElement(elementName).getTooltipText();
 		boolean negate = !StringUtils.isEmpty(assertion);	
 		var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",

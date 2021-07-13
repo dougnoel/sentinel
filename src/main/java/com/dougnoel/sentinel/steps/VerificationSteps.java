@@ -154,9 +154,10 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be enabled.",
                 elementName, (negate ? "not " : ""));
         log.trace(expectedResult);
-        int waitTime = (negate) ? 1 : 10; // If we expect it to fail, only wait a second, otherwise wait the normal 10
-                                          // seconds TODO: Make this even shorter than a second.
-        assertTrue(expectedResult, negate != getElement(elementName).isEnabled(waitTime));
+        if (negate) {
+        	assertTrue(expectedResult, negate != getElement(elementName).isEnabled(false));
+        }
+        assertTrue(expectedResult, negate != getElement(elementName).isEnabled(true));
     }
     
     /**
@@ -177,9 +178,10 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
                 : "hidden"));
         log.debug(expectedResult);
-        int waitTime = (negate) ? 10 : 1; // If we expect it to fail, only wait a second, otherwise wait the normal 10
-                                          // seconds
-        assertTrue(expectedResult, negate == getElement(elementName).isDisplayed(waitTime));
+        if (negate) {
+        	assertTrue(expectedResult, negate == getElement(elementName).isDisplayed());
+        }
+        assertTrue(expectedResult, negate == getElement(elementName).doesNotExist());
     }
     
     /**

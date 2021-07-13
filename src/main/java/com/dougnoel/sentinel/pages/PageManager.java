@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -304,7 +306,7 @@ public class PageManager {
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
-		driver().manage().timeouts().pageLoadTimeout(Time.out(), Time.unit());
+		driver().manage().timeouts().pageLoadTimeout(Time.out().toSeconds(), TimeUnit.SECONDS);
 		while (!isPageLoaded()) {
 			Thread.sleep(20);
 		}

@@ -108,11 +108,11 @@ public class Element {
 		return name;
 	}
 
-	private WebElement getElementWithWait(final By locator, Duration timeout, Duration interval) {
+	private WebElement getElementWithWait(final By locator, Duration timeout) {
 		try {
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 			       .withTimeout(timeout)
-			       .pollingEvery(interval)
+			       .pollingEvery(Time.interval())
 			       .ignoring(org.openqa.selenium.NoSuchElementException.class);
 
 		return wait.until(d -> driver.findElement(locator));
@@ -162,11 +162,12 @@ public class Element {
 	 */
 	protected WebElement element() {
 		WebElement element = null;
+		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
-		while((System.currentTimeMillis()-startTime) < Time.out() * 1000) {
+		while((System.currentTimeMillis() - startTime) < searchTime) {
     	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
     	    	log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
-    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
+    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
     	    	if (element != null) {
     	    		return element;
     	    	}
@@ -238,7 +239,7 @@ public class Element {
 	}
 
 	/**
-	 * Click a Element.
+	 * Click an Element.
 	 * <p>
 	 * This function waits up to 10 seconds in 500 millisecond increments to see if
 	 * the element is visible. This wait ensures that context-switching, such as
@@ -253,7 +254,7 @@ public class Element {
 	 * @return Element (for chaining)
 	 */
 	public Element click() {
-		long waitTime = Time.out();
+		long waitTime = Time.out().getSeconds();
 		try {
 			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
 		} catch (WebDriverException e) {
@@ -300,50 +301,36 @@ public class Element {
 	    executor.executeScript(script, this.element(), target.element());
 	    return this;	      
 	}	  
-	
-	/**
-	 * Returns true if the element is enabled within 10 seconds; otherwise returns
-	 * false.
-	 * 
-	 * @return boolean true if the element is enabled within 10 seconds; otherwise returns false.
-	 */
-	public boolean isEnabled()  {
-		return isEnabled(10);
-	}
 
 	/**
-	 * Returns true if the element is enabled within the number of seconds
-	 * indicated; otherwise returns false.
-	 * <p>
-	 * This function waits a number of seconds in 500 millisecond increments to see
+	 * Returns true if the expected result is found. If expectedResult is true,
+	 * this method returns true if the element is enabled, otherwise false.
+	 * If expectedResult is false, this method returns true if the element is 
+	 * disabled, otherwise false.
+	 * 
+	 * This method waits a number of seconds in 10 millisecond increments to see
 	 * if the element is visible. This wait ensures that context-switching, such as
 	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * <p>
-	 * A StaleElementReferenceException can be thrown when testing a Bootstrap
-	 * website that uses divs as popups. We resolve this by catching the exception
-	 * and retrying it 5 times. If it still fails, we catch the exception and return
-	 * a failure indicating the element wasn't found instead of throwing an
-	 * exception.
+	 * StaleElementReferenceExceptions are automatically caught and retried.
 	 * 
-	 * @param seconds int the number of seconds to wait before returning failure.
-	 * @return boolean true if the element is enabled within the number of seconds indicated; otherwise returns false.
+	 * @return boolean true is the expected condition is met; otherwise false
 	 */
-	public boolean isEnabled(int seconds) {
-		var retries = 0;
-		while (true) {
-			try {
-				return new WebDriverWait(driver, seconds).until(ExpectedConditions.elementToBeClickable(element()))
-						.isEnabled();
-			} catch (StaleElementReferenceException e) {
-				if (retries < 5) {
-					retries++;
-				} else {
-					return false;
-				}
-			} catch (TimeoutException e) {
-				return false;
-			}
+	public boolean isEnabled(boolean expectedResult) {
+		boolean result;
+		
+		try {
+			result = new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+					.ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.elementToBeClickable(element()))
+					.isEnabled();
+		} catch (TimeoutException e) {
+			result = false;
 		}
+		
+		if (expectedResult)
+			return result;
+		else
+			return !result;
 	}
 
 	/**
@@ -355,53 +342,29 @@ public class Element {
 	}
 
 	/**
-	 * Returns true if the element is displayed within 10 seconds; otherwise returns
-	 * false.
-	 * 
-	 * @return boolean true if the element is displayed within 10 seconds; otherwise returns false.
-	 */
-	public boolean isDisplayed() {
-		return isDisplayed(10);
-	}
-
-	/**
 	 * Returns true if the element is displayed within the number of seconds
-	 * indicated; otherwise returns false.
+	 * set by the timeout configuration option; otherwise returns false.
 	 * <p>
-	 * This function waits a number of seconds in 500 millisecond increments to see
+	 * This method waits a number of seconds in 10 millisecond increments to see
 	 * if the element is visible. This wait ensures that context-switching, such as
 	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * <p>
-	 * A StaleElementReferenceException can be thrown when testing a Boostrap
-	 * website that uses divs as popups. We resolve this by catching the exception
-	 * and retrying it 5 times. If it still fails, we catch the exception and return
-	 * a failure indicating the element wasn't found instead of throwing an
-	 * exception.
+	 * StaleElementReferenceExceptions are automatically caught and retried.
 	 * 
-	 * @param seconds int the number of seconds to wait before returning failure.
-	 * @return boolean true if the element is displayed within the number of seconds indicated; otherwise returns false.
+	 * @return boolean true if the element is displayed; otherwise returns false.
 	 */
-	public boolean isDisplayed(int seconds) {
-		var retries = 0;
-		while (true) {
-			try {
-				return new WebDriverWait(driver, seconds).until(ExpectedConditions.visibilityOf(element()))
-						.isDisplayed();
-			} catch (StaleElementReferenceException e) {
-				if (retries < 5) {
-					retries++;
-				} else {
-					return false;
-				}
-			} catch (TimeoutException e) {
-				return false;
-			}
+	public boolean isDisplayed() {
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+					.ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.visibilityOf(element()))
+					.isDisplayed();
+		} catch (TimeoutException e) {
+			return false;
 		}
 	}
 
 	/**
-	 * TODO: Test to make sure this to work with multiple selectors
-	 * Determines with 250 milliseconds (1/4 of a second) if an element is not present.
+	 * Determines with 100 milliseconds (1/10th of a second) if an element is not present.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
@@ -409,7 +372,7 @@ public class Element {
 	public boolean doesNotExist() {
 	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
+	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
 	    	if (element == null || !(element.isDisplayed())) {
 	    		log.trace("doesNotExist() return result: true");
 	    		return true;
@@ -479,26 +442,15 @@ public class Element {
 
 		return false;
 	}
-	
-	/**
-	 * Moves the mouse to the middle of the element.
-	 * 
-	 * @param target String the element we are moving the mouse over
-	 * @return Element (for chaining)
-	 */
-	public Element mouseOver(Element target) {
-		new Actions(driver).moveToElement(target.element()).build().perform();
-		return this;
-	}
 
 	/**
 	 * This method is used to get the text on mouse hover
 	 * 
 	 * @return The value of the tooltip text
 	 */
-	public String getMouseOverText() {
-		 mouseOver(this);
-		 return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
+	public String getTooltipText() {
+		new Actions(driver).moveToElement(this.element()).build().perform();
+		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}	
 	
 }
