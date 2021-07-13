@@ -61,20 +61,19 @@ In Eclipse:
 7. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select **SentinelTests - Dev**.
 
 ### How do I change the default timeout?
-All timeouts default to 10 seconds, however you can change that either on the command line or in the sentinel.yml configuration file. For example if you want to double it to 20 seconds you would use `-Dtimeout=20`. If you wanted it to fail fast after only half a second you could use `-Dtimeout=500 -Dtimeunit=MILLISECONDS`. If you really wanted to extend the time, you could extend it to a minute using `-Dtimeout=1 -Dtimeunit=MINUTES`.
+All timeouts default to 10 seconds, however you can change that either on the command line or in the sentinel.yml configuration file. For example if you want to double it to 20 seconds you would use `-Dtimeout=20`.
 
-Perhaps your dev environment is giving you a problem and you want to set the wait time astronomically high, but leave it the same for your other environments, so you want to give it an hour because sometimes your job runs at night and you don't want it to hang up during a deploy. In that case you could set a value in the configuration file like so:
+Perhaps your dev environment is giving you a problem and you want to set the wait time astronomically high, but leave it the same for your other environments, so you want to give it ten minutes because sometimes your job runs at night and you don't want it to hang up during a deploy. In that case you could set a value in the configuration file like so:
 
 ```
 configurations:
   dev:
-  	timeout=10
-  	timeunit=MINUTES
+  	timeout=3600
 ```
 
 It will wait ten minutes before failing on any wait in dev, but stick to the 10 second timeout in any other environment.
 
-All timeout values must be whole numbers. The valid values for `timeunit` are DAYS, HOURS, MINUTES, SECONDS, MICROSECONDS, MILLISECONDS, NANOSECONDS. It is not recommended that you use anything other than SECONDS or MILLISECONDS. MINUTES and HOURS can be used on nightly regression jobs to deal with infrastructure instability issues you cannot control. Your tests will likely all fail if you use MICROSECONDS or NANOSECONDS, but they'll fail fast, and that's the Agile way!
+Timeout values must be whole numbers.
 
 ### How do I leave the browser open at the end of my test?
 When running on the command line, you can use the argument `-DleaveBrowserOpen`. Ex:
