@@ -209,19 +209,32 @@ public class VerificationSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I should see the Third Party iframe</li>
-     * <li>I should see the Provider Search iframe</li>
+     * <li>I should load Provider Search iframe</li>
      * <li>I should see the Facebook iframe</li>
      * </ul>
      * @see com.dougnoel.sentinel.steps.VerificationSteps#verifyElementExists(String, String)
      * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
      * @param iFrameName String the name of the iframe element on the page object.
      */
-    @Then("^I should see the (.*) iframe$")
+    @Then("^I (?:should see|load) the (.*)$")
     public static void switchToIFrame(String iFrameName) {
 
         // Make sure the content is loaded in the i frame
         VerificationSteps.verifyElementExists(iFrameName, "");
         PageManager.switchToIFrame();
 
+    }
+    
+    /**
+     * Exits iFrame.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I exit the iFrame</li>
+     * </ul>
+     */
+    @Then("^I exit the iFrame$")
+    public static void exitIFrame() {
+        PageManager.exitIFrame();
     }
 }

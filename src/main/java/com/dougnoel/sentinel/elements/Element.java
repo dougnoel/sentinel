@@ -224,15 +224,16 @@ public class Element {
 
 		// Iterate through the string and press every key
 		var robot = new Robot();
-		robot.delay(1000);
+		robot.setAutoWaitForIdle(true);
+		robot.delay(150);
+		robot.waitForIdle();
+		
 		char[] chars = text.toCharArray();
-
+        
 		for (char c : chars) {
-			log.debug(c);
+			log.trace(c);
 			robot.keyPress(KeyEvent.getExtendedKeyCodeForChar(c));
-			robot.delay(1000);
 			robot.keyRelease(KeyEvent.getExtendedKeyCodeForChar(c));
-			robot.delay(1000);
 		}
 
 		return this;

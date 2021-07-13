@@ -268,6 +268,13 @@ public class PageManager {
 		}
 
 	}
+	
+	/**
+	 * Exits existing iFrame.
+	 */
+	public static void exitIFrame() {
+		driver().switchTo().defaultContent();
+	}
 
 	/**
 	 * Gets the URL of the page we are currently on by calling the Page Object which
