@@ -1,8 +1,10 @@
-@element-visibilty
-Feature: Validate the Fucntionality of Elements Existing and Not Existing
+@251
+Feature: 251 Verification Steps
+Create cucumber tests for all VerificationSteps. Update and rename "Element Exists Feature". Will increase code coverage.
 
-  @element-exists @element-does-not-exist @145
+  @251A @145
   Scenario: Test Link Existance
+  Validate the Fucntionality of Elements Existing and Not Existing
     Given I am on the Guinea Pig Page
     Then I verify the Example Div exists
     	And I verify the Example Link exists
