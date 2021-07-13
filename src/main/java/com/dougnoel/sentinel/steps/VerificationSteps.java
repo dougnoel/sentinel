@@ -204,25 +204,17 @@ public class VerificationSteps {
     }
     
     /**
-     * Identifies an iframe and switches to it, if it exists.
+     * Identifies the first iFrame in a document and switches to it.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I should see the Third Party iframe</li>
-     * <li>I should load Provider Search iframe</li>
-     * <li>I should see the Facebook iframe</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.steps.VerificationSteps#verifyElementExists(String, String)
+     * <li>I enter the iFrame
      * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
      * @param iFrameName String the name of the iframe element on the page object.
      */
-    @Then("^I (?:should see|load) the (.*)$")
-    public static void switchToIFrame(String iFrameName) {
-
-        // Make sure the content is loaded in the i frame
-        VerificationSteps.verifyElementExists(iFrameName, "");
+    @Then("^I enter the iFrame$")
+    public static void switchToIFrame() {
         PageManager.switchToIFrame();
-
     }
     
     /**

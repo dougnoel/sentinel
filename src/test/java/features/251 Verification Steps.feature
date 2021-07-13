@@ -27,5 +27,5 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
   Scenario: Switch to iFrame
   Validate you can switch to an iFrame and back out.
   	Given I am on the Internet IFrame Page
-  	When I load the editor iframe
+  	When I enter the iFrame
   	Then I exit the iFrame

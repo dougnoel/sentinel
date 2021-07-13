@@ -1,6 +1,2 @@
 urls:
   default: https://the-internet.herokuapp.com/iframe
-elements:
-  editor_iframe:
-    elementType: iFrame
-    id: mce_0_ifr
