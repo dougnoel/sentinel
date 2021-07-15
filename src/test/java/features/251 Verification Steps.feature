@@ -17,11 +17,19 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
 #  @251C
 #  Scenario: Is Active and Is Not Active
 #  
-#  @251D
-#  Scenario: Is Enabled and Is Not Enabled
-#    
-#  @251E
-#  Scenario: Is Hidden and Is Not Hidden
+  @251D
+  Scenario: Enabled and Disabled Tests
+  	Given I am on the Internet Dynamic Controls Page
+  	Then I verify the Input Textbox is disabled
+  	When I click the Enable Button
+  	Then I verify the Input Textbox is enabled
+
+    
+  @251E
+  Scenario: Element Visibility Tests
+  	Given I am on the Guinea Pig Page
+  	Then I verify the hidden div is hidden
+  	  And I verify the your comments span is visible
   
   @251F
   Scenario: Switch to iFrame

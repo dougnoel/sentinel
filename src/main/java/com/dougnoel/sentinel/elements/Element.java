@@ -12,8 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -304,34 +302,22 @@ public class Element {
 	}	  
 
 	/**
-	 * Returns true if the expected result is found. If expectedResult is true,
-	 * this method returns true if the element is enabled, otherwise false.
-	 * If expectedResult is false, this method returns true if the element is 
-	 * disabled, otherwise false.
+	 * Returns true if the element is displayed, otherwise returns false if it is
+	 * hidden.
 	 * 
-	 * This method waits a number of seconds in 10 millisecond increments to see
-	 * if the element is visible. This wait ensures that context-switching, such as
-	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * StaleElementReferenceExceptions are automatically caught and retried.
-	 * 
-	 * @return boolean true is the expected condition is met; otherwise false
+	 * @return boolean true if the element is displayed; false if it is hidden.
 	 */
-	public boolean isEnabled(boolean expectedResult) {
-		boolean result;
-		
-		try {
-			result = new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
-					.ignoring(StaleElementReferenceException.class)
-					.until(ExpectedConditions.elementToBeClickable(element()))
-					.isEnabled();
-		} catch (TimeoutException e) {
-			result = false;
-		}
-		
-		if (expectedResult)
-			return result;
-		else
-			return !result;
+	public boolean isDisplayed() {
+		return element().isDisplayed();
+	}
+
+	/**
+	 * Returns true if the element is enabled; false if it is disabled
+	 * 
+	 * @return boolean true if the element is enabled; false if it is disabled
+	 */
+	public boolean isEnabled() {
+		return element().isEnabled();
 	}
 
 	/**
@@ -341,29 +327,7 @@ public class Element {
 	public boolean isSelected() {
 		return element().isSelected();
 	}
-
-	/**
-	 * Returns true if the element is displayed within the number of seconds
-	 * set by the timeout configuration option; otherwise returns false.
-	 * <p>
-	 * This method waits a number of seconds in 10 millisecond increments to see
-	 * if the element is visible. This wait ensures that context-switching, such as
-	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * StaleElementReferenceExceptions are automatically caught and retried.
-	 * 
-	 * @return boolean true if the element is displayed; otherwise returns false.
-	 */
-	public boolean isDisplayed() {
-		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
-					.ignoring(StaleElementReferenceException.class)
-					.until(ExpectedConditions.visibilityOf(element()))
-					.isDisplayed();
-		} catch (TimeoutException e) {
-			return false;
-		}
-	}
-
+	
 	/**
 	 * Determines with 100 milliseconds (1/10th of a second) if an element is not present.
 	 * This should be used when you expect an element to not be present and do not want

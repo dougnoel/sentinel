@@ -148,16 +148,15 @@ public class VerificationSteps {
      * @param elementName String the name of the element
      * @param assertion String if not null we expect this be true
      */
-    @Then("^I verify (?:the|a|an) (.*?) is( not)? enabled$")
+    @Then("^I verify (?:the|a|an) (.*?) is (enabled|disabled)$")
     public static void verifyElementIsEnabled(String elementName, String assertion) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be enabled.",
-                elementName, (negate ? "not " : ""));
-        log.trace(expectedResult);
-        if (negate) {
-        	assertTrue(expectedResult, negate != getElement(elementName).isEnabled(false));
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.",
+                elementName, assertion);
+        if (assertion.contains("visible")) {
+        	assertTrue(expectedResult, getElement(elementName).isEnabled());
+        } else {
+        	assertFalse(expectedResult, getElement(elementName).isEnabled());
         }
-        assertTrue(expectedResult, negate != getElement(elementName).isEnabled(true));
     }
     
     /**
@@ -172,16 +171,14 @@ public class VerificationSteps {
      * @param elementName String the name of the element
      * @param assertion String if the assertion is not empty we expect it to be hidden
      */
-    @Then("^I verify (?:the|a|an) (.*?) is( not)? hidden$")
-    public static void verifyElementIsHidden(String elementName, String assertion) {
-        boolean negate = !StringUtils.isEmpty(assertion); // is hidden = empty, so negate is false
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
-                : "hidden"));
-        log.debug(expectedResult);
-        if (negate) {
-        	assertTrue(expectedResult, negate == getElement(elementName).isDisplayed());
+    @Then("^I verify (?:the|a|an) (.*?) is (visible|hidden)$")
+    public static void verifyElementVisibility(String elementName, String assertion) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, assertion);
+        if (assertion.contains("visible")) {
+        	assertTrue(expectedResult, getElement(elementName).isDisplayed());
+        } else {
+        	assertFalse(expectedResult, getElement(elementName).isDisplayed());
         }
-        assertTrue(expectedResult, negate == getElement(elementName).doesNotExist());
     }
     
     /**

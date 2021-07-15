@@ -13,3 +13,9 @@ elements:
   fake_div:
     elementType: Div
     id: "fake div"
+  hidden_div:
+    elementType: Div
+    id: "invisible div"
+  your_comments_span:
+    elementType: Span
+    id: "your_comments"
