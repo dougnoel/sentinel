@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -257,7 +256,9 @@ public class Element {
 	public Element click() {
 		long waitTime = Time.out().getSeconds();
 		try {
-			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
+			new WebDriverWait(driver, waitTime, Time.interval().toMillis())
+			.until(ExpectedConditions.elementToBeClickable(element()))
+			.click();
 		} catch (WebDriverException e) {
 			try {
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
@@ -384,30 +385,42 @@ public class Element {
 	}
 
 	/**
-	 * Verifies if the element has a class value.
+	 * Returns true if the attribute exists for the element; otherwise returns false.
+	 * Expects the attribute to exist, and if it does not, this method will check every 
+	 * 10 milliseconds up until to the configured timeout time (10 second default).
 	 * <p>
-	 * <b>Examples:</b>
-	 * <ul>
-	 * <li>Determine if an element is highlighted because class="active"</li>
-	 * </ul>
+	 * NOTE: Use doesNotHaveAttribute() for the fastest processing time if you expect the
+	 * element to not have the attribute.
 	 * 
-	 * @param text String the class to verify
-	 * @return boolean
+	 * @param attribute String the attribute for which to test
+	 * @return true if the attribute exists for the element; otherwise false
 	 */
-	public boolean hasClass(String text) {
-		String classes = element().getAttribute("class");
-		log.debug("Classes found on element {}: {}", this.getClass().getName(), classes);
-		for (String c : classes.split(" ")) {
-			if (c.equals(text)) {
-				return true;
-			}
-		}
-
-		return false;
+	public boolean hasAttribute(String attribute) {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
 	}
 
 	/**
-	 * Returns true if the element as an attribute equal to the value passed;
+	 * Returns true if the attribute does not exist for the element; otherwise returns false.
+	 * Expects the attribute to not exist, and if it does, this method will check every 
+	 * 10 milliseconds up until to the configured timeout time (10 second default).
+	 * <p>
+	 * NOTE: Use hasAttribute() for the fastest processing time if you expect the element
+	 * to have the attribute.
+	 * 
+	 * @param attribute String the attribute for which to test
+	 * @return true if the attribute does not exist for the element; otherwise false
+	 */
+	public boolean doesNotHaveAttribute(String attribute) {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.not(
+						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
+	}
+	
+	/**
+	 * Returns true if the element has an attribute equal to the value passed;
 	 * otherwise returns false.
 	 * <p>
 	 * <b>Examples:</b>
@@ -420,19 +433,20 @@ public class Element {
 	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
 	 */
 	public boolean attributeEquals(String attribute, String value) {
-		String values = element().getAttribute(attribute);
-		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
-				values);
-		if (values.equals(value)) {
-			return true;
-		} else {
-			for (String c : values.split(" ")) {
-				if (c.equals(value)) {
-					return true;
+		if (hasAttribute(attribute)) {
+			String values = element().getAttribute(attribute);
+			log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
+					values);
+			if (values.equals(value)) {
+				return true;
+			} else {
+				for (String c : values.split(" ")) {
+					if (c.equals(value)) {
+						return true;
+					}
 				}
 			}
 		}
-
 		return false;
 	}
 

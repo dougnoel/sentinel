@@ -11,12 +11,14 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
     	And I verify the Invisible Div does not exist
     	And I verify the Fake Div does not exist
     	
-#  @251B
-#  Scenario: Has Attribute and Does Not Have Attribute
-#  
-#  @251C
-#  Scenario: Is Active and Is Not Active
-#  
+  @251B
+  Scenario: Attribute Tests
+  	Given I am on the Internet Page
+  	Then I verify the Header has the attribute class
+  	  But I verify the Header does not have the attribute bob
+  	  And I verify the Header has the class heading
+  	  But I verify the Header does not have the class footer
+  
   @251D
   Scenario: Enabled and Disabled Tests
   	Given I am on the Internet Dynamic Controls Page
