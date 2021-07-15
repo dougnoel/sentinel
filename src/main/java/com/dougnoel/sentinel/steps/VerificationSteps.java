@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
@@ -16,8 +14,6 @@ import io.cucumber.java.en.Then;
  *
  */
 public class VerificationSteps {
-	
-    private static final Logger log = LogManager.getLogger(VerificationSteps.class.getName()); // Create a logger.
     
     /**
      * Verifies the given element exists. The given element string is made lower case 
@@ -120,7 +116,7 @@ public class VerificationSteps {
      * </ul>
      * @param elementName String element to inspect
      * @param assertion String "has" for a positive check, anything else for negative
-     * @param attribute String class attribute to verify
+     * @param className String class to verify
      */
     @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
     public static void verifyElementHasClass(String elementName, String assertion, String className) {
