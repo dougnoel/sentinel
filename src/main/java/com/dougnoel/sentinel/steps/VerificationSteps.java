@@ -206,8 +206,8 @@ public class VerificationSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I enter the iFrame
+     * </ul>
      * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
-     * @param iFrameName String the name of the iframe element on the page object.
      */
     @Then("^I enter the iFrame$")
     public static void switchToIFrame() {
