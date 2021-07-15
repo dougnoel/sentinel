@@ -7,3 +7,6 @@ elements:
   enable_button:
     elementType: Button
     xpath: "//form[@id='input-example']/button"
+  disable_button:
+    elementType: Button
+    xpath: "//form[@id='input-example']/button"

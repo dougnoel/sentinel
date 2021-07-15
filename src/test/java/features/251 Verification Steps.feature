@@ -20,9 +20,10 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
   @251D
   Scenario: Enabled and Disabled Tests
   	Given I am on the Internet Dynamic Controls Page
-  	Then I verify the Input Textbox is disabled
   	When I click the Enable Button
   	Then I verify the Input Textbox is enabled
+  	When I click the Disable Button
+  	Then I verify the Input Textbox is disabled
 
     
   @251E

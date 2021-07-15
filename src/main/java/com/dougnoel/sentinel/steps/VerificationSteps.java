@@ -152,10 +152,10 @@ public class VerificationSteps {
     public static void verifyElementIsEnabled(String elementName, String assertion) {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.",
                 elementName, assertion);
-        if (assertion.contains("visible")) {
+        if (assertion.contains("enabled")) {
         	assertTrue(expectedResult, getElement(elementName).isEnabled());
         } else {
-        	assertFalse(expectedResult, getElement(elementName).isEnabled());
+        	assertTrue(expectedResult, getElement(elementName).isDisabled());
         }
     }
     

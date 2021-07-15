@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -312,12 +314,38 @@ public class Element {
 	}
 
 	/**
-	 * Returns true if the element is enabled; false if it is disabled
+	 * Returns true if the element is enabled; false if it is disabled.
+	 * Expects the element to be enabled, and if it is not, this method
+	 * will check every 10 milliseconds until it is up to the configured
+	 * timeout time (10 second default).
+	 * <p>
+	 * NOTE: Use isDisabled() for the fastest processing time if you expect
+	 * the element to be disabled.
 	 * 
 	 * @return boolean true if the element is enabled; false if it is disabled
 	 */
-	public boolean isEnabled() {
-		return element().isEnabled();
+	public boolean isEnabled() {		
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.not(
+						ExpectedConditions.attributeContains(element(), "disabled", "")));
+	}
+
+	/**
+	 * Returns true if the element is disabled; false if it is enabled.
+	 * Expects the element to be disabled, and if it is not, this method
+	 * will check every 10 milliseconds until it is up to the configured
+	 * timeout time (10 second default).
+	 * <p>
+	 * NOTE: Use isEnabled() for the fastest processing time if you expect
+	 * the element to be enabled.
+	 * 
+	 * @return boolean true if the element is disabled; false if it is enabled
+	 */
+	public boolean isDisabled() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
 	}
 
 	/**
