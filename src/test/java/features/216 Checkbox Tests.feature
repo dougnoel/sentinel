@@ -5,9 +5,7 @@ Feature: 216 Checkbox Tests
 	
   @216A
   Scenario: 216A Checkbox Tests
-    Given I am on the Internet Page
-      And I click the Checkboxes link
-      And I am redirected to the Internet Checkboxes Page
+    Given I am on the Internet Checkboxes Page
     When I click on checkbox one
       And I click on checkbox two
         Then I verify checkbox one is checked

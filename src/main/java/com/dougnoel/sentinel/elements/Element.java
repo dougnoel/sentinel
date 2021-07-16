@@ -306,14 +306,34 @@ public class Element {
 
 	/**
 	 * Returns true if the element is displayed, otherwise returns false if it is
-	 * hidden.
+	 * hidden/invisible.
+	 * <p>
+	 * NOTE: Use isInvisible() for the fastest processing time if you expect
+	 * the element to be hidden/invisible.
 	 * 
 	 * @return boolean true if the element is displayed; false if it is hidden.
 	 */
 	public boolean isDisplayed() {
-		return element().isDisplayed();
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
 	}
 
+	/**
+	 * Returns true if the element is invisible, otherwise returns false if it is
+	 * visible/displayed.
+	 * <p>
+	 * NOTE: Use isDisplayed() for the fastest processing time if you expect
+	 * the element to be visible/displayed.
+	 * 
+	 * @return boolean true if the element is invisible; false if it is displayed.
+	 */
+	public boolean isInvisible() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.invisibilityOf(element()));
+	}
+	
 	/**
 	 * Returns true if the element is enabled; false if it is disabled.
 	 * Expects the element to be enabled, and if it is not, this method
@@ -350,11 +370,31 @@ public class Element {
 	}
 
 	/**
-	 * Validates whether or not the element is selected.
+	 * Returns true if the element is selected; false if it is not.
+	 * <p>
+	 * NOTE: Use isNotSelected() for the fastest processing time if you expect
+	 * the element to not be selected.
+	 * 
 	 * @return boolean true if the element is selected, false if it is not
 	 */
 	public boolean isSelected() {
-		return element().isSelected();
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.elementToBeSelected(element()));
+	}
+
+	/**
+	 * Returns true if the element is not selected; false if it is.
+	 * <p>
+	 * NOTE: Use isSelected() for the fastest processing time if you expect
+	 * the element to be selected.
+	 * 
+	 * @return boolean true if the element is not selected, false if it is
+	 */
+	public boolean isNotSelected() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
 	}
 	
 	/**

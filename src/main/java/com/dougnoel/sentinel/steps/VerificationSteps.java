@@ -47,9 +47,6 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}exist.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
-            // We need a different assertion here because checking to see if something does
-            // exist takes 10 seconds to come back with a failure when we want it to come
-            // back much faster.
             assertTrue(expectedResult, getElement(elementName).doesNotExist());
         } else {
             assertTrue(expectedResult, getElement(elementName).isDisplayed());
@@ -75,7 +72,7 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {} selected.",
                 elementName, (negate ? "not be" : "be"));
         if (negate) {
-            assertFalse(expectedResult, getElement(elementName).isSelected());
+            assertTrue(expectedResult, getElement(elementName).isNotSelected());
         } else {
             assertTrue(expectedResult, getElement(elementName).isSelected());
         }
@@ -189,7 +186,7 @@ public class VerificationSteps {
         if (assertion.contentEquals("visible")) {
         	assertTrue(expectedResult, getElement(elementName).isDisplayed());
         } else {
-        	assertFalse(expectedResult, getElement(elementName).isDisplayed());
+        	assertTrue(expectedResult, getElement(elementName).isInvisible());
         }
     }
     
