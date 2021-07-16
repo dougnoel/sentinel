@@ -21,7 +21,7 @@ import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-public class ElementFunctionsTests {
+public class ElementTests {
 	private static WebDriver driver;
 	
 	@BeforeClass

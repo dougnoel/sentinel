@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -48,7 +47,7 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * Every time we use an element on the page, we look for it at the time we are
  * using it.
  * <p>
- * <b>Note:</b> Renamed from WebElement to PageElement to avoid name space
+ * <b>Note:</b> Renamed from WebElement to Element to avoid name space
  * conflicts with selenium's WebElement object when Selenium's WebElement type
  * was needed as a return type for the element() function.
  * <p>
@@ -62,8 +61,8 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * calling objects that get called often.</li>
  * </ul>
  */
-public class PageElement {
-	private static final Logger log = LogManager.getLogger(PageElement.class.getName()); // Create a logger.
+public class Element {
+	private static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
 
 	protected Map<SelectorType,String> selectors;
 	protected String name;
@@ -78,11 +77,11 @@ public class PageElement {
 	 * @param elementName String the element name
 	 * @param selectors Map the various selectors to iterate through to find the element
 	 */
-	public PageElement(String elementName, Map<String,String> selectors) {
-		this("PageElement", elementName, selectors);
+	public Element(String elementName, Map<String,String> selectors) {
+		this("Element", elementName, selectors);
 	}
 	
-	public PageElement(String elementType, String elementName, Map<String,String> selectors) {
+	public Element(String elementType, String elementName, Map<String,String> selectors) {
 		this.selectors = new EnumMap<>(SelectorType.class);
 		selectors.forEach((locatorType, locatorValue) -> {
 			if (!"elementType".equalsIgnoreCase(locatorType)) {
@@ -108,11 +107,11 @@ public class PageElement {
 		return name;
 	}
 
-	private WebElement getElementWithWait(final By locator, Duration timeout, Duration interval) {
+	private WebElement getElementWithWait(final By locator, Duration timeout) {
 		try {
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 			       .withTimeout(timeout)
-			       .pollingEvery(interval)
+			       .pollingEvery(Time.interval())
 			       .ignoring(org.openqa.selenium.NoSuchElementException.class);
 
 		return wait.until(d -> driver.findElement(locator));
@@ -162,11 +161,12 @@ public class PageElement {
 	 */
 	protected WebElement element() {
 		WebElement element = null;
+		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
-		while((System.currentTimeMillis()-startTime) < Time.out() * 1000) {
+		while((System.currentTimeMillis() - startTime) < searchTime) {
     	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
     	    	log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
-    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
+    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
     	    	if (element != null) {
     	    		return element;
     	    	}
@@ -178,7 +178,7 @@ public class PageElement {
 	}
 
 	/**
-	 * Type text into a PageElement.
+	 * Type text into a Element.
 	 * <p>
 	 * <b>Aliases:</b>
 	 * <ul>
@@ -187,16 +187,15 @@ public class PageElement {
 	 * 
 	 * @param text
 	 *            String (text to type)
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
-	public PageElement sendKeys(String text) {
-		element().click();
-		element().clear();
+	public Element sendKeys(String text) {
+		this.click().clear();
 		element().sendKeys(text);
 		return this;
 	}
 
-	public PageElement javaScriptSendKeys(String text) {
+	public Element javaScriptSendKeys(String text) {
 		JavascriptExecutor jse = (JavascriptExecutor) driver;
 		jse.executeScript("arguments[0].value='" + text + "';", element());
 
@@ -204,16 +203,16 @@ public class PageElement {
 	}
 
 	/**
-	 * Press keys with focus on a PageElement. This is useful when type() or
+	 * Press keys with focus on a Element. This is useful when type() or
 	 * sendKeys isn't working due to a mask or hidden field being employed to grab
 	 * key press events and operate on each one.
 	 * 
 	 * @param text
 	 *            String (keys to type)
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 * @throws AWTException if the key cannot be pressed.
 	 */
-	public PageElement pressKeys(String text) throws AWTException {
+	public Element pressKeys(String text) throws AWTException {
 		// Ensure that the element has focus.
 		if ("input".equals(element().getTagName())) {
 			element().sendKeys("");
@@ -223,22 +222,23 @@ public class PageElement {
 
 		// Iterate through the string and press every key
 		var robot = new Robot();
-		robot.delay(1000);
+		robot.setAutoWaitForIdle(true);
+		robot.delay(150);
+		robot.waitForIdle();
+		
 		char[] chars = text.toCharArray();
-
+        
 		for (char c : chars) {
-			log.debug(c);
+			log.trace(c);
 			robot.keyPress(KeyEvent.getExtendedKeyCodeForChar(c));
-			robot.delay(1000);
 			robot.keyRelease(KeyEvent.getExtendedKeyCodeForChar(c));
-			robot.delay(1000);
 		}
 
 		return this;
 	}
 
 	/**
-	 * Click a PageElement.
+	 * Click an Element.
 	 * <p>
 	 * This function waits up to 10 seconds in 500 millisecond increments to see if
 	 * the element is visible. This wait ensures that context-switching, such as
@@ -250,12 +250,14 @@ public class PageElement {
 	 * <li>Radiobutton.select()</li>
 	 * </ul>
 	 * 
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
-	public PageElement click() {
-		long waitTime = Time.out();
+	public Element click() {
+		long waitTime = Time.out().getSeconds();
 		try {
-			new WebDriverWait(driver, waitTime).until(ExpectedConditions.elementToBeClickable(element())).click();
+			new WebDriverWait(driver, waitTime, Time.interval().toMillis())
+			.until(ExpectedConditions.elementToBeClickable(element()))
+			.click();
 		} catch (WebDriverException e) {
 			try {
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
@@ -272,7 +274,7 @@ public class PageElement {
 	}
 
 	/**
-	 * Clear a PageElement. Clears text in a text box. Un-checks check boxes. Clears
+	 * Clear a Element. Clears text in a text box. Un-checks check boxes. Clears
 	 * radio button choices.
 	 * <p>
 	 * <b>Aliases:</b>
@@ -280,128 +282,122 @@ public class PageElement {
 	 * <li>Checkbox.uncheck()</li>
 	 * </ul>
 	 * 
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
-	public PageElement clear() {
+	public Element clear() {
 		element().clear();
 		return this;
 	}
 
 	/**
 	 * Drags the current element on top of the target element.
-	 * @param target PageElement the element the target is being dragged and dropped onto
-	 * @return PageElement (for chaining)
+	 * @param target Element the element the target is being dragged and dropped onto
+	 * @return Element (for chaining)
 	 * @throws IOException if the drag and drop javascript file cannot be loaded
 	 */
-	public PageElement dragAndDrop(PageElement target) throws IOException {
+	public Element dragAndDrop(Element target) throws IOException {
 	    String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
 	    
 	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
-	    executor.executeScript(script, this.toWebElement(), target.toWebElement());
+	    executor.executeScript(script, this.element(), target.element());
 	    return this;	      
 	}	  
+
+	/**
+	 * Returns true if the element is displayed, otherwise returns false if it is
+	 * hidden/invisible.
+	 * <p>
+	 * NOTE: Use isInvisible() for the fastest processing time if you expect
+	 * the element to be hidden/invisible.
+	 * 
+	 * @return boolean true if the element is displayed; false if it is hidden.
+	 */
+	public boolean isDisplayed() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
+	}
+
+	/**
+	 * Returns true if the element is invisible, otherwise returns false if it is
+	 * visible/displayed.
+	 * <p>
+	 * NOTE: Use isDisplayed() for the fastest processing time if you expect
+	 * the element to be visible/displayed.
+	 * 
+	 * @return boolean true if the element is invisible; false if it is displayed.
+	 */
+	public boolean isInvisible() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.invisibilityOf(element()));
+	}
 	
 	/**
-	 * Returns true if the element is enabled within 10 seconds; otherwise returns
-	 * false.
+	 * Returns true if the element is enabled; false if it is disabled.
+	 * Expects the element to be enabled, and if it is not, this method
+	 * will check every 10 milliseconds until it is up to the configured
+	 * timeout time (10 second default).
+	 * <p>
+	 * NOTE: Use isDisabled() for the fastest processing time if you expect
+	 * the element to be disabled.
 	 * 
-	 * @return boolean true if the element is enabled within 10 seconds; otherwise returns false.
+	 * @return boolean true if the element is enabled; false if it is disabled
 	 */
-	public boolean isEnabled()  {
-		return isEnabled(10);
+	public boolean isEnabled() {		
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.not(
+						ExpectedConditions.attributeContains(element(), "disabled", "")));
 	}
 
 	/**
-	 * Returns true if the element is enabled within the number of seconds
-	 * indicated; otherwise returns false.
+	 * Returns true if the element is disabled; false if it is enabled.
+	 * Expects the element to be disabled, and if it is not, this method
+	 * will check every 10 milliseconds until it is up to the configured
+	 * timeout time (10 second default).
 	 * <p>
-	 * This function waits a number of seconds in 500 millisecond increments to see
-	 * if the element is visible. This wait ensures that context-switching, such as
-	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * <p>
-	 * A StaleElementReferenceException can be thrown when testing a Bootstrap
-	 * website that uses divs as popups. We resolve this by catching the exception
-	 * and retrying it 5 times. If it still fails, we catch the exception and return
-	 * a failure indicating the element wasn't found instead of throwing an
-	 * exception.
+	 * NOTE: Use isEnabled() for the fastest processing time if you expect
+	 * the element to be enabled.
 	 * 
-	 * @param seconds int the number of seconds to wait before returning failure.
-	 * @return boolean true if the element is enabled within the number of seconds indicated; otherwise returns false.
+	 * @return boolean true if the element is disabled; false if it is enabled
 	 */
-	public boolean isEnabled(int seconds) {
-		var retries = 0;
-		while (true) {
-			try {
-				return new WebDriverWait(driver, seconds).until(ExpectedConditions.elementToBeClickable(element()))
-						.isEnabled();
-			} catch (StaleElementReferenceException e) {
-				if (retries < 5) {
-					retries++;
-				} else {
-					return false;
-				}
-			} catch (TimeoutException e) {
-				return false;
-			}
-		}
+	public boolean isDisabled() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
 	}
 
 	/**
-	 * Validates whether or not the element is selected.
+	 * Returns true if the element is selected; false if it is not.
+	 * <p>
+	 * NOTE: Use isNotSelected() for the fastest processing time if you expect
+	 * the element to not be selected.
+	 * 
 	 * @return boolean true if the element is selected, false if it is not
 	 */
 	public boolean isSelected() {
-		return element().isSelected();
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.elementToBeSelected(element()));
 	}
 
 	/**
-	 * Returns true if the element is displayed within 10 seconds; otherwise returns
-	 * false.
-	 * 
-	 * @return boolean true if the element is displayed within 10 seconds; otherwise returns false.
-	 */
-	public boolean isDisplayed() {
-		return isDisplayed(10);
-	}
-
-	/**
-	 * Returns true if the element is displayed within the number of seconds
-	 * indicated; otherwise returns false.
+	 * Returns true if the element is not selected; false if it is.
 	 * <p>
-	 * This function waits a number of seconds in 500 millisecond increments to see
-	 * if the element is visible. This wait ensures that context-switching, such as
-	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * <p>
-	 * A StaleElementReferenceException can be thrown when testing a Boostrap
-	 * website that uses divs as popups. We resolve this by catching the exception
-	 * and retrying it 5 times. If it still fails, we catch the exception and return
-	 * a failure indicating the element wasn't found instead of throwing an
-	 * exception.
+	 * NOTE: Use isSelected() for the fastest processing time if you expect
+	 * the element to be selected.
 	 * 
-	 * @param seconds int the number of seconds to wait before returning failure.
-	 * @return boolean true if the element is displayed within the number of seconds indicated; otherwise returns false.
+	 * @return boolean true if the element is not selected, false if it is
 	 */
-	public boolean isDisplayed(int seconds) {
-		var retries = 0;
-		while (true) {
-			try {
-				return new WebDriverWait(driver, seconds).until(ExpectedConditions.visibilityOf(element()))
-						.isDisplayed();
-			} catch (StaleElementReferenceException e) {
-				if (retries < 5) {
-					retries++;
-				} else {
-					return false;
-				}
-			} catch (TimeoutException e) {
-				return false;
-			}
-		}
+	public boolean isNotSelected() {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
 	}
-
+	
 	/**
-	 * TODO: Test to make sure this to work with multiple selectors
-	 * Determines with 250 milliseconds (1/4 of a second) if an element is not present.
+	 * Determines with 100 milliseconds (1/10th of a second) if an element is not present.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
@@ -409,7 +405,7 @@ public class PageElement {
 	public boolean doesNotExist() {
 	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100), Duration.ofMillis(10));
+	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
 	    	if (element == null || !(element.isDisplayed())) {
 	    		log.trace("doesNotExist() return result: true");
 	    		return true;
@@ -428,39 +424,42 @@ public class PageElement {
 	}
 
 	/**
-	 * Returns the WebElement wrapped inside the PageElement so that it can be acted
-	 * upon inside of step definitions.
-	 * @return org.openqa.selenium.WebElement
-	 */
-	public WebElement toWebElement() {
-		return element();
-	}
-
-	/**
-	 * Verifies if the element has a class value.
+	 * Returns true if the attribute exists for the element; otherwise returns false.
+	 * Expects the attribute to exist, and if it does not, this method will check every 
+	 * 10 milliseconds up until to the configured timeout time (10 second default).
 	 * <p>
-	 * <b>Examples:</b>
-	 * <ul>
-	 * <li>Determine if an element is highlighted because class="active"</li>
-	 * </ul>
+	 * NOTE: Use doesNotHaveAttribute() for the fastest processing time if you expect the
+	 * element to not have the attribute.
 	 * 
-	 * @param text String the class to verify
-	 * @return boolean
+	 * @param attribute String the attribute for which to test
+	 * @return true if the attribute exists for the element; otherwise false
 	 */
-	public boolean hasClass(String text) {
-		String classes = element().getAttribute("class");
-		log.debug("Classes found on element {}: {}", this.getClass().getName(), classes);
-		for (String c : classes.split(" ")) {
-			if (c.equals(text)) {
-				return true;
-			}
-		}
-
-		return false;
+	public boolean hasAttribute(String attribute) {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
 	}
 
 	/**
-	 * Returns true if the element as an attribute equal to the value passed;
+	 * Returns true if the attribute does not exist for the element; otherwise returns false.
+	 * Expects the attribute to not exist, and if it does, this method will check every 
+	 * 10 milliseconds up until to the configured timeout time (10 second default).
+	 * <p>
+	 * NOTE: Use hasAttribute() for the fastest processing time if you expect the element
+	 * to have the attribute.
+	 * 
+	 * @param attribute String the attribute for which to test
+	 * @return true if the attribute does not exist for the element; otherwise false
+	 */
+	public boolean doesNotHaveAttribute(String attribute) {
+		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(ExpectedConditions.not(
+						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
+	}
+	
+	/**
+	 * Returns true if the element has an attribute equal to the value passed;
 	 * otherwise returns false.
 	 * <p>
 	 * <b>Examples:</b>
@@ -473,31 +472,21 @@ public class PageElement {
 	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
 	 */
 	public boolean attributeEquals(String attribute, String value) {
-		String values = element().getAttribute(attribute);
-		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
-				values);
-		if (values.equals(value)) {
-			return true;
-		} else {
-			for (String c : values.split(" ")) {
-				if (c.equals(value)) {
-					return true;
+		if (hasAttribute(attribute)) {
+			String values = element().getAttribute(attribute);
+			log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
+					values);
+			if (values.equals(value)) {
+				return true;
+			} else {
+				for (String c : values.split(" ")) {
+					if (c.equals(value)) {
+						return true;
+					}
 				}
 			}
 		}
-
 		return false;
-	}
-	
-	/**
-	 * Moves the mouse to the middle of the element.
-	 * 
-	 * @param target String the element we are moving the mouse over
-	 * @return PageElement (for chaining)
-	 */
-	public PageElement mouseOver(PageElement target) {
-		new Actions(driver).moveToElement(target.toWebElement()).build().perform();
-		return this;
 	}
 
 	/**
@@ -505,9 +494,9 @@ public class PageElement {
 	 * 
 	 * @return The value of the tooltip text
 	 */
-	public String getMouseOverText() {
-		 mouseOver(this);
-		 return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
+	public String getTooltipText() {
+		new Actions(driver).moveToElement(this.element()).build().perform();
+		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}	
 	
 }

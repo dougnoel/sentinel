@@ -12,10 +12,10 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
- * Retrieves as an element as a  PageElement or as one of the following types:
+ * Retrieves as an element as a  Element or as one of the following types:
  * Checkbox, Dropdown, Radiobutton, Select, Table, or Textbox.
  * 
- * To return as the desired type, we call getElement which returns a PageElement, and the element is 
+ * To return as the desired type, we call getElement which returns a Element, and the element is 
  * cast as the desired element.
  *
  */
@@ -26,13 +26,13 @@ public class ElementFunctions {
     	// Exists to defeat instantiation.
     }
     /**
-     * Returns a PageElement object for a given elementName string from current page. Gets current page reference, 
+     * Returns a Element object for a given elementName string from current page. Gets current page reference, 
      * replaces page name space characters with '_'
      * 
      * @param elementName String name of requested element
-     * @return PageElement the requested element
+     * @return Element the requested element
      */
-    public static PageElement getElement(String elementName) {
+    public static Element getElement(String elementName) {
         return PageManager.getPage().getElement(elementName);
     }
 

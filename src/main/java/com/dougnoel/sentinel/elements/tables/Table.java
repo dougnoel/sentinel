@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
@@ -22,7 +22,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
  * management issues, such as finding a value in the same row.
  */
 
-public class Table extends PageElement {
+public class Table extends Element {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
@@ -279,7 +279,7 @@ public class Table extends PageElement {
 	
 	/**
 	 * Returns a WebElement found inside the indicated row using the locator passed.
-	 * TODO: Fix this so that it uses PageElements
+	 * TODO: Fix this so that it uses Elements
 	 * 
 	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
 	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element

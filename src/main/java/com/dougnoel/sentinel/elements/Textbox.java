@@ -3,12 +3,12 @@ package com.dougnoel.sentinel.elements;
 import java.util.Map;
 
 /**
- * Textbox implementation of a PageElement.
+ * Textbox implementation of a Element.
  */
-public class Textbox extends PageElement {
+public class Textbox extends Element {
 
 	/**
-	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
+	 * Implementation of a Element to initialize how an element is going to be found when it is worked on by the 
 	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
 	 * 
 	 * @param elementName String the name of the element
@@ -19,13 +19,13 @@ public class Textbox extends PageElement {
 	}
 	
 	/**
-	 * Type text into a Textbox PageElement. Created as an alias for sendKeys.
+	 * Type text into a Textbox Element. Created as an alias for sendKeys.
 	 * <p>
 	 * <b>Alias For:</b> sendKeys(text)
 	 * @param text String (text to type)
-	 * @return PageElement (for chaining)
+	 * @return Element (for chaining)
 	 */
-	public PageElement type(String text) {
+	public Element type(String text) {
         return this.sendKeys(text);
 	}
 

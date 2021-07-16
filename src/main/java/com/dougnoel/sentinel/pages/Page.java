@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Checkbox;
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.elements.Textbox;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
@@ -25,13 +25,8 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 /**
  * Page class to contain a URL and the elements on the page.
  * <p>
- * <b>TO DO:</b>
- * <ul>
- * <li>Turn this into an abstract class.</li>
- * <li>Create a PageFactory</li>
- * <li>Abstract out the driver creation to allow multiple drivers to be created
- * at once</li>
- * </ul>
+ * TO DO: Abstract out the driver creation to allow multiple drivers to be created
+ * at once.
  */
 public class Page {
 	
@@ -45,7 +40,7 @@ public class Page {
 
     protected WebDriver driver;
 
-    protected Map<String,PageElement> elements;
+    protected Map<String,Element> elements;
     
     private String pageName;
     
@@ -59,7 +54,7 @@ public class Page {
         return pageName;
     }
 
-	public PageElement getElement(String elementName) {
+	public Element getElement(String elementName) {
         String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
         return elements.computeIfAbsent(normalizedName, name -> createElement(name));
 	}
@@ -77,7 +72,7 @@ public class Page {
 		return elementData;
 	}
 	
-	private PageElement createElement(String elementName) {
+	private Element createElement(String elementName) {
 		Map<String, String> elementData = findElement(elementName, getName());
 		
 		if (elementData == null) {
@@ -124,6 +119,6 @@ public class Page {
 			return new Table(elementName, elementData);
 		}
 		// This allows people to call their element type whatever they want without needing a child class to implement it.
-		return new PageElement(elementType, elementName, elementData);
+		return new Element(elementType, elementName, elementData);
 	}
 }

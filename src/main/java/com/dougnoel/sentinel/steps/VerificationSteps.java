@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
@@ -16,8 +14,6 @@ import io.cucumber.java.en.Then;
  *
  */
 public class VerificationSteps {
-	
-    private static final Logger log = LogManager.getLogger(VerificationSteps.class.getName()); // Create a logger.
     
     /**
      * Verifies the given element exists. The given element string is made lower case 
@@ -51,9 +47,6 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}exist.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
-            // We need a different assertion here because checking to see if something does
-            // exist takes 10 seconds to come back with a failure when we want it to come
-            // back much faster.
             assertTrue(expectedResult, getElement(elementName).doesNotExist());
         } else {
             assertTrue(expectedResult, getElement(elementName).isDisplayed());
@@ -79,60 +72,76 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {} selected.",
                 elementName, (negate ? "not be" : "be"));
         if (negate) {
-            assertFalse(expectedResult, getElement(elementName).isSelected());
+            assertTrue(expectedResult, getElement(elementName).isNotSelected());
         } else {
             assertTrue(expectedResult, getElement(elementName).isSelected());
         }
     }
     
     /**
-     * Verifies an element has an attribute by asserting the element for the given elementName has the given class attribute.
+     * Verifies an element has an attribute.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the table has the attribute "table-striped"</li>
-     * <li>I verify the textbox does not have the attribute "listStyleClass"</li>
-     * <li>I verify the div has the attribute "container"</li>
+     * <li>I verify the table has the attribute table-striped</li>
+     * <li>I verify the textbox does not have the attribute listStyleClass</li>
+     * <li>I verify the div has the attribute container</li>
      * </ul>
      * @param elementName String element to inspect
-     * @param assertion String if not null we expect this be true
+     * @param assertion String "has" for a positive check, anything else for negative
      * @param attribute String class attribute to verify
      */
-    @Then("^I verify (?:the|a|an) (.*) (?:has)?(does not have)? the attribute (.*)$")
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the attribute (.*?)$")
     public static void verifyElementHasAttribute(String elementName, String assertion, String attribute) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have the attribute \"{}\".",
-                elementName, (negate ? "" : "not "), attribute);
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, getElement(elementName).hasClass(attribute));
+        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\".",
+                elementName, assertion, attribute);
+        if (assertion.contentEquals("has")) {
+            assertTrue(expectedResult, getElement(elementName).hasAttribute(attribute));
         } else {
-            assertTrue(expectedResult, getElement(elementName).hasClass(attribute));
+            assertTrue(expectedResult, getElement(elementName).doesNotHaveAttribute(attribute));
         }
     }
     
     /**
-     * Verifies an element is active by asserting the element for the given element name has class attribute 'active'
+     * Verifies an element has a class.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the menu item for the current page is active</li>
-     * <li>I verify the second li element in the accordion is active</li>
-     * <li>I verify the password field is not active</li>
+     * <li>I verify the table has the class heading"</li>
+     * <li>I verify the textbox does not have the class style"</li>
+     * <li>I verify the div has the class aria</li>
      * </ul>
-     * @param elementName String  the element to inspect for the active class
-     * @param assertion String if not null we expect this be true
+     * @param elementName String element to inspect
+     * @param assertion String "has" for a positive check, anything else for negative
+     * @param className String class to verify
      */
-    @Then("^I verify (?:the|a|an) (.*) is( not)? active$")
-    public static void verifyElementIsActive(String elementName, String assertion) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be active.",
-                elementName, (negate ? "" : "not "));
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, getElement(elementName).hasClass("active"));
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
+    public static void verifyElementHasClass(String elementName, String assertion, String className) {
+    	verifyElementAttributeHasValue(elementName, assertion, "class", className);
+    }
+    
+    /**
+     * Verifies an attribute for an element has a given value.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the boxes table with the attribute class has the value heading"</li>
+     * <li>I verify the New Div with the attribute style does not have the value aria"</li>
+     * <li>I verify the Submit Button with the attribute color has the value blue</li>
+     * </ul>
+     * @param elementName String element to inspect
+     * @param assertion String "has" for a positive check, anything else for negative
+     * @param attribute String attribute to inspect
+     * @param value String value expected
+     */
+    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
+    public static void verifyElementAttributeHasValue(String elementName, String assertion, String attribute, String value) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
+                elementName, assertion, attribute, value);
+        if (assertion.contentEquals("has")) {
+            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
         } else {
-            assertTrue(expectedResult, getElement(elementName).hasClass("active"));
+            assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
         }
     }
     
@@ -146,17 +155,17 @@ public class VerificationSteps {
      * <li>I verify the link to open a pdf is enabled</li>
      * </ul>
      * @param elementName String the name of the element
-     * @param assertion String if not null we expect this be true
+     * @param assertion String "enabled" for a positive check, anything else for negative
      */
-    @Then("^I verify (?:the|a|an) (.*?) is( not)? enabled$")
+    @Then("^I verify (?:the|a|an) (.*?) is (enabled|disabled)$")
     public static void verifyElementIsEnabled(String elementName, String assertion) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be enabled.",
-                elementName, (negate ? "not " : ""));
-        log.trace(expectedResult);
-        int waitTime = (negate) ? 1 : 10; // If we expect it to fail, only wait a second, otherwise wait the normal 10
-                                          // seconds TODO: Make this even shorter than a second.
-        assertTrue(expectedResult, negate != getElement(elementName).isEnabled(waitTime));
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.",
+                elementName, assertion);
+        if (assertion.contentEquals("enabled")) {
+        	assertTrue(expectedResult, getElement(elementName).isEnabled());
+        } else {
+        	assertTrue(expectedResult, getElement(elementName).isDisabled());
+        }
     }
     
     /**
@@ -169,17 +178,16 @@ public class VerificationSteps {
      * <li>I verify the data for the user's current plan is not hidden</li>
      * </ul>
      * @param elementName String the name of the element
-     * @param assertion String if the assertion is not empty we expect it to be hidden
+     * @param assertion String "visible" for a positive check, anything else for negative
      */
-    @Then("^I verify (?:the|a|an) (.*?) is( not)? hidden$")
-    public static void verifyElementIsHidden(String elementName, String assertion) {
-        boolean negate = !StringUtils.isEmpty(assertion); // is hidden = empty, so negate is false
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
-                : "hidden"));
-        log.debug(expectedResult);
-        int waitTime = (negate) ? 10 : 1; // If we expect it to fail, only wait a second, otherwise wait the normal 10
-                                          // seconds
-        assertTrue(expectedResult, negate == getElement(elementName).isDisplayed(waitTime));
+    @Then("^I verify (?:the|a|an) (.*?) is (visible|hidden)$")
+    public static void verifyElementVisibility(String elementName, String assertion) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, assertion);
+        if (assertion.contentEquals("visible")) {
+        	assertTrue(expectedResult, getElement(elementName).isDisplayed());
+        } else {
+        	assertTrue(expectedResult, getElement(elementName).isInvisible());
+        }
     }
     
     /**
@@ -202,24 +210,29 @@ public class VerificationSteps {
     }
     
     /**
-     * Identifies an iframe and switches to it, if it exists.
+     * Identifies the first iFrame in a document and switches to it.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I should see the Third Party iframe</li>
-     * <li>I should see the Provider Search iframe</li>
-     * <li>I should see the Facebook iframe</li>
+     * <li>I enter the iFrame
      * </ul>
-     * @see com.dougnoel.sentinel.steps.VerificationSteps#verifyElementExists(String, String)
      * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
-     * @param iFrameName String the name of the iframe element on the page object.
      */
-    @Then("^I should see the (.*) iframe$")
-    public static void switchToIFrame(String iFrameName) {
-
-        // Make sure the content is loaded in the i frame
-        VerificationSteps.verifyElementExists(iFrameName, "");
+    @Then("^I enter the iFrame$")
+    public static void switchToIFrame() {
         PageManager.switchToIFrame();
-
+    }
+    
+    /**
+     * Exits iFrame.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I exit the iFrame</li>
+     * </ul>
+     */
+    @Then("^I exit the iFrame$")
+    public static void exitIFrame() {
+        PageManager.exitIFrame();
     }
 }

@@ -20,7 +20,7 @@ public class TextSteps {
      * then it is sent a sendKeys event to an element defined on a page object with that name. The
      * page object and driver object are defined by the WebDriverFactory and PageFactory objects.
      * The derived Page Object (extends Page) should define a method named [element name]_[element type]
-     * returning a PageElement object (e.g. password_field).
+     * returning a Element object (e.g. password_field).
      * <p>
      * Since this random value might need to be referenced again, we store it using
      * the ConfigurationManager, using the passed elementname as the key to retrieve
@@ -54,7 +54,7 @@ public class TextSteps {
      * sent a sendKeys event to an element defined on a page object with that name.
      * The page object and driver object are defined by the WebDriverFactory and
      * PageFactory objects. The derived Page Object (extends Page) should define a
-     * method named [element name]_[element type] returning a PageElement object
+     * method named [element name]_[element type] returning a Element object
      * (e.g. password_field).
      * <p>
      * <b>Gherkin Examples:</b>
@@ -81,7 +81,7 @@ public class TextSteps {
      * page object with that name. The page object and driver object are defined by
      * the WebDriverFactory and PageFactory objects. The derived Page Object
      * (extends Page) should define a method named [element name]_[element type]
-     * returning a PageElement object (e.g. password_field).
+     * returning a Element object (e.g. password_field).
      * <p>
      * This is different from just entering text in that the text is injected into
      * the element by executing javascript. This will deal with javascript sending

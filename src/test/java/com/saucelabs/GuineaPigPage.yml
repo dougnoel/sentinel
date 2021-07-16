@@ -3,7 +3,7 @@ urls:
 elements:
   example_link:
     elementType: Link
-    text: "i am a link"
+    partialtext: "i am a link"
   invisible_div:
     elementType: Div
     id: "invisible div"
@@ -13,3 +13,9 @@ elements:
   fake_div:
     elementType: Div
     id: "fake div"
+  hidden_div:
+    elementType: Div
+    id: "invisible div"
+  your_comments_span:
+    elementType: Span
+    id: "your_comments"
