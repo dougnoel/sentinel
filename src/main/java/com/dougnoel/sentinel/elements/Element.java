@@ -190,8 +190,7 @@ public class Element {
 	 * @return Element (for chaining)
 	 */
 	public Element sendKeys(String text) {
-		element().click();
-		element().clear();
+		this.click().clear();
 		element().sendKeys(text);
 		return this;
 	}
