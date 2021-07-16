@@ -1,1 +1,0 @@
-/usr/local/opt/openjdk/bin/javadoc @options @packages

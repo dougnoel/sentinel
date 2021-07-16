@@ -25,7 +25,7 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 /**
  * Page class to contain a URL and the elements on the page.
  * <p>
- * <b>TO DO: Abstract out the driver creation to allow multiple drivers to be created
+ * TO DO: Abstract out the driver creation to allow multiple drivers to be created
  * at once.
  */
 public class Page {
