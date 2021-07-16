@@ -6,28 +6,51 @@
 
 **Implemented enhancements:**
 
+- Unexpose Selenium [\#247](https://github.com/dougnoel/sentinel/issues/247)
+- Update timeouts for negative tests [\#246](https://github.com/dougnoel/sentinel/issues/246)
 - Add unit tests for checkboxes [\#216](https://github.com/dougnoel/sentinel/issues/216)
 - Create a Selenium Grid Driver [\#209](https://github.com/dougnoel/sentinel/issues/209)
 - Implement Edge browser driver [\#206](https://github.com/dougnoel/sentinel/issues/206)
+- Implement Drag and Drop action for PageElements. [\#201](https://github.com/dougnoel/sentinel/issues/201)
 - Add a total wait time warning. [\#198](https://github.com/dougnoel/sentinel/issues/198)
 - Implement webdrivermanager [\#193](https://github.com/dougnoel/sentinel/issues/193)
+- Replace Codebeat with SonarCloud with Github Actions [\#192](https://github.com/dougnoel/sentinel/issues/192)
+- Increase the speed of PageElement.isDisplayed [\#186](https://github.com/dougnoel/sentinel/issues/186)
+- Increase the Speed of PageElement.isEnabled [\#185](https://github.com/dougnoel/sentinel/issues/185)
 - Fix deployment to Maven Central and Update Documentation [\#178](https://github.com/dougnoel/sentinel/issues/178)
+- Close Driver even when tests error out [\#158](https://github.com/dougnoel/sentinel/issues/158)
+- Allow multiple element locators [\#83](https://github.com/dougnoel/sentinel/issues/83)
+- Overload getElement to accept a selector type and selector string [\#80](https://github.com/dougnoel/sentinel/issues/80)
+- Add Edge as a browser choice for local execution [\#77](https://github.com/dougnoel/sentinel/issues/77)
+- Monitor Google Web Drivers and automatically release new updates [\#69](https://github.com/dougnoel/sentinel/issues/69)
 
 **Fixed bugs:**
 
+- Errors in CI/CD Pipeline [\#236](https://github.com/dougnoel/sentinel/issues/236)
+- Default timeout settings doesn't work on elements [\#220](https://github.com/dougnoel/sentinel/issues/220)
+- Dynamic wait doesn't work on elements [\#219](https://github.com/dougnoel/sentinel/issues/219)
 - Cucumber Wait step is throwing a Null Pointer Exception [\#204](https://github.com/dougnoel/sentinel/issues/204)
 
 **Closed issues:**
 
+- Review PDFSteps [\#249](https://github.com/dougnoel/sentinel/issues/249)
 - README is very outdated [\#221](https://github.com/dougnoel/sentinel/issues/221)
+- Remove all configurations from the test runner [\#50](https://github.com/dougnoel/sentinel/issues/50)
 
 **Merged pull requests:**
 
+- Refactored PageElement to Element. Made toWebElement\(\) private so tha… [\#250](https://github.com/dougnoel/sentinel/pull/250) ([dougnoel](https://github.com/dougnoel))
+- 243 cleanup page object locations [\#244](https://github.com/dougnoel/sentinel/pull/244) ([dougnoel](https://github.com/dougnoel))
+- Bump pdfbox from 2.0.16 to 2.0.24 [\#242](https://github.com/dougnoel/sentinel/pull/242) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Updated version to 1.0.6, updated Javadocs. [\#241](https://github.com/dougnoel/sentinel/pull/241) ([dougnoel](https://github.com/dougnoel))
 - Bump httpclient from 4.5.10 to 4.5.13 [\#238](https://github.com/dougnoel/sentinel/pull/238) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Updated jacoco version to latest. [\#237](https://github.com/dougnoel/sentinel/pull/237) ([dougnoel](https://github.com/dougnoel))
 - 197 add an on hover test step1 [\#235](https://github.com/dougnoel/sentinel/pull/235) ([dougnoel](https://github.com/dougnoel))
+- Completed \# 3049 - When the "elements:" line is missing from the yaml file we should throw a ConfigurationParseException with a message [\#233](https://github.com/dougnoel/sentinel/pull/233) ([paglajewel](https://github.com/paglajewel))
 - added instructions to navigate from scenario to step def [\#229](https://github.com/dougnoel/sentinel/pull/229) ([mdsapon](https://github.com/mdsapon))
+- Fixed new window/tab issue and added unit tests [\#228](https://github.com/dougnoel/sentinel/pull/228) ([paglajewel](https://github.com/paglajewel))
 - Updated README.md, CHANGELOG.md and Javadocs. [\#226](https://github.com/dougnoel/sentinel/pull/226) ([dougnoel](https://github.com/dougnoel))
+- Added Drag and Drop code to PageElement object. [\#218](https://github.com/dougnoel/sentinel/pull/218) ([dougnoel](https://github.com/dougnoel))
 - Added Checkbox unit tests and modified language in cucumber steps. [\#217](https://github.com/dougnoel/sentinel/pull/217) ([dougnoel](https://github.com/dougnoel))
 - 193 implement webdrivermanager [\#215](https://github.com/dougnoel/sentinel/pull/215) ([dougnoel](https://github.com/dougnoel))
 - Added script to support selenium grid [\#212](https://github.com/dougnoel/sentinel/pull/212) ([mdsapon](https://github.com/mdsapon))
