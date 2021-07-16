@@ -159,8 +159,8 @@
             <show>${maven-javadoc-plugin.show}</show>
             <nohelp>${maven-javadoc-plugin.nohelp}</nohelp>
             <!-- Automatically puts the javadocs in the correct directory but this may mess with the release process -->
-            <reportOutputDirectory>.</reportOutputDirectory>
-            <destDir>docs</destDir>
+<!--             <reportOutputDirectory>.</reportOutputDirectory>
+            <destDir>docs</destDir> -->
             <!-- The next 2 lines needed for OpenJDK11 support -->
             <source>8</source>
             <detectJavaApiLink>false</detectJavaApiLink>
