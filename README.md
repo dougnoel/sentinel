@@ -7,13 +7,13 @@
 A Selenium framework that implements the [Page Object Model](http://cheezyworld.com/2010/11/09/ui-tests-not-brittle/) (POM) using [Object Oriented Programming](https://en.wikipedia.org/wiki/Object-oriented_programming) (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.
 
 ## Quickstart
-For those wanting to go crazy without reading lots of docs, get the [sentinel.example Project](https://github.com/dougnoel/sentinel.example), and checkout the [Sentinel Javadocs](https://dougnoel.github.io/sentinel/), especially the steps package. Sentinel is intended to be included in your test automation and used as a jar file. If you are writing tests, you should **NOT** be modifying the Sentinel code itself.
+If you want to write tests, you are in the wrong place. Head over to the [sentinel.example Project](https://github.com/dougnoel/sentinel.example) to get started. There is extensive documentation there along with sample code to get you up and running in minutes. You can also check out the [Sentinel Javadocs](https://dougnoel.github.io/sentinel/), especially the steps package. Sentinel is intended to be included in your test automation and used as a jar file. If you are writing tests, you should **NOT** be modifying the Sentinel code itself.
 
-People wondering where they can write @Given, @When, and @Then steps should first be asking what has been written and attempting to reuse that instead of writing their own. If you are writing your own more than 1% of the time then you are not using the framework as intended and wasting time (or working on something really weird).
+People wondering where they can write glue code @Given, @When, and @Then steps should first be asking what has been written and attempting to reuse that instead of writing their own. If you are writing your own more than 1% of the time then you are not using the framework as intended and wasting time (or working on something really weird).
 
 # Section 1: Using Sentinel
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development purposes. See deployment for notes on how to deploy the project to Maven Central.
 
 ## 1.0 Getting Started
 
@@ -51,204 +51,8 @@ In Eclipse:
 
 ## 2.0 Frequently Asked Questions (FAQs)
 
-### How do I add command line options in Eclipse when running tests?
-1. Go to **Run -> Run configurations...**
-2. Under JUnit, select **SentinelTests** and in the **Name:** box to the right change the name to reflect the changes you are making.
-3. Click on the **(x)= Arguments** tab.
-4. In the **VM arguments:** box add a space after the existing arguments (-ea may be the only argument) and then put `-Dkey=value` For example to pass a different browser than chrome use `-Dbrowser=edge`.
-5. Click the **Apply** button.
-6. Click the **Close** button.
-7. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select **SentinelTests - Dev**.
-
-### How do I change the default timeout?
-All timeouts default to 10 seconds, however you can change that either on the command line or in the sentinel.yml configuration file. For example if you want to double it to 20 seconds you would use `-Dtimeout=20`.
-
-Perhaps your dev environment is giving you a problem and you want to set the wait time astronomically high, but leave it the same for your other environments, so you want to give it ten minutes because sometimes your job runs at night and you don't want it to hang up during a deploy. In that case you could set a value in the configuration file like so:
-
-```
-configurations:
-  dev:
-  	timeout=3600
-```
-
-It will wait ten minutes before failing on any wait in dev, but stick to the 10 second timeout in any other environment.
-
-Timeout values must be whole numbers.
-
-### How do I leave the browser open at the end of my test?
-When running on the command line, you can use the argument `-DleaveBrowserOpen`. Ex:
-
-```
-mvn test -DleaveBrowserOpen
-```
-
-In Eclipse:
-1. Go to **Run -> Run configurations...**
-2. Under JUnit, select your test, right-click on it and select *Duplicate*
-3. Under JUnit, select the new test and in the **Name:** box to the right change the name to reflect that the browser is staying open.
-4. Click on the (x)= Arguments tab.
-5. In the **VM arguments:** box add a space after the existing arguments (-ea may be the only argument) and then put `-DleaveBrowserOpen`
-6. Click the **Apply** button.
-7. Click the **Close** button.
-8. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select your new test runner.
-
-### How do I use an environment other than dev?
-When running on the command line, you can use the argument `-Denv=`. For example for a stage environment:
-
-```
-mvn test -Denv=stage
-```
-
-1. In Eclipse, go to **Run -> Run configurations...**
-2. Under JUnit, select **SentinelTests.java**, right-click on it and select **Duplicate**
-3. Under JUnit, select the new test and in the **Name:** box to the right change the name to reflect the environment you want to use (e.g. **SentinelTests - Stage**.
-4. Click on the **(x)= Arguments** tab.
-5. In the **VM arguments:** box add a space after the existing arguments (-ea may be the only argument) and then put `-Denv=stage` or whicever environment you want to use.
-6. Click the **Apply** button.
-7. Click the **Close** button.
-8. From the Toolbar, click the drop down arrow to the right of the Run toolbar icon <img src="images/eclipse_tool_bar_icon_run.png" height="14"> and select your new test runner (**SentinelTests - Stage**, etc).
-
-### I only have one environment, can I hard code it?
-Yes, you can but be aware this will affect not only your local, but anyone who pulls the code to run tests, as well as you CI/CD pipeline. You are better off configuring a test runner for each environment or passing it in on the command line. However if you need it, here's how:
-
-1. Open SentinelTests.java
-2. In the @BeforeClass section, add the following line `System.setProperty("env", "dev");` where `dev` is the environment you want to hard code.
-3. Save the file.
-
-**IMPORTANT NOTE:** Whenever you run your tests either on the command line or in your IDE, it will only ever use that environment and you will no longer have to pass that argument. Keep in mind you *cannot* pass that argument, it will always be overwritten by the above line. It is not a default, but an absolute. Sentinel prefers configuration over convention when it comes to test environments, because you should know where you are testing at all times.
-
-### When I try to pass in a different environment on the command line it ignores it and uses another environment. How do I fix that?
-Check `SentinelTests.java` and look for the string `System.setProperty("env"` and comment it out or delete it. Likely someone hard coded your environment. This setting overrides anything passed on the command line.
-
-### How do I set the URL for my page object?
-The URL for your page object is set in the page object yaml file. The file name needs to match the name you use for the page in your Cucumber steps without spaces. So if your page name is `Bits N Bobs Main Page` then your file needs to be named `BitsNBobsMainPage.yml`. Note that the word Page must be at the end of the file and it must have an upper case P. Then you just put in a `urls:` section and a default url. It will be used regardless of what environment is passed.
-
-```
-urls:
-	default: http://myurl.com
-```
-
-### How do I set different URLs for specific environments?
-If you want to define urls for different test environments (dev, qa, stage, uat, etc) then you can define them in your file. If a url is not found, the default url will be used. If no default is used, the tests will fail with an error message telling you that the url could not be found.
-
-```
-urls:
-	default: http://myurl.com
-	dev: http://dev.myurl.com
-```
-
-If you passed the **dev** environment using the above configuration, you would get `http://dev.myurl.com`. If you passed the **qa** environment, it would load the default `http://myurl.com`.
-
-### How do I use a URL pattern for similar environments?
-If you have multiple environments with the same naming convention, you do not need to spell out each one. Instead you can put the `{env}` specifier in your url and tag it with `default:` and it will be auto replaced by the environment name you have passed. If you want to override this default pattern, you just define the environment names you want to overload.
-
-```
-urls:
-	default: http://{env}.myurl.com
-	prod: http://myurl.com
-```
-
-If you passed the **prod** environment using the above configuration, you would get `http://myurl.com`. If you passed the **stage** environment, it would load the default and replace the name resulting in `http://stage.myurl.com`.
-
-### None of my elements can be found! What's going on?
-You need to ensure that you are telling the framework what page you are on. It keeps track of that by the `I am on the Page Name Page` and `I am redirected to the Page Name Page` steps. If you do not expect to be on a particular page, then the framework assumes you are still on the last page you started on, or no page if you have not told it you expect to be on your page. Defining page objects is an exercise that is helpful for us as people to be able to grasp a whole web site, but it means nothing to a computer. DEfine your page objects in such a way that people can understand the distinctions.
-
-### How do I set default username and password account info across environments?
-If you have the same test account across multiple environments, you can easily set them all at the same time. For example, your dev, qa and stage environments might share the same identification provider. Lets say there is a standard user and an admin user. You could set their values for all environments like so:
-
-```
-urls:
-	default: http://myurl.com
-accounts:
-	default:
-		StandardUser:
-			username: user1
-			password: badp@ssw0rd
-		AdminUser:
-			username: user2
-			password: @n0therb@dp@ssw0rd
-```
-
-*Remember to update your passwords in the page object yaml when you update them in your test environments!*
-
-### How do I set username and password account info for a specific environment?
-If you have a specific test accounts, say a more secure admin one for your stage environment only, you could define it like so:
-
-```
-urls:
-	default: http://myurl.com
-accounts:
-	default:
-		StandardUser:
-			username: user1
-			password: badp@ssw0rd
-		AdminUser:
-			username: user2
-			password: @n0therb@dp@ssw0rd
-	stage:
-		AdminUser:
-			username: stageadmin
-			password: 3h@njk#wnk{wdf76
-```
-
-In stage it would use your more secure admin account, but for normal user tests it would use your original account, and for all other environments it would use the default accounts.
-
-### My tests were all passing and now some (or all) of my accounts can no longer log in! What's going on?
-Check to make sure someone didn't update the tests account passwords. If they did, update your page object yaml files accordingly.
-
-### How do I wait?
-Sometimes you need to add an implicit wait to your tests due to the vagaries of the Internet. You can do this by using anything from `And I wait 0.001 seconds` to `And I wait 99 seconds`. You can use whole numbers or can add fractions of a second up to the thousandths place. For example if you want to wait a second and a half, use `And I wait 0.001 seconds`.
-
-*NOTE: If you find yourself needing to use waits a lot, create a bug ticket in the Sentinel project and see if we can solve that problem.*
-
-### How do I use a different/newer/custom version of Chrome?
-If you want to use a different Chrome executable, you need to change the browser type to `customChrome` and set the `chromeBrowserBinary` value to the path of the executable you want to use.
-
-```
-mvn test -D browser=customChrome -DchromeBrowserBinary=path/to/executable/executableName
-```
-
-Alternately, you can just add the values to your sentinel.yml config file:
-
-```
-configurations:
-  default:
-    browser: customChrome
-    chromeBrowserBinary: "path/to/executable/executableName"
-```
-
-### How do I run chrome in headless mode?
-If you want to run chrome as a headless browser, you can change that either on the command line or in the sentinel.yml configuration file. On the command line you would use `-Dheadless` to use chrome in headless mode. This is the equivalent of passing `-Dheadless=true`. Alternately if headless is turned on in the configuration file and you need to override it, you can pass `-Dheadless=false` on the command line.
-
-Perhaps your in your CI/CD pipeline, your dev environment is the only one not setup for browser compatibility, and you want to run the tests there as headless. In that case you could set a value in the configuration file like so:
-
-```
-configurations:
-  dev:
-  	headless: true
-```
-
-It's also possible that you need every environment except localhost to run headless. In this case you could setup the configuration file like so:
-
-```
-configurations:
-  default:
-  	headless: true
-  localhost:
-  	headless: false
-```
-*NOTE: Passing in a value on the command line will always override whatever is in the configuration file.*
-
-### How do I run only certain tests?
-If you want to run specific tagged tests, you can do so by passing in cucumber arguments on the command line. E.G. `mvn -Dcucumber.options="--tags @106" test`
-
-You can also do so by customizing a Run Configuration.
-1. Go to Run -> Run Configurations...
-2. Make a copy of Sentinel Tests
-3. Click on the arguments tab.
-4. Change the VM arguments from `-ea` to something like `-ea -Dcucumber.options="--tags @106"` replacing the tag(s) you want to use with your tag.
-
-For more information on command line options you can use for cucumber, you may refer to [this article](https://www.toolsqa.com/selenium-cucumber-framework/run-cucumber-test-from-command-line-terminal/).
+### How do I create page objects, feature files and new glue code steps?
+All of this is explained at length in the [sentinel.example Project](https://github.com/dougnoel/sentinel.example) project. If you want to use this framework to write tests, that is the code you need to check out - not this. You check this code out to contribute to the project.
 
 ### How do I run code coverage for my unit tests using Jacoco? ###
 This script will run code coverage and then open up the results in your default browser. The results will not open if there are build failures.
@@ -258,9 +62,9 @@ src/test/resources/scripts/UnitTests.sh
 
 ```
 
-### How to navigate to step definition file from feature file scenario step ###
-Press CTRL + Click on feature file scenario, This should navigate to associated step defintion, but if this does not work, the follow below steps: 
-1. On Eclipse go to Help
+### How do I navigate to step definition file from feature file scenario step? ###
+Press CTRL + Click (Command + Click on a Mac) on the feature file scenario, This should navigate to associated step defintion, but if this does not work, the follow below steps: 
+1. In Eclipse go to Help
 2. Select Eclipse Marketplace
 3. Search for cucumber
 4. result should return Cucumber eclipse plugin and Natural plugin
@@ -268,7 +72,7 @@ Press CTRL + Click on feature file scenario, This should navigate to associated 
 6. If both are installed then uninstall Natural plugin and keep Cucumber plugin installed
 7. After install the plugin, Right click on the Project --> Configure  --> Convert to Cucumber project
 8. Open any feature file: Right click on feature file and select cucumber editor
-9. Now CTRL + Click should navigate to step definition file. Enjoy coding :)
+9. Now CTRL + Click (Command + Click) should navigate to the step definition file. Enjoy coding :)
 
 ## 3.0 Deployment
 Add additional notes about how to deploy this on a live system in Bamboo/Jenkins/etc.
