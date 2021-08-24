@@ -101,6 +101,8 @@
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    
+    <screen-recorder.version>0.7.7.0</screen-recorder.version>
   </properties>
 
   <build>
@@ -373,6 +375,13 @@
         <scope>import</scope>
       </dependency>
 
+      <!-- https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder -->
+		<dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		    <version>${screen-recorder.version}</version>
+		</dependency>
+      
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -538,6 +547,11 @@
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
     </dependency>
+    
+    <dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		</dependency>
 
     <dependency>
       <groupId>org.apache.commons</groupId>

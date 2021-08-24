@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.utilities.*;
+import io.cucumber.junit.CucumberOptions;
 
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -26,13 +26,15 @@ import io.cucumber.junit.CucumberOptions;
 public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
 
-	@BeforeClass
-	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
-		WebDriverFactory.instantiateWebDriver();
-	}
-	
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        WebDriverFactory.instantiateWebDriver();
+        if(Configuration.toString("addVideoToReport")!=null)
+            SentinelScreenRecorder.startRecording("extent-cucumber");
+    }
+
     @AfterClass
-    public static void tearDownAfterClass() throws SentinelException {
+    public static void tearDownAfterClass() throws Exception {
         String totalWaitTime = Configuration.toString("totalWaitTime");
         if (totalWaitTime != null) {
         	log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", totalWaitTime);
@@ -41,5 +43,7 @@ public class SentinelTests {
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
         	PageManager.quit();
         }
+        if(Configuration.toString("addVideoToReport")!=null)
+            SentinelScreenRecorder.stopRecording();
     }
 }

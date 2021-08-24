@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -14,6 +15,7 @@ import com.dougnoel.sentinel.pages.PageManager;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 /**
@@ -173,4 +175,10 @@ public class BaseSteps {
         }
     }    
     
+    @Then("^video recording (.*?)( was not)?(?: was)? attached to the report?$")
+    public static void addVideoToReport(String elementName, String assertion) {
+    	if(Configuration.toString("addVideoToReport")!=null && !elementName.contains("not"))
+     	   ExtentCucumberAdapter.addTestStepLog("<a href='"+System.getProperty("user.dir")+"\\reports\\extent-cucumber.avi'>Click to see video recording</a>");
+       
+    }
 }
