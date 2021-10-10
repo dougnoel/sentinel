@@ -14,7 +14,7 @@ public class WebDriverFactoryTest {
 	}
 	
 	@Test
-	public void createGridShouldSucessTest() {
+	public void createGridShouldSucceedTest() {
 		var browser = "firefox";
 		var gridUrl = "http://hub.technologynursery.org/wd/hub";
 		var driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
