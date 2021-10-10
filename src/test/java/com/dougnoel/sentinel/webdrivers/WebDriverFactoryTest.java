@@ -32,7 +32,7 @@ public class WebDriverFactoryTest {
 		try {
 			assertNotNull(driver);
 		}finally {
-			driver.quit();
+			driver.close();
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class WebDriverFactoryTest {
 		try {
 			assertNotNull(driver);
 		}finally {
-			driver.quit();
+			driver.close();
 		}
 	}
 	
