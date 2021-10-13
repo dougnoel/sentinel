@@ -11,12 +11,15 @@ import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.elements.Textbox;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
+import com.dougnoel.sentinel.elements.dropdowns.MetabolonPortalCheckboxDropdown;
+import com.dougnoel.sentinel.elements.dropdowns.MetabolonPortalDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
 import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
+import com.dougnoel.sentinel.elements.tables.MetabolonPortalResultsTable;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -103,6 +106,12 @@ public class Page {
 		if ("PrimeNGDropdown".equalsIgnoreCase(elementType)) {
 			return new PrimeNGDropdown(elementName, elementData);
 		}
+		if ("MetabolonPortalDropdown".equalsIgnoreCase(elementType)) {
+			return new MetabolonPortalDropdown(elementName, elementData);
+		}
+		if ("MetabolonPortalCheckboxDropdown".equalsIgnoreCase(elementType)) {
+			return new MetabolonPortalCheckboxDropdown(elementName, elementData);
+		}
 		if ("SelectElement".equalsIgnoreCase(elementType)) {
 			return new SelectElement(elementName, elementData);
 		}
@@ -117,6 +126,9 @@ public class Page {
 		}
 		if ("Table".equalsIgnoreCase(elementType)) {
 			return new Table(elementName, elementData);
+		}
+		if ("MetabolonPortalResultsTable".equalsIgnoreCase(elementType)) {
+			return new MetabolonPortalResultsTable(elementName, elementData);
 		}
 		// This allows people to call their element type whatever they want without needing a child class to implement it.
 		return new Element(elementType, elementName, elementData);
