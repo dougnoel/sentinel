@@ -4,8 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
-import com.dougnoel.sentinel.filemanagers.DownloadManager;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.systems.DownloadManager;
 
 import io.cucumber.java.en.Then;
 

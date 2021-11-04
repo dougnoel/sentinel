@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.io.File;
 import org.junit.Test;
 
+import com.dougnoel.sentinel.systems.DownloadManager;
+
 public class DownloadManagerTests {
 
 	@Test

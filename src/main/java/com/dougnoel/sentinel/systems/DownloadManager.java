@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.filemanagers;
+package com.dougnoel.sentinel.systems;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;

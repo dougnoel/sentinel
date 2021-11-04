@@ -24,9 +24,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 public class PageData {
 	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
-	// page urls to load in the web driver TODO: Annotate corretly.
+	// page urls to load in the web driver TODO: Annotate correctly.
 	public Map<String,String> urls;
-	// user account data TODO: Annotate corretly.
+	// user account data TODO: Annotate correctly.
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
 	public String include;
