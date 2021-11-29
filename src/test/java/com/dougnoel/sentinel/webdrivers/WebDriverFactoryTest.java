@@ -24,28 +24,29 @@ public class WebDriverFactoryTest {
 		System.setProperty(BROWSERVERSION,"1234567");
 		GridWebDriverFactory.createGridDriver(CHROME, gridUrl);
 	}
-	
-	@Test
-	public void createGridShouldSucceedTest() {
-		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-		var driver = GridWebDriverFactory.createGridDriver(FIREFOX, gridUrl);
-		try {
-			assertNotNull(driver);
-		}finally {
-			driver.close();
-		}
-	}
-	
-	@Test
-	public void nullBrowserVersionTest() {
-		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-		var driver = GridWebDriverFactory.createGridDriver(CHROME, gridUrl);
-		try {
-			assertNotNull(driver);
-		}finally {
-			driver.close();
-		}
-	}
+
+// TODO: Selenium Grid not working. Need to setup a self-contained one for testing.
+//	@Test
+//	public void createGridShouldSucceedTest() {
+//		var gridUrl = "http://hub.technologynursery.org/wd/hub";
+//		var driver = GridWebDriverFactory.createGridDriver(FIREFOX, gridUrl);
+//		try {
+//			assertNotNull(driver);
+//		}finally {
+//			driver.close();
+//		}
+//	}
+//	
+//	@Test
+//	public void nullBrowserVersionTest() {
+//		var gridUrl = "http://hub.technologynursery.org/wd/hub";
+//		var driver = GridWebDriverFactory.createGridDriver(CHROME, gridUrl);
+//		try {
+//			assertNotNull(driver);
+//		}finally {
+//			driver.close();
+//		}
+//	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.MalformedURLException.class)
 	public void malFormedUrlTest() {
