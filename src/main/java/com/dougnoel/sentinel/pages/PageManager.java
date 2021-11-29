@@ -108,7 +108,7 @@ public class PageManager {
 	 * is the last window open, the next call to the driver will open a new window.
 	 */
 	public static void close() {
-		driver().close();
+		WebDriverFactory.close();
 	}
 
 	/**
