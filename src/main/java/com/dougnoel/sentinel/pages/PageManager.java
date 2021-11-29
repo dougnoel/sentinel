@@ -33,12 +33,7 @@ public class PageManager {
 	private static String parentHandle = null;
 	private static String parentPage = null;
 
-	protected static WebDriver driver() {
-		if (page == null)
-			return WebDriverFactory.getWebDriver();
-		else
-			return page.driver;
-	}
+	protected static WebDriver driver() { return WebDriverFactory.getWebDriver(); }
 
 	private PageManager() {
 		// Exists only to defeat instantiation.
@@ -100,24 +95,27 @@ public class PageManager {
 	 * @param url String Full URL to navigate to.
 	 */
 	protected static void open(String url) {
-		driver().get(url);
+		try {
+			driver().get(url);
+		}
+		/* Adding this to catch the case where a unit test breaks encapsulation by using the 
+		 * WebDriver to directly close the browser instead of using the WebDriverManager to do it.
+		 */
+		catch (org.openqa.selenium.NoSuchSessionException e) {
+			WebDriverFactory.instantiateWebDriver().get(url);
+		}
 	}
 
-	/**
-	 * Closes the current browser tab or window. Does not quit the driver. If this
-	 * is the last window open, the next call to the driver will open a new window.
-	 */
-	public static void close() {
-		WebDriverFactory.close();
-	}
 
 	/**
 	 * Quits the current driver. Subsequent calls to the driver will fail. Should be
 	 * used at the end of tests only.
+	 * 
+	 * @deprecated use {@WebDriverFactory #quit()} instead.
 	 */
+	@Deprecated
 	public static void quit() {
 		WebDriverFactory.quit();
-		
 	}
 
 	/**
@@ -245,7 +243,7 @@ public class PageManager {
 	 * @throws InterruptedException if page does not load
 	 */
 	public static String closeChildWindow() throws InterruptedException {
-		close();
+		WebDriverFactory.close();
 		driver().switchTo().window(parentHandle);
         setPage(parentPage);
         waitForPageLoad();

@@ -39,7 +39,7 @@ public class SentinelTests {
         }
     	log.info("Driver: {}", WebDriverFactory.getWebDriver());
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
-        	PageManager.quit();
+        	WebDriverFactory.quit();
         }
     }
 }
