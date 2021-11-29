@@ -111,7 +111,7 @@ public class PageManager {
 	 * Quits the current driver. Subsequent calls to the driver will fail. Should be
 	 * used at the end of tests only.
 	 * 
-	 * @deprecated use {@WebDriverFactory #quit()} instead.
+	 * @deprecated use @WebDriverFactory.quit() instead.
 	 */
 	@Deprecated
 	public static void quit() {
