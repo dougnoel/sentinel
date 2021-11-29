@@ -111,7 +111,7 @@ public class PageManager {
 	 * Quits the current driver. Subsequent calls to the driver will fail. Should be
 	 * used at the end of tests only.
 	 * 
-	 * @deprecated use @WebDriverFactory.quit() instead.
+	 * @deprecated use WebDriverFactory.quit() instead.
 	 */
 	@Deprecated
 	public static void quit() {
@@ -183,9 +183,10 @@ public class PageManager {
 	 * <b>Preconditions:</b> Expects a new tab or window to have just been opened,
 	 * and for there to be only two.
 	 * 
-	 * @return String the window handle we are switching to
+     * @param pageName the new page name to set the window to so it switches correctly
+     * String the window handle we are switching to
 	 * @throws InterruptedException if page doesn't load
-	 */
+     */
 	public static String switchToNewWindow(String pageName) throws InterruptedException {
 		String newHandle = null;
 		parentHandle = driver().getWindowHandle();
@@ -216,7 +217,8 @@ public class PageManager {
 	 * sentinel.pages.PageManager#switchToNewWindow() and passes the
 	 * index. This will allow for more fine grained control at a later date.
 	 * 
-	 * @param index String the window to which we want to switch
+	 * @param pageName the new page name to set the window to so it switches correctly
+	 * @param String the window to which we want to switch
 	 * @throws InterruptedException if page doesn't load
 	 */
 	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
