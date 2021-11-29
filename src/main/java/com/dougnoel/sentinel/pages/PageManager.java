@@ -184,7 +184,7 @@ public class PageManager {
 	 * and for there to be only two.
 	 * 
      * @param pageName the new page name to set the window to so it switches correctly
-     * String the window handle we are switching to
+     * @return String the window handle we are switching to
 	 * @throws InterruptedException if page doesn't load
      */
 	public static String switchToNewWindow(String pageName) throws InterruptedException {
@@ -218,7 +218,7 @@ public class PageManager {
 	 * index. This will allow for more fine grained control at a later date.
 	 * 
 	 * @param pageName the new page name to set the window to so it switches correctly
-	 * @param String the window to which we want to switch
+	 * @param index String the window to which we want to switch
 	 * @throws InterruptedException if page doesn't load
 	 */
 	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
