@@ -2,6 +2,8 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -24,6 +26,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  * For a list of supported browsers and operating systems, see the readme.
  */
 public class WebDriverFactory {
+	private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
     private static WebDriver driver = null;
     private static WebDriverFactory instance = null;
     private static String parentHandle = null;
@@ -74,9 +77,6 @@ public class WebDriverFactory {
         	WebDriverManager.edgedriver().setup();
         	driver = new EdgeDriver();
         	break;
-        case "customChrome":
-        	driver = createCustomChromeDriver();
-            break;
         case "firefox":
     		WebDriverManager.firefoxdriver().setup();
     		driver = new FirefoxDriver();
@@ -131,8 +131,17 @@ public class WebDriverFactory {
      * Quits the driver and sets the driver instance back to null.
      */
     public static void quit() {
-    	getWebDriver().quit();
-    	driver = null;
+    	if (exists()) {
+    		getWebDriver().quit();
+    		driver = null;
+    	}
+    	else {
+    		log.info("Attempted to call quit on a driver that did not exist.");
+    	}
+    }
+    
+    public static boolean exists() {
+    	return driver != null;
     }
     
     /**
@@ -164,17 +173,9 @@ public class WebDriverFactory {
     		chromeOptions.addArguments("--disable-dev-shm-usage");
     		chromeOptions.addArguments("--headless");        		
     	}
-    	WebDriverManager.chromedriver().setup();
-    	return new ChromeDriver(chromeOptions);
-    }
-    
-    /**
-     * Creates a ChromeDriver using a custom Chrome executable. The path for that executable must be set using the -DchromeBrowserBinary configuration option.
-     * @return WebDriver ChromeDrvier
-     */
-    private static WebDriver createCustomChromeDriver() {
-    	var chromeOptions = new ChromeOptions();
-    	chromeOptions.setBinary(Configuration.toString("chromeBrowserBinary"));
+    	var binary = Configuration.toString("chromeBrowserBinary");
+    	if (binary != null)
+    		chromeOptions.setBinary(binary);
     	WebDriverManager.chromedriver().setup();
     	return new ChromeDriver(chromeOptions);
     }
