@@ -1,7 +1,11 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Checkbox;
@@ -18,6 +22,7 @@ import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * Page class to contain a URL and the elements on the page.
@@ -114,5 +119,23 @@ public class Page {
 		}
 		// This allows people to call their element type whatever they want without needing a child class to implement it.
 		return new Element(elementType, elementName, elementData);
+	}
+	
+	/**
+	 * Returns true if iFrames exist on the page, false if they do not.
+	 * 
+	 * @return true if iFrames exist on the page, false if they do not
+	 */
+	public boolean hasIFrames() {
+		return !WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe")).isEmpty();
+	}
+	
+	/**
+	 * Returns a list of WebElement objects containing all the iFrames on the page.
+	 * 
+	 * @return List &ltWebElement&gt the list of iFrames in this page
+	 */
+	public List <WebElement> getIFrames() {
+		return WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe"));
 	}
 }

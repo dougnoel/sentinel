@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -164,13 +165,14 @@ public class Element {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		while((System.currentTimeMillis() - startTime) < searchTime) {
-    	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-    	    	log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
-    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
-    	    	if (element != null) {
-    	    		return element;
-    	    	}
-    	    }
+			element = findElementInCurrentFrameForDuration(Duration.ofMillis(100));
+	    	if (element != null) {
+	    		return element;
+	    	}
+	    	element = findElementInIFrame();
+	    	if (element != null) {
+	    		return element;
+	    	}	
         }
 		var errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 				elementType, getName(), selectors);
@@ -197,7 +199,54 @@ public class Element {
 			return null;
 		}
 	}
+	
+	/**
+	 * Searches recursively through any iFrames on the page for the element. Returns
+	 * null if the element is not found, or if there are no iFrames on the page. This
+	 * method traverses through iFrames but returns to the default root context upon
+	 * returning.
+	 * 
+	 * @return WebElement the element if it is found, otherwise null
+	 */
+	protected WebElement findElementInIFrame() {
+    	if (PageManager.getPage().hasIFrames()) {
+    		WebElement element = null;
+    		List <WebElement> iframes = PageManager.getPage().getIFrames();
+    		for (WebElement iframe : iframes) {
+    			driver.switchTo().frame(iframe);
+    			element = findElementInCurrentFrameForDuration(Duration.ofMillis(100));
+    			if (element != null) {
+    				driver.switchTo().defaultContent();
+    				return element;
+    			}
+        	    element = findElementInIFrame();
+    			if (element != null)
+    				return element;
+    			driver.switchTo().parentFrame();
+    		}
+    	}
+    	return null;
+	}
 
+	/**
+	 * Searches for the current element within the current frame context. Searches each selector for the passed
+	 * amount of time as a Duration object. Recommended to be 100 milliseconds.
+	 * 
+	 * @param duration Duration total time to search for the element per selector
+	 * @return WebElement the element if it is found, otherwise null
+	 */
+	private WebElement findElementInCurrentFrameForDuration(Duration duration) {
+		WebElement element = null;
+		for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
+			log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
+			element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), duration);
+			if (element != null) {
+				return element;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * Type text into a Element.
 	 * <p>
