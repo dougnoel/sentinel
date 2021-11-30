@@ -49,14 +49,14 @@ public class WebdriverFactoryBadBrowserNameTest {
 			Configuration.update("browser", "internetexplorer");
 			driver = WebDriverFactory.instantiateWebDriver();
 			Assert.assertNotNull(driver);
-			driver.quit();
+			WebDriverFactory.quit();
 			break;
 		case "mac":
 			System.setProperty("browser", "safari");
 			Configuration.update("browser", "safari");
 			driver = WebDriverFactory.instantiateWebDriver();
 			Assert.assertNotNull(driver);
-			driver.quit();
+			WebDriverFactory.quit();
 			break;
 		default:
 			Assert.assertTrue("Tested on linux, this is a passthrough test.", true);
@@ -73,7 +73,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 			Configuration.update("browser", "edge");
 			var driver = WebDriverFactory.instantiateWebDriver();
 			Assert.assertNotNull(driver);
-			driver.quit();
+			WebDriverFactory.quit();
 		}
 		else {
 			Assert.assertTrue("Tested on " + os + ", this is a passthrough test.", true);
@@ -110,7 +110,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 		Configuration.update("browser", "opera");
 		var driver = WebDriverFactory.instantiateWebDriver();
 		Assert.assertNotNull(driver);
-		driver.quit();
+		WebDriverFactory.quit();
 	}
 	
 	@Test
@@ -123,6 +123,6 @@ public class WebdriverFactoryBadBrowserNameTest {
 		Configuration.update("browser", "firefox");
 		var driver = WebDriverFactory.instantiateWebDriver();
 		Assert.assertNotNull(driver);
-		driver.quit();
+		WebDriverFactory.quit();
 	}
 }

@@ -1,51 +1,77 @@
 package com.dougnoel.sentinel.webdrivers;
 
-import static org.junit.Assert.*;
+import org.junit.After;
 import org.junit.Test;
+
+import com.dougnoel.sentinel.configurations.Configuration;
 
 public class WebDriverFactoryTest {
 
+	private static final String BROWSERVERSION = "browserVersion";
+	private static final String FIREFOX = "firefox";
+	private static final String GRIDURL = "gridUrl";
+	private static final String BROWSER = "browser";
+	
+//	@BeforeClass
+//	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
+//		System.clearProperty(BROWSERVERSION);
+//	}
+	
+	@After
+	public void tearDownAfterEachTest() throws Exception {
+		Configuration.clear(BROWSERVERSION);
+		System.clearProperty(BROWSERVERSION);
+		Configuration.clear(GRIDURL);
+		System.clearProperty(GRIDURL);
+		Configuration.clear(BROWSER);
+		System.clearProperty(BROWSER);
+		Configuration.clear("chromeBrowserBinary");
+		System.clearProperty("chromeBrowserBinary");
+		
+		WebDriverFactory.quit();
+	}
+	
 	@Test(expected = org.openqa.selenium.remote.UnreachableBrowserException.class)
 	public void createGridShouldFailTest() {
-		var browser = "chrome";
-		var gridUrl = "http://gridrul.com";
-		System.setProperty("browserVersion","1234567");
-		GridWebDriverFactory.createGridDriver(browser, gridUrl);
+		System.setProperty(BROWSERVERSION,"1234567");
+		System.setProperty(GRIDURL,"http://gridrul.com");
+		WebDriverFactory.instantiateWebDriver();
 	}
-	
-	@Test
-	public void createGridShouldSucessTest() {
-		var browser = "firefox";
-		System.setProperty("browserVersion","86.0");
-		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-		var driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
-		try {
-			assertNotNull(driver);
-		}finally {
-			driver.quit();
-		}
-	}
-	
-	@Test
-	public void nullBrowserVersionTest() {
-		var browser = "chrome";
-		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-		System.clearProperty("browserVersion");
-		var driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
-		try {
-			assertNotNull(driver);
-		}finally {
-			driver.quit();
-		}
-	}
+
+// TODO: Selenium Grid not working. Need to setup a self-contained one for testing.
+//	@Test
+//	public void createGridShouldSucceedTest() {
+//		var gridUrl = "http://hub.technologynursery.org/wd/hub";
+//		var driver = GridWebDriverFactory.createGridDriver(FIREFOX, gridUrl);
+//		try {
+//			assertNotNull(driver);
+//		}finally {
+//			driver.close();
+//		}
+//	}
+//	
+//	@Test
+//	public void nullBrowserVersionTest() {
+//		var gridUrl = "http://hub.technologynursery.org/wd/hub";
+//		var driver = GridWebDriverFactory.createGridDriver(CHROME, gridUrl);
+//		try {
+//			assertNotNull(driver);
+//		}finally {
+//			driver.close();
+//		}
+//	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.MalformedURLException.class)
 	public void malFormedUrlTest() {
-		var browser = "firefox";
-		System.setProperty("browserVersion","86.0");
-		var gridUrl = "hub.technologynursery.org:4444/wd/hub";
-		GridWebDriverFactory.createGridDriver(browser, gridUrl);
-		
+		System.setProperty(BROWSER, FIREFOX);
+		System.setProperty(BROWSERVERSION,"86.0");
+		System.setProperty(GRIDURL,"hub.technologynursery.org:4444/wd/hub");
+		WebDriverFactory.instantiateWebDriver();
 	}
 	
+	@Test(expected = org.openqa.selenium.WebDriverException.class)
+	public void createCustomChromeDriver() {
+		System.setProperty("chromeBrowserBinary","fake/path");
+		WebDriverFactory.instantiateWebDriver();
+	}
 }

@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.junit.Cucumber;
@@ -39,7 +38,7 @@ public class SentinelTests {
         }
     	log.info("Driver: {}", WebDriverFactory.getWebDriver());
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
-        	PageManager.quit();
+        	WebDriverFactory.quit();
         }
     }
 }

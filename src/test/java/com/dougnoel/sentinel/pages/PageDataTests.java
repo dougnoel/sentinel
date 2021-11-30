@@ -8,24 +8,21 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class PageDataTests {
 
 	private final static String ELEMENT_NAME = "male_radio_button";
-	private static WebDriver driver;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		driver = WebDriverFactory.instantiateWebDriver();
+		WebDriverFactory.instantiateWebDriver();
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		driver.close();
+		WebDriverFactory.quit();
 	}
 	
 	@Test
