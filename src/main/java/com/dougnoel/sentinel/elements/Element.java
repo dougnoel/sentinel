@@ -15,7 +15,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -161,11 +160,12 @@ public class Element {
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
 	 */
 	protected WebElement element() {
+		driver.switchTo().defaultContent();
 		WebElement element = null;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		while((System.currentTimeMillis() - startTime) < searchTime) {
-			element = findElementInCurrentFrameForDuration(Duration.ofMillis(100));
+			element = findElementInCurrentFrameForDuration(Time.loopInterval());
 	    	if (element != null) {
 	    		return element;
 	    	}
@@ -214,9 +214,8 @@ public class Element {
     		List <WebElement> iframes = PageManager.getPage().getIFrames();
     		for (WebElement iframe : iframes) {
     			driver.switchTo().frame(iframe);
-    			element = findElementInCurrentFrameForDuration(Duration.ofMillis(100));
+    			element = findElementInCurrentFrameForDuration(Time.loopInterval());
     			if (element != null) {
-    				driver.switchTo().defaultContent();
     				return element;
     			}
         	    element = findElementInIFrame();
@@ -324,22 +323,41 @@ public class Element {
 	 */
 	public Element click() {
 		long waitTime = Time.out().getSeconds();
-		try {
-			new WebDriverWait(driver, waitTime, Time.interval().toMillis())
-			.until(ExpectedConditions.elementToBeClickable(element()))
-			.click();
-		} catch (WebDriverException e) {
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		
+		while((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
-				JavascriptExecutor executor = (JavascriptExecutor) driver;
-				executor.executeScript("arguments[0].click();", element());
-			} catch (Exception e2) {
-				var errorMessage = SentinelStringUtils.format(
-						"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
-								elementType, getName(), selectors, waitTime);
-				log.error(errorMessage);
-				throw new ElementNotVisibleException(errorMessage, e2);
+				new WebDriverWait(driver, Time.loopInterval().toMillis())
+				.until(ExpectedConditions.elementToBeClickable(element()))
+				.click();
+				break;
+			} catch (Exception e) {
+				try{
+					JavascriptExecutor executor = (JavascriptExecutor) driver;
+					executor.executeScript("arguments[0].hover();", element());
+					new WebDriverWait(driver, Time.loopInterval().toMillis()).ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.elementToBeClickable(element()));
+					element().click();
+					break;
+				} catch(Exception e1){
+					try{
+						JavascriptExecutor executor = (JavascriptExecutor) driver;
+						executor.executeScript("arguments[0].click();", element());
+						break;
+					} catch (Exception e2) {
+						if((System.currentTimeMillis() - startTime) > searchTime){
+							var errorMessage = SentinelStringUtils.format(
+								"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
+										elementType, getName(), selectors, waitTime);
+							log.error(errorMessage);
+							throw new ElementNotVisibleException(errorMessage, e2);
+						}
+					}
+				}
 			}
 		}
+		
 		return this;
 	}
 
