@@ -133,7 +133,7 @@ public class Page {
 	/**
 	 * Returns a list of WebElement objects containing all the iFrames on the page.
 	 * 
-	 * @return List &ltWebElement&gt the list of iFrames in this page
+	 * @return List &lt;WebElement&gt; the list of iFrames in this page
 	 */
 	public List <WebElement> getIFrames() {
 		return WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe"));
