@@ -108,6 +108,14 @@ public class Element {
 		return name;
 	}
 
+	/**
+	 * Searches for an element using the given locator for the passed duration. It will look
+	 * multiple times, as determined by the Time.interval() value which defaults to 10 milliseconds.
+	 * 
+	 * @param locator By Selenium By locator
+	 * @param timeout Duration the amount of time we look for an element before returning failure
+	 * @return org.openqa.selenium.WebElement the Selenium WebElement if found, otherwise null
+	 */
 	private WebElement getElementWithWait(final By locator, Duration timeout) {
 		try {
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
@@ -122,6 +130,13 @@ public class Element {
 		}
 	}
 	
+	/**
+	 * Takes a Sentinel SelectorType and string value and returns a Selenium By locator.
+	 * 
+	 * @param selectorType SelectorType the ENUM value indicating how we search for the element
+	 * @param selectorValue String the value being pulled from the config file for the selector
+	 * @return org.openqa.selenium.By returns a Selenium By selector for locating an element.
+	 */
 	private By createByLocator(SelectorType selectorType, String selectorValue) {
 		try {
 			switch (selectorType) {
@@ -262,6 +277,12 @@ public class Element {
 	public Element sendKeys(String text) {
 		this.click().clear();
 		element().sendKeys(text);
+		//validate the text is in the box
+		//try method 2
+		//check again
+		//try method 3
+		//check
+		//throw exception if timeout is reached
 		return this;
 	}
 
@@ -341,12 +362,12 @@ public class Element {
 					.until(ExpectedConditions.elementToBeClickable(element()));
 					element().click();
 					break;
-				} catch(Exception e1){
+				} catch(WebDriverException e1){
 					try{
 						JavascriptExecutor executor = (JavascriptExecutor) driver;
 						executor.executeScript("arguments[0].click();", element());
 						break;
-					} catch (Exception e2) {
+					} catch (WebDriverException e2) {
 						if((System.currentTimeMillis() - startTime) > searchTime){
 							var errorMessage = SentinelStringUtils.format(
 								"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
