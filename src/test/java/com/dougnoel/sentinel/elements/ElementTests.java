@@ -61,4 +61,40 @@ public class ElementTests {
 		BaseSteps.navigateToPage("TextboxPage");
 		assertTrue("Expecting element to be enabled.", getElement("Last Name Field").isEnabled());
 	}
+	
+	@Test
+	public void isHiddenOnHiddenElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting element to be hidden.", getElement("Hidden Field").isHidden());
+	}
+	
+	@Test
+	public void isHiddenOnNotDisplayedElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting element to be hidden.", getElement("Not Displayed Field").isHidden());
+	}
+	
+	@Test
+	public void isHiddenOnVisibleElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertFalse("Expecting element to be visible.", getElement("Last Name Field").isHidden());
+	}
+	
+	@Test
+	public void isDisplayedOnVisibleElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting element to be visible.", getElement("Last Name Field").isDisplayed());
+	}
+	
+	@Test
+	public void isDisplayedOnHiddenElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertFalse("Expecting element to be hidden.", getElement("Hidden Field").isDisplayed());
+	}
+	
+	@Test
+	public void isDisplayedOnNotDisplayedElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertFalse("Expecting element to be hidden.", getElement("Not Displayed Field").isDisplayed());
+	}
 }

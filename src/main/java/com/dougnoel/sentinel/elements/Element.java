@@ -448,24 +448,34 @@ public class Element {
 	 * @return boolean true if the element is displayed; false if it is hidden.
 	 */
 	public boolean isDisplayed() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
-	 * Returns true if the element is invisible, otherwise returns false if it is
+	 * Returns true if the element is hidden, otherwise returns false if it is
 	 * visible/displayed.
 	 * <p>
 	 * NOTE: Use isDisplayed() for the fastest processing time if you expect
 	 * the element to be visible/displayed.
 	 * 
-	 * @return boolean true if the element is invisible; false if it is displayed.
+	 * @return boolean true if the element is hidden; false if it is displayed.
 	 */
-	public boolean isInvisible() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+	public boolean isHidden() {
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.invisibilityOf(element()));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 	
 	/**

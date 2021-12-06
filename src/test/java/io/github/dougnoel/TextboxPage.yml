@@ -7,3 +7,9 @@ elements:
    last_name_field:
       elementType: Textbox
       id: lname
+   hidden_field:
+      elementType: Textbox
+      id: hiddenbox
+   not_displayed_field:
+      elementType: Textbox
+      id: notdisplayedbox
