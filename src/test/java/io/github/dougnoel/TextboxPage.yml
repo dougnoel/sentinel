@@ -4,3 +4,6 @@ elements:
    first_name_field:
       elementType: Textbox
       id: fname
+   last_name_field:
+      elementType: Textbox
+      id: lname

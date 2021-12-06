@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -328,6 +329,16 @@ public class Element {
 		return this;
 	}
 
+
+	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
+		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+			       .withTimeout(timeout)
+			       .pollingEvery(Time.interval())
+			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+
+		return wait;
+	}
+	
 	/**
 	 * Click an Element.
 	 * <p>
@@ -349,40 +360,54 @@ public class Element {
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		
 		while((System.currentTimeMillis() - startTime) < searchTime) {
-			try {
-				new WebDriverWait(driver, Time.loopInterval().toMillis())
-				.until(ExpectedConditions.elementToBeClickable(element()))
+			if (clickLoop())
+				return this;
+		}
+		WebElement element = element();
+		var errorMessage = SentinelStringUtils.format(
+			"{} element named \"{}\" cannot be clicked. Make sure the element is visible on the page when you attempt to click it. The selectors being used are: {} The total attempt time for all click types was {} seconds.",
+				elementType
+				, getName()
+				, selectors
+				, waitTime);
+		if (element == null) {
+			errorMessage += "\nElement does not exist.";
+		}
+		else {
+			if (!element.isEnabled())
+				errorMessage += "\nElement is disabled.";
+			if (!element.isDisplayed())
+				errorMessage += "\nElement is not visible.";
+		}
+		log.error(errorMessage);
+		throw new ElementNotVisibleException(errorMessage);
+	}
+
+	private boolean clickLoop() {
+		WebElement element = element();
+		try {
+			constructElementWait(Time.loopInterval())
+				.until(ExpectedConditions.elementToBeClickable(element))
 				.click();
-				break;
-			} catch (WebDriverException e) {
-				try{
-					JavascriptExecutor executor = (JavascriptExecutor) driver;
-					executor.executeScript("arguments[0].hover();", element());
-					new WebDriverWait(driver, Time.loopInterval().toMillis()).ignoring(StaleElementReferenceException.class)
-					.until(ExpectedConditions.elementToBeClickable(element()));
-					element().click();
-					break;
-				} catch(WebDriverException e1){
-					try{
-						JavascriptExecutor executor = (JavascriptExecutor) driver;
-						executor.executeScript("arguments[0].click();", element());
-						break;
-					} catch (WebDriverException e2) {
-						if((System.currentTimeMillis() - startTime) > searchTime){
-							var errorMessage = SentinelStringUtils.format(
-								"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
-										elementType, getName(), selectors, waitTime);
-							log.error(errorMessage);
-							throw new ElementNotVisibleException(errorMessage, e2);
-						}
-					}
+			return true;
+		} catch (WebDriverException e) {
+			try{
+				hover();
+				constructElementWait(Time.loopInterval())
+					.until(ExpectedConditions.elementToBeClickable(element))
+					.click();
+				return true;
+			} catch(WebDriverException e1){
+				if (element.isEnabled()) {
+				JavascriptExecutor executor = (JavascriptExecutor) driver;
+				executor.executeScript("arguments[0].click();", element);
+				return true;
 				}
 			}
 		}
-		
-		return this;
+		return false;
 	}
-
+	
 	/**
 	 * Clear a Element. Clears text in a text box. Un-checks check boxes. Clears
 	 * radio button choices.
@@ -454,11 +479,15 @@ public class Element {
 	 * 
 	 * @return boolean true if the element is enabled; false if it is disabled
 	 */
-	public boolean isEnabled() {		
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+	public boolean isEnabled() {
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.not(
-						ExpectedConditions.attributeContains(element(), "disabled", "")));
+				.until(d -> element().isEnabled());
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -473,9 +502,14 @@ public class Element {
 	 * @return boolean true if the element is disabled; false if it is enabled
 	 */
 	public boolean isDisabled() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -600,12 +634,21 @@ public class Element {
 	}
 
 	/**
+	 * Hovers over an element using Actions.
+	 * @return Element for chaining
+	 */
+	public Element hover() {
+		new Actions(driver).moveToElement(element()).build().perform();
+		return this;
+	}
+	
+	/**
 	 * This method is used to get the text on mouse hover
 	 * 
 	 * @return The value of the tooltip text
 	 */
 	public String getTooltipText() {
-		new Actions(driver).moveToElement(this.element()).build().perform();
+		hover();
 		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}	
 	
