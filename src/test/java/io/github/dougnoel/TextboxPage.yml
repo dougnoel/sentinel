@@ -13,3 +13,11 @@ elements:
    not_displayed_field:
       elementType: Textbox
       id: notdisplayedbox
+   car_checkbox:
+      elementType: Checkbox
+      id: vehicle2
+   boat_checkbox:
+      elementType: Checkbox
+      id: vehicle3
+   bad_element:
+      id: bad_id

@@ -97,4 +97,40 @@ public class ElementTests {
 		BaseSteps.navigateToPage("TextboxPage");
 		assertFalse("Expecting element to be hidden.", getElement("Not Displayed Field").isDisplayed());
 	}
+	
+	@Test
+	public void isSelectedOnUnCheckedElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertFalse("Expecting element to not be selected.", getElement("Car Checkbox").isSelected());
+	}
+
+	@Test
+	public void isSelectedOnCheckedElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting element to be selected.", getElement("Boat Checkbox").isSelected());
+	}
+	
+	@Test
+	public void isNotSelectedOnUnCheckedElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting element to not be selected.", getElement("Car Checkbox").isNotSelected());
+	}
+
+	@Test
+	public void isNotSelectedOnCheckedElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertFalse("Expecting element to be selected.", getElement("Boat Checkbox").isNotSelected());
+	}
+	
+	@Test
+	public void doesNotExistOnVisibleElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertFalse("Expecting element to exist.", getElement("Last Name Field").doesNotExist());
+	}
+	
+	@Test
+	public void doesNotExistOnBadElement() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting element to not exist.", getElement("Bad Element").doesNotExist());
+	}
 }

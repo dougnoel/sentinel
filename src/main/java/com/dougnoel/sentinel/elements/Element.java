@@ -373,12 +373,8 @@ public class Element {
 		if (element == null) {
 			errorMessage += "\nElement does not exist.";
 		}
-		else {
-			if (!element.isEnabled())
+		else if (!element.isEnabled())
 				errorMessage += "\nElement is disabled.";
-			if (!element.isDisplayed())
-				errorMessage += "\nElement is not visible.";
-		}
 		log.error(errorMessage);
 		throw new ElementNotVisibleException(errorMessage);
 	}
@@ -531,9 +527,14 @@ public class Element {
 	 * @return boolean true if the element is selected, false if it is not
 	 */
 	public boolean isSelected() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementToBeSelected(element()));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -545,9 +546,14 @@ public class Element {
 	 * @return boolean true if the element is not selected, false if it is
 	 */
 	public boolean isNotSelected() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 	
 	/**
