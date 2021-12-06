@@ -1,0 +1,6 @@
+urls:
+  default: https://dougnoel.github.io/sentinel/test/textbox.html
+elements:
+   first_name_field:
+      elementType: Textbox
+      id: fname
