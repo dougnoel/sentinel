@@ -283,7 +283,7 @@ public class Element {
 			try {
 				JavascriptExecutor executor = (JavascriptExecutor) driver;
 				executor.executeScript("arguments[0].click();", element());
-			} catch (Exception e2) {
+			} catch (WebDriverException e2) {
 				var errorMessage = SentinelStringUtils.format(
 						"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
 								elementType, getName(), selectors, waitTime);
