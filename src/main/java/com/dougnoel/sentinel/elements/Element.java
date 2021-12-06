@@ -328,16 +328,6 @@ public class Element {
 
 		return this;
 	}
-
-
-	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
-		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
-			       .withTimeout(timeout)
-			       .pollingEvery(Time.interval())
-			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
-
-		return wait;
-	}
 	
 	/**
 	 * Click an Element.
@@ -379,6 +369,11 @@ public class Element {
 		throw new ElementNotVisibleException(errorMessage);
 	}
 
+	/**
+	 * Loops through all the ways to click an element.
+	 * 
+	 * @return boolean true if the element was clicked, false otherwise
+	 */
 	private boolean clickLoop() {
 		WebElement element = element();
 		try {
@@ -402,6 +397,18 @@ public class Element {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Creates a FluentWait Webdriver object for searching for elements.
+	 * @param timeout Duration how long to search
+	 * @return FluentWait the wait object that can be invoked
+	 */
+	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
+		return new FluentWait<WebDriver>(driver)
+			       .withTimeout(timeout)
+			       .pollingEvery(Time.interval())
+			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 	}
 	
 	/**
