@@ -399,9 +399,9 @@ public class Element {
 				return true;
 			} catch(WebDriverException e1){
 				if (element.isEnabled()) {
-				JavascriptExecutor executor = (JavascriptExecutor) driver;
-				executor.executeScript("arguments[0].click();", element);
-				return true;
+					JavascriptExecutor executor = (JavascriptExecutor) driver;
+					executor.executeScript("arguments[0].click();", element);
+					return true;
 				}
 			}
 		}
