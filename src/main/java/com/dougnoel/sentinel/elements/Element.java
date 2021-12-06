@@ -112,7 +112,7 @@ public class Element {
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 			       .withTimeout(timeout)
 			       .pollingEvery(Time.interval())
-			       .ignoring(org.openqa.selenium.NoSuchElementException.class);
+			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
 		return wait.until(d -> driver.findElement(locator));
 		}
@@ -175,6 +175,27 @@ public class Element {
 		var errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 				elementType, getName(), selectors);
 		throw new NoSuchElementException(errorMessage);
+	}
+	
+	/**
+	 * Returns a Selenium WebElement using the current element as the beginning search point
+	 * for the passed By locator.
+	 * 
+	 * @param locator org.openqa.selenium.By the locator to use to find the element inside of this one
+	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
+	 */
+	protected WebElement element(final By locator) {    	
+		try {
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+					.withTimeout(Time.out())
+					.pollingEvery(Time.interval())
+					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+
+			WebElement element = wait.until(d -> driver.findElement(locator));
+			return wait.until(d -> element.findElement(locator));
+		} catch (org.openqa.selenium.TimeoutException e) {
+			return null;
+		}
 	}
 
 	/**

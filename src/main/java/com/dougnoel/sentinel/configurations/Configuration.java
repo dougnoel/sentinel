@@ -54,8 +54,10 @@ public class Configuration {
     private static final String WINDOWS = "windows";
     private static final String BROWSER = "browser";
 
+    /**
+     * Exists only to defeat instantiation.
+     */
 	private Configuration() {
-		// Exists only to defeat instantiation.
 	}
 	
 	/**

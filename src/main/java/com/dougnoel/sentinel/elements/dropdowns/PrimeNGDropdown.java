@@ -48,7 +48,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
     	String xPath = "//li[@aria-label=\"" + selectionText + "\"]";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", selectionText, xTagName, xPath);
     	this.click();
-    	return this.element().findElement(By.xpath(xPath));
+    	return this.element(By.xpath(xPath));
     }
     
     /**
@@ -63,7 +63,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
     	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, xTagName, xPath);
     	this.click();
-    	return this.element().findElement(By.xpath(xPath));
+    	return this.element(By.xpath(xPath));
     }
     
 
@@ -83,6 +83,6 @@ public class PrimeNGDropdown extends JSDropdownElement {
      */
 	@Override
     public String getSelectedText() {
-    	return this.element().findElement(By.xpath("//span[contains(@class, 'p-dropdown-label')]")).getText();
+    	return this.element(By.xpath("//span[contains(@class, 'p-dropdown-label')]")).getText();
    }
 }

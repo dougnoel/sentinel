@@ -3,8 +3,6 @@ package com.dougnoel.sentinel.pages;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Checkbox;
 import com.dougnoel.sentinel.elements.Element;
@@ -23,7 +21,6 @@ import com.dougnoel.sentinel.elements.tables.MetabolonPortalResultsTable;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * Page class to contain a URL and the elements on the page.
@@ -39,9 +36,7 @@ public class Page {
 	protected static final SelectorType NAME = SelectorType.NAME;
 	protected static final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
 	protected static final SelectorType TEXT = SelectorType.TEXT;
-	protected static final SelectorType XPATH = SelectorType.XPATH;    
-
-    protected WebDriver driver;
+	protected static final SelectorType XPATH = SelectorType.XPATH;
 
     protected Map<String,Element> elements;
     
@@ -49,7 +44,6 @@ public class Page {
     
     public Page(String pageName) {
     	this.pageName = pageName;
-        driver = WebDriverFactory.getWebDriver();
         elements = new HashMap<>();
     }
 
