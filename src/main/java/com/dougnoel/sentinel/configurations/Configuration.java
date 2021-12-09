@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.AccessDeniedException;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
@@ -20,6 +19,7 @@ import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -244,60 +244,21 @@ public class Configuration {
 	 * @return File the OS path to the config file
 	 */
 	private static File findPageObjectFilePath(String pageName)  {
-		// String filename = pageName + ".yml";
-		// File result = searchDirectory(new File("src/"), filename);
-
-		// if (result == null) {
-		// 	var errorMessage = SentinelStringUtils.format("Failed to locate the {} configuration file. Please ensure the file exists in the same directory as the page object.", filename);
-		// 	log.error(errorMessage);
-		// 	throw new FileNotFoundException(filename);
-		// }
-
-		String filename = pageName + ".yml";
-		return new File(findFilePath(filename));
-	}
-
-	public static String findFilePath(String fileName)  {
-		File result = searchDirectory(new File("src/"), fileName);
-
-		if (result == null) {
-			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory.", fileName);
-			log.error(errorMessage);
-			throw new FileNotFoundException(fileName);
-		}
-
-		return result.getAbsolutePath();
+		return new File(FileManager.findFilePath(pageName + ".yml"));
 	}
 
 	/**
-	 * Returns a File handler to a file if it is found in the given directory or any
-	 * sub-directories.
+	 * Returns a valid class path for instantiating a java class given a class name.
 	 * 
-	 * @param directory File the directory to start the search
-	 * @param fileName String the full name of the file with extension to find
-	 * @return File the file that is found, null if nothing is found
+	 * @param className String the name of the class (case sensitive)
+	 * @return String the path to the class that can be used to create an object
 	 */
-	protected static File searchDirectory(File directory, String fileName) {
-		log.trace("Searching directory {}", directory.getAbsoluteFile());
-		File searchResult = null;
-		if (directory.canRead()) {
-			for (File temp : directory.listFiles()) {
-				if (temp.isDirectory()) {
-					searchResult = searchDirectory(temp, fileName);
-				} else {
-					if (fileName.equals(temp.getName()))
-						searchResult = temp.getAbsoluteFile();
-				}
-				if (searchResult != null) {
-					break;
-				}
-			}
-		} else {
-			throw new AccessDeniedException(directory.getAbsoluteFile().toString());
-		}
-		return searchResult;
+	public static String getClassPath(String className) {
+		String filePath = FileManager.findFilePath(className + ".java");
+		String returnValue = StringUtils.removeEnd(filePath.replace("/", "."), ".java");
+		return "com" + StringUtils.substringAfter(returnValue, "com");
 	}
-  
+
 	/**
 	 * Returns page data through yaml instructions to a config path in given pageName string. 
 	 * 

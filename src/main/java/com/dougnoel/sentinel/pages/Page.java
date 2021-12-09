@@ -1,25 +1,14 @@
 package com.dougnoel.sentinel.pages;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.elements.Checkbox;
 import com.dougnoel.sentinel.elements.Element;
-import com.dougnoel.sentinel.elements.Textbox;
-import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
-import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
-import com.dougnoel.sentinel.elements.dropdowns.MetabolonPortalCheckboxDropdown;
-import com.dougnoel.sentinel.elements.dropdowns.MetabolonPortalDropdown;
-import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
-import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
-import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
-import com.dougnoel.sentinel.elements.tables.NGXDataTable;
-import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.elements.tables.MetabolonPortalResultsTable;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -31,6 +20,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
  * at once.
  */
 public class Page {
+	private static final Logger log = LogManager.getLogger(Page.class);
 	
 	protected static final SelectorType CLASS = SelectorType.CLASS;
 	protected static final SelectorType CSS = SelectorType.CSS;
@@ -86,73 +76,18 @@ public class Page {
 		else {
 			elementType = "Element";
 		}
-		String classFileName = elementType + ".java";
-		String fullClassFilePath = Configuration.findFilePath(classFileName);
+		
+		String fullClassFilePath = Configuration.getClassPath(elementType);
 
 		try {
-			Class<?> newElement = Class.forName(fullClassFilePath);
-			Constructor<?> ctor = newElement.getConstructor(String.class, Map.class);
-			return ctor.newInstance(elementName, elementData);
-		} catch (InstantiationException e) {
-			var errorMessage = SentinelStringUtils.format("InstantiationException: {} Element Object creation failed.", fullClassFilePath);
-			throw new ElementNotFoundException(errorMessage);
-		} catch (IllegalAccessException e) {
-			var errorMessage = SentinelStringUtils.format("IllegalAccessException: {} Element Object creation failed.", fullClassFilePath);
-			throw new ElementNotFoundException(errorMessage);
-		} catch (ClassNotFoundException e) {
-			var errorMessage = SentinelStringUtils.format("ClassNotFoundException: {} Element Object creation failed.", fullClassFilePath);
-			throw new ElementNotFoundException(errorMessage);
-		} catch (InvocationTargetException e) {
-			var errorMessage = SentinelStringUtils.format("InvocationTargetException: {} Element Object creation failed.", fullClassFilePath);
-			throw new ElementNotFoundException(errorMessage);
-		} catch (NoSuchMethodException e) {
-			var errorMessage = SentinelStringUtils.format("NoSuchMethodException: {} Element Object creation failed.", fullClassFilePath);
-			throw new ElementNotFoundException(errorMessage);
+			return Class.forName(fullClassFilePath).getConstructor(String.class, Map.class).newInstance(elementName, elementData);
+		} catch (Exception e) {
+			var errorMessage = SentinelStringUtils.format("{}: {} Element Object creation failed. File location: {}", e.getClass().getSimpleName(), StringUtils.capitalize(elementName), fullClassFilePath);
+			log.error(errorMessage);
+			throw new ElementNotFoundException(errorMessage, e);
 		}
 
-
-		//return new Class.forName(elementType).getConstructor().newInstance();
-
-		// if ("Checkbox".equalsIgnoreCase(elementType)) {
-		// 	return new Checkbox(elementName, elementData);
-		// }
-		// if ("Textbox".equalsIgnoreCase(elementType)) {
-		// 	return new Textbox(elementName, elementData);
-		// }
-		// if ("Dropdown".equalsIgnoreCase(elementType)) {
-		// 	return new Dropdown(elementName, elementData);
-		// }
-		// if ("MaterialUISelect".equalsIgnoreCase(elementType)) {
-		// 	return new MaterialUISelect(elementName, elementData);
-		// }
-		// if ("PrimeNGDropdown".equalsIgnoreCase(elementType)) {
-		// 	return new PrimeNGDropdown(elementName, elementData);
-		// }
-		// if ("MetabolonPortalDropdown".equalsIgnoreCase(elementType)) {
-		// 	return new MetabolonPortalDropdown(elementName, elementData);
-		// }
-		// if ("MetabolonPortalCheckboxDropdown".equalsIgnoreCase(elementType)) {
-		// 	return new MetabolonPortalCheckboxDropdown(elementName, elementData);
-		// }
-		// if ("SelectElement".equalsIgnoreCase(elementType)) {
-		// 	return new SelectElement(elementName, elementData);
-		// }
-		// if ("PrimeNGRadioButton".equalsIgnoreCase(elementType)) {
-		// 	return new PrimeNGRadioButton(elementName, elementData);
-		// }
-		// if ("Radiobutton".equalsIgnoreCase(elementType)) {
-		// 	return new Radiobutton(elementName, elementData);
-		// }
-		// if ("NGXDataTable".equalsIgnoreCase(elementType)) {
-		// 	return new NGXDataTable(elementName, elementData);
-		// }
-		// if ("Table".equalsIgnoreCase(elementType)) {
-		// 	return new Table(elementName, elementData);
-		// }
-		// if ("MetabolonPortalResultsTable".equalsIgnoreCase(elementType)) {
-		// 	return new MetabolonPortalResultsTable(elementName, elementData);
-		// }
-		// // This allows people to call their element type whatever they want without needing a child class to implement it.
-		// return new Element(elementType, elementName, elementData);
+		 //TODO: This allows people to call their element type whatever they want without needing a child class to implement it.
+//		 return new Element(elementType, elementName, elementData);
 	}
 }

@@ -6,7 +6,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.dougnoel.sentinel.exceptions.AccessDeniedException;
+import com.dougnoel.sentinel.exceptions.FileNotFoundException;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
+
 public class FileManager {
+	private static final Logger log = LogManager.getLogger(FileManager.class);
 	
 	private FileManager() {} //Exists to defeat instantiation.
 
@@ -24,5 +32,53 @@ public class FileManager {
 		path = path.replace("/", File.separator);
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 	    return new String(encoded, StandardCharsets.UTF_8);
+	}
+	
+	/**
+	 * Returns the absolute path to the file searching the root directory of the project
+	 * and any sub directories.
+	 * 
+	 * @param fileName String the full (exact) name of file to be found
+	 * @return String the absolute path of the file found
+	 */
+	public static String findFilePath(String fileName)  {
+		File result = searchDirectory(new File("src/"), fileName);
+
+		if (result == null) {
+			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory.", fileName);
+			log.error(errorMessage);
+			throw new FileNotFoundException(fileName);
+		}
+
+		return result.getAbsolutePath();
+	}
+	
+	/**
+	 * Returns a File handler to a file if it is found in the given directory or any
+	 * sub-directories.
+	 * 
+	 * @param directory File the directory to start the search
+	 * @param fileName String the full name of the file with extension to find
+	 * @return File the file that is found, null if nothing is found
+	 */
+	protected static File searchDirectory(File directory, String fileName) {
+		log.trace("Searching directory {}", directory.getAbsoluteFile());
+		File searchResult = null;
+		if (directory.canRead()) {
+			for (File temp : directory.listFiles()) {
+				if (temp.isDirectory()) {
+					searchResult = searchDirectory(temp, fileName);
+				} else {
+					if (fileName.equals(temp.getName()))
+						searchResult = temp.getAbsoluteFile();
+				}
+				if (searchResult != null) {
+					break;
+				}
+			}
+		} else {
+			throw new AccessDeniedException(directory.getAbsoluteFile().toString());
+		}
+		return searchResult;
 	}
 }
