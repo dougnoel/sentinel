@@ -9,7 +9,7 @@ import org.openqa.selenium.WebElement;
 
 public class MetabolonPortalCheckboxDropdown extends JSDropdownElement {
 
-  private static final Logger log = LogManager.getLogger(PrimeNGDropdown.class.getName());
+  private static final Logger log = LogManager.getLogger(MetabolonPortalCheckboxDropdown.class.getName());
 	
   public MetabolonPortalCheckboxDropdown(String elementName, Map<String,String> selectors) {
 	  super(elementName, selectors);
@@ -41,7 +41,7 @@ public class MetabolonPortalCheckboxDropdown extends JSDropdownElement {
   protected WebElement getOption(int index) {
     this.element().findElement(openDropdown).click();
     String dropdownOptions = ".//div[@class='Dropdown-menu']//div[contains(@class,'reportName')]["+(index)+"]/span";
-  	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, dropdownOptions);
+  	log.trace("Trying to click option {} from downdown using the xpath {}", index, dropdownOptions);
     	
   	return this.element().findElements(By.xpath(dropdownOptions)).get(index-1); //we must convert the index to start at zero
   }
@@ -59,13 +59,13 @@ public class MetabolonPortalCheckboxDropdown extends JSDropdownElement {
     this.element().findElement(openDropdown).click();
     String dropdownOptions = ".//div[@class='Dropdown-menu']//div[contains(@class,'reportName')]/span[contains(text(),'" + selectionText + "')]"; 
     String checkbox = "/ancestor::li/div[contains(@class, 'check-cell')]//input";
-   	log.trace("Looking for the value in the dropdown at position {} using {}", selectionText, dropdownOptions+checkbox);
+   	log.trace("Looking for the value in the dropdown at position {} using {}{}", selectionText, dropdownOptions, checkbox);
   	return this.element().findElement(By.xpath(dropdownOptions+checkbox));
   }
 
   protected void setDropdownOptionChecked(String selectionText, Boolean checked){
     WebElement checkBox = getDropdownOptionCheckbox(selectionText);
-    if (checked.toString() != checkBox.getAttribute("value"))
+    if (checked.toString().equals(checkBox.getAttribute("value")))
       checkBox.click();
   }
 }

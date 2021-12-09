@@ -43,7 +43,7 @@ public class MetabolonPortalDropdown extends JSDropdownElement {
   protected WebElement getOption(int index) {
     this.element().findElement(openDropdown).click();
     String dropdownOptions = SentinelStringUtils.format(".//div[@class='Dropdown-menu']//button[{}]", index);     
-  	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, dropdownOptions);
+  	log.trace("Trying to click option {} from downdown using the xpath {}", index, dropdownOptions);
     	
   	return this.element().findElements(By.xpath(dropdownOptions)).get(index-1); //we must convert the index to start at zero
   }

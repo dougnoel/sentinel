@@ -244,16 +244,29 @@ public class Configuration {
 	 * @return File the OS path to the config file
 	 */
 	private static File findPageObjectFilePath(String pageName)  {
+		// String filename = pageName + ".yml";
+		// File result = searchDirectory(new File("src/"), filename);
+
+		// if (result == null) {
+		// 	var errorMessage = SentinelStringUtils.format("Failed to locate the {} configuration file. Please ensure the file exists in the same directory as the page object.", filename);
+		// 	log.error(errorMessage);
+		// 	throw new FileNotFoundException(filename);
+		// }
+
 		String filename = pageName + ".yml";
-		File result = searchDirectory(new File("src/"), filename);
+		return new File(findFilePath(filename));
+	}
+
+	public static String findFilePath(String fileName)  {
+		File result = searchDirectory(new File("src/"), fileName);
 
 		if (result == null) {
-			var errorMessage = SentinelStringUtils.format("Failed to locate the {} configuration file. Please ensure the file exists in the same directory as the page object.", filename);
+			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory.", fileName);
 			log.error(errorMessage);
-			throw new FileNotFoundException(filename);
+			throw new FileNotFoundException(fileName);
 		}
 
-		return result;
+		return result.getAbsolutePath();
 	}
 
 	/**
