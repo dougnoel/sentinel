@@ -10,7 +10,8 @@ import org.junit.Test;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
+import com.dougnoel.sentinel.exceptions.ElementDisabledException;
+import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -32,7 +33,7 @@ public class ElementTests {
 	}
 
 	
-	@Test(expected = ElementNotVisibleException.class)
+	@Test(expected = ElementNotClickableException.class)
 	public void clickOnDisabledTextbox() {
 		BaseSteps.navigateToPage("TextboxPage");
 		getElement("First Name Field").click();
@@ -133,4 +134,17 @@ public class ElementTests {
 		BaseSteps.navigateToPage("TextboxPage");
 		assertTrue("Expecting element to not exist.", getElement("Bad Element").doesNotExist());
 	}
+	
+	@Test(expected = ElementDisabledException.class)
+	public void sendingTextToDisabledTextbox() {
+		BaseSteps.navigateToPage("TextboxPage");
+		getElement("First Name Field").sendKeys("stuff");
+	}
+	
+	@Test
+	public void sendingTextToHiddenTextbox() {
+		BaseSteps.navigateToPage("TextboxPage");
+		assertTrue("Expecting hidden element to receive text.", getElement("Hidden Field").sendKeys("stuff").getText().contains("stuff"));
+	}
+	
 }

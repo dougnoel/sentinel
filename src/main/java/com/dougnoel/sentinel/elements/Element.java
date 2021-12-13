@@ -1,8 +1,5 @@
 package com.dougnoel.sentinel.elements;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
@@ -25,6 +22,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.exceptions.ElementDisabledException;
+import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
@@ -264,69 +263,68 @@ public class Element {
 	}
 	
 	/**
-	 * Type text into a Element.
-	 * <p>
-	 * <b>Aliases:</b>
-	 * <ul>
-	 * <li>Textbox.type(text)</li>
-	 * </ul>
+	 * Enter text into a Element. Typically used for text boxes.
+	 * This method will throw an ElementDisabledException() if the text box is disabled.
 	 * 
-	 * @param text
-	 *            String (text to type)
+	 * @param text String the text to enter
 	 * @return Element (for chaining)
 	 */
 	public Element sendKeys(String text) {
-		this.click().clear();
-		element().sendKeys(text);
-		//validate the text is in the box
-		//try method 2
-		//check again
-		//try method 3
-		//check
-		//throw exception if timeout is reached
-		return this;
-	}
-
-	public Element javaScriptSendKeys(String text) {
-		JavascriptExecutor jse = (JavascriptExecutor) driver;
-		jse.executeScript("arguments[0].value='" + text + "';", element());
-
-		return this;
-	}
-
-	/**
-	 * Press keys with focus on a Element. This is useful when type() or
-	 * sendKeys isn't working due to a mask or hidden field being employed to grab
-	 * key press events and operate on each one.
-	 * 
-	 * @param text
-	 *            String (keys to type)
-	 * @return Element (for chaining)
-	 * @throws AWTException if the key cannot be pressed.
-	 */
-	public Element pressKeys(String text) throws AWTException {
-		// Ensure that the element has focus.
-		if ("input".equals(element().getTagName())) {
-			element().sendKeys("");
-		} else {
-			new Actions(driver).moveToElement(element()).perform();
-		}
-
-		// Iterate through the string and press every key
-		var robot = new Robot();
-		robot.setAutoWaitForIdle(true);
-		robot.delay(150);
-		robot.waitForIdle();
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
 		
-		char[] chars = text.toCharArray();
-        
-		for (char c : chars) {
-			log.trace(c);
-			robot.keyPress(KeyEvent.getExtendedKeyCodeForChar(c));
-			robot.keyRelease(KeyEvent.getExtendedKeyCodeForChar(c));
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			if (sendKeysLoop(text))
+				return this;
 		}
+		
+		var errorMessage = SentinelStringUtils.format(
+			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time for all click types was {} seconds.",
+				elementType
+				, getName()
+				, selectors
+				, Time.out().getSeconds());
+		if (!element().isEnabled()) {
+			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
+			log.error(errorMessage);
+			throw new ElementDisabledException(errorMessage);
+		}
+		log.error(errorMessage);
+		throw new ElementNotVisibleException(errorMessage);
+	}
+	
+	/**
+	 * Loops through all the ways to send text to an element.
+	 * 
+	 * @return boolean true if the text was sent, false otherwise
+	 */
+	private boolean sendKeysLoop(String text) {
+		WebElement element = element();
+		try {
+			this.click().clear();
+			element.sendKeys(text);
 
-		return this;
+			constructElementWait(Time.loopInterval())
+					.until(ExpectedConditions.textToBePresentInElementValue(element, text));
+
+			return true;
+		} 
+		catch (ElementDisabledException e) {
+			return false;
+		}
+		catch (WebDriverException e) {
+			try {
+				JavascriptExecutor jse = (JavascriptExecutor) driver;
+				jse.executeScript("arguments[0].value='" + text + "';", element());
+
+				constructElementWait(Time.loopInterval())
+						.until(ExpectedConditions.textToBePresentInElementValue(element, text));
+
+				return true;
+			} catch (WebDriverException e1) {
+				return false;
+			}
+		}
 	}
 	
 	/**
@@ -345,7 +343,6 @@ public class Element {
 	 * @return Element (for chaining)
 	 */
 	public Element click() {
-		long waitTime = Time.out().getSeconds();
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		
@@ -359,14 +356,17 @@ public class Element {
 				elementType
 				, getName()
 				, selectors
-				, waitTime);
+				, Time.out().getSeconds());
 		if (element == null) {
 			errorMessage += "\nElement does not exist.";
 		}
-		else if (!element.isEnabled())
+		else if (!element.isEnabled()) {
 				errorMessage += "\nElement is disabled.";
+				log.error(errorMessage);
+				throw new ElementDisabledException(errorMessage);
+		}
 		log.error(errorMessage);
-		throw new ElementNotVisibleException(errorMessage);
+		throw new ElementNotClickableException(errorMessage);
 	}
 
 	/**
