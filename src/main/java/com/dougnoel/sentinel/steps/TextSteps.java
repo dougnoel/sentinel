@@ -72,41 +72,6 @@ public class TextSteps {
         getElementAsTextbox(elementName).type(text);
         Configuration.update(elementName, text);
     }
-
-    /**
-     * Enters the given text into a text box that matches the given elementName as defined on the current Page object,
-     * then stores the text value in the Configuration Manager using the given element name as the key.
-     * The given element name is made lower case and whitespaces are replaced with
-     * underscores in getElementAsTextbox, then it is sent a pressKeys event to an element defined on a
-     * page object with that name. The page object and driver object are defined by
-     * the WebDriverFactory and PageFactory objects. The derived Page Object
-     * (extends Page) should define a method named [element name]_[element type]
-     * returning a Element object (e.g. password_field).
-     * <p>
-     * This is different from just entering text in that the text is injected into
-     * the element by executing javascript. This will deal with javascript sending
-     * key events to a hidden field for text processing when the sendKeys() method
-     * isn't working.
-     * <p>
-     * NOTE: This should only be used if the standard "I enter &lt;text&gt; in the
-     * &lt;element&gt; step does not work. It is not representative of typical user
-     * action.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I inject bob in the username textbox</li>
-     * <li>I inject abc123 in the Password field</li>
-     * <li>I inject test@test.com into the email field<li>
-     * </ul>
-     * 
-     * @param text String the text to enter
-     * @param elementName String the name of the element into which to enter text
-     */
-    @When("^I inject (.*) in the (.*)$")
-    public static void injectText(String text, String elementName) {
-        getElementAsTextbox(elementName).javaScriptSendKeys(text);
-        Configuration.update(elementName, text);
-    }
     
     /**
      * Types the randomly generated text for the given key under which the text is stored in the given elementName.

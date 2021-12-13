@@ -1,11 +1,9 @@
 package com.dougnoel.sentinel.elements;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -23,6 +22,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.exceptions.ElementDisabledException;
+import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
 import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchElementException;
@@ -107,6 +108,14 @@ public class Element {
 		return name;
 	}
 
+	/**
+	 * Searches for an element using the given locator for the passed duration. It will look
+	 * multiple times, as determined by the Time.interval() value which defaults to 10 milliseconds.
+	 * 
+	 * @param locator By Selenium By locator
+	 * @param timeout Duration the amount of time we look for an element before returning failure
+	 * @return org.openqa.selenium.WebElement the Selenium WebElement if found, otherwise null
+	 */
 	private WebElement getElementWithWait(final By locator, Duration timeout) {
 		try {
 		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
@@ -121,6 +130,13 @@ public class Element {
 		}
 	}
 	
+	/**
+	 * Takes a Sentinel SelectorType and string value and returns a Selenium By locator.
+	 * 
+	 * @param selectorType SelectorType the ENUM value indicating how we search for the element
+	 * @param selectorValue String the value being pulled from the config file for the selector
+	 * @return org.openqa.selenium.By returns a Selenium By selector for locating an element.
+	 */
 	private By createByLocator(SelectorType selectorType, String selectorValue) {
 		try {
 			switch (selectorType) {
@@ -160,17 +176,19 @@ public class Element {
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
 	 */
 	protected WebElement element() {
+		driver.switchTo().defaultContent();
 		WebElement element = null;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		while((System.currentTimeMillis() - startTime) < searchTime) {
-    	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-    	    	log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
-    	    	element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
-    	    	if (element != null) {
-    	    		return element;
-    	    	}
-    	    }
+			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+	    	if (element != null) {
+	    		return element;
+	    	}
+	    	element = findElementInIFrame();
+	    	if (element != null) {
+	    		return element;
+	    	}	
         }
 		var errorMessage = SentinelStringUtils.format("{} element named \"{}\" does not exist or is not visible using the following values: {}. Assure you are on the page you think you are on, and that the element identifier you are using is correct.",
 				elementType, getName(), selectors);
@@ -197,67 +215,118 @@ public class Element {
 			return null;
 		}
 	}
+	
+	/**
+	 * Searches recursively through any iFrames on the page for the element. Returns
+	 * null if the element is not found, or if there are no iFrames on the page. This
+	 * method traverses through iFrames but returns to the default root context upon
+	 * returning.
+	 * 
+	 * @return WebElement the element if it is found, otherwise null
+	 */
+	protected WebElement findElementInIFrame() {
+    	if (PageManager.getPage().hasIFrames()) {
+    		WebElement element = null;
+    		List <WebElement> iframes = PageManager.getPage().getIFrames();
+    		for (WebElement iframe : iframes) {
+    			driver.switchTo().frame(iframe);
+    			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+    			if (element != null) {
+    				return element;
+    			}
+        	    element = findElementInIFrame();
+    			if (element != null)
+    				return element;
+    			driver.switchTo().parentFrame();
+    		}
+    	}
+    	return null;
+	}
 
 	/**
-	 * Type text into a Element.
-	 * <p>
-	 * <b>Aliases:</b>
-	 * <ul>
-	 * <li>Textbox.type(text)</li>
-	 * </ul>
+	 * Searches for the current element within the current frame context. Searches each selector for the passed
+	 * amount of time as a Duration object. Recommended to be 100 milliseconds.
 	 * 
-	 * @param text
-	 *            String (text to type)
+	 * @param duration Duration total time to search for the element per selector
+	 * @return WebElement the element if it is found, otherwise null
+	 */
+	private WebElement findElementInCurrentFrameForDuration(Duration duration) {
+		WebElement element = null;
+		for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
+			log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
+			element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), duration);
+			if (element != null) {
+				return element;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Enter text into a Element. Typically used for text boxes.
+	 * This method will throw an ElementDisabledException() if the text box is disabled.
+	 * 
+	 * @param text String the text to enter
 	 * @return Element (for chaining)
 	 */
 	public Element sendKeys(String text) {
-		this.click().clear();
-		element().sendKeys(text);
-		return this;
-	}
-
-	public Element javaScriptSendKeys(String text) {
-		JavascriptExecutor jse = (JavascriptExecutor) driver;
-		jse.executeScript("arguments[0].value='" + text + "';", element());
-
-		return this;
-	}
-
-	/**
-	 * Press keys with focus on a Element. This is useful when type() or
-	 * sendKeys isn't working due to a mask or hidden field being employed to grab
-	 * key press events and operate on each one.
-	 * 
-	 * @param text
-	 *            String (keys to type)
-	 * @return Element (for chaining)
-	 * @throws AWTException if the key cannot be pressed.
-	 */
-	public Element pressKeys(String text) throws AWTException {
-		// Ensure that the element has focus.
-		if ("input".equals(element().getTagName())) {
-			element().sendKeys("");
-		} else {
-			new Actions(driver).moveToElement(element()).perform();
-		}
-
-		// Iterate through the string and press every key
-		var robot = new Robot();
-		robot.setAutoWaitForIdle(true);
-		robot.delay(150);
-		robot.waitForIdle();
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
 		
-		char[] chars = text.toCharArray();
-        
-		for (char c : chars) {
-			log.trace(c);
-			robot.keyPress(KeyEvent.getExtendedKeyCodeForChar(c));
-			robot.keyRelease(KeyEvent.getExtendedKeyCodeForChar(c));
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			if (sendKeysLoop(text))
+				return this;
 		}
-
-		return this;
+		
+		var errorMessage = SentinelStringUtils.format(
+			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time for all click types was {} seconds.",
+				elementType
+				, getName()
+				, selectors
+				, Time.out().getSeconds());
+		if (!element().isEnabled()) {
+			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
+			log.error(errorMessage);
+			throw new ElementDisabledException(errorMessage);
+		}
+		log.error(errorMessage);
+		throw new ElementNotVisibleException(errorMessage);
 	}
+	
+	/**
+	 * Loops through all the ways to send text to an element.
+	 * 
+	 * @return boolean true if the text was sent, false otherwise
+	 */
+	private boolean sendKeysLoop(String text) {
+		WebElement element = element();
+		try {
+			this.click().clear();
+			element.sendKeys(text);
 
+			constructElementWait(Time.loopInterval())
+					.until(ExpectedConditions.textToBePresentInElementValue(element, text));
+
+			return true;
+		} 
+		catch (ElementDisabledException e) {
+			return false;
+		}
+		catch (WebDriverException e) {
+			try {
+				JavascriptExecutor jse = (JavascriptExecutor) driver;
+				jse.executeScript("arguments[0].value='" + text + "';", element());
+
+				constructElementWait(Time.loopInterval())
+						.until(ExpectedConditions.textToBePresentInElementValue(element, text));
+
+				return true;
+			} catch (WebDriverException e1) {
+				return false;
+			}
+		}
+	}
+	
 	/**
 	 * Click an Element.
 	 * <p>
@@ -274,26 +343,74 @@ public class Element {
 	 * @return Element (for chaining)
 	 */
 	public Element click() {
-		long waitTime = Time.out().getSeconds();
-		try {
-			new WebDriverWait(driver, waitTime, Time.interval().toMillis())
-			.until(ExpectedConditions.elementToBeClickable(element()))
-			.click();
-		} catch (WebDriverException e) {
-			try {
-				JavascriptExecutor executor = (JavascriptExecutor) driver;
-				executor.executeScript("arguments[0].click();", element());
-			} catch (Exception e2) {
-				var errorMessage = SentinelStringUtils.format(
-						"{} element named \"{}\" does not exist or is not visible using the following values: {}. It cannot be clicked. Make sure the element is visible on the page when you attempt to click it. Clicking was attempted once with a mouse click and once with the Return key. The total wait time was {} seconds.",
-								elementType, getName(), selectors, waitTime);
-				log.error(errorMessage);
-				throw new ElementNotVisibleException(errorMessage, e2);
-			}
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			if (clickLoop())
+				return this;
 		}
-		return this;
+		WebElement element = element();
+		var errorMessage = SentinelStringUtils.format(
+			"{} element named \"{}\" cannot be clicked. Make sure the element is visible on the page when you attempt to click it. The selectors being used are: {} The total attempt time for all click types was {} seconds.",
+				elementType
+				, getName()
+				, selectors
+				, Time.out().getSeconds());
+		if (element == null) {
+			errorMessage += "\nElement does not exist.";
+		}
+		else if (!element.isEnabled()) {
+				errorMessage += "\nElement is disabled.";
+				log.error(errorMessage);
+				throw new ElementDisabledException(errorMessage);
+		}
+		log.error(errorMessage);
+		throw new ElementNotClickableException(errorMessage);
 	}
 
+	/**
+	 * Loops through all the ways to click an element.
+	 * 
+	 * @return boolean true if the element was clicked, false otherwise
+	 */
+	private boolean clickLoop() {
+		WebElement element = element();
+		try {
+			constructElementWait(Time.loopInterval())
+				.until(ExpectedConditions.elementToBeClickable(element))
+				.click();
+			return true;
+		} catch (WebDriverException e) {
+			try{
+				hover();
+				constructElementWait(Time.loopInterval())
+					.until(ExpectedConditions.elementToBeClickable(element))
+					.click();
+				return true;
+			} catch(WebDriverException e1){
+				if (element.isEnabled()) {
+					JavascriptExecutor executor = (JavascriptExecutor) driver;
+					executor.executeScript("arguments[0].click();", element);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Creates a FluentWait Webdriver object for searching for elements.
+	 * @param timeout Duration how long to search
+	 * @return FluentWait the wait object that can be invoked
+	 */
+	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
+		return new FluentWait<WebDriver>(driver)
+			       .withTimeout(timeout)
+			       .pollingEvery(Time.interval())
+			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+	}
+	
 	/**
 	 * Clear a Element. Clears text in a text box. Un-checks check boxes. Clears
 	 * radio button choices.
@@ -334,24 +451,34 @@ public class Element {
 	 * @return boolean true if the element is displayed; false if it is hidden.
 	 */
 	public boolean isDisplayed() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
-	 * Returns true if the element is invisible, otherwise returns false if it is
+	 * Returns true if the element is hidden, otherwise returns false if it is
 	 * visible/displayed.
 	 * <p>
 	 * NOTE: Use isDisplayed() for the fastest processing time if you expect
 	 * the element to be visible/displayed.
 	 * 
-	 * @return boolean true if the element is invisible; false if it is displayed.
+	 * @return boolean true if the element is hidden; false if it is displayed.
 	 */
-	public boolean isInvisible() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+	public boolean isHidden() {
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.invisibilityOf(element()));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 	
 	/**
@@ -365,11 +492,15 @@ public class Element {
 	 * 
 	 * @return boolean true if the element is enabled; false if it is disabled
 	 */
-	public boolean isEnabled() {		
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+	public boolean isEnabled() {
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.not(
-						ExpectedConditions.attributeContains(element(), "disabled", "")));
+				.until(d -> element().isEnabled());
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -384,9 +515,14 @@ public class Element {
 	 * @return boolean true if the element is disabled; false if it is enabled
 	 */
 	public boolean isDisabled() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -398,9 +534,14 @@ public class Element {
 	 * @return boolean true if the element is selected, false if it is not
 	 */
 	public boolean isSelected() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementToBeSelected(element()));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -412,9 +553,14 @@ public class Element {
 	 * @return boolean true if the element is not selected, false if it is
 	 */
 	public boolean isNotSelected() {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		try {
+			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 	
 	/**
@@ -511,12 +657,21 @@ public class Element {
 	}
 
 	/**
+	 * Hovers over an element using Actions.
+	 * @return Element for chaining
+	 */
+	public Element hover() {
+		new Actions(driver).moveToElement(element()).build().perform();
+		return this;
+	}
+	
+	/**
 	 * This method is used to get the text on mouse hover
 	 * 
 	 * @return The value of the tooltip text
 	 */
 	public String getTooltipText() {
-		new Actions(driver).moveToElement(this.element()).build().perform();
+		hover();
 		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}	
 	

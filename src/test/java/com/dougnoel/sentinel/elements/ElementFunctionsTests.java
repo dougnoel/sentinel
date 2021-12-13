@@ -143,13 +143,11 @@ public class ElementFunctionsTests {
 	@Test(expected = NoSuchSelectorException.class)
 	public void badSelector() {
 		ElementFunctions.getElement("bad_selector").click();
-		
 	}
 	
 	@Test(expected = MalformedSelectorException.class)
 	public void creationFailure() {
 		ElementFunctions.getElement("bad_element").click();
-		
 	}
 	
 }
