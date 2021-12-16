@@ -17,8 +17,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 /**
- * Methods used to define basic operations. Other step files can extend or
- * include this one to leverage these actions.
+ * Methods used to define basic operations.
  * 
  * Functionality in this class includes clicking given elements, entering text, selecting items, verifying elements exist, 
  * contains given text, or are active, enabled, or hidden, verifying table columns or table rows have given text, 

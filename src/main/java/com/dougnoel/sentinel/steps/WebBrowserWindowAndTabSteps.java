@@ -4,7 +4,7 @@ import com.dougnoel.sentinel.pages.PageManager;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class WindowAndTabSteps {
+public class WebBrowserWindowAndTabSteps {
 
     /**
      * Closes the child browser tab or window

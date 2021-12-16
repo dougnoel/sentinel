@@ -26,6 +26,7 @@ public class PageData {
 	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
 	// page urls to load in the web driver TODO: Annotate correctly.
 	public Map<String,String> urls;
+	public Map<String,String> executables;
 	// user account data TODO: Annotate correctly.
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
@@ -57,13 +58,18 @@ public class PageData {
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
 		} catch (JsonParseException e) {
-			String errorMessage = SentinelStringUtils.format("Configuration file is not a valid YAML file: {}.", fileName);
+			String errorMessage = SentinelStringUtils.format("Page object file is not a valid YAML file: {}.", fileName);
 			log.error(errorMessage);
 			throw new ConfigurationParseException(errorMessage, e);
 		} catch (JsonMappingException e) {
-			String errorMessage = SentinelStringUtils.format("Incorrect formatting in the configuration file: {}.", fileName);
+			String errorMessage = SentinelStringUtils.format("Incorrect formatting in the page object file: {}.", fileName);
 			log.error(errorMessage);
 			throw new ConfigurationMappingException(errorMessage, e);
+		}
+		if (pageData.urls != null && pageData.executables != null) {
+			String errorMessage = SentinelStringUtils.format("A page object cannot contain both urls and executables: {}.", fileName);
+			log.error(errorMessage);
+			throw new ConfigurationParseException(errorMessage);
 		}
 			
 		return pageData;
@@ -119,6 +125,14 @@ public class PageData {
     
     public String getUrl(String env) {
     	return urls.get(env);
+    }
+    
+    public boolean containsExecutable(String env) {
+    	return executables.containsKey(env);
+    }
+    
+    public String getExecutable(String env) {
+    	return executables.get(env);
     }
 
 }

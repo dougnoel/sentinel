@@ -325,7 +325,7 @@ public class Configuration {
 	 * @throws PageNotFoundException if page is not found
 	 * @throws URLNotFoundException if url is not found for the page
 	 */
-	public static String url()  {
+	public static String url() {
 		return url(PageManager.getPage().getName());
 	}
 	
@@ -333,7 +333,7 @@ public class Configuration {
 	 * Returns a URL for the given page name based on the environment value set.
 	 
 	 * @param pageName String the name of the page from which the url is retrieved
-	 * @return String baseUrl the url for the given page and current environment
+	 * @return String the url for the given page and current environment
 	 */
 	protected static String url(String pageName) {
 		String baseURL = null;
@@ -355,6 +355,42 @@ public class Configuration {
 			throw new URLNotFoundException(errorMessage);
 		}
 		return baseURL;
+	}
+	
+	/**
+	 * Returns the Executable for the currently active page based on the environment value set. 
+	 * 
+	 * @return String the desired application executable path
+	 * @throws PageNotFoundException if page is not found
+	 * @throws URLNotFoundException if url is not found for the page
+	 */
+	public static String executable() {
+		return executable(PageManager.getPage().getName());
+	}
+	
+	/**
+	 * Returns an Executable path for the given page name based on the environment value set.
+	 
+	 * @param pageName String the name of the page from which the executable is retrieved
+	 * @return String the executable path for the given page and current environment
+	 */
+	protected static String executable(String pageName) {
+		String executablePath = null;
+		var pageData = loadPageData(pageName);
+		String env = Configuration.environment();
+
+		if (pageData.containsExecutable(env)) {
+			executablePath = pageData.getExecutable(env);
+		} else if (pageData.containsExecutable(DEFAULT)){
+			executablePath = pageData.getExecutable(DEFAULT);
+			executablePath = StringUtils.replace(executablePath, "{env}", env);
+		}
+		if (StringUtils.isEmpty(executablePath)) {
+			var errorMessage = SentinelStringUtils.format("An executable was not found for the {} environment in your {}.yml file. Please add an executable to the yml file. See the project README for details.", env, pageName);
+			log.error(errorMessage);
+			throw new FileNotFoundException(errorMessage);
+		}
+		return executablePath;
 	}
 	
 	/**

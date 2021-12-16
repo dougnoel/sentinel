@@ -79,6 +79,7 @@
 
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
+    <appium.version>7.3.0</appium.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <extentreports.version>4.1.5</extentreports.version>
     <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
@@ -391,6 +392,12 @@
         <version>${httpclient.version}</version>
       </dependency>
 
+	  <dependency>
+		<groupId>io.appium</groupId>
+		<artifactId>java-client</artifactId>
+		<version>${appium.version}</version>
+	  </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -557,6 +564,11 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>io.appium</groupId>
+      <artifactId>java-client</artifactId>
     </dependency>
 
     <dependency>

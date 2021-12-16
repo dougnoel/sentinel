@@ -1,0 +1,6 @@
+executables:
+   default: C:\\Windows\\System32\\win32calc.exe
+elements:
+  note_editor:
+    name: "Text Editor"
+    class: Edit

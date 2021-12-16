@@ -1,0 +1,51 @@
+executables:
+   default: "C:\\Windows\\System32\\win32calc.exe"
+elements:
+   numerical_buttons:
+      zero_button:
+         name: "0"
+      one_button:
+         name: "1"
+         xpath: "//Button[@Name=1]"
+         accessibility_id: "131"
+      two_button:
+         name: "2"
+      three_button:
+         name: "3"
+      four_button:
+         name: "4"
+      five_button:
+         name: "5"
+      six_button:
+         name: "6"
+      seven_button:
+         name: "7"
+      eight_button:
+         name: "8"
+      nine_button:
+         name: "9"
+      decimal_button:
+         name: "Decimal separator"
+   operand_buttons:
+      add_button:
+         name: "Add"
+      divide_button:
+         name: "Divide"
+      equal_button:
+         name: "Equals"
+      multiply_button:
+         name: "Multiply"
+      subtract_button:
+         name: "Subtract"
+   functional_buttons:
+      backspace_button:
+         name: "Backspace"
+      clear_button:
+         name: "Clear"
+      clear_entry_button:
+         name: "Clear entry"
+   output_displays:
+      history:
+         name: "Running History"
+      result:
+         name: "Result"
