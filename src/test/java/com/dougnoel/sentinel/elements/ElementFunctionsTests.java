@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
@@ -22,18 +20,17 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class ElementFunctionsTests {
-	private static WebDriver driver;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		System.setProperty("env", "dev");
-		driver = WebDriverFactory.instantiateWebDriver();
+		WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("Elements");
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		driver.close();
+		WebDriverFactory.quit();
 	}
 
 	@Test
@@ -146,13 +143,11 @@ public class ElementFunctionsTests {
 	@Test(expected = NoSuchSelectorException.class)
 	public void badSelector() {
 		ElementFunctions.getElement("bad_selector").click();
-		
 	}
 	
 	@Test(expected = MalformedSelectorException.class)
 	public void creationFailure() {
 		ElementFunctions.getElement("bad_element").click();
-		
 	}
 	
 }

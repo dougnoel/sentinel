@@ -18,7 +18,7 @@ public class PageManagerTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		PageManager.quit();
+		WebDriverFactory.quit();
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.NoSuchWindowException.class)

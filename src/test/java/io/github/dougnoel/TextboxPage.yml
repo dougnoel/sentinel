@@ -1,0 +1,23 @@
+urls:
+  default: https://dougnoel.github.io/sentinel/test/textbox.html
+elements:
+   first_name_field:
+      elementType: Textbox
+      id: fname
+   last_name_field:
+      elementType: Textbox
+      id: lname
+   hidden_field:
+      elementType: Textbox
+      id: hiddenbox
+   not_displayed_field:
+      elementType: Textbox
+      id: notdisplayedbox
+   car_checkbox:
+      elementType: Checkbox
+      id: vehicle2
+   boat_checkbox:
+      elementType: Checkbox
+      id: vehicle3
+   bad_element:
+      id: bad_id

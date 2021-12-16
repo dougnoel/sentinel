@@ -1,9 +1,11 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Checkbox;
@@ -36,9 +38,7 @@ public class Page {
 	protected static final SelectorType NAME = SelectorType.NAME;
 	protected static final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
 	protected static final SelectorType TEXT = SelectorType.TEXT;
-	protected static final SelectorType XPATH = SelectorType.XPATH;    
-
-    protected WebDriver driver;
+	protected static final SelectorType XPATH = SelectorType.XPATH;
 
     protected Map<String,Element> elements;
     
@@ -46,7 +46,6 @@ public class Page {
     
     public Page(String pageName) {
     	this.pageName = pageName;
-        driver = WebDriverFactory.getWebDriver();
         elements = new HashMap<>();
     }
 
@@ -120,5 +119,23 @@ public class Page {
 		}
 		// This allows people to call their element type whatever they want without needing a child class to implement it.
 		return new Element(elementType, elementName, elementData);
+	}
+	
+	/**
+	 * Returns true if iFrames exist on the page, false if they do not.
+	 * 
+	 * @return true if iFrames exist on the page, false if they do not
+	 */
+	public boolean hasIFrames() {
+		return !WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe")).isEmpty();
+	}
+	
+	/**
+	 * Returns a list of WebElement objects containing all the iFrames on the page.
+	 * 
+	 * @return List &lt;WebElement&gt; the list of iFrames in this page
+	 */
+	public List <WebElement> getIFrames() {
+		return WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe"));
 	}
 }

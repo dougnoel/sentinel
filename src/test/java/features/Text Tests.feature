@@ -14,7 +14,6 @@ Feature: Text Verifcation Tests
   	  And I enter Bob in the username field
   	  And I randomly enter text in the password field for the fun of it
   	  And I reuse the password field text in the password field
-  	  And I inject hi in the password field 
   	Then I verify the username field is not empty
   	  And I verify the username field does not contain the text "foo"
   	  And I verify the username field has the text "Bob"

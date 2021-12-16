@@ -5,15 +5,12 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class ConfigurationDevTests {
-	private static WebDriver driver;
 	private static String originalEnvironment = null;
 	private static final String DEV = "dev";
 	private static final String USERNAME = "username";
@@ -26,14 +23,14 @@ public class ConfigurationDevTests {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(DEV);
 		System.setProperty("download", "downloads");
-		driver = WebDriverFactory.instantiateWebDriver();
+		WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
 		Configuration.environment(originalEnvironment);
-		driver.close();
+		WebDriverFactory.quit();
 	}
 	
 	@Test

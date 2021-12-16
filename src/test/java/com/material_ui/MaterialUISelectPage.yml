@@ -1,5 +1,5 @@
 urls:
-  default: "https://material-ui.com/components/selects/"
+  default: "https://mui.com/components/selects/"
 elements:
   age_dropdown:
     elementType: MaterialUISelect
