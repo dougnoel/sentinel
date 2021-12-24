@@ -69,7 +69,7 @@ public class TextSteps {
      */
     @When("^I enter (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
-        getElementAsTextbox(elementName).type(text);
+        getElementAsTextbox(elementName).sendKeys(text);
         Configuration.update(elementName, text);
     }
     

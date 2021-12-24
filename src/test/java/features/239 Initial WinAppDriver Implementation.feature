@@ -9,7 +9,8 @@ Feature: 239 Implement WinAppDriver to automate windows
   @239A @TextEntry  
   Scenario: 239A Use Notepad
   	Given that I open "Notepad Main Page"
-  	When I enter "test" into the "Text Editor" field
+  	When I enter test in the Text Editor field
+  	#When I enter "test" into the "Text Editor" field
   	Then I expect that "Text Editor" contains "test"
 
   @239B @ButtonInteraction

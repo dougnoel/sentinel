@@ -1,6 +1,7 @@
 executables:
   default: C:/Windows/System32/notepad.exe
 elements:
-  note_editor:
+  text_editor_field:
+    elementType: Textbox
     name: "Text Editor"
     class: Edit
