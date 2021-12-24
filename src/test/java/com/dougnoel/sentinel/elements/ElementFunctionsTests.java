@@ -9,7 +9,6 @@ import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
@@ -87,13 +86,6 @@ public class ElementFunctionsTests {
 	@Test(expected = ElementTypeMismatchException.class)
 	public void failToCreateSelect() {
 		ElementFunctions.getElementAsSelectElement("generic");
-	}
-	
-	@Test
-	public void createPrimeNGRadioButton() {
-		Element element = ElementFunctions.getElement("prime_ng_radio_button");
-		assertTrue("Expecting PrimeNGRadioButton class.", element instanceof PrimeNGRadioButton);
-		assertEquals("Expecting PrimeNGRadioButton Name.", "prime_ng_radio_button", element.getName());
 	}
 	
 	@Test

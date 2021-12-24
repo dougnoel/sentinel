@@ -14,7 +14,6 @@ import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.PageObjectType;
@@ -123,9 +122,6 @@ public class Page {
 		}
 		if ("SelectElement".equalsIgnoreCase(elementType)) {
 			return new SelectElement(elementName, elementData);
-		}
-		if ("PrimeNGRadioButton".equalsIgnoreCase(elementType)) {
-			return new PrimeNGRadioButton(elementName, elementData);
 		}
 		if ("NGXDataTable".equalsIgnoreCase(elementType)) {
 			return new NGXDataTable(elementName, elementData);
