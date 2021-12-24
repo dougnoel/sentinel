@@ -8,7 +8,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.elements.Checkbox;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.elements.Textbox;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
@@ -111,9 +110,6 @@ public class Page {
 			elementType = "Element";
 		}
 
-		if ("Checkbox".equalsIgnoreCase(elementType)) {
-			return new Checkbox(elementName, elementData);
-		}
 		if ("Textbox".equalsIgnoreCase(elementType)) {
 			return new Textbox(elementName, elementData);
 		}

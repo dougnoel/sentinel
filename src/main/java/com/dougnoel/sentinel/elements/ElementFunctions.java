@@ -12,10 +12,9 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
- * Retrieves as an element as a  Element or as one of the following types:
- * Checkbox, Dropdown, Radiobutton, Select, Table, or Textbox.
+ * Retrieves as an element as an Element or as a child type.
  * 
- * To return as the desired type, we call getElement which returns a Element, and the element is 
+ * To return as the desired type, we call getElement which returns an Element, and the element is 
  * cast as the desired element.
  *
  */
@@ -34,22 +33,6 @@ public class ElementFunctions {
      */
     public static Element getElement(String elementName) {
         return PageManager.getPage().getElement(elementName);
-    }
-
-    /**
-     * Returns the Checkbox associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Checkbox the checkbox associated with the element name on the currently active page
-     */
-    public static Checkbox getElementAsCheckbox(String elementName) {
-		try {
-			return (Checkbox) getElement(elementName);
-		} catch (ClassCastException e) {
-			String errorMessage = getClassCastExceptionErrorMessage(elementName, Checkbox.class.getSimpleName());
-			log.error(errorMessage);
-			throw new ElementTypeMismatchException(errorMessage);
-		}
     }
 
     /**

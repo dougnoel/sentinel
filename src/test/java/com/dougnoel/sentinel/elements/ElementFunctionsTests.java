@@ -39,18 +39,6 @@ public class ElementFunctionsTests {
 		assertTrue("Expecting Element class.", element instanceof Element);
 		assertEquals("Expecting Default Name.", "generic", element.getName());
 	}
-	
-	@Test
-	public void createCheckBox() {
-		Element element = ElementFunctions.getElementAsCheckbox("checkbox");
-		assertTrue("Expecting Checkbox class.", element instanceof Checkbox);
-		assertEquals("Expecting Checkbox Name.", "checkbox", element.getName());
-	}
-	
-	@Test(expected = ElementTypeMismatchException.class)
-	public void failToCreateCheckBox() {
-		ElementFunctions.getElementAsCheckbox("generic");
-	}
 
 	@Test
 	public void createTextBox() {
