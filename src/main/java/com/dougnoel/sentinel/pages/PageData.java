@@ -127,6 +127,10 @@ public class PageData {
     	return urls.get(env);
     }
     
+    public boolean hasUrls() {
+    	return urls != null;
+    }
+    
     public boolean containsExecutable(String env) {
     	return executables.containsKey(env);
     }
@@ -135,4 +139,8 @@ public class PageData {
     	return executables.get(env);
     }
 
+    public boolean hasExecutables() {
+    	return executables != null;
+    }
+    
 }

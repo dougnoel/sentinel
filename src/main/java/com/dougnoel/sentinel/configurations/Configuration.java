@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.AccessDeniedException;
 import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
@@ -314,6 +315,24 @@ public class Configuration {
 		}
 		log.trace("Page data loaded: {}", pageName);
 		return pageData;
+	}
+	
+	/**
+	 * Returns the type of page object. Most will be WEBPAGE, but if an "executables:"
+	 * section is defined instead of a "urls:" section, this will return EXECUTABLE as the type.
+	 * 
+	 * @return PageObjectType the type of page object either WEBPAGE or EXECUTABLE
+	 */
+	public static PageObjectType getPageObjectType(String pageName) {
+		var pageData = loadPageData(pageName);
+		if (pageData.hasUrls())
+			return PageObjectType.WEBPAGE;
+		if (pageData.hasExecutables())
+			return PageObjectType.EXECUTABLE;
+
+		var errorMessage = SentinelStringUtils.format("The file {}.yml does not contain urls or executables. Please ensure one and only one of these sections exists and is formatted correctly", pageName);
+		log.error(errorMessage);
+		throw new ConfigurationParseException(errorMessage);
 	}
 
 	/**

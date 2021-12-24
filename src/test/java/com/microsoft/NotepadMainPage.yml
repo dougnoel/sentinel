@@ -1,5 +1,5 @@
 executables:
-   default: C:/Windows/System32/notepad.exe
+  default: C:/Windows/System32/notepad.exe
 elements:
   note_editor:
     name: "Text Editor"

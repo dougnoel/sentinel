@@ -7,10 +7,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.webdrivers.Driver;
+import com.dougnoel.sentinel.webdrivers.WinAppDriverFactory;
 
 import io.appium.java_client.windows.WindowsDriver;
 import io.cucumber.java.Before;
@@ -25,6 +28,8 @@ import io.cucumber.java.en.When;
 public class WinAppSteps {
     private static final Logger log = LogManager.getLogger(WinAppSteps.class.getName()); // Create a logger.
     
+	private static WindowsDriver windowsAppSession = null; //TODO: Tyler - This was in the middle of the code. It should not be there.
+	
     @Before
     public static void before(Scenario scenario) {
         log.trace("Scenario ID: {} Scenario Name: {}", scenario.getId(), scenario.getName());
@@ -47,30 +52,15 @@ public class WinAppSteps {
     public static void NaviagateToWinApp(String pageName) {
     	BaseSteps.navigateToPageWithArguments("", pageName);
     }
-    
-	private static WindowsDriver windowsAppSession = null;
 	
+	@SuppressWarnings("unchecked")
 	@Given("that I open {string}")
 	public void ProgramOpens(String pageName) {
-    	PageManager.setPage(pageName);
-    	String appToOpen = Configuration.executable();
-    	log.debug("Loading the the {} page using the executable: {}", pageName, appToOpen);
+    	PageManager.setPage(pageName); //Set page name to windows app
         
-	    // Write code here that turns the phrase above into concrete actions
-		try {
-			 DesiredCapabilities capabilities = new DesiredCapabilities();
-			 capabilities.setCapability("app", appToOpen);
-			 capabilities.setCapability("platformName","Windows");
-			 capabilities.setCapability("deviceName", "WindowsPC");
-			 windowsAppSession = new WindowsDriver(new URL("http://127.0.0.1:4723"), capabilities);
-			 windowsAppSession.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-			} catch (Exception e) {
-				if(windowsAppSession != null) {
-					windowsAppSession.quit();
-				}
-			 
-			 throw new io.cucumber.core.exception.CucumberException(appToOpen + " failed to start", e);
-		  }
+    	//Create the Driver
+    	windowsAppSession = (WindowsDriver<WebElement>) Driver.getDriver();
+
 	}
 	
 	@When("I enter {string} into the {string} field")
@@ -80,6 +70,7 @@ public class WinAppSteps {
 	
 	@When("I press the {string} button")
 	public void IPressTheButtons(String buttonToPress) {
+//		BaseSteps.click(buttonToPress);
 		windowsAppSession.findElementByName(buttonToPress).click();
 	}
 	

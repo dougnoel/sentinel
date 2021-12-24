@@ -1,6 +1,10 @@
 executables:
-   default: C:\\Windows\\System32\\win32calc.exe
+  default: C:/Windows/System32/calc.exe
+  old: C:/Windows/System32/win32calc.exe
 elements:
-  note_editor:
-    name: "Text Editor"
-    class: Edit
+  one_button:
+    name: "1"
+    xpath: "//Button[@Name=1]"
+    accessibility_id: "131"
+  two_button:
+    name: "2"
