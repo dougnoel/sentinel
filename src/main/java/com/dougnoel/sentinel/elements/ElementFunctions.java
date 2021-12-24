@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -46,22 +45,6 @@ public class ElementFunctions {
 			return (Dropdown) getElement(elementName);
 		} catch (ClassCastException e) {
 			String errorMessage = getClassCastExceptionErrorMessage(elementName, Dropdown.class.getSimpleName());
-			log.error(errorMessage);
-			throw new ElementTypeMismatchException(errorMessage);
-		}
-    }
-
-    /**
-     * Returns the Radio button associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Radio the radio button associated with the element name on the currently active page
-     */
-    public static Radiobutton getElementAsRadiobutton(String elementName) {
-		try {
-			return (Radiobutton) getElement(elementName);
-		} catch (ClassCastException e) {
-			String errorMessage = getClassCastExceptionErrorMessage(elementName, Radiobutton.class.getSimpleName());
 			log.error(errorMessage);
 			throw new ElementTypeMismatchException(errorMessage);
 		}

@@ -9,7 +9,7 @@ import java.util.Map;
 public class Textbox extends Element {
 
 	/**
-	 * Inherited Element constructor for a Textbox.
+	 * Default Textbox constructor. An override of the Element constructor.
 	 * 
 	 * @param elementName String the name of the element
 	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
