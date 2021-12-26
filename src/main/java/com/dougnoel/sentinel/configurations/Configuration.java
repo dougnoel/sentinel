@@ -12,20 +12,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.AccessDeniedException;
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
-import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
+import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -47,7 +43,7 @@ public class Configuration {
 	
 	private static ConfigurationData sentinelConfigurations = null;
 	
-	private static final String CONFIG_FILEPATH = "conf/sentinel.yml";
+	private static final File CONFIGURATION_FILE = new File("conf/sentinel.yml");
 	private static final String DEFAULT = "default";
     private static final String LINUX = "linux";
     private static final String MAC = "mac";
@@ -75,20 +71,13 @@ public class Configuration {
 		
 		if(sentinelConfigurations == null) {
 			try {
-				ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
+						.configure(DeserializationFeature
+						.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
-			} catch (JsonParseException e) {
-				var errorMessage = SentinelStringUtils.format("Configuration file {} is not a valid YAML file. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
-				throw new ConfigurationParseException(errorMessage, e);
-			} catch (JsonMappingException e) {
-				var errorMessage = SentinelStringUtils.format("Configuration file {} has incorrect formatting and cannot be read. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
-				throw new ConfigurationMappingException(errorMessage, e);
-			} catch (java.io.FileNotFoundException e) {
-				var errorMessage = SentinelStringUtils.format("Configuration file {} cannot be found in the specified location. Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
-				throw new FileNotFoundException(errorMessage, e);
-			} catch (java.io.IOException e) {
-				var errorMessage = SentinelStringUtils.format("Configuration file {} cannot be opened in the specified location. Could not load the {} property. Please fix the file read properties or pass the property in on the commandline using the -D{}= option.", CONFIG_FILEPATH, configurationKey, configurationKey);
-				throw new IOException(errorMessage, e);
+			} catch (Exception e) {
+				var errorMessage = SentinelStringUtils.format("Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", configurationKey, configurationKey);
+				throw new YAMLFileException(errorMessage, e, CONFIGURATION_FILE);
 			}
 		}
 	 

@@ -5,15 +5,10 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
 import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -23,7 +18,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * based on the given environment and the account map within that environment.
  */
 public class PageData {
-	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
 	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
 	// user account data TODO: Annotate corretly.
@@ -52,22 +46,16 @@ public class PageData {
 	 */
 	public static PageData loadYaml(File fileName) throws IOException{
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				.configure(DeserializationFeature
+				.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		PageData pageData = null;
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
-		} catch (JsonParseException e) {
-			String errorMessage = SentinelStringUtils.format("Configuration file is not a valid YAML file: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationParseException(errorMessage, e);
-		} catch (JsonMappingException e) {
-			String errorMessage = SentinelStringUtils.format("Incorrect formatting in the configuration file: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationMappingException(errorMessage, e);
+		} catch (Exception e) {
+			throw new YAMLFileException(e, fileName);
 		}
 			
 		return pageData;
-		
 	}
 	
 	/**
