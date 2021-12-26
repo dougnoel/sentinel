@@ -35,7 +35,7 @@ public class AccessDeniedException extends SentinelException {
     
     @Override
     public String getMessage() {
-    	return super.getMessage() + " Access denied for file path :" + filePath.getAbsoluteFile().toString();
+    	return super.getMessage() + " Access denied for file path: " + filePath.getAbsoluteFile().toString();
     }
     
 	public File getFilePath() {
