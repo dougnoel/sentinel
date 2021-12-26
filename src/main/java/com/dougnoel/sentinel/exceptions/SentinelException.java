@@ -8,6 +8,10 @@ public class SentinelException extends RuntimeException {
 
     private static final long serialVersionUID = 8469225740522080236L;
 
+    public SentinelException() {
+        super();
+    }
+    
     public SentinelException(Throwable cause) {
         super(cause);
     }

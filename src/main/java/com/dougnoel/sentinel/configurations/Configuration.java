@@ -280,7 +280,7 @@ public class Configuration {
 				}
 			}
 		} else {
-			throw new AccessDeniedException(directory.getAbsoluteFile().toString());
+			throw new AccessDeniedException(directory);
 		}
 		return searchResult;
 	}
