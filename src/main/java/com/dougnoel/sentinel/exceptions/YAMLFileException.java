@@ -6,8 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * Creating an unchecked YAMLFileException so that we can fail a test without failing the entire
@@ -47,20 +45,21 @@ public class YAMLFileException extends SentinelException {
     
     @Override
     public String getMessage() {
-    	if(this.getCause() instanceof JsonParseException) {
-    		return SentinelStringUtils.format("{} is not a valid YAML file. {}", filePath(), super.getMessage());
-    	}
-    	if(this.getCause() instanceof JsonMappingException) {
-    		return SentinelStringUtils.format("{} has incorrect formatting and cannot be read. {}", filePath(), super.getMessage());
-    	}
-    	if(this.getCause() instanceof java.io.FileNotFoundException) {
-    		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
-    	}
-    	if(this.getCause() instanceof java.io.IOException) {
-    		return SentinelStringUtils.format("{} cannot be opened. {}", filePath(), super.getMessage());
-    	}
-    	return super.getMessage() + " File path: " + file.getAbsoluteFile().toString();
+    	if (this.getCause() == null)
+    		return filePath();
     	
+    	switch(this.getCause().getClass().getSimpleName()) {
+    	case "JsonParseException":
+    		return SentinelStringUtils.format("{} is not a valid YAML file. {}", filePath(), super.getMessage());
+    	case "JsonMappingException":
+    		return SentinelStringUtils.format("{} has incorrect formatting and cannot be read. {}", filePath(), super.getMessage());
+    	case "FileNotFoundException":
+    		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
+    	case "IOException":
+    		return SentinelStringUtils.format("{} cannot be opened. {}", filePath(), super.getMessage());
+    	default:
+    		return SentinelStringUtils.format("{} {}", filePath(), super.getMessage());
+    	}
     }
     
 	public File getFile() {

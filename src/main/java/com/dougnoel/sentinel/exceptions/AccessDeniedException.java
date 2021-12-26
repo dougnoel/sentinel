@@ -15,38 +15,42 @@ import org.apache.logging.log4j.Logger;
 public class AccessDeniedException extends SentinelException {
 	private static final Logger log = LogManager.getLogger(AccessDeniedException.class);
     private static final long serialVersionUID = 8461275760821180367L;
-    private final File filePath;
+    private final File file;
 
     public AccessDeniedException(File filePath) {
     	super();
-        this.filePath = filePath;
+        this.file = filePath;
         log.error(this.getMessage(), this);
     }
     
     public AccessDeniedException(Throwable cause, File filePath) {
         super(cause);
-        this.filePath = filePath;
+        this.file = filePath;
         log.error(this.getMessage(), this);
     }
     
     public AccessDeniedException(String message, File filePath) {
         super(message);
-        this.filePath = filePath;
+        this.file = filePath;
         log.error(this.getMessage(), this);
     }
 
     public AccessDeniedException(String message, Throwable cause, File filePath) {
         super(message, cause);
-        this.filePath = filePath;
+        this.file = filePath;
         log.error(this.getMessage(), this);
     }
     
     @Override
     public String getMessage() {
-    	return super.getMessage() + " Access denied for file path: " + filePath.getAbsoluteFile().toString();
+    	return super.getMessage() + " Access denied for file path: " + filePath();
     }
     
-	public File getFilePath() {
-    	return filePath;
+	public File getFile() {
+    	return file;
     }
+	
+	public String filePath() {
+		return file.getAbsoluteFile().toString();
+	}
 }
