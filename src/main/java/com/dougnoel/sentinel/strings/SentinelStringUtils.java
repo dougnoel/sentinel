@@ -27,6 +27,8 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
      * @return String the text without surrounding quotes (if they exist) 
      */
     public static String stripSurroundingQuotes(String text) {
+    	if (text == null)
+    		return null;
     	Pattern pattern = Pattern.compile(SURROUNDING_QUOTES);
     	
     	if (pattern.matcher(text).find())

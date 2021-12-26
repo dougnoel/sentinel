@@ -34,11 +34,8 @@ public class SaucelabsDriverFactoryTests {
 		System.setProperty("saucelabsUserName", "FakeName");
 		System.setProperty("saucelabsAccessKey", "FakeKey");
 		System.setProperty("browserVersion", "1");
-		System.setProperty("parent-tunnel", "FakeTunnel");
-		System.setProperty("tunnelIdentifier", "FakeTunnelID");
+		System.setProperty("saucelabsConfigs", "saucelabsConfigs=\"parent-tunnel=\"optumtest\", tunnelIdentifier=Optum-Prd\"");
 		System.setProperty("name", "Test Name");
-		System.setProperty("tags", "Tag1");
-		System.setProperty("build", "1.0");
 		WebDriverFactory.instantiateWebDriver();
 	}
 	
