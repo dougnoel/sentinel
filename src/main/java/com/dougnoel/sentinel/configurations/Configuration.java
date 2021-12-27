@@ -305,8 +305,6 @@ public class Configuration {
 	 * @see com.dougnoel.sentinel.pages.PageManager#getPage()
 	 * @see com.dougnoel.sentinel.pages.Page#getName()
 	 * @return String the desired URL
-	 * @throws PageNotFoundException if page is not found
-	 * @throws URLNotFoundException if url is not found for the page
 	 */
 	public static String url()  {
 		return url(PageManager.getPage().getName());
