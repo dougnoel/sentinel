@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.ElementNotVisibleException;
@@ -25,8 +26,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ElementDisabledException;
-import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
 import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -286,7 +285,7 @@ public class Element {
 		if (!element().isEnabled()) {
 			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
 			log.error(errorMessage);
-			throw new ElementDisabledException(errorMessage);
+			throw new ElementNotInteractableException(errorMessage);
 		}
 		log.error(errorMessage);
 		throw new ElementNotVisibleException(errorMessage);
@@ -308,7 +307,7 @@ public class Element {
 
 			return true;
 		} 
-		catch (ElementDisabledException e) {
+		catch (ElementNotInteractableException e) {
 			return false;
 		}
 		catch (WebDriverException e) {
@@ -362,10 +361,10 @@ public class Element {
 		else if (!element.isEnabled()) {
 				errorMessage += "\nElement is disabled.";
 				log.error(errorMessage);
-				throw new ElementDisabledException(errorMessage);
+				throw new ElementNotInteractableException(errorMessage);
 		}
 		log.error(errorMessage);
-		throw new ElementNotClickableException(errorMessage);
+		throw new ElementNotInteractableException(errorMessage);
 	}
 
 	/**

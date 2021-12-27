@@ -7,11 +7,10 @@ import static org.junit.Assert.assertFalse;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.ElementNotInteractableException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.exceptions.ElementDisabledException;
-import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -33,7 +32,7 @@ public class ElementTests {
 	}
 
 	
-	@Test(expected = ElementNotClickableException.class)
+	@Test(expected = ElementNotInteractableException.class)
 	public void clickOnDisabledTextbox() {
 		BaseSteps.navigateToPage("TextboxPage");
 		getElement("First Name Field").click();
@@ -135,7 +134,7 @@ public class ElementTests {
 		assertTrue("Expecting element to not exist.", getElement("Bad Element").doesNotExist());
 	}
 	
-	@Test(expected = ElementDisabledException.class)
+	@Test(expected = ElementNotInteractableException.class)
 	public void sendingTextToDisabledTextbox() {
 		BaseSteps.navigateToPage("TextboxPage");
 		getElement("First Name Field").sendKeys("stuff");

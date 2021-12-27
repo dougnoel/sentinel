@@ -15,7 +15,6 @@ import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
 import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -47,7 +46,7 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting Checkbox Name.", "checkbox", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateCheckBox() {
 		ElementFunctions.getElementAsCheckbox("generic");
 	}
@@ -59,7 +58,7 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting Textbox Name.", "textbox", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateTextBox() {
 		ElementFunctions.getElementAsTextbox("generic");
 	}
@@ -71,7 +70,7 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting Dropdown Name.", "dropdown", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateDropDown() {
 		ElementFunctions.getElementAsDropdown("generic");
 	}
@@ -97,7 +96,7 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting SelectElement Name.", "select", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateSelect() {
 		ElementFunctions.getElementAsSelectElement("generic");
 	}
@@ -116,7 +115,7 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting Radiobutton Name.", "radiobutton", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateRadioButton() {
 		ElementFunctions.getElementAsRadiobutton("generic");
 	}
@@ -135,7 +134,7 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting Table Name.", "table", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateTable() {
 		ElementFunctions.getElementAsTable("generic");
 	}
