@@ -7,7 +7,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -62,12 +61,12 @@ public class ConfigurationTests {
 		assertEquals("Expecting the Stage env StageUser password", "BadPassw0rd", Configuration.accountInformation(STAGEUSER, PASSWORD));
 	}
 
-	@Test(expected = SentinelException.class)
+	@Test(expected = YAMLFileException.class)
 	public void failToLoadNonExistentUsername() {
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
 	}
 
-	@Test(expected = SentinelException.class)
+	@Test(expected = YAMLFileException.class)
 	public void failToLoadNonExistentPassword() {
 		Configuration.accountInformation(DOESNOTEXIST, PASSWORD);
 	}
@@ -88,7 +87,7 @@ public class ConfigurationTests {
 		assertEquals("Expecting the default env RegularUser password", "test", Configuration.accountInformation(REGULARUSER, PASSWORD));
 	}
 	
-	@Test(expected = SentinelException.class)
+	@Test(expected = YAMLFileException.class)
 	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() {
 		System.setProperty("env", DEV);
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
