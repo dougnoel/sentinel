@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -26,8 +27,6 @@ import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.exceptions.ElementDisabledException;
 import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
-import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -91,7 +90,7 @@ public class Element {
 				} catch (IllegalArgumentException e) {
 					var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
 					log.error(errorMessage);
-					throw new NoSuchSelectorException(errorMessage);
+					throw new InvalidSelectorException(errorMessage);
 				}
 			}
 		});
@@ -158,12 +157,12 @@ public class Element {
 				var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
 				
 				log.error(errorMessage);
-				throw new NoSuchSelectorException(errorMessage);
+				throw new InvalidSelectorException(errorMessage);
 			}
 		} catch (IllegalArgumentException e) {
 			var errorMessage = SentinelStringUtils.format("{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType, selectorValue, getName(), PageManager.getPage().getName());
 			log.error(errorMessage);
-			throw new MalformedSelectorException(errorMessage, e);
+			throw new InvalidSelectorException(errorMessage, e);
 		}
 	}
 	
