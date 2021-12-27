@@ -7,7 +7,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 
-import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -103,7 +102,7 @@ public class ConfigurationTests {
 		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.url("BaseUrl"));
 	}
 	
-	@Test(expected = URLNotFoundException.class)
+	@Test(expected = YAMLFileException.class)
 	public void failToLoadDefaultUrl() {
 		Configuration.url("NoDefaultUrl");
 	}
