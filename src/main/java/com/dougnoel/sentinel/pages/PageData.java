@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+
+import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -85,7 +86,7 @@ public class PageData {
         	}
     	} else {
     		var errorMessage = SentinelStringUtils.format("There is no elements section defined in the page object {}. Please make sure that elements defined are under an \"elements:\" section. Refer to the Readme for more information.", PageManager.getPage().getName());
-			throw new ConfigurationParseException(errorMessage);
+			throw new NoSuchElementException(errorMessage);
     	}
     	return null;
     }

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  * @author dougnoel
  *
  */
-public class AccessDeniedException extends SentinelException {
+public class AccessDeniedException extends RuntimeException {
 	private static final Logger log = LogManager.getLogger(AccessDeniedException.class);
     private static final long serialVersionUID = 8461275760821180367L;
     private final File file;

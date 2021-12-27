@@ -14,7 +14,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
  * @author dougnoel
  *
  */
-public class YAMLFileException extends SentinelException {
+public class YAMLFileException extends RuntimeException {
 	private static final Logger log = LogManager.getLogger(YAMLFileException.class);
     private static final long serialVersionUID = 7430222710522100336L;
     private final File file;

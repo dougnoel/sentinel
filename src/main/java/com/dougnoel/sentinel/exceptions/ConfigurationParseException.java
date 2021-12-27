@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class ConfigurationParseException extends ConfigurationNotFoundException {
+public class ConfigurationParseException extends RuntimeException {
 
     /**
      * Thrown when a configuration file cannot be parsed.

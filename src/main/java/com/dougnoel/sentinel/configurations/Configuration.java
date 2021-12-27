@@ -12,10 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.AccessDeniedException;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
+import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.pages.PageData;
@@ -111,7 +111,7 @@ public class Configuration {
 					appProps.setProperty(property, propertyValue);
 				}
 				return propertyValue;
-			} catch (ConfigurationNotFoundException e) {
+			} catch (YAMLFileException e) {
 				log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
 				return null;
 			}
@@ -368,7 +368,7 @@ public class Configuration {
 		if (Objects.equals(accountData, null)) {
 			var erroMessage = SentinelStringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
 			log.debug(erroMessage);
-			throw new ConfigurationNotFoundException(erroMessage);
+			throw new SentinelException(erroMessage);
 		}
 		String data = accountData.get(key);
 		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);
