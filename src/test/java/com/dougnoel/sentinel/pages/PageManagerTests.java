@@ -4,8 +4,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchSessionException;
+import org.openqa.selenium.NoSuchWindowException;
 
-import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -21,7 +21,7 @@ public class PageManagerTests {
 		WebDriverFactory.quit();
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.NoSuchWindowException.class)
+	@Test(expected = NoSuchWindowException.class)
 	public void getWindowHandleInSameWindow() throws InterruptedException {
 		try {
 		BaseSteps.navigateToPage("Encode DNA Home Page");

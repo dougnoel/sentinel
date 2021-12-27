@@ -6,6 +6,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -29,19 +30,19 @@ public class PageDataTests {
 		Assert.assertNotNull("Expected page element to contain data.", Configuration.getElement(ELEMENT_NAME, "CorrectPageObject"));
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.NoSuchElementException.class)
+	@Test(expected = NoSuchElementException.class)
 	public void validateElementDoesNotExistInYaml() {
 		PageManager.setPage("IncorrectLocatorOffsetPageObject");
 		getElement(ELEMENT_NAME);
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.NoSuchElementException.class)
+	@Test(expected = NoSuchElementException.class)
 	public void validateElementIsEmptyInYaml() {
 		PageManager.setPage("IncorrectElementOffsetPageObject");
 		getElement(ELEMENT_NAME);
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.NoSuchElementException.class)
+	@Test(expected = NoSuchElementException.class)
 	public void validateSectionMissingInYaml() {
 		PageManager.setPage("MissingElementsSectionPageObject");
 		getElement(ELEMENT_NAME);

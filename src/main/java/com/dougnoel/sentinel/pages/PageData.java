@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.NoSuchElementException;
 
-import com.dougnoel.sentinel.exceptions.NoSuchElementException;
 import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;

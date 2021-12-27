@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.NoSuchWindowException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +14,6 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -233,7 +233,7 @@ public class PageManager {
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
-			throw new com.dougnoel.sentinel.exceptions.NoSuchWindowException(errorMessage);
+			throw new NoSuchWindowException(errorMessage);
 		}
 	}
 
