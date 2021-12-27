@@ -365,7 +365,7 @@ public class Configuration {
 		if (Objects.equals(accountData, null)) {
 			var erroMessage = SentinelStringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
 			log.debug(erroMessage);
-			throw new SentinelException(erroMessage);
+			throw new SentinelException(erroMessage); //TODO: Replace this with an appropriate specific exception
 		}
 		String data = accountData.get(key);
 		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);
