@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
-import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.exceptions.YAMLFileException;
@@ -283,15 +282,13 @@ public class Configuration {
 	 * @see com.dougnoel.sentinel.configurations.Configuration#findPageObjectFilePath(String)
 	 * @param pageName String the name of the page for which the data is retrieved
 	 * @return PageData the class for the data on desired page
-	 * @throws ConfigurationNotFoundException if a configuration option cannot be loaded
-	 * @throws PageObjectNotFoundException if the page object file could not be read
 	 */
 	private static PageData loadPageData(String pageName) {
 		PageData pageData = null;
 		try {
 			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
 		} catch (Exception e) {
-			if (e.getCause().getClass().getSimpleName() == "AccessDeniedException")
+			if (e.getCause() != null && e.getCause().getClass().getSimpleName() == "AccessDeniedException")
 				pageName = e.getMessage();
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
 			throw new YAMLFileException(errorMessage, e, new File(pageName + ".yml"));

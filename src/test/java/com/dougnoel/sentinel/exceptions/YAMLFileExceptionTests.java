@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 import org.junit.Test;
 
@@ -75,6 +76,19 @@ public class YAMLFileExceptionTests {
 					FILEPATH, TEST_MESSAGE);
 			assertEquals("Expecting custom exception message.", expectedMessage, e.getMessage());
 			assertEquals("Expecting exception cause to be FileNotFoundException", exception, e.getCause());
+		}
+	}
+
+	@Test
+	public void AccessDeniedException() {
+		AccessDeniedException exception = new AccessDeniedException(FILEPATH);
+		try {
+			throw new YAMLFileException(TEST_MESSAGE, exception, FILE);
+		} catch (YAMLFileException e) {
+			String expectedMessage = SentinelStringUtils.format("{} could not be accessed. Please ensure the file can be read by the current user and is not password protected. {}",
+					FILEPATH, TEST_MESSAGE);
+			assertEquals("Expecting custom exception message.", expectedMessage, e.getMessage());
+			assertEquals("Expecting exception cause to be IOException", exception, e.getCause());
 		}
 	}
 	

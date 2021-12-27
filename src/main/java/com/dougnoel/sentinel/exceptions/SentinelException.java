@@ -14,7 +14,6 @@ public class SentinelException extends RuntimeException {
     /**
      * Logs the message and stack trace to the error log.
      * 
-     * @param file java.io.File the File that caused the exception
      */
     public SentinelException() {
         super();

@@ -6,7 +6,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.dougnoel.sentinel.exceptions.SentinelException;
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -38,7 +37,7 @@ public class ConfigurationDevTests {
 		assertEquals("Expecting the default env RegularUser password", "test", Configuration.accountInformation(REGULARUSER, PASSWORD));
 	}
 	
-	@Test(expected = YAMLFileException.class)
+	@Test(expected = SentinelException.class)
 	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() throws SentinelException {
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
 	}	
