@@ -82,6 +82,9 @@ public class YAMLFileException extends RuntimeException {
     		return SentinelStringUtils.format("{} is not a valid YAML file. {}", filePath(), super.getMessage());
     	case "JsonMappingException":
     		return SentinelStringUtils.format("{} has incorrect formatting and cannot be read. {}", filePath(), super.getMessage());
+    	case "AccessDeniedException":
+    		return SentinelStringUtils.format("{} could not be accessed. Please ensure the file can be read by the current user and is not password protected. {}", 
+    				filePath(), super.getMessage());
     	case "FileNotFoundException":
     		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
     	case "IOException":

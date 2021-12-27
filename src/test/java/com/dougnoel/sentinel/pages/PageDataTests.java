@@ -31,19 +31,19 @@ public class PageDataTests {
 		Assert.assertNotNull("Expected page element to contain data.", Configuration.getElement(ELEMENT_NAME, "CorrectPageObject"));
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
+	@Test(expected = com.dougnoel.sentinel.exceptions.YAMLFileException.class)
 	public void validateElementDoesNotExistsInYaml() {
 		PageManager.setPage("IncorrectLocatorOffsetPageObject");
 		getElement(ELEMENT_NAME);
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
+	@Test(expected = com.dougnoel.sentinel.exceptions.YAMLFileException.class)
 	public void validateElementIsEmptyInYaml() throws IOException {
 		PageManager.setPage("IncorrectElementOffsetPageObject");
 		getElement(ELEMENT_NAME);
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.ConfigurationParseException.class)
+	@Test(expected = com.dougnoel.sentinel.exceptions.YAMLFileException.class)
 	public void validateSectionMissingInYaml() throws IOException {
 		PageManager.setPage("MissingElementsSectionPageObject");
 		getElement(ELEMENT_NAME);

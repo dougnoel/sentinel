@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -11,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.AccessDeniedException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.PageObjectNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
@@ -231,8 +231,10 @@ public class Configuration {
 	 * 
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
+	 * @throws FileNotFoundException if the file cannot be found
+	 * @throws AccessDeniedException if a file or directory cannot be accessed
 	 */
-	private static File findPageObjectFilePath(String pageName)  {
+	private static File findPageObjectFilePath(String pageName) throws FileNotFoundException, AccessDeniedException  {
 		String filename = pageName + ".yml";
 		File result = searchDirectory(new File("src/"), filename);
 
@@ -252,8 +254,9 @@ public class Configuration {
 	 * @param directory File the directory to start the search
 	 * @param fileName String the full name of the file with extension to find
 	 * @return File the file that is found, null if nothing is found
+	 * @throws AccessDeniedException if a file or directory cannot be accessed
 	 */
-	protected static File searchDirectory(File directory, String fileName) {
+	protected static File searchDirectory(File directory, String fileName) throws AccessDeniedException {
 		log.trace("Searching directory {}", directory.getAbsoluteFile());
 		File searchResult = null;
 		if (directory.canRead()) {
@@ -269,7 +272,7 @@ public class Configuration {
 				}
 			}
 		} else {
-			throw new AccessDeniedException(directory);
+			throw new AccessDeniedException(directory.getAbsoluteFile().toString());
 		}
 		return searchResult;
 	}
@@ -287,21 +290,18 @@ public class Configuration {
 		PageData pageData = null;
 		try {
 			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
-		} catch (java.nio.file.AccessDeniedException e) {
-			var errorMessage = SentinelStringUtils.format("Could not access the file {}.yml. Please ensure the file can be read by the current user and is not password protected.", pageName);
-			log.error(errorMessage);
-			throw new PageObjectNotFoundException(errorMessage, e);
-		} catch (java.io.IOException e) {
-			var errorMessage = SentinelStringUtils.format("Could not access the file {}.yml. Please ensure the file exists and the the pageObjectPackages value is set to include its package.", pageName);
-			log.error(errorMessage);
-			throw new PageObjectNotFoundException(errorMessage, e);
+		} catch (Exception e) {
+			if (e.getCause().getClass().getSimpleName() == "AccessDeniedException")
+				pageName = e.getMessage();
+			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
+			throw new YAMLFileException(errorMessage, e, new File(pageName + ".yml"));
 		}
+
 		if (pageData == null) {
-			var errorMessage = SentinelStringUtils.format("The file {}.yml appears to contain no data. Please ensure the file is properly formatted", pageName);
-			log.error(errorMessage);
-			throw new PageObjectNotFoundException(errorMessage);
+			var errorMessage = "The file appears to contain no data. Please ensure the file is properly formatted.";
+			throw new YAMLFileException(errorMessage, new File(pageName + ".yml"));
 		}
-		log.trace("Page data loaded: {}", pageName);
+		
 		return pageData;
 	}
 
