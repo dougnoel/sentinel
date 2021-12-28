@@ -277,8 +277,8 @@ public class Element {
 		}
 		
 		var errorMessage = SentinelStringUtils.format(
-			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time was {} seconds.",
-				elementType
+			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time was {} seconds."
+				, elementType
 				, getName()
 				, selectors
 				, Time.out().getSeconds());
@@ -304,8 +304,16 @@ public class Element {
 					.until(ExpectedConditions.textToBePresentInElementValue(element, text));
 
 			return true;
-		}
+		} 
 		catch (WebDriverException e) {
+			if(!element.isEnabled()) { // Respect if an element is disabled.
+				var errorMessage = SentinelStringUtils.format(
+						"{} element named \"{}\" is disabled and cannot receive text. The selectors being used are: {}"
+							, elementType
+							, getName()
+							, selectors);
+				throw new ElementNotInteractableException(errorMessage);
+		}
 			try {
 				JavascriptExecutor jse = (JavascriptExecutor) driver;
 				jse.executeScript("arguments[0].value='" + text + "';", element());
