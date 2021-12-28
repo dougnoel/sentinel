@@ -285,7 +285,7 @@ public class Configuration {
 		try {
 			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
 		} catch (Exception e) {
-			if (e.getCause() != null && e.getCause().getClass().getSimpleName() == "AccessDeniedException")
+			if (e.getCause() != null && e.getCause().getClass().getSimpleName().equalsIgnoreCase("AccessDeniedException"))
 				pageName = e.getMessage();
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
 			throw new YAMLFileException(errorMessage, e, new File(pageName + ".yml"));
