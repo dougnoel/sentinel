@@ -292,6 +292,7 @@ public class Element {
 	/**
 	 * Loops through all the ways to send text to an element.
 	 * 
+	 * @param text String the text to send
 	 * @return boolean true if the text was sent, false otherwise
 	 */
 	private boolean sendKeysLoop(String text) {
