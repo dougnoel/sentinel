@@ -277,15 +277,13 @@ public class Element {
 		}
 		
 		var errorMessage = SentinelStringUtils.format(
-			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time for all click types was {} seconds.",
+			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time was {} seconds.",
 				elementType
 				, getName()
 				, selectors
 				, Time.out().getSeconds());
 		if (!element().isEnabled()) {
 			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
-			log.error(errorMessage);
-			throw new ElementNotInteractableException(errorMessage);
 		}
 		log.error(errorMessage);
 		throw new ElementNotVisibleException(errorMessage);
@@ -306,9 +304,6 @@ public class Element {
 					.until(ExpectedConditions.textToBePresentInElementValue(element, text));
 
 			return true;
-		} 
-		catch (ElementNotInteractableException e) {
-			return false;
 		}
 		catch (WebDriverException e) {
 			try {

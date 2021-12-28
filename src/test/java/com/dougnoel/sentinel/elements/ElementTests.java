@@ -142,8 +142,11 @@ public class ElementTests {
 	
 	@Test
 	public void sendingTextToHiddenTextbox() {
+		Time.reset();
+		Configuration.update("timeout", 10);
 		BaseSteps.navigateToPage("TextboxPage");
-		assertTrue("Expecting hidden element to receive text.", getElement("Hidden Field").sendKeys("stuff").getText().contains("stuff"));
+		getElement("Hidden Field").sendKeys("stuff");
+		assertTrue("Expecting hidden element to receive text.", getElement("Hidden Field").getText().contains("stuff"));
 	}
 	
 }
