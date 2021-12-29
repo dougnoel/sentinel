@@ -2,12 +2,18 @@ package com.dougnoel.sentinel.elements;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertFalse;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.NoSuchElementException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
@@ -145,6 +151,20 @@ public class ElementTests {
 		BaseSteps.navigateToPage("TextboxPage");
 		getElement("Hidden Field").sendKeys("stuff");
 		assertTrue("Expecting hidden element to receive text.", getElement("Hidden Field").getText().contains("stuff"));
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void ElementDoesNotExist() {
+		BaseSteps.navigateToPage("TextboxPage");
+		getElement("Blah");
+	}
+
+	@Test(expected = InvalidSelectorException.class)
+	public void InvalidSelectorTest() {
+		BaseSteps.navigateToPage("TextboxPage");
+		Map<String, String> selectors = new HashMap<>();
+		selectors.put("value", "1");
+		new Element("Checkbox", "Checkbox", selectors).element();
 	}
 	
 }

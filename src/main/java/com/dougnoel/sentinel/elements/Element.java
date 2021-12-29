@@ -153,7 +153,6 @@ public class Element {
 				return By.xpath(selectorValue);
 			default:
 				var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
-				
 				log.error(errorMessage);
 				throw new InvalidSelectorException(errorMessage);
 			}
