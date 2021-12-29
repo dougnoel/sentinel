@@ -18,7 +18,7 @@ public class WebDriverFactoryTest {
 //	}
 	
 	@After
-	public void tearDownAfterEachTest() throws Exception {
+	public void tearDownAfterEachTest() {
 		Configuration.clear(BROWSERVERSION);
 		System.clearProperty(BROWSERVERSION);
 		Configuration.clear(GRIDURL);
