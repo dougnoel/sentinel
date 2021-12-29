@@ -15,7 +15,6 @@ public class SelectElementTests {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		WebDriverFactory.instantiateWebDriver();
-		
 	}
 
 	@AfterClass

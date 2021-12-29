@@ -66,7 +66,7 @@ public class Element {
 	protected Map<SelectorType,String> selectors;
 	protected String name;
 	private final String elementType;
-	protected WebDriver driver;
+	private WebDriver driver() { return WebDriverFactory.getWebDriver(); }
 
 	/**
 	 * The constructor for a WebElement to initialize how an element is going to be
@@ -95,7 +95,6 @@ public class Element {
 		});
 		this.elementType = elementType;
 		name = elementName;
-		this.driver = WebDriverFactory.getWebDriver();
 	}
 	
 	/**
@@ -116,12 +115,12 @@ public class Element {
 	 */
 	private WebElement getElementWithWait(final By locator, Duration timeout) {
 		try {
-		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 			       .withTimeout(timeout)
 			       .pollingEvery(Time.interval())
 			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-		return wait.until(d -> driver.findElement(locator));
+		return wait.until(d -> driver().findElement(locator));
 		}
 		catch (org.openqa.selenium.TimeoutException e) {
 			return null;
@@ -174,7 +173,7 @@ public class Element {
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
 	 */
 	protected WebElement element() {
-		driver.switchTo().defaultContent();
+		driver().switchTo().defaultContent();
 		WebElement element = null;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
@@ -202,12 +201,12 @@ public class Element {
 	 */
 	protected WebElement element(final By locator) {    	
 		try {
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 					.withTimeout(Time.out())
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-			WebElement element = wait.until(d -> driver.findElement(locator));
+			WebElement element = wait.until(d -> driver().findElement(locator));
 			return wait.until(d -> element.findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			return null;
@@ -227,7 +226,7 @@ public class Element {
     		WebElement element = null;
     		List <WebElement> iframes = PageManager.getPage().getIFrames();
     		for (WebElement iframe : iframes) {
-    			driver.switchTo().frame(iframe);
+    			driver().switchTo().frame(iframe);
     			element = findElementInCurrentFrameForDuration(Time.loopInterval());
     			if (element != null) {
     				return element;
@@ -235,7 +234,7 @@ public class Element {
         	    element = findElementInIFrame();
     			if (element != null)
     				return element;
-    			driver.switchTo().parentFrame();
+    			driver().switchTo().parentFrame();
     		}
     	}
     	return null;
@@ -316,7 +315,7 @@ public class Element {
 				throw new ElementNotInteractableException(errorMessage);
 		}
 			try {
-				JavascriptExecutor jse = (JavascriptExecutor) driver;
+				JavascriptExecutor jse = (JavascriptExecutor) driver();
 				jse.executeScript("arguments[0].value='" + text + "';", element());
 
 				constructElementWait(Time.loopInterval())
@@ -392,7 +391,7 @@ public class Element {
 				return true;
 			} catch(WebDriverException e1){
 				if (element.isEnabled()) {
-					JavascriptExecutor executor = (JavascriptExecutor) driver;
+					JavascriptExecutor executor = (JavascriptExecutor) driver();
 					executor.executeScript("arguments[0].click();", element);
 					return true;
 				}
@@ -407,7 +406,7 @@ public class Element {
 	 * @return FluentWait the wait object that can be invoked
 	 */
 	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
-		return new FluentWait<WebDriver>(driver)
+		return new FluentWait<WebDriver>(driver())
 			       .withTimeout(timeout)
 			       .pollingEvery(Time.interval())
 			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
@@ -454,7 +453,7 @@ public class Element {
 	 */
 	public boolean isDisplayed() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
 		}
@@ -474,7 +473,7 @@ public class Element {
 	 */
 	public boolean isHidden() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.invisibilityOf(element()));
 		}
@@ -496,7 +495,7 @@ public class Element {
 	 */
 	public boolean isEnabled() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> element().isEnabled());
 		}
@@ -518,7 +517,7 @@ public class Element {
 	 */
 	public boolean isDisabled() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
 		}
@@ -537,7 +536,7 @@ public class Element {
 	 */
 	public boolean isSelected() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementToBeSelected(element()));
 		}
@@ -556,7 +555,7 @@ public class Element {
 	 */
 	public boolean isNotSelected() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
 		}
@@ -604,7 +603,7 @@ public class Element {
 	 * @return true if the attribute exists for the element; otherwise false
 	 */
 	public boolean hasAttribute(String attribute) {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
 	}
@@ -621,7 +620,7 @@ public class Element {
 	 * @return true if the attribute does not exist for the element; otherwise false
 	 */
 	public boolean doesNotHaveAttribute(String attribute) {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.not(
 						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
@@ -663,7 +662,7 @@ public class Element {
 	 * @return Element for chaining
 	 */
 	public Element hover() {
-		new Actions(driver).moveToElement(element()).build().perform();
+		new Actions(driver()).moveToElement(element()).build().perform();
 		return this;
 	}
 	
@@ -674,7 +673,7 @@ public class Element {
 	 */
 	public String getTooltipText() {
 		hover();
-		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
+		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}	
 	
 }
