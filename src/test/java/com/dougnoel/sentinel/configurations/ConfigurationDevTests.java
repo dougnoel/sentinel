@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ConfigurationDevTests {
 	private static String originalEnvironment = null;
@@ -23,14 +23,13 @@ public class ConfigurationDevTests {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(DEV);
 		System.setProperty("download", "downloads");
-		WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
 		Configuration.environment(originalEnvironment);
-		WebDriverFactory.quit();
+		Driver.quit();
 	}
 	
 	@Test

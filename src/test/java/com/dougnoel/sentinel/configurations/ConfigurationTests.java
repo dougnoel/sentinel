@@ -5,17 +5,14 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
 import com.dougnoel.sentinel.exceptions.FileNotFoundException;
 import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ConfigurationTests {
-	private static WebDriver driver;
 	private static String originalEnvironment = null;
 	private static final String STAGE = "stage";
 	private static final String DEV = "dev";
@@ -33,14 +30,13 @@ public class ConfigurationTests {
 	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(STAGE);
-		driver = WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
 		Configuration.environment(originalEnvironment);
-		driver.close();
+		Driver.quit();
 	}
 
 	@Test

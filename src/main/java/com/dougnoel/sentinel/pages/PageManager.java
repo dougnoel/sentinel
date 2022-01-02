@@ -16,6 +16,7 @@ import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
 import com.dougnoel.sentinel.exceptions.PageNotFoundException;
 import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
@@ -33,7 +34,7 @@ public class PageManager {
 	private static String parentHandle = null;
 	private static String parentPage = null;
 
-	protected static WebDriver driver() { return WebDriverFactory.getWebDriver(); }
+	protected static WebDriver driver() { return Driver.getDriver(); }
 
 	private PageManager() {
 		// Exists only to defeat instantiation.
@@ -102,20 +103,8 @@ public class PageManager {
 		 * WebDriver to directly close the browser instead of using the WebDriverManager to do it.
 		 */
 		catch (org.openqa.selenium.NoSuchSessionException e) {
-			WebDriverFactory.instantiateWebDriver().get(url);
+			Driver.getDriver().get(url);
 		}
-	}
-
-
-	/**
-	 * Quits the current driver. Subsequent calls to the driver will fail. Should be
-	 * used at the end of tests only.
-	 * 
-	 * @deprecated use WebDriverFactory.quit() instead.
-	 */
-	@Deprecated
-	public static void quit() {
-		WebDriverFactory.quit();
 	}
 
 	/**

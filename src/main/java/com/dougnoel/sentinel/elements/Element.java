@@ -31,6 +31,7 @@ import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.systems.FileManager;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
@@ -63,17 +64,16 @@ import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
  * </ul>
  */
 public class Element {
-	private static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
+	protected static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
 
 	protected Map<SelectorType,String> selectors;
 	protected String name;
-	private final String elementType;
+	protected final String elementType;
 	protected WebDriver driver;
 
 	/**
 	 * The constructor for a WebElement to initialize how an element is going to be
-	 * found when it is worked on by the WebDriver class. Takes a reference to the
-	 * WebDriver class that will be exercising its functionality.
+	 * found when it is worked on by the WebDriver class.
 	 * 
 	 * @param elementName String the element name
 	 * @param selectors Map the various selectors to iterate through to find the element
@@ -97,7 +97,7 @@ public class Element {
 		});
 		this.elementType = elementType;
 		name = elementName;
-		this.driver = WebDriverFactory.getWebDriver();
+		this.driver = Driver.getDriver();
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class Element {
 	 * @param selectorValue String the value being pulled from the config file for the selector
 	 * @return org.openqa.selenium.By returns a Selenium By selector for locating an element.
 	 */
-	private By createByLocator(SelectorType selectorType, String selectorValue) {
+	protected By createByLocator(SelectorType selectorType, String selectorValue) {
 		try {
 			switch (selectorType) {
 			case CLASS:
@@ -250,7 +250,7 @@ public class Element {
 	 * @param duration Duration total time to search for the element per selector
 	 * @return WebElement the element if it is found, otherwise null
 	 */
-	private WebElement findElementInCurrentFrameForDuration(Duration duration) {
+	protected WebElement findElementInCurrentFrameForDuration(Duration duration) {
 		WebElement element = null;
 		for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 			log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
@@ -329,16 +329,6 @@ public class Element {
 	
 	/**
 	 * Click an Element.
-	 * <p>
-	 * This function waits up to 10 seconds in 500 millisecond increments to see if
-	 * the element is visible. This wait ensures that context-switching, such as
-	 * bringing up a pop-up, AJAX calls, etc. will not fail a test.
-	 * <p>
-	 * <b>Aliases:</b>
-	 * <ul>
-	 * <li>Checkbox.check()</li>
-	 * <li>Radiobutton.select()</li>
-	 * </ul>
 	 * 
 	 * @return Element (for chaining)
 	 */
@@ -414,11 +404,6 @@ public class Element {
 	/**
 	 * Clear a Element. Clears text in a text box. Un-checks check boxes. Clears
 	 * radio button choices.
-	 * <p>
-	 * <b>Aliases:</b>
-	 * <ul>
-	 * <li>Checkbox.uncheck()</li>
-	 * </ul>
 	 * 
 	 * @return Element (for chaining)
 	 */
@@ -585,7 +570,7 @@ public class Element {
 	/**
 	 * Returns the text of the page element as a String.
 	 * 
-	 * @return String The text value stored in the element.	 */
+	 * @return String the text value stored in the element	 */
 	public String getText() {
 		return element().getText();
 	}
@@ -673,6 +658,6 @@ public class Element {
 	public String getTooltipText() {
 		hover();
 		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
-	}	
+	}
 	
 }

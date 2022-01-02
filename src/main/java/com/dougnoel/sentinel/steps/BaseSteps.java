@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -115,7 +116,7 @@ public class BaseSteps {
      * </ul>
      * @param pageName String Page Object Name
      */
-    @Given("^I (?:navigate to|am on|remain on) the (.*?)$")
+    @Given("^I (?:navigate to|am on|remain on|open) the (.*?)$")
     public static void navigateToPage(String pageName) {
     	navigateToPageWithArguments("", pageName);
     }
@@ -137,10 +138,12 @@ public class BaseSteps {
     @Given("^I pass the arguments? \"([^\"]*)\" to the (.*?)$")
     public static void navigateToPageWithArguments(String arguments, String pageName) {
     	PageManager.setPage(pageName);
-    	String baseUrl = Configuration.url();
-    	baseUrl += arguments;
-    	log.debug("Loading the the {} page using the url: {}", pageName, baseUrl);
-        PageManager.openPage(baseUrl);
+    	if (PageManager.getPage().getPageObjectType() == PageObjectType.WEBPAGE) {
+	    	String baseUrl = Configuration.url();
+	    	baseUrl += arguments;
+	    	log.debug("Loading the the {} page using the url: {}", pageName, baseUrl);
+	        PageManager.openPage(baseUrl);
+    	}
     }
     
     /**

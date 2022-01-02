@@ -330,9 +330,7 @@ public class Configuration {
 		if (pageData.hasExecutables())
 			return PageObjectType.EXECUTABLE;
 
-		var errorMessage = SentinelStringUtils.format("The file {}.yml does not contain urls or executables. Please ensure one and only one of these sections exists and is formatted correctly", pageName);
-		log.error(errorMessage);
-		throw new ConfigurationParseException(errorMessage);
+		return PageObjectType.UNKNOWN;
 	}
 
 	/**

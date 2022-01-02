@@ -30,7 +30,7 @@ public class SaucelabsDriverFactoryTests {
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void failToLoadSaucelabs() {
+	public void failToLoadSaucelabsTest() {
 		System.setProperty("saucelabsUserName", "FakeName");
 		System.setProperty("saucelabsAccessKey", "FakeKey");
 		System.setProperty("browserVersion", "1");
@@ -43,7 +43,7 @@ public class SaucelabsDriverFactoryTests {
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void sauceDefaultValues() {
+	public void sauceDefaultValuesTest() {
 		System.clearProperty("user.name");
 		System.setProperty("saucelabsUserName", "FakeName");
 		System.setProperty("saucelabsAccessKey", "FakeKey");

@@ -6,23 +6,17 @@ import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class PageDataTests {
 
 	private final static String ELEMENT_NAME = "male_radio_button";
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		WebDriverFactory.instantiateWebDriver();
-	}
-
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+		Driver.quit();
 	}
 	
 	@Test

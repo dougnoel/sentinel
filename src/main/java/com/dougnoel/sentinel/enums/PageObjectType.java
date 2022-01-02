@@ -1,11 +1,17 @@
 package com.dougnoel.sentinel.enums;
 
 /**
- * Currently only web page or executable
+ * The possible types a PageObject can be.
+ * 
+ * WEBPAGE
+ * EXECUTABLE
+ * UNKNOWN
  */
 public enum PageObjectType {
 	WEBPAGE,
-	EXECUTABLE;
+	EXECUTABLE,
+	UNKNOWN;
+	
 	public static PageObjectType of(String name) {
 		return valueOf(name.toUpperCase());
 	}

@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+//TODO: Get this working or remove it.
 public class OperatingSystemInteractions {
     private static final Logger log = LogManager.getLogger(OperatingSystemInteractions.class.getName()); // Create a logger.
 

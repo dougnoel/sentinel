@@ -5,6 +5,6 @@ elements:
   one_button:
     name: "1"
     xpath: "//Button[@Name=1]"
-    accessibility_id: "131"
+    accessibilityid: "131"
   two_button:
     name: "2"

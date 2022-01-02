@@ -81,22 +81,6 @@ public class ElementFunctions {
 			throw new ElementTypeMismatchException(errorMessage);
 		}
     }
-
-    /**
-     * Returns the Textbox associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Textbox the text box associated with the element name on the currently active page
-     */
-    public static Textbox getElementAsTextbox(String elementName) {
-		try {
-			return (Textbox) getElement(elementName);
-		} catch (ClassCastException e) {
-			String errorMessage = getClassCastExceptionErrorMessage(elementName, Textbox.class.getSimpleName());
-			log.error(errorMessage);
-			throw new ElementTypeMismatchException(errorMessage);
-		}
-    }
     
     /**
      * Returns an error message that is clearer than a casting error.

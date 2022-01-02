@@ -17,7 +17,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.WebDriverException.class)
-	public void passBadBrowserName() {
+	public void passBadBrowserNameTest() {
 		System.setProperty("browser", "badBrowser");
 		Configuration.update("browser", "badBrowser");
 		WebDriverFactory.instantiateWebDriver();
@@ -25,7 +25,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	
 	//Test IE and Safari Failing based on OS
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void failOSSpecificBrowserA() {
+	public void failOSSpecificBrowserATest() {
 		if(Configuration.operatingSystem().contentEquals("windows")) {
 			System.setProperty("browser", "safari");
 			Configuration.update("browser", "safari");
@@ -40,7 +40,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	
 	//Test IE and Safari passing based on OS, passthrough for linux
 	@Test
-	public void passOSSpecificBrowser() {
+	public void passOSSpecificBrowserTest() {
 		var os = Configuration.operatingSystem();
 		WebDriver driver;
 		switch(os) {
@@ -66,7 +66,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	}
 	
 	@Test
-	public void passEdgeBrowser() {
+	public void passEdgeBrowserTest() {
 		var os = Configuration.operatingSystem();
 		if(os.contentEquals("windows")) {
 			System.setProperty("browser", "edge");
@@ -81,7 +81,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void failEdgeBrowser() {
+	public void failEdgeBrowserTest() {
 		if(Configuration.operatingSystem().contentEquals("windows")) {
 			throw new org.openqa.selenium.WebDriverException();
 		}
@@ -93,7 +93,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	}
 	
 	@Test(expected = com.dougnoel.sentinel.exceptions.WebDriverException.class)
-	public void failCustomChromeBrowser() {
+	public void failCustomChromeBrowserTest() {
 		System.setProperty("browser", "customChrome");
 		Configuration.update("browser", "customChrome");
 		Configuration.update("chromeBrowserBinary", "fakePath");
@@ -101,7 +101,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	}
 	
 	@Test
-	public void passOperaBrowser() {
+	public void passOperaBrowserTest() {
 		if (Configuration.toString("headless") != null) {
 			Assert.assertTrue("Cannot test Opera in headless mode.", true);
 			return;
@@ -114,7 +114,7 @@ public class WebdriverFactoryBadBrowserNameTest {
 	}
 	
 	@Test
-	public void passFirefoxBrowser() {
+	public void passFirefoxBrowserTest() {
 		if (Configuration.toString("headless") != null) {
 			Assert.assertTrue("Cannot test firefox in headless mode.", true);
 			return;

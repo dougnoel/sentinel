@@ -15,20 +15,19 @@ import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
 import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
 import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ElementFunctionsTests {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		System.setProperty("env", "dev");
-		WebDriverFactory.instantiateWebDriver();
 		PageManager.setPage("Elements");
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+		Driver.quit();
 	}
 
 	@Test
@@ -37,19 +36,7 @@ public class ElementFunctionsTests {
 		assertTrue("Expecting Element class.", element instanceof Element);
 		assertEquals("Expecting Default Name.", "generic", element.getName());
 	}
-
-	@Test
-	public void createTextBox() {
-		Element element = ElementFunctions.getElementAsTextbox("textbox");
-		assertTrue("Expecting Textbox class.", element instanceof Textbox);
-		assertEquals("Expecting Textbox Name.", "textbox", element.getName());
-	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
-	public void failToCreateTextBox() {
-		ElementFunctions.getElementAsTextbox("generic");
-	}
-
 	@Test
 	public void createDropDown() {
 		Element element = ElementFunctions.getElementAsDropdown("dropdown");

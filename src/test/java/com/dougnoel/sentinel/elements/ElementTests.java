@@ -12,8 +12,9 @@ import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.exceptions.ElementDisabledException;
 import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
+import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.steps.BaseSteps;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ElementTests {
 	
@@ -21,15 +22,14 @@ public class ElementTests {
 	public static void setUpBeforeClass() throws Exception {
 		Time.reset();
 		Configuration.update("timeout", 1);
-		WebDriverFactory.instantiateWebDriver();
-		
+		PageManager.setPage("TextboxPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		Time.reset();
 		Configuration.update("timeout", 10);
-		WebDriverFactory.quit();
+		Driver.quit();
 	}
 
 	

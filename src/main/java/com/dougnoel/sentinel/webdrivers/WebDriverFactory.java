@@ -27,8 +27,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  */
 public class WebDriverFactory {
 	private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
-    private static WebDriver driver = null;
-    private static WebDriverFactory instance = null;
+    private static WebDriver driver = null; //TODO: Remove this as it is now tracked in the Driver object
     private static String parentHandle = null;
 
     private WebDriverFactory() {
@@ -44,13 +43,7 @@ public class WebDriverFactory {
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
      */
-    public static WebDriver instantiateWebDriver() {
-        // Ensure we only have one instance of this class, so that we always return the
-        // same driver.
-        if (instance == null) {
-            instance = new WebDriverFactory();
-        }
-        
+    protected static WebDriver instantiateWebDriver() {
         //Saucelabs Driver setup
         var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
@@ -104,13 +97,15 @@ public class WebDriverFactory {
     }
 
     /**
-     * Returns the WebDriver instance. This will silently instatntiate the WebDriver if that has not been done yet.
+     * Returns the WebDriver instance. This will silently instantiate the WebDriver if that has not been done yet.
      * 
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver() {
-        if (instance == null || driver == null) {
+    	//TODO: I need to know what page I'm on and return the appropriate driver.
+        if (driver == null) {
         	instantiateWebDriver();
+        	log.info("Driver created: {}", driver);
         }
         return driver;
     }
@@ -130,7 +125,7 @@ public class WebDriverFactory {
     /**
      * Quits the driver and sets the driver instance back to null.
      */
-    public static void quit() {
+    protected static void quit() {
     	if (exists()) {
     		getWebDriver().quit();
     		driver = null;

@@ -93,6 +93,7 @@ public class PageData {
     
     /**
      * Returns an element if it exists in a page object.
+     * 
      * @param elementName the name of the element in the page object under the 'elements' section
      * @return Map&lt;String, String&gt; the locators for an element
      */
@@ -110,6 +111,7 @@ public class PageData {
     
     /**
      * Returns any page parts to search for elements
+     * 
      * @return String[] list of page parts
      */
     public String[] getPageParts() {
@@ -119,26 +121,62 @@ public class PageData {
     	return new String[0];
     }
     
+    /**
+     * Returns whether or not a URL exists for the given environment
+     * in the page object.
+     * 
+     * @param env String the environment to check
+     * @return boolean true if found, otherwise false
+     */
     public boolean containsUrl(String env) {
     	return urls.containsKey(env);
     }
     
+    /**
+     * Returns a URL based on the environment passed.
+     * 
+     * @param env String the environment to check
+     * @return String the URL
+     */
     public String getUrl(String env) {
     	return urls.get(env);
     }
     
+    /**
+     * Returns whether or not the page object contains a urls section.
+     * 
+     * @return true if there is a urls section in the page object, false otherwise
+     */
     public boolean hasUrls() {
     	return urls != null;
     }
     
+    /**
+     * Returns whether or not an executable path exists for the given environment
+     * in the page object.
+     * 
+     * @param env String the environment to check
+     * @return boolean true if found, otherwise false
+     */
     public boolean containsExecutable(String env) {
     	return executables.containsKey(env);
     }
     
+    /**
+     * Returns an executable path based on the environment passed.
+     * 
+     * @param env String the environment to check
+     * @return String the path to the executable
+     */
     public String getExecutable(String env) {
     	return executables.get(env);
     }
 
+    /**
+     * Returns whether or not the page object contains an executables section.
+     * 
+     * @return true if there is an executables section in the page object, false otherwise
+     */
     public boolean hasExecutables() {
     	return executables != null;
     }

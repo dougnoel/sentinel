@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.elements.Textbox;
+import com.dougnoel.sentinel.elements.WindowsElement;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
@@ -23,10 +24,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
- * Page class to contain a URL and the elements on the page.
- * <p>
- * TO DO: Abstract out the driver creation to allow multiple drivers to be created
- * at once.
+ * Page class to contain the details of an page.
  */
 public class Page {
 	
@@ -37,12 +35,17 @@ public class Page {
 	protected static final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
 	protected static final SelectorType TEXT = SelectorType.TEXT;
 	protected static final SelectorType XPATH = SelectorType.XPATH;
+	protected static final PageObjectType EXECUTABLE = PageObjectType.EXECUTABLE;
 
     protected Map<String,Element> elements;
     
     private String pageName;
     private PageObjectType pageType = null;
     
+    /**
+     * Constructor
+     * @param pageName String the exact name of the page as stored on disk without extension.
+     */
     public Page(String pageName) {
     	this.pageName = pageName;
         elements = new HashMap<>();
@@ -92,6 +95,11 @@ public class Page {
 		return elementData;
 	}
 	
+	/**
+	 * Create an Element object by pulling data from a Page Obeject.
+	 * @param elementName Sting the name of the element to create
+	 * @return Element the object created
+	 */
 	private Element createElement(String elementName) {
 		Map<String, String> elementData = findElement(elementName, getName());
 		
@@ -108,6 +116,9 @@ public class Page {
 			elementType = "Element";
 		}
 
+		if (this.getPageObjectType().equals(EXECUTABLE)) {
+			return new WindowsElement(elementName, elementData);
+		}
 		if ("Textbox".equalsIgnoreCase(elementType)) {
 			return new Textbox(elementName, elementData);
 		}
@@ -154,7 +165,7 @@ public class Page {
 	/**
 	 * Returns either WEBPAGE or EXECUTABLE based on the type of page object this is.
 	 * 
-	 * @return PageObjectType the type of page object (WEBPAGE, EXECUTABLE)
+	 * @return PageObjectType the type of page object (WEBPAGE, EXECUTABLE, UNKNOWN)
 	 */
 	public PageObjectType getPageObjectType() {
 		if (pageType == null) {
