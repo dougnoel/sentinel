@@ -1,0 +1,6 @@
+urls:
+   default: https://the-internet.herokuapp.com/dropdown
+elements:
+  dropdown:
+    elementType: Dropdown
+    id: dropdown
