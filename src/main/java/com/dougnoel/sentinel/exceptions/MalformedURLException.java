@@ -1,11 +1,10 @@
 package com.dougnoel.sentinel.exceptions;
 
-public class MalformedURLException extends IOException {
+/**
+ *  Wrapping MalformedURLException so that it is a RuntimeException.
+ */
+public class MalformedURLException extends RuntimeException {
 
-    /**
-     *  Allows us to pass in the stack trace and additional text to a MalformedURLException.
-     *  Also wraps it in a SentinelException for easier error handling at the glue step level.
-     */
     private static final long serialVersionUID = 8461266760821180367L;
 
     public MalformedURLException(Throwable cause) {

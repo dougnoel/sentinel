@@ -1,14 +1,16 @@
 package com.dougnoel.sentinel.pages;
 
-import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Checkbox;
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.elements.Textbox;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
@@ -19,20 +21,14 @@ import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * Page class to contain a URL and the elements on the page.
  * <p>
- * <b>TO DO:</b>
- * <ul>
- * <li>Turn this into an abstract class.</li>
- * <li>Create a PageFactory</li>
- * <li>Abstract out the driver creation to allow multiple drivers to be created
- * at once</li>
- * </ul>
+ * TO DO: Abstract out the driver creation to allow multiple drivers to be created
+ * at once.
  */
 public class Page {
 	
@@ -42,53 +38,30 @@ public class Page {
 	protected static final SelectorType NAME = SelectorType.NAME;
 	protected static final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
 	protected static final SelectorType TEXT = SelectorType.TEXT;
-	protected static final SelectorType XPATH = SelectorType.XPATH;    
+	protected static final SelectorType XPATH = SelectorType.XPATH;
 
-    protected WebDriver driver;
-
-    protected URL url;
-    
-    protected Map<String,PageElement> elements;
+    protected Map<String,Element> elements;
     
     private String pageName;
-
-    /**
-     * Initializes a WebDriver object for operating on page elements, and sets the
-     * base URL for the page.
-     */
-    public Page() {
-    	this.pageName = this.getClass().getSimpleName();
-        driver = WebDriverFactory.getWebDriver();
-        elements = new HashMap<>();
-    }
     
     public Page(String pageName) {
     	this.pageName = pageName;
-        driver = WebDriverFactory.getWebDriver();
         elements = new HashMap<>();
-    }
-
-    public URL getUrl() {
-        return url;
-    }
-
-    public void setUrl(URL url) {
-        this.url = url;
     }
 
     public String getName() {
         return pageName;
     }
 
-	public PageElement getElement(String elementName) {
+	public Element getElement(String elementName) {
         String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
         return elements.computeIfAbsent(normalizedName, name -> createElement(name));
 	}
 	
 	private Map<String, String> findElement(String elementName, String pageName) {
-		Map<String, String> elementData = ConfigurationManager.getElement(elementName, pageName);
+		Map<String, String> elementData = Configuration.getElement(elementName, pageName);
 		if (elementData == null) {
-			for (String page : ConfigurationManager.getPageParts(pageName)) {
+			for (String page : Configuration.getPageParts(pageName)) {
 				elementData = findElement(elementName, page);
 				if (elementData != null) {
 					break;
@@ -98,12 +71,12 @@ public class Page {
 		return elementData;
 	}
 	
-	private PageElement createElement(String elementName) {
+	private Element createElement(String elementName) {
 		Map<String, String> elementData = findElement(elementName, getName());
 		
 		if (elementData == null) {
-			String errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
-			throw new ElementNotFoundException(errorMessage);
+			var errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
+			throw new NoSuchElementException(errorMessage);
 		}
 		
 		String elementType = null;
@@ -145,6 +118,24 @@ public class Page {
 			return new Table(elementName, elementData);
 		}
 		// This allows people to call their element type whatever they want without needing a child class to implement it.
-		return new PageElement(elementType, elementName, elementData);
+		return new Element(elementType, elementName, elementData);
+	}
+	
+	/**
+	 * Returns true if iFrames exist on the page, false if they do not.
+	 * 
+	 * @return true if iFrames exist on the page, false if they do not
+	 */
+	public boolean hasIFrames() {
+		return !WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe")).isEmpty();
+	}
+	
+	/**
+	 * Returns a list of WebElement objects containing all the iFrames on the page.
+	 * 
+	 * @return List &lt;WebElement&gt; the list of iFrames in this page
+	 */
+	public List <WebElement> getIFrames() {
+		return WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe"));
 	}
 }

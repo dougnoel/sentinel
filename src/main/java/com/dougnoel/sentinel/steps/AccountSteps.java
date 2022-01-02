@@ -1,8 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.SentinelException;
-
+import com.dougnoel.sentinel.configurations.Configuration;
 import io.cucumber.java.en.When;
 
 public class AccountSteps {
@@ -24,12 +22,11 @@ public class AccountSteps {
      * @param account String user account to look up for the page object being used
      * @param usernameField String user name field element to enter the user name
      * @param passwordField String password field element to enter the password
-     * @throws SentinelException any uncaught exceptions result in the test failing
      */
     @When("I fill the account information for account {} into the {} and the {}")
-    public static void fillAccountInfoIntoUsernameAndPasswordFields(String account, String usernameField, String passwordField) throws SentinelException {
-    	TextSteps.enterText(ConfigurationManager.getAccountInformation(account, USERNAME), usernameField);
-    	TextSteps.enterText(ConfigurationManager.getAccountInformation(account, PASSWORD), passwordField);          
+    public static void fillAccountInfoIntoUsernameAndPasswordFields(String account, String usernameField, String passwordField) {
+    	TextSteps.enterText(Configuration.accountInformation(account, USERNAME), usernameField);
+    	TextSteps.enterText(Configuration.accountInformation(account, PASSWORD), passwordField);          
     }
 
     /**
@@ -44,12 +41,11 @@ public class AccountSteps {
      * </ul>     
      * @param usernameField String user name field element to enter the user name
      * @param passwordField String password field element to enter the password
-     * @throws SentinelException any uncaught exceptions result in the test failing
      */
     @When("I fill the account information into the {} and the {}")
-    public static void fillAccountInfoIntoUsernameAndPasswordFields(String usernameField, String passwordField) throws SentinelException {
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, USERNAME), usernameField);
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, PASSWORD), passwordField);            
+    public static void fillAccountInfoIntoUsernameAndPasswordFields(String usernameField, String passwordField) {
+    	fillUsernameField(usernameField);
+    	fillPasswordField(passwordField);         
     }
     
     /**
@@ -64,11 +60,10 @@ public class AccountSteps {
      * </ul>
      * @param account String user account to look up for the page object being used
      * @param passwordField String password field element to enter the password
-     * @throws SentinelException any uncaught exceptions result in the test failing
      */
     @When("I fill the password for account {} into the {}")
-    public static void fillPasswordField(String account, String passwordField) throws SentinelException {
-        	TextSteps.enterText(ConfigurationManager.getAccountInformation(account, PASSWORD), passwordField);         
+    public static void fillPasswordField(String account, String passwordField) {
+        	TextSteps.enterText(Configuration.accountInformation(account, PASSWORD), passwordField);         
     }
 
     /**
@@ -82,11 +77,10 @@ public class AccountSteps {
      * <li>I fill the password into the password field</li>
      * </ul>
      * @param passwordField String password field element to enter the password
-     * @throws SentinelException any uncaught exceptions result in the test failing
      */
     @When("I fill the password into the {}")
-    public static void fillPasswordField(String passwordField) throws SentinelException {
-    	TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, PASSWORD), passwordField);
+    public static void fillPasswordField(String passwordField) {
+    	fillPasswordField(DEFAULT, passwordField);
     }
     
     /**
@@ -101,11 +95,10 @@ public class AccountSteps {
      * </ul>
      * @param account String user account to look up for the page object being used
      * @param usernameField String user name field element to enter the user name
-     * @throws SentinelException any uncaught exceptions result in the test failing
      */
     @When("I fill the username for account {} into the {}")
-    public static void fillUsernameField(String account, String usernameField) throws SentinelException {
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(account, USERNAME), usernameField);
+    public static void fillUsernameField(String account, String usernameField) {
+        TextSteps.enterText(Configuration.accountInformation(account, USERNAME), usernameField);
     }
  
     /**
@@ -119,10 +112,9 @@ public class AccountSteps {
      * <li>I fill the username into the User Name field</li>
      * </ul>
      * @param usernameField String user name field element to enter the user name
-     * @throws SentinelException any uncaught exceptions result in the test failing
      */
     @When("I fill the username into the {}")
-    public static void fillUsernameField(String usernameField) throws SentinelException {
-        TextSteps.enterText(ConfigurationManager.getAccountInformation(DEFAULT, USERNAME), usernameField);
+    public static void fillUsernameField(String usernameField) {
+    	fillUsernameField(DEFAULT, usernameField);
     }
 }

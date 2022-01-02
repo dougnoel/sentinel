@@ -1,0 +1,6 @@
+urls:
+  default: "https://mui.com/components/selects/"
+elements:
+  age_dropdown:
+    elementType: MaterialUISelect
+    xpath: "//*[@id=\"demo-simple-select\"]"

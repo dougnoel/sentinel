@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -30,12 +30,11 @@ public class TextVerificationSteps {
      * </ul>
      * @param elementName String name of the element to verify.
      * @param assertion Sting if this is not empty, we expect it to be true.
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*?)( is not)?(?: is)? empty?$")
-    public static void i_verify_an_element_text(String elementName, String assertion) throws Throwable {
+    public static void verifyElementTextIsEmpty(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be empty.",
+        var expectedResult = SentinelStringUtils.format("Expected the element {} to {}be empty.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
             assertFalse(expectedResult, getElement(elementName).getText().isEmpty());
@@ -68,19 +67,21 @@ public class TextVerificationSteps {
      * @param assertion String Evaluated as a boolean, where null = false and any text = true.
      * @param matchType String whether we are doing an exact match or a partial match
      * @param text String The text to verify exists in the element.
-     * @throws Throwable Throws any errors passed to it.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void i_verify_the_element_contains_the_text(String elementName, String assertion, String matchType, String text) throws Throwable {
+    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
+        String partialMatchText = partialMatch ? "contain" : "exactly match";
+        
         if (elementName.contains("URL")) {
-            i_verify_the_URL_contains_the_text(text);
+            verifyURLTextContains(text);
         } else {
             String elementText = getElement(elementName).getText();
-            String expectedResult = SentinelStringUtils.format(
+            var expectedResult = SentinelStringUtils.format(
                     "Expected the {} element to {}{} the text {}. The element contained the text: {}",
-                    elementName, (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, elementText
+                    elementName, negateText, partialMatchText, text, elementText
                             .replace("\n", " "));
             log.trace(expectedResult);
             if (partialMatch) {
@@ -104,11 +105,10 @@ public class TextVerificationSteps {
      * text in the URL.
 	 *
      * @param text String text to verify in the URL
-     * @throws Throwable Throws any errors passed to it.
      */
-    private static void i_verify_the_URL_contains_the_text(String text) throws Throwable {
+    private static void verifyURLTextContains(String text) {
         String currentUrl = PageManager.getCurrentUrl();
-        String expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
+        var expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));
     }
@@ -132,13 +132,12 @@ public class TextVerificationSteps {
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
      * @param textToMatch String Text to match
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public static void i_verify_the_selection_contains_the_text(String elementName, String assertion, String textToMatch) throws Throwable {
+    public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String selectedText = getElementAsSelectElement(elementName).getSelectedText();
-        String expectedResult = SentinelStringUtils.format(
+        var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);
@@ -169,14 +168,13 @@ public class TextVerificationSteps {
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
      * @param key String the key to retrieve the text to match from the configuration manager
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
-    public static void i_verify_the_selection_contains_the_previously_entered_value(String elementName, String assertion, String key) throws Throwable {
-        String textToMatch = ConfigurationManager.getValue(key);
+    public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
+    	var textToMatch = Configuration.toString(key);
         boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = (String) getElementAsSelectElement(elementName).getSelectedText();
-        String expectedResult = SentinelStringUtils.format(
+        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
+        var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
         log.trace(expectedResult);
@@ -185,5 +183,34 @@ public class TextVerificationSteps {
         } else {
             assertTrue(expectedResult, selectedText.contains(textToMatch));
         }
-    }
+    } 
+    
+   /**
+    * Used to verify that on mouse over an element contains certain text. 
+    * <b>Gherkin Examples:</b>
+    * <ul>
+    * <li>I verify the mouse over has the value "Username"</li>
+    * <li>I verify the mouse over does not have the value "VA"</li>
+    * <li>I verify the mouse over have the value "name: user1"</li> 
+    * </ul> 
+    * @param elementName String The name of the element to be evaluated as defined in the page object.
+    * @param assertion String Evaluated as a boolean, where null = false and any text = true. 
+    * @param textToMatch String The text to verify exists in the element.
+    */
+    
+    @Then("^I verify the (.*?)( does not)? (?:has|have) the value \"([^\"]*)\"$")
+	public static void toolTipText(String elementName, String assertion, String textToMatch) {		
+		String value = getElement(elementName).getTooltipText();
+		boolean negate = !StringUtils.isEmpty(assertion);	
+		var expectedResult = SentinelStringUtils.format(
+                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
+                elementName, (negate ? "not " : ""), textToMatch, value.replace("\n", " "));
+		log.trace(expectedResult);
+		if (negate) {
+			assertFalse(expectedResult, value.contains(textToMatch));
+		} else {
+			assertTrue(expectedResult, value.contains(textToMatch));
+		}		
+	}
+    
 }

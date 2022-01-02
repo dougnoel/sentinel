@@ -5,11 +5,14 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 public class TableSteps {
+	
+	private static final String XPATH = "xpath";
+	private static final String CONTAINS_TEXT = "//*[contains(text(),'";
 
     /**
      * Clicks the link in a table row by matching text in another part of the row.
@@ -30,7 +33,7 @@ public class TableSteps {
      */
     @When("^I find the (.*?) link in the row of the (.*?) containing the (.*?) value and click it$")
     public static void clickAssociatedLinkInTable(String elementName, String tableName, String key) {
-        String text = ConfigurationManager.getValue(key);
+    	var text = Configuration.toString(key);
         getElementAsTable(tableName).clickElementInRowThatContains(text, elementName);
     }
     
@@ -55,16 +58,16 @@ public class TableSteps {
     @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
     public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {
     	By clickLocator;
-    	if ( StringUtils.equals(clickLocatorType, "xpath") ) {
+    	if ( StringUtils.equals(clickLocatorType, XPATH) ) {
     		clickLocator = By.xpath(elementToClick);
     	} else {
-    		clickLocator = By.xpath("//*[contains(text(),'" + elementToClick + "')]");
+    		clickLocator = By.xpath(CONTAINS_TEXT + elementToClick + "')]");
     	}
     	By matchLocator;
-    	if ( StringUtils.equals(matchLocatorType, "xpath") ) {
+    	if ( StringUtils.equals(matchLocatorType, XPATH) ) {
     		matchLocator = By.xpath(elementToMatch);
     	} else {
-    		matchLocator = By.xpath("//*[contains(text(),'" + elementToMatch + "')]");
+    		matchLocator = By.xpath(CONTAINS_TEXT + elementToMatch + "')]");
     	}
     	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
     }
@@ -89,14 +92,14 @@ public class TableSteps {
     	By clickLocator;
     	int ordinalRow;
     	switch (clickLocatorType) {
-    	case "xpath":
+    	case XPATH:
     		clickLocator = By.xpath(elementToClick);
     		break;
     	case "value for":
-    		elementToClick = ConfigurationManager.getValue(elementToClick);
+    		elementToClick = Configuration.toString(elementToClick);
     		// If we are retrieving a value we want to fall through here
     	default:
-    		clickLocator = By.xpath("//*[contains(text(),'" + elementToClick + "')]");
+    		clickLocator = By.xpath(CONTAINS_TEXT + elementToClick + "')]");
     		break;
     	}
     	if ( StringUtils.equals(ordinal, "la") ) { 

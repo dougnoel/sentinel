@@ -1,0 +1,12 @@
+urls:
+  default: https://the-internet.herokuapp.com/dynamic_controls
+elements:
+  input_textbox:
+    elementType: Textbox
+    xpath: "//form[@id='input-example']/input"
+  enable_button:
+    elementType: Button
+    xpath: "//form[@id='input-example']/button"
+  disable_button:
+    elementType: Button
+    xpath: "//form[@id='input-example']/button"

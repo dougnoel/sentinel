@@ -1,7 +1,0 @@
----
-configurations:
-  default:
-    pageObjectPackages: "pages"
-    os: "OS X"
-    browser: "chrome"
-...

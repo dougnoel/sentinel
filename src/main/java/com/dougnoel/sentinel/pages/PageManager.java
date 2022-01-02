@@ -1,6 +1,11 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -8,12 +13,9 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import com.dougnoel.sentinel.configurations.TimeoutManager;
-import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
-import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
-import com.dougnoel.sentinel.exceptions.PageNotFoundException;
-import com.dougnoel.sentinel.exceptions.URLNotFoundException;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * The Page Manager is a singleton class that manages what page the test is on.
@@ -28,10 +30,9 @@ public class PageManager {
 	private static PageManager instance = null;
 	// Page handle for the first window opened.
 	private static String parentHandle = null;
+	private static String parentPage = null;
 
-	protected static WebDriver driver() {
-		return page.driver;
-	} // Get the driver for the current page.
+	protected static WebDriver driver() { return WebDriverFactory.getWebDriver(); }
 
 	private PageManager() {
 		// Exists only to defeat instantiation.
@@ -65,11 +66,9 @@ public class PageManager {
 	 * @return Page the Page Object
 	 */
 	public static Page getPage() {
-		if (instance == null)
-			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
-		if(page == null) {
-			throw new PageNotFoundException("We could not find the Page you are looking for. Please check the pageObjectPackages configuration in conf/sentinel.yml and make sure it includes directory containing your page object.");
-		}
+		if (instance == null || page == null)
+			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
+		
 		return page;
 	}
 
@@ -93,37 +92,27 @@ public class PageManager {
 	 * @param url String Full URL to navigate to.
 	 */
 	protected static void open(String url) {
-		driver().get(url);
+		try {
+			driver().get(url);
+		}
+		/* Adding this to catch the case where a unit test breaks encapsulation by using the 
+		 * WebDriver to directly close the browser instead of using the WebDriverManager to do it.
+		 */
+		catch (org.openqa.selenium.NoSuchSessionException e) {
+			WebDriverFactory.instantiateWebDriver().get(url);
+		}
 	}
 
-	/**
-	 * Closes the current browser tab or window. Does not quit the driver. If this
-	 * is the last window open, the next call to the driver will open a new window.
-	 */
-	public static void close() {
-		driver().close();
-	}
 
 	/**
 	 * Quits the current driver. Subsequent calls to the driver will fail. Should be
 	 * used at the end of tests only.
-	 */
-	public static void quit() {
-		driver().quit();
-	}
-
-	/**
-	 * Navigates to the given URL.
-	 * <p>
-	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
-	 * existing page, and if so, passing that off as the new page object.
 	 * 
-	 * @param url String the uniform resource locator
-	 * @return Page the current page object for chaining
+	 * @deprecated use WebDriverFactory.quit() instead.
 	 */
-	public static Page navigateTo(String url) {
-		driver().navigate().to(url);
-		return page;
+	@Deprecated
+	public static void quit() {
+		WebDriverFactory.quit();
 	}
 
 	/**
@@ -179,7 +168,7 @@ public class PageManager {
      * 
      * @return String
      */
-    public String getPageTitle() {
+    public static String getPageTitle() {
         return driver().getTitle();
     }
     
@@ -191,19 +180,22 @@ public class PageManager {
 	 * <b>Preconditions:</b> Expects a new tab or window to have just been opened,
 	 * and for there to be only two.
 	 * 
-	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
-	 * @return String the window handle we are switching to
-	 */
-	public static String switchToNewWindow() {
+     * @param pageName the new page name to set the window to so it switches correctly
+     * @return String the window handle we are switching to
+	 * @throws InterruptedException if page doesn't load
+     */
+	public static String switchToNewWindow(String pageName) throws InterruptedException {
 		String newHandle = null;
+		parentHandle = driver().getWindowHandle();
+		parentPage = PageManager.getPage().getName();
 		Set<String> handles = driver().getWindowHandles();
 		if (handles.size() == 1) {
-			String errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
+			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
 		if (parentHandle == null) {
-			String errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
+			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
 			log.error(errorMessage);
 			throw new NoSuchWindowException(errorMessage);
 		}
@@ -212,7 +204,7 @@ public class PageManager {
 				newHandle = handle;
 			}
 		}
-		switchToNewWindow(newHandle);
+		switchToNewWindow(pageName, newHandle);
 		return newHandle;
 	}
 
@@ -222,19 +214,22 @@ public class PageManager {
 	 * sentinel.pages.PageManager#switchToNewWindow() and passes the
 	 * index. This will allow for more fine grained control at a later date.
 	 * 
-	 * @see com.dougnoel.sentinel.pages.PageManager#switchToNewWindow()
+	 * @param pageName the new page name to set the window to so it switches correctly
 	 * @param index String the window to which we want to switch
+	 * @throws InterruptedException if page doesn't load
 	 */
-	public static void switchToNewWindow(String index) {
+	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
 		try {
 			driver().switchTo().window(index);
+	        setPage(pageName);
+	        waitForPageLoad();
 			log.trace("Switched to new window {}", index);
 		} catch (org.openqa.selenium.NoSuchWindowException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
-			throw new com.dougnoel.sentinel.exceptions.NoSuchWindowException(errorMessage);
+			throw new NoSuchWindowException(errorMessage);
 		}
 	}
 
@@ -244,10 +239,13 @@ public class PageManager {
 	 * closed after a test is complete.
 	 * 
 	 * @return String the handle of the parent window to which we are returning
+	 * @throws InterruptedException if page does not load
 	 */
-	public static String closeChildWindow() {
-		close();
+	public static String closeChildWindow() throws InterruptedException {
+		WebDriverFactory.close();
 		driver().switchTo().window(parentHandle);
+        setPage(parentPage);
+        waitForPageLoad();
 		return parentHandle;
 	}
 
@@ -259,13 +257,20 @@ public class PageManager {
 			driver().switchTo().frame(0);
 			log.trace("Switched to iFrame on current page");
 		} catch (org.openqa.selenium.NoSuchFrameException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"No iFrames were found on the current page. Ensure you have the correct page open, and please try again. {}",
 					e.getMessage());
 			log.error(errorMessage);
 			throw new NoSuchFrameException(errorMessage);
 		}
 
+	}
+	
+	/**
+	 * Exits existing iFrame.
+	 */
+	public static void exitIFrame() {
+		driver().switchTo().defaultContent();
 	}
 
 	/**
@@ -280,16 +285,17 @@ public class PageManager {
 			currentUrl = driver().getCurrentUrl();
 			log.trace("Current URL retrieved: {}", currentUrl);
 		} catch (WebDriverException e) {
-			String errorMessage = SentinelStringUtils.format(
+			var errorMessage = SentinelStringUtils.format(
 					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
 					page.getName(), e.getMessage());
 			log.error(errorMessage);
-			throw new URLNotFoundException(errorMessage);
+			throw new NotFoundException(errorMessage);
 
 		}
 		if (currentUrl == null) {
-			log.error("Current URL not found");
-			throw new URLNotFoundException("Current URL could not be found. Please check the URL and try again.");
+			var errorMessage = "Current URL could not be found. Please check the URL and try again.";
+			log.error(errorMessage);
+			throw new NotFoundException(errorMessage);
 		}
 		return currentUrl;
 	}
@@ -305,7 +311,7 @@ public class PageManager {
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
-		driver().manage().timeouts().pageLoadTimeout(TimeoutManager.getDefaultTimeout(), TimeoutManager.getDefaultTimeUnit());
+		driver().manage().timeouts().pageLoadTimeout(Time.out().toSeconds(), TimeUnit.SECONDS);
 		while (!isPageLoaded()) {
 			Thread.sleep(20);
 		}
@@ -326,7 +332,7 @@ public class PageManager {
 			driver().findElement(By.tagName("body"));
 		} catch (TimeoutException e) {
 			throw new TimeoutException(
-					"This page timed out before it could finish loading. Please increae the timeout, ensure the page you are loading exists, or check your internet connection and try agin.");
+					"This page timed out before it could finish loading. Please increase the timeout, ensure the page you are loading exists, or check your internet connection and try agin.");
 		}
 		// if we've gotten this far, we haven't timed out so return the
 		// document.readyState check

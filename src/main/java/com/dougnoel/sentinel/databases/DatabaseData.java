@@ -8,8 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -56,14 +55,8 @@ public class DatabaseData {
 		DatabaseData pageData = null;
 		try {
 			pageData = mapper.readValue(fileName, DatabaseData.class);
-		} catch (JsonParseException e) {
-			String errorMessage = SentinelStringUtils.format("Configuration file is not a valid YAML file: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationParseException(errorMessage, e);
-		} catch (JsonMappingException e) {
-			String errorMessage = SentinelStringUtils.format("Incorrect formatting in the configuration file: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationMappingException(errorMessage, e);
+		} catch (Exception e) {
+			throw new YAMLFileException(e, fileName);
 		}
 			
 		return pageData;

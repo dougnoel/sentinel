@@ -2,20 +2,20 @@ package com.dougnoel.sentinel.elements.dropdowns;
 
 import java.util.Map;
 
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.support.ui.Select;
 
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
- * Extends PageElement. Is intended to be a a base class for Dropdown.
+ * Extends Element. Is intended to be a a base class for Dropdown.
  */
-public class SelectElement extends PageElement {
+public class SelectElement extends Element {
 
 	/**
-	 * Implementation of a PageElement to initialize how an element is going to be found when it is worked on by the 
+	 * Implementation of a Element to initialize how an element is going to be found when it is worked on by the 
 	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
 	 * 
 	 * @param elementName String the name of the element
@@ -72,7 +72,7 @@ public class SelectElement extends PageElement {
             String errorMessage = SentinelStringUtils.format(
                     "Unhandled selector type \"{}\" passed to Page Select Element class. Could not resolve the reference. Refer to the Javadoc for valid options.",
                     selectorType);
-            throw new NoSuchSelectorException(errorMessage);
+            throw new InvalidSelectorException(errorMessage);
         }
 
         return this;

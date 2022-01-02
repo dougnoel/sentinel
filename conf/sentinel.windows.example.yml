@@ -1,7 +1,0 @@
----
-configurations:
-  default:
-    pageObjectPackages: "pages"
-    os: "Windows"
-    browser: "IE"
-...

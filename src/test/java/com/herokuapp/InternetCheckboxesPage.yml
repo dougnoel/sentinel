@@ -1,0 +1,9 @@
+urls:
+  default: https://the-internet.herokuapp.com/checkboxes
+elements:
+  checkbox_one:
+    elementType: Checkbox
+    xpath: "//input[1]"
+  checkbox_two:
+    elementType: Checkbox
+    xpath: "//input[2]"

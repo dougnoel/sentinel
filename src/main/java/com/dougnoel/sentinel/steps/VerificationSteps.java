@@ -5,14 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
-
 import io.cucumber.java.en.Then;
 
 /**
@@ -20,8 +14,6 @@ import io.cucumber.java.en.Then;
  *
  */
 public class VerificationSteps {
-	
-    private static final Logger log = LogManager.getLogger(VerificationSteps.class.getName()); // Create a logger.
     
     /**
      * Verifies the given element exists. The given element string is made lower case 
@@ -39,40 +31,22 @@ public class VerificationSteps {
      * </ul>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I verify the &lt;element&gt; &lt;Assertion&gt; exist
+     * I verify the &lt;element&gt; &lt;Assertion&gt; exists
      * <p>
-     * Examples:
-     * &lt;table summary="Examples"&gt;
-     * &lt;tr&gt;
-     * &lt;td&gt;| element&lt;/td&gt;
-     * &lt;td&gt;| Assertion&lt;/td&gt;
-     * &lt;td&gt;|&lt;/td&gt;
-     * &lt;/tr&gt;
-     * &lt;tr&gt;
-     * &lt;td&gt;| first dropdown&lt;/td&gt;
-     * &lt;td&gt;| does&lt;/td&gt;
-     * &lt;td&gt;|&lt;/td&gt;
-     * &lt;/tr&gt;
-     * &lt;tr&gt;
-     * &lt;td&gt;| second dropdown&lt;/td&gt;
-     * &lt;td&gt;| does not&lt;/td&gt;
-     * &lt;td&gt;|&lt;/td&gt;
-     * &lt;/tr&gt;
-     * &lt;/table&gt;
+     * Examples:<br>
+     *   | element         | Assertion |<br>
+     *   | first dropdown  | does      |<br>
+     *   | second dropdown | does not  |
      * 
      * @param elementName String Element to check
      * @param assertion String "does" or does not" for true or false
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
     @Then("^I verify (?:the|a|an) (.*?)( does not)?(?: does)? exists?$")
-    public static void i_verify_an_element_exists(String elementName, String assertion) throws Throwable {
+    public static void verifyElementExists(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}exist.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
-            // We need a different assertion here because checking to see if something does
-            // exist takes 10 seconds to come back with a failure when we want it to come
-            // back much faster.
             assertTrue(expectedResult, getElement(elementName).doesNotExist());
         } else {
             assertTrue(expectedResult, getElement(elementName).isDisplayed());
@@ -91,71 +65,83 @@ public class VerificationSteps {
      * </ul>
      * @param elementName String Element to check
      * @param assertion String "" or " not" for true or false
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
-    @Then("^I verify the (.*) is( not)? (?:checked|selected)$")
-    public static void i_verify_the_element_is_selected(String elementName, String assertion) throws Throwable {
+    @Then("^I verify(?: the)? (.*) is (not |un)?(?:checked|selected)$")
+    public static void verifyElementIsSelected(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {} selected.",
                 elementName, (negate ? "not be" : "be"));
         if (negate) {
-            assertFalse(expectedResult, getElement(elementName).isSelected());
+            assertTrue(expectedResult, getElement(elementName).isNotSelected());
         } else {
             assertTrue(expectedResult, getElement(elementName).isSelected());
         }
     }
     
     /**
-     * Verifies an element has an attribute by asserting the element for the given elementName has the given class attribute.
+     * Verifies an element has an attribute.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the table has the attribute "table-striped"</li>
-     * <li>I verify the textbox does not have the attribute "listStyleClass"</li>
-     * <li>I verify the div has the attribute "container"</li>
+     * <li>I verify the table has the attribute table-striped</li>
+     * <li>I verify the textbox does not have the attribute listStyleClass</li>
+     * <li>I verify the div has the attribute container</li>
      * </ul>
      * @param elementName String element to inspect
-     * @param assertion String if not null we expect this be true
+     * @param assertion String "has" for a positive check, anything else for negative
      * @param attribute String class attribute to verify
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
      */
-    @Then("^I verify (?:the|a|an) (.*) (?:has)?(does not have)? the attribute (.*)$")
-    public static void i_verify_an_element_has_an_attribute(String elementName, String assertion, String attribute)
-            throws Throwable {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have the attribute \"{}\".",
-                elementName, (negate ? "" : "not "), attribute);
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, getElement(elementName).hasClass(attribute));
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the attribute (.*?)$")
+    public static void verifyElementHasAttribute(String elementName, String assertion, String attribute) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\".",
+                elementName, assertion, attribute);
+        if (assertion.contentEquals("has")) {
+            assertTrue(expectedResult, getElement(elementName).hasAttribute(attribute));
         } else {
-            assertTrue(expectedResult, getElement(elementName).hasClass(attribute));
+            assertTrue(expectedResult, getElement(elementName).doesNotHaveAttribute(attribute));
         }
     }
     
     /**
-     * Verifies an element is active by asserting the element for the given element name has class attribute 'active'
+     * Verifies an element has a class.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the menu item for the current page is active</li>
-     * <li>I verify the second li element in the accordion is active</li>
-     * <li>I verify the password field is not active</li>
+     * <li>I verify the table has the class heading"</li>
+     * <li>I verify the textbox does not have the class style"</li>
+     * <li>I verify the div has the class aria</li>
      * </ul>
-      * @param elementName String  the element to inspect for the active class
-     * @param assertion String if not null we expect this be true
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @param elementName String element to inspect
+     * @param assertion String "has" for a positive check, anything else for negative
+     * @param className String class to verify
      */
-    @Then("^I verify (?:the|a|an) (.*) is( not)? active$")
-    public static void i_verify_an_element_is_active(String elementName, String assertion) throws Throwable {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be active.",
-                elementName, (negate ? "" : "not "));
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, getElement(elementName).hasClass("active"));
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
+    public static void verifyElementHasClass(String elementName, String assertion, String className) {
+    	verifyElementAttributeHasValue(elementName, assertion, "class", className);
+    }
+    
+    /**
+     * Verifies an attribute for an element has a given value.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the boxes table with the attribute class has the value heading"</li>
+     * <li>I verify the New Div with the attribute style does not have the value aria"</li>
+     * <li>I verify the Submit Button with the attribute color has the value blue</li>
+     * </ul>
+     * @param elementName String element to inspect
+     * @param assertion String "has" for a positive check, anything else for negative
+     * @param attribute String attribute to inspect
+     * @param value String value expected
+     */
+    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
+    public static void verifyElementAttributeHasValue(String elementName, String assertion, String attribute, String value) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
+                elementName, assertion, attribute, value);
+        if (assertion.contentEquals("has")) {
+            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
         } else {
-            assertTrue(expectedResult, getElement(elementName).hasClass("active"));
+            assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
         }
     }
     
@@ -169,18 +155,17 @@ public class VerificationSteps {
      * <li>I verify the link to open a pdf is enabled</li>
      * </ul>
      * @param elementName String the name of the element
-     * @param assertion String if not null we expect this be true
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @param assertion String "enabled" for a positive check, anything else for negative
      */
-    @Then("^I verify (?:the|a|an) (.*?) is( not)? enabled$")
-    public static void i_verify_an_element_is_enabled(String elementName, String assertion) throws Throwable {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to {}be enabled.",
-                elementName, (negate ? "not " : ""));
-        log.trace(expectedResult);
-        int waitTime = (negate) ? 1 : 10; // If we expect it to fail, only wait a second, otherwise wait the normal 10
-                                          // seconds TODO: Make this even shorter than a second.
-        assertTrue(expectedResult, negate != getElement(elementName).isEnabled(waitTime));
+    @Then("^I verify (?:the|a|an) (.*?) is (enabled|disabled)$")
+    public static void verifyElementIsEnabled(String elementName, String assertion) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.",
+                elementName, assertion);
+        if (assertion.contentEquals("enabled")) {
+        	assertTrue(expectedResult, getElement(elementName).isEnabled());
+        } else {
+        	assertTrue(expectedResult, getElement(elementName).isDisabled());
+        }
     }
     
     /**
@@ -193,18 +178,16 @@ public class VerificationSteps {
      * <li>I verify the data for the user's current plan is not hidden</li>
      * </ul>
      * @param elementName String the name of the element
-     * @param assertion String if the assertion is not empty we expect it to be hidden
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @param assertion String "visible" for a positive check, anything else for negative
      */
-    @Then("^I verify (?:the|a|an) (.*?) is( not)? hidden$")
-    public static void i_verify_an_element_is_hidden(String elementName, String assertion) throws Throwable {
-        boolean negate = !StringUtils.isEmpty(assertion); // is hidden = empty, so negate is false
-        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, (negate ? "visible"
-                : "hidden"));
-        log.debug(expectedResult);
-        int waitTime = (negate) ? 10 : 1; // If we expect it to fail, only wait a second, otherwise wait the normal 10
-                                          // seconds
-        assertTrue(expectedResult, negate == getElement(elementName).isDisplayed(waitTime));
+    @Then("^I verify (?:the|a|an) (.*?) is (visible|hidden)$")
+    public static void verifyElementVisibility(String elementName, String assertion) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} to be {}.", elementName, assertion);
+        if (assertion.contentEquals("visible")) {
+        	assertTrue(expectedResult, getElement(elementName).isDisplayed());
+        } else {
+        	assertTrue(expectedResult, getElement(elementName).isHidden());
+        }
     }
     
     /**
@@ -217,75 +200,39 @@ public class VerificationSteps {
      * <li>I am shown the member portal pop-up overlay</li>
      * </ul>
      * @param pageName String the name of the place to redirect to
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
+     * @throws InterruptedException if the thread gets interrupted while sleeping
      */
     @Then("^I am (?:redirected to|shown) the (.*) (?:(?:P|p)age|(?:O|o)verlay)$")
-    public static void i_am_redirected_to_the_page(String pageName) throws Throwable {
+    public static void redirectedToPage(String pageName) throws InterruptedException {
         pageName = pageName.replaceAll("\\s", "") + "Page";
         PageManager.setPage(pageName);
         PageManager.waitForPageLoad();
     }
     
     /**
-     * Opens the given pageName in a new window
+     * Identifies the first iFrame in a document and switches to it.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I see a new tab open with the Home page</li>
-     * <li>I see a new tab open with the Login page</li>
-     * <li>I see a new tab open with the Google Maps page</li>
+     * <li>I enter the iFrame
      * </ul>
-     * @param pageName String the page to open
-     * @throws Throwable this exists so that any uncaught exceptions result in the test failing
-     */
-    @Then("^I see a new tab open with the (.*) Page$")
-    public static void i_see_a_new_tab_open_with_the_foo_Page(String pageName) throws Throwable {
-        PageManager.switchToNewWindow();
-        pageName = pageName.replaceAll("\\s", "") + "Page";
-        PageManager.setPage(pageName);
-        PageManager.waitForPageLoad();
-    }
-       
-    /**
-     * Verifies that a URL loads in a new window when a named link is clicked.|<p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I open the google link in a new tab and verify the url that loads is http://google.com</li>
-     * <li>I open the ESPN link in a new tab for verfiy the url is http://go.espn.com</li>
-     * <li>I open the Pharmacy Benefits link in a new window and verify the url is https://testsite.com/pharamacy_benefits</li>
-     * </ul>
-     * @param linkName String The text of the link. NOT a PageElement object name.
-     * @param url String the URL expected to be loaded.
-     * @throws Throwable Passes through any errors to the executing code.
-     */
-    @Then("^I open the (.*?) link in a new tab and verify the URL that loads is (.*?)$")
-    public static void i_open_the_link_in_a_new_tab_and_verify_the_url(String linkName, String url) throws Throwable {
-            WebDriverFactory.getWebDriver().findElement(By.linkText(linkName)).sendKeys(Keys.RETURN);
-            PageManager.switchToNewWindow();
-            String newUrl = PageManager.getCurrentUrl();
-            assertTrue(newUrl.contains(url));
-    }
-    
-    /**
-     * Identifies an iframe and switches to it, if it exists.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I should see the Third Party iframe</li>
-     * <li>I should see the Provider Search iframe</li>
-     * <li>I should see the Facebook iframe</li>
-     * </ul>
-     * @see com.dougnoel.sentinel.steps.VerificationSteps#i_verify_an_element_exists(String, String)
      * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
-     * @param iFrameName String the name of the iframe element on the page object.
-     * @throws Throwable Passes through any errors to the executing code.
      */
-    @Then("^I should see the (.*) iframe$")
-    public static void i_should_see_content_in_the_x_iframe(String iFrameName) throws Throwable {
-
-        // Make sure the content is loaded in the i frame
-        VerificationSteps.i_verify_an_element_exists(iFrameName, "");
+    @Then("^I enter the iFrame$")
+    public static void switchToIFrame() {
         PageManager.switchToIFrame();
-
+    }
+    
+    /**
+     * Exits iFrame.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I exit the iFrame</li>
+     * </ul>
+     */
+    @Then("^I exit the iFrame$")
+    public static void exitIFrame() {
+        PageManager.exitIFrame();
     }
 }

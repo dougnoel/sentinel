@@ -1,11 +1,14 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.configurations.TimeoutManager;
-import com.dougnoel.sentinel.exceptions.SentinelException;
+
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
 
 import io.cucumber.java.Before;
@@ -24,7 +27,7 @@ import io.cucumber.java.en.When;
  */
 public class BaseSteps {
     private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
-
+    
     @Before
     public static void before(Scenario scenario) {
         log.trace("Scenario ID: {} Scenario Name: {}", scenario.getId(), scenario.getName());
@@ -33,7 +36,7 @@ public class BaseSteps {
     /**
      * Clicks the element that matches the given elementName as defined on the current Page object. The page object and driver object are defined by the
      * WebDriverFactory and PageFactory objects. The derived Page Object (extends
-     * Page) should define a method named [element name]_[element type] returning a PageElement object (e.g. login_button).
+     * Page) should define a method named [element name]_[element type] returning a Element object (e.g. login_button).
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
@@ -43,11 +46,29 @@ public class BaseSteps {
      * </ul>
      * 
      * @param elementName String the name of the element to click
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    @When("^I click (?:the|a|an) (.*?)$")
-    public static void click(String elementName) throws SentinelException {
+    @When("^I click (?:the|a|an|on) (.*?)$")
+    public static void click(String elementName) {
         getElement(elementName).click();
+    }
+    
+    /**
+     * Drags the first element onto the second element.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I drag Box A onto Box B</li>
+     * <li>I drag the first name to the answer box</li>
+     * <li>I drag an animal icon into a habitat icon</li>
+     * </ul>
+     * @param source String the name of the source element to drag
+     * @param target String the name of the target element the source is being dragged to
+     * @throws IOException if the javascript drag and drop file cannot be loaded
+     */
+    
+    @When("I drag (?:the |an? )?(.*?) (?:on|in)?to (?:the |an? )?(.*?)$")
+    public void dragAndDropToObject(String source, String target) throws IOException {
+    	getElement(source).dragAndDrop(getElement(target));	
     }
 
     /**
@@ -76,7 +97,9 @@ public class BaseSteps {
      */
     @When("^I wait (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?(?:.*)$")
     public static void wait(double seconds) {
-        TimeoutManager.wait(seconds);
+    	double totalWaitTime = Configuration.toDouble("totalWaitTime");
+    	Configuration.update("totalWaitTime", seconds + totalWaitTime);
+        Time.wait(seconds);
         log.warn("Passed {} seconds, waiting {} milliseconds. Waits should only be used for special circumstances. If you are seeing this message a lot then you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", seconds, (seconds * 1000));
     }
 
@@ -88,62 +111,37 @@ public class BaseSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I navigate to the Login Page</li>
-     * <li>I am on the Main page</li>
-     * <li>I remain on the popup page</li>
-     * <li>I navigate to the Documents page using the argument ?docYear=2003</li>
-     * <li>I am on the Home Page using the arguments ?firstname=bob{@literal &}lastname=smith</li>
+     * <li>I am on the Main Page</li>
+     * <li>I remain on the PopUp Page</li>
      * </ul>
      * @param pageName String Page Object Name
-     * @param hasArguments boolean indicates whether there is a query string to add to the usual URL
-     * @param arguments String the literal string to append to the default URL.
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
-    @Given("^I (?:navigate to|am on|remain on) the (.*?) (?:P|p)age( using the arguments? )?(.*?)?$")
-    public static void navigateToPage(String pageName, String hasArguments, String arguments) throws SentinelException  {   	
-    	pageName = pageName.replaceAll("\\s", "") + "Page";
-        PageManager.setPage(pageName);
-        String baseUrl = ConfigurationManager.getUrl();
-        if (hasArguments != null) {
-            baseUrl += arguments;
-        }
-        log.debug("Loading {} for the {} in the {} environment.", baseUrl, pageName, ConfigurationManager.getEnvironment());
-        PageManager.openPage(baseUrl);
+    @Given("^I (?:navigate to|am on|remain on) the (.*?)$")
+    public static void navigateToPage(String pageName) {
+    	navigateToPageWithArguments("", pageName);
     }
     
     /**
-     * Overloaded method for navigating to a page object's url based on the current environment, 
-     * so that nulls do not need to be passed. Intended for use in creating complex Cucumber steps definitions.
-     * @param pageName String Page Object Name
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
-     */
-    public static void naviagteToPage(String pageName) throws SentinelException {
-    	navigateToPage(pageName, null, null);
-    }
-    
-    /**
-     * Overloaded method for navigating to a page object's url based on the current environment, and taking a 
-     * query string argument it will append to the request. Used so that nulls do not need to be passed. Intended 
-     * for use in creating complex Cucumber steps definitions.
-     * @param pageName String Page Object Name
-     * @param arguments String the literal string to append to the default URL.
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
-     */
-    public static void naviagteToPage(String pageName, String arguments) throws SentinelException {
-    	navigateToPage(pageName, "has arguments", arguments);
-    }
- 
-    /**
-     * Closes the child browser tab or window
+     * Loads a page based on the environment you are currently testing. The url is set in the page object yaml file.
+     * Refer to the documentation in the sentinel.example project for more information. You cannot load a URL
+     * directly, because once there you would not be able to do anything.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I close the browser tab</li>
-     * <li>I close the browser window"</li>
+     * <li>I pass the argument "?docYear=2003" to the Documents Page</li>
+     * <li>I pass the arguments "?firstname=bob{@literal &}lastname=smith" to the Users Page</li>
+     * <li>I pass the arguments "/apples/oranges" to the Fruits Page</li>
      * </ul>
+     * @param arguments String the literal string to append to the default URL.
+     * @param pageName String Page Object Name
      */
-    @When("^I close the browser (?:tab|window)$")
-    public static void closeBrowserWindow() {
-        PageManager.closeChildWindow();
+    @Given("^I pass the arguments? \"([^\"]*)\" to the (.*?)$")
+    public static void navigateToPageWithArguments(String arguments, String pageName) {
+    	PageManager.setPage(pageName);
+    	String baseUrl = Configuration.url();
+    	baseUrl += arguments;
+    	log.debug("Loading the the {} page using the url: {}", pageName, baseUrl);
+        PageManager.openPage(baseUrl);
     }
     
     /**
@@ -173,6 +171,6 @@ public class BaseSteps {
             PageManager.refresh();
             break;
         }
-    }
+    }    
     
 }

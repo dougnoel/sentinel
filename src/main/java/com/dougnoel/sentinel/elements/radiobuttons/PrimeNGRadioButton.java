@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.openqa.selenium.By;
 
-import com.dougnoel.sentinel.elements.PageElement;
+import com.dougnoel.sentinel.elements.Element;
 
 /**
  * Implementation of an NGPrime Radio Button.
@@ -34,7 +34,7 @@ public class PrimeNGRadioButton extends Radiobutton {
 	 * Overrides the click method to send it to the correct part of the radio button.
 	 */
 	@Override
-	public PageElement click() {
+	public Element click() {
 		element().findElement(By.xpath("//input")).click();
 		return this;
 	}

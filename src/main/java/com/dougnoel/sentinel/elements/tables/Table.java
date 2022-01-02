@@ -9,11 +9,10 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.elements.PageElement;
-import com.dougnoel.sentinel.exceptions.ElementNotFoundException;
-import com.dougnoel.sentinel.exceptions.NoSuchColumnException;
+import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -22,7 +21,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
  * management issues, such as finding a value in the same row.
  */
 
-public class Table extends PageElement {
+public class Table extends Element {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
@@ -279,7 +278,7 @@ public class Table extends PageElement {
 	
 	/**
 	 * Returns a WebElement found inside the indicated row using the locator passed.
-	 * TODO: Fix this so that it uses PageElements
+	 * TODO: Fix this so that it uses Elements
 	 * 
 	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
 	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
@@ -301,7 +300,7 @@ public class Table extends PageElement {
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
 			log.error(errorMsg);
-			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+			throw new NoSuchElementException(errorMsg);
 		} 
 		catch (org.openqa.selenium.StaleElementReferenceException e2) {
 			reset(); //We ended up with a stale element so reset the whole table
@@ -312,7 +311,7 @@ public class Table extends PageElement {
 			} catch (org.openqa.selenium.NoSuchElementException e) {
 				String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
 				log.error(errorMsg);
-				throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+				throw new NoSuchElementException(errorMsg);
 			}
 		}
 		log.trace("Element found: {}", element);
@@ -339,7 +338,7 @@ public class Table extends PageElement {
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = SentinelStringUtils.format("{} not found in the row with {} Error: {}", elementLocator, rowLocator, e.getMessage());
 			log.error(errorMsg);
-			throw new com.dougnoel.sentinel.exceptions.NoSuchElementException(errorMsg);
+			throw new NoSuchElementException(errorMsg);
 		}
 		log.trace("Element found: {}", element);
 		return element;
@@ -392,7 +391,7 @@ public class Table extends PageElement {
 		if (column == null) {
 			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
-			throw new ElementNotFoundException(errorMessage);
+			throw new NoSuchElementException(errorMessage);
 		}
 		for (String cell : column) {
 			try {
@@ -403,7 +402,7 @@ public class Table extends PageElement {
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
-				throw new ElementNotFoundException(errorMessage, e);
+				throw new NoSuchElementException(errorMessage, e);
 			}
 
 		}
@@ -423,7 +422,7 @@ public class Table extends PageElement {
 		if (column == null) {
 			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
-			throw new ElementNotFoundException(errorMessage);
+			throw new NoSuchElementException(errorMessage);
 		}
 		for (String cell : column) {
 			try {
@@ -436,7 +435,7 @@ public class Table extends PageElement {
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
-				throw new ElementNotFoundException(errorMessage, e);
+				throw new NoSuchElementException(errorMessage, e);
 			}
 
 		}
@@ -576,7 +575,7 @@ public class Table extends PageElement {
 			if (!verifyColumnExists(columnHeader)) {
 				String errorMessage = SentinelStringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
-				throw new NoSuchColumnException(errorMessage);
+				throw new NoSuchElementException(errorMessage);
 			}
 			for (int i = 0; i < headers.size(); i++) {
 

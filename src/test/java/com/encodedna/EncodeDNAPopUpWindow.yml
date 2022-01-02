@@ -1,0 +1,6 @@
+urls:
+   default: https://www.encodedna.com/2013/09/open-new-window-using-javascript-window-open-demo.htm
+elements:
+  header:
+    elementType: Div
+    xpath: "//div[@class='header']/h1"

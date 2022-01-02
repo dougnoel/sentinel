@@ -2,9 +2,7 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelectElement;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
-import com.dougnoel.sentinel.exceptions.SentinelException;
-
+import com.dougnoel.sentinel.configurations.Configuration;
 import io.cucumber.java.en.When;
 
 public class SelectSteps {
@@ -35,12 +33,11 @@ public class SelectSteps {
      * 
      * @param text String the text of the option to select
      * @param elementName String the name of the select element
-     * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I select (?!the)(.*?) (?:in|from) the (.*)$")
-    public static void selectItemFromElement(String text, String elementName) throws SentinelException {
+    public static void selectItemFromElement(String text, String elementName) {
         getElementAsSelectElement(elementName).select(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
 
 	/**
@@ -61,13 +58,12 @@ public class SelectSteps {
      * 
      * @param ordinal String the ordinal selection (numbering starts with 1)
      * @param elementName String the name of the select element
-	 * @throws SentinelException this exists so that any uncaught exceptions result in the test failing
      */
     @When("^I select the (\\d+)(?:st|nd|rd|th) option (?:in|from) the (.*)$")
-    public static void selectOrdinalItemFromElement(String ordinal, String elementName) throws SentinelException {
-        int index = Integer.parseInt(ordinal);
+    public static void selectOrdinalItemFromElement(String ordinal, String elementName) {
+    	var index = Integer.parseInt(ordinal);
         String text = getElementAsSelectElement(elementName).select(index).getText(index);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
 
 }

@@ -1,0 +1,21 @@
+elements:
+  app_logo:
+    elementType: Div
+    xpath: "//div[@class='app_logo']"
+  hamburger_menu:
+    elementType: Button
+    id: react-burger-menu-btn
+    text: "Open Menu"
+    xpath: "//button[@id='react-burger-menu-btn']"
+  inventory_menu_item:
+    elementType: Link
+    id: inventory_sidebar_link
+  about_menu_item:
+    elementType: Link
+    id: about_sidebar_link
+  logout_menu_item:
+    elementType: Link
+    id: logout_sidebar_link
+  reset_app_menu_item:
+    elementType: Link
+    id: reset_sidebar_link

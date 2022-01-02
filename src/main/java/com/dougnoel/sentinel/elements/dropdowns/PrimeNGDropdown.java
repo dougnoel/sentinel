@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.configurations.TimeoutManager;
+import com.dougnoel.sentinel.configurations.Time;
 
 /**
  * Implementation of an NGPrime Dropdown.
@@ -43,12 +43,12 @@ public class PrimeNGDropdown extends JSDropdownElement {
 	 */
 	@Override
     protected WebElement getOption(String selectionText) {
-		TimeoutManager.wait(SELECTWAITTIME);
+		Time.wait(SELECTWAITTIME);
 		String xTagName = this.element().getTagName();
     	String xPath = "//li[@aria-label=\"" + selectionText + "\"]";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", selectionText, xTagName, xPath);
     	this.click();
-    	return this.element().findElement(By.xpath(xPath));
+    	return this.element(By.xpath(xPath));
     }
     
     /**
@@ -58,12 +58,12 @@ public class PrimeNGDropdown extends JSDropdownElement {
      */
 	@Override
     protected WebElement getOption(int index) {
-		TimeoutManager.wait(SELECTWAITTIME);
+		Time.wait(SELECTWAITTIME);
     	String xTagName = this.element().getTagName();
     	String xPath = "//p-dropdownitem[" + Integer.toString(index) + "]/li";
     	log.trace("Trying to click option {} from downdown using the xpath {}{}", index, xTagName, xPath);
     	this.click();
-    	return this.element().findElement(By.xpath(xPath));
+    	return this.element(By.xpath(xPath));
     }
     
 
@@ -83,10 +83,6 @@ public class PrimeNGDropdown extends JSDropdownElement {
      */
 	@Override
     public String getSelectedText() {
-    	try {
-		return this.element().findElement(By.xpath("//label")).getText(); //TODO: apparently deprecated on 5/25/2020 figure out if we can remove this immediately
-    	} catch (org.openqa.selenium.NoSuchElementException e) {
-    		return this.element().findElement(By.xpath("//span[contains(@class, 'ui-dropdown-label')]")).getText();
-    	}
+    	return this.element(By.xpath("//span[contains(@class, 'p-dropdown-label')]")).getText();
    }
 }

@@ -8,12 +8,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -25,7 +23,7 @@ import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
@@ -35,31 +33,13 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 public class DownloadManager {
     private static final Logger log = LogManager.getLogger(DownloadManager.class.getName()); // Create a logger.
 
-    private static DownloadManager instance = null;
-
     private static String filename = null; // Current filename
     private static String fileExtension = "pdf"; // Current file extension - Default of pdf
     private static File file = null; // Current file
 
     private static String downloadDirectory = createDownloadDirectory();
 
-    // Create a list to store all the downloaded files
-    // This will allow us to clean them all up at the end of a run.
-
-    protected DownloadManager() {
-        // Exists only to defeat instantiation.
-    }
-
-    /**
-     * Creates instance of Singleton class.
-     * @return DownloadManager instance of this class
-     */
-    public static DownloadManager getInstance() {
-        if (instance == null)
-            instance = new DownloadManager();
-
-        return instance;
-    }
+    private DownloadManager(){}
 
     /**
      * Returns true if the file exists in the directory, given a filename and a path.
@@ -69,10 +49,10 @@ public class DownloadManager {
      * @return boolean Returns true if the file exists, false if it does not.
      */
     public static boolean isFileDownloaded(String downloadPath, String fileName) {
-        File dir = new File(downloadPath);
+    	var dir = new File(downloadPath);
         File[] directoryContents = dir.listFiles();
 
-        for (int i = 0; i < directoryContents.length; i++) {
+        for (var i = 0; i < directoryContents.length; i++) {
             if (directoryContents[i].getName().equals(fileName))
                 return true;
         }
@@ -85,8 +65,10 @@ public class DownloadManager {
      * file is downloaded.
      * 
      * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the file download is interrupted
+     * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload() {
+    public static String monitorDownload() throws InterruptedException, IOException {
         return monitorDownload(downloadDirectory, fileExtension);
     }
 
@@ -100,62 +82,51 @@ public class DownloadManager {
      * @param downloadDir String path to the download directory.
      * @param fileExtension String extension of the file type you are expecting to be  downloaded.
      * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the thread is interrupted during download
+     * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload(String downloadDir, String fileExtension) {
+    public static String monitorDownload(String downloadDir, String fileExtension) throws InterruptedException, IOException {
         String downloadedFileName = null;
-        boolean valid = true;
-        boolean found = false;
-
+        var valid = true;
+        
         // default timeout in seconds
         long timeOut = 20;
-        try {
-            Path downloadFolderPath = Paths.get(downloadDir);
-            WatchService watchService = FileSystems.getDefault().newWatchService();
-            downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-            long startTime = System.currentTimeMillis();
-            do {
-                WatchKey watchKey;
-                watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
-                long currentTime = (System.currentTimeMillis() - startTime) / 1000;
-                if (currentTime > timeOut) {
-                    log.error("Download operation timed out.. Expected file was not downloaded");
-                    return downloadedFileName;
-                }
+        var downloadFolderPath = Paths.get(downloadDir);
+        var watchService = FileSystems.getDefault().newWatchService();
+        downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+        long startTime = System.currentTimeMillis();
+        do {
+            WatchKey watchKey;
+            watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
+            long currentTime = (System.currentTimeMillis() - startTime) / 1000;
+            if (currentTime > timeOut) {
+                log.error("Download operation timed out.. Expected file was not downloaded");
+                return downloadedFileName;
+            }
 
-                for (WatchEvent<?> event : watchKey.pollEvents()) {
-                    WatchEvent.Kind<?> kind = event.kind();
-                    if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-                        String fileName = event.context().toString();
-                        log.debug("New File Created: {}", fileName);
-                        if (fileName.endsWith(fileExtension)) {
-                            downloadedFileName = fileName;
-                            log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
-                            Thread.sleep(100);
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (found) {
-                    return downloadedFileName;
-                } else {
-                    currentTime = (System.currentTimeMillis() - startTime) / 1000;
-                    if (currentTime > timeOut) {
-                        log.error("Failed to download expected file");
+            for (WatchEvent<?> event : watchKey.pollEvents()) {
+                WatchEvent.Kind<?> kind = event.kind();
+                if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+                	var fileName = event.context().toString();
+                    log.debug("New File Created: {}", fileName);
+                    if (fileName.endsWith(fileExtension)) {
+                        downloadedFileName = fileName;
+                        log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
+                        Thread.sleep(100);
                         return downloadedFileName;
                     }
-                    valid = watchKey.reset();
                 }
-            } while (valid);
-        }
-
-        catch (InterruptedException e) {
-            log.error("Interrupted error - {}", e.getMessage());
-        } catch (NullPointerException e) {
-            log.error("Download operation timed out.. Expected file was not downloaded");
-        } catch (Exception e) {
-            log.error("Error occured - {}", e.getMessage());
-        }
+            }
+            
+            currentTime = (System.currentTimeMillis() - startTime) / 1000;
+            if (currentTime > timeOut) {
+                log.error("Failed to download expected file");
+                return downloadedFileName;
+            }
+            valid = watchKey.reset();
+            
+        } while (valid);
+        
         return downloadedFileName;
     }
 
@@ -195,7 +166,7 @@ public class DownloadManager {
      */
     public static boolean verifyPDFContent(URL url, String expectedText, int pageStart, int pageEnd) throws IOException {
         
-        boolean flag = false;
+    	var flag = false;
 
         BufferedInputStream file = null;
         PDFTextStripper pdfStripper = null;
@@ -205,16 +176,17 @@ public class DownloadManager {
         try {
             file = new BufferedInputStream(url.openStream());
         } catch (IOException e) {
-            String errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
+        	var errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
         } finally {
-        	file.close();
+        	if (file != null)
+        		file.close();
         }
 
         try {
             pdfStripper = new PDFTextStripper();
         } catch (IOException e) {
-            String errorMessage = SentinelStringUtils.format("Could not create PDFTextStripper() for PDF file {} Setting -Dssltrust=all on the command line will bypass PKIX errors.", url.toString());
+        	var errorMessage = SentinelStringUtils.format("Could not create PDFTextStripper() for PDF file {} Setting -Dssltrust=all on the command line will bypass PKIX errors.", url.toString());
             throw new IOException(errorMessage, e);
         }
         pdfStripper.setStartPage(pageStart);
@@ -223,17 +195,17 @@ public class DownloadManager {
         try {
             pdDoc = PDDocument.load(file);
         } catch (InvalidPasswordException e) {
-            String errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
+        	var errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
             throw new IOException(errorMessage, e);
         } catch (IOException e) {
-            String errorMessage = SentinelStringUtils.format("Could not load the PDF {}", url.toString());
+        	var errorMessage = SentinelStringUtils.format("Could not load the PDF {}", url.toString());
             throw new IOException(errorMessage, e);
         }
         
         try {
             parsedText = pdfStripper.getText(pdDoc);
         } catch (IOException e) {
-            String errorMessage = SentinelStringUtils.format("Could not get text from PDFTextStripper() for PDF file {}", url.toString());
+        	var errorMessage = SentinelStringUtils.format("Could not get text from PDFTextStripper() for PDF file {}", url.toString());
             throw new IOException(errorMessage, e);
         }
 
@@ -241,7 +213,7 @@ public class DownloadManager {
             try {
                 pdDoc.close();
             } catch (IOException e) {
-                String errorMessage = SentinelStringUtils.format("Could not close the PDF document {}", url.toString());
+            	var errorMessage = SentinelStringUtils.format("Could not close the PDF document {}", url.toString());
                 throw new IOException(errorMessage, e);
             }
         }
@@ -262,22 +234,18 @@ public class DownloadManager {
      * @param pageStart int Number of the page on the pdf to start looking for the text  (inclusive).
      * @param pageEnd int Number of the page on the pdf to stop looking for the text     (inclusive).
      * @return boolean true if the text was found, false if it was not.
-     * @throws IOException Throws an error if the PDF file cannot be opened.
      */
-    public static boolean verifyTextInDownloadedPDF(String expectedText, File pdfFile, int pageStart, int pageEnd)
-            throws IOException {
+    public static boolean verifyTextInDownloadedPDF(String expectedText, File pdfFile, int pageStart, int pageEnd) {
 
-        boolean flag = false;
+    	var flag = false;
 
         PDFTextStripper pdfStripper = null;
-        FileInputStream fis = null;
         PDDocument pdDoc = null;
         String parsedText = null;
 
-        try {
-            fis = new FileInputStream(pdfFile);
-            BufferedInputStream file = new BufferedInputStream(fis);
-
+        try ( var fis = new FileInputStream(pdfFile);
+        		var file = new BufferedInputStream(fis); ) {
+        	
             pdfStripper = new PDFTextStripper();
             pdfStripper.setStartPage(pageStart);
             pdfStripper.setEndPage(pageEnd);
@@ -292,10 +260,8 @@ public class DownloadManager {
             } catch (Exception e1) {
                 log.error(e1);
             }
-        } finally {
-        	fis.close();
         }
-
+        
         log.trace("PDF Parsed Text: \n{}", parsedText);
 
         if (parsedText != null && parsedText.contains(expectedText)) {
@@ -314,11 +280,11 @@ public class DownloadManager {
      * @throws IOException if error durring file io or during document load
      */
     public static String saveImageInPDF(int index, File pdfFile) throws IOException {
-        String imageLocation = "test.jpg";
+    	var imageLocation = "test.jpg";
         PDFRenderer pdfRenderer = null;
         BufferedImage image = null;
 
-        PDDocument document = PDDocument.load(pdfFile);
+        var document = PDDocument.load(pdfFile);
 
         pdfRenderer = new PDFRenderer(document);
         image = pdfRenderer.renderImage(index);
@@ -398,7 +364,7 @@ public class DownloadManager {
      * @return String the download directory path
      */
     public static String createDownloadDirectory() {
-    	String downloadDirectory = ConfigurationManager.getOptionalProperty("downloadDirectory");
+    	var downloadDirectory = Configuration.toString("downloadDirectory");
     	if (downloadDirectory == null) {
     		downloadDirectory = "../../Downloads";
     	}

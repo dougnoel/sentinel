@@ -5,10 +5,9 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTextbo
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.configurations.ConfigurationManager;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.en.When;
@@ -21,7 +20,7 @@ public class TextSteps {
      * then it is sent a sendKeys event to an element defined on a page object with that name. The
      * page object and driver object are defined by the WebDriverFactory and PageFactory objects.
      * The derived Page Object (extends Page) should define a method named [element name]_[element type]
-     * returning a PageElement object (e.g. password_field).
+     * returning a Element object (e.g. password_field).
      * <p>
      * Since this random value might need to be referenced again, we store it using
      * the ConfigurationManager, using the passed elementname as the key to retrieve
@@ -44,18 +43,7 @@ public class TextSteps {
         if (storageName != null) {
             elementName = storageName + " " + elementName;
         }
-        ConfigurationManager.setValue(elementName, text);
-    }
-    
-    /**
-     * Overloaded method for entering random text in a text box, so that nulls do not need to be passed. 
-     * Intended for use in creating complex Cucumber steps definitions.
-     * 
-     * @param text String the text to enter into the element
-     * @param elementName String the name of the element into which to enter text
-     */
-    public static void enterRandomText(String text, String elementName) {
-    	enterRandomText(text, elementName, null);
+        Configuration.update(elementName, text);
     }
 
     /**
@@ -66,7 +54,7 @@ public class TextSteps {
      * sent a sendKeys event to an element defined on a page object with that name.
      * The page object and driver object are defined by the WebDriverFactory and
      * PageFactory objects. The derived Page Object (extends Page) should define a
-     * method named [element name]_[element type] returning a PageElement object
+     * method named [element name]_[element type] returning a Element object
      * (e.g. password_field).
      * <p>
      * <b>Gherkin Examples:</b>
@@ -82,42 +70,7 @@ public class TextSteps {
     @When("^I enter (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
         getElementAsTextbox(elementName).type(text);
-        ConfigurationManager.setValue(elementName, text);
-    }
-
-    /**
-     * Enters the given text into a text box that matches the given elementName as defined on the current Page object,
-     * then stores the text value in the Configuration Manager using the given element name as the key.
-     * The given element name is made lower case and whitespaces are replaced with
-     * underscores in getElementAsTextbox, then it is sent a pressKeys event to an element defined on a
-     * page object with that name. The page object and driver object are defined by
-     * the WebDriverFactory and PageFactory objects. The derived Page Object
-     * (extends Page) should define a method named [element name]_[element type]
-     * returning a PageElement object (e.g. password_field).
-     * <p>
-     * This is different from just entering text in that the text is injected into
-     * the element by executing javascript. This will deal with javascript sending
-     * key events to a hidden field for text processing when the sendKeys() method
-     * isn't working.
-     * <p>
-     * NOTE: This should only be used if the standard "I enter &lt;text&gt; in the
-     * &lt;element&gt; step does not work. It is not representative of typical user
-     * action.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I inject bob in the username textbox</li>
-     * <li>I inject abc123 in the Password field</li>
-     * <li>I inject test@test.com into the email field<li>
-     * </ul>
-     * 
-     * @param text String the text to enter
-     * @param elementName String the name of the element into which to enter text
-     */
-    @When("^I inject (.*) in the (.*)$")
-    public static void injectText(String text, String elementName) {
-        getElementAsTextbox(elementName).javaScriptSendKeys(text);
-        ConfigurationManager.setValue(elementName, text);
+        Configuration.update(elementName, text);
     }
     
     /**
@@ -137,7 +90,7 @@ public class TextSteps {
      */
     @When("^I reuse the (.*) text in the (.*)$")
     public static void enterStoredText(String key, String elementName) {
-        String text = ConfigurationManager.getValue(key);
+    	var text = Configuration.toString(key);
         enterText(text, elementName);
     }
 
@@ -155,7 +108,7 @@ public class TextSteps {
     @When("^I press the (escape|enter|return|tab) key$")
     public static void keyPress(String keyName) {
     	keyName = keyName.toUpperCase();
-        WebDriver driver = WebDriverFactory.getWebDriver();
+    	var driver = WebDriverFactory.getWebDriver();
         WebElement element = driver.findElement(By.tagName("Body"));
         element.sendKeys(Keys.valueOf(keyName));
     }
