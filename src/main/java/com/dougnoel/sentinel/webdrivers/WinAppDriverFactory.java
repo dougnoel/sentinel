@@ -28,11 +28,21 @@ public class WinAppDriverFactory {
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
 			
+	/**
+	 * Exists to defeat instantiation.
+	 */
+	private WinAppDriverFactory() {}
 
-	private WinAppDriverFactory() {
-		// exists to defeat instantiation
-	}
-
+	/**
+	 * Returns a newly created WindowsDriver as a WebDriver, based on the currently
+	 * active page object and environment. If the WinAppDriver.exe program is not started,
+	 * it also starts that.
+	 * <p>
+	 * Note: This method cannot tell if WinAppDriver.exe has already been started externally
+	 * and will create a port conflict if it is already running.
+	 * 
+	 * @return WebDriver returns a WindowsDriver&lt;WebElement&gt;
+	 */
 	protected static WebDriver createWinAppDriver() {
 		startWinAppDriverExe();
 		URL url;
@@ -62,6 +72,12 @@ public class WinAppDriverFactory {
 		return driver;
 	}
 
+	/**
+	 * Quits the WindowsDriver process passed to it. If this is the last remaining
+	 * WinAppDriver running, the WinAppDriver.exe executable is also stopped.
+	 * 
+	 * @param driver WindowsDriver&lt;WebElement&gt; the WindowsDriver to quit
+	 */
 	protected static void quit(WindowsDriver<WebElement> driver) {
 		driver.closeApp();
 		numberOfDriversRunning -= 1;
@@ -71,6 +87,13 @@ public class WinAppDriverFactory {
 		}
 	}
 	
+	/**
+	 * Starts the WinAppDriver executable program if it is not running
+	 * so that Windows programs can be driven using it. Sets the
+	 * winAppDrvierProcess member variable to be the running process.
+	 * 
+	 * TODO: Start this so that it can be left over after the test (parent process) ends.
+	 */
 	private static void startWinAppDriverExe() {
 		if (winAppDriverProcess == null) {
 			ProcessBuilder builder = new ProcessBuilder(COMMAND)
@@ -85,6 +108,11 @@ public class WinAppDriverFactory {
 		}
 	}
 	
+	/**
+	 * Stops WinAppDriver running if it is running and sets the
+	 * WinAppDriverProcess member variable to null so that we know
+	 * we need to start it up again if necessary.
+	 */
 	private static void stopWinAppDriverExe() {
 		if (winAppDriverProcess != null) {
 			winAppDriverProcess.destroy();
