@@ -5,14 +5,13 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 
 public class ConfigurationProdTests {
 	private static String originalEnvironment = null;
 	private static final String PROD = "prod";
 	
 	@BeforeClass
-	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
+	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(PROD);
 	}
@@ -23,7 +22,7 @@ public class ConfigurationProdTests {
 	}
 	
 	@Test
-	public void loadProdUrl() throws SentinelException {
+	public void loadProdUrl() {
 		Configuration.environment(PROD);
 		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", Configuration.url("DefaultUrls"));
 	}

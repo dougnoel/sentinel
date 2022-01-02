@@ -20,7 +20,5 @@ public class DownloadManagerTests {
 		File file = new File("src/test/resources/pdfs/TestPDF.pdf");
 		assertFalse("Expecting text to not appear on page 2 of PDF.", DownloadManager.verifyTextInDownloadedPDF("This is page one.", file, 2, 2));
 	}
-	
-
 
 }

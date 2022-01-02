@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -44,9 +43,7 @@ public class ElementFunctions {
 		try {
 			return (Dropdown) getElement(elementName);
 		} catch (ClassCastException e) {
-			String errorMessage = getClassCastExceptionErrorMessage(elementName, Dropdown.class.getSimpleName());
-			log.error(errorMessage);
-			throw new ElementTypeMismatchException(errorMessage);
+			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Dropdown.class.getSimpleName()));
 		}
     }
     
@@ -60,9 +57,7 @@ public class ElementFunctions {
 		try {
 			return (SelectElement) getElement(elementName);
 		} catch (ClassCastException e) {
-			String errorMessage = getClassCastExceptionErrorMessage(elementName, SelectElement.class.getSimpleName());
-			log.error(errorMessage);
-			throw new ElementTypeMismatchException(errorMessage);
+			throw new ClassCastException(buildClassCastExceptionMessage(elementName, SelectElement.class.getSimpleName()));
 		}
     }
 
@@ -76,19 +71,22 @@ public class ElementFunctions {
 		try {
 			return (Table) getElement(elementName);
 		} catch (ClassCastException e) {
-			String errorMessage = getClassCastExceptionErrorMessage(elementName, Table.class.getSimpleName());
-			log.error(errorMessage);
-			throw new ElementTypeMismatchException(errorMessage);
+			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Table.class.getSimpleName()));
 		}
     }
     
     /**
-     * Returns an error message that is clearer than a casting error.
+     * Returns an error message that is a clearer casting error and logs it.
      * @param elementName the element that was improperly used
      * @param className the page object name
      * @return String the error message to pass to the user
      */
-    private static String getClassCastExceptionErrorMessage(String elementName, String className) {
-		return SentinelStringUtils.format("\"{}\" was not created as a {}. Update the {}.yml page object and try again.", elementName, className, PageManager.getPage().getName());
+    private static String buildClassCastExceptionMessage(String elementName, String className) {
+    	String errorMessage = SentinelStringUtils.format("\"{}\" was not created as a {}. Update the {}.yml page object and try again."
+    			, elementName
+    			, className
+    			, PageManager.getPage().getName());
+    	log.error(errorMessage);
+    	return errorMessage;
     }
 }

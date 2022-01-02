@@ -3,6 +3,9 @@ package com.dougnoel.sentinel.pages;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -11,10 +14,6 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.exceptions.NoSuchFrameException;
-import com.dougnoel.sentinel.exceptions.NoSuchWindowException;
-import com.dougnoel.sentinel.exceptions.PageNotFoundException;
-import com.dougnoel.sentinel.exceptions.URLNotFoundException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -68,11 +67,9 @@ public class PageManager {
 	 * @return Page the Page Object
 	 */
 	public static Page getPage() {
-		if (instance == null)
-			throw new PageNotFoundException("Page not created yet. It must be created before it can be used. Make sure you are calling getPage in your BeforeAll step with parameters.");
-		if (page == null) {
-			throw new PageNotFoundException("We could not find the Page you are looking for. Please check the pageObjectPackages configuration in conf/sentinel.yml and make sure it includes directory containing your page object.");
-		}
+		if (instance == null || page == null)
+			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
+		
 		return page;
 	}
 
@@ -221,7 +218,7 @@ public class PageManager {
 					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
 					e.getMessage());
 			log.error(errorMessage);
-			throw new com.dougnoel.sentinel.exceptions.NoSuchWindowException(errorMessage);
+			throw new NoSuchWindowException(errorMessage);
 		}
 	}
 
@@ -281,12 +278,13 @@ public class PageManager {
 					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
 					page.getName(), e.getMessage());
 			log.error(errorMessage);
-			throw new URLNotFoundException(errorMessage);
+			throw new NotFoundException(errorMessage);
 
 		}
 		if (currentUrl == null) {
-			log.error("Current URL not found");
-			throw new URLNotFoundException("Current URL could not be found. Please check the URL and try again.");
+			var errorMessage = "Current URL could not be found. Please check the URL and try again.";
+			log.error(errorMessage);
+			throw new NotFoundException(errorMessage);
 		}
 		return currentUrl;
 	}

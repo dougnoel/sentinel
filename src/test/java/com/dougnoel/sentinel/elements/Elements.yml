@@ -34,6 +34,6 @@ elements:
     elementType: Table
     name: "register"
   bad_selector:
-     bad: "blah"
+    bad: "blah"
   bad_element:
-     id:
+    id:

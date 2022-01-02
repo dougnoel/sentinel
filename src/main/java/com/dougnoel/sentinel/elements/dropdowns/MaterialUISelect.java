@@ -42,7 +42,7 @@ public class MaterialUISelect extends JSDropdownElement {
     	String xPath = "//div[contains(@class, 'MuiPopover-root')]/div[3]/ul/li[contains(text(),'" + selectionText + "')]";
     	log.trace("Looking for the value in the dropdown at position {} using {}", selectionText, xPath);
     	this.click();
-    	return driver.findElement(By.xpath(xPath));
+    	return this.element(By.xpath(xPath));
     }
     
     /**
@@ -55,7 +55,7 @@ public class MaterialUISelect extends JSDropdownElement {
     	String xPath = "//div[contains(@class, 'MuiPopover-root')]/div[3]/ul/li[" + Integer.toString(index) + "]";
     	log.trace("Looking for the value in the dropdown at position {} using {}", index, xPath);
     	this.click();
-    	return driver.findElement(By.xpath(xPath));
+    	return this.element(By.xpath(xPath));
     }
 
 }

@@ -9,7 +9,11 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -22,12 +26,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.ElementDisabledException;
-import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
-import com.dougnoel.sentinel.exceptions.ElementNotVisibleException;
-import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
-import com.dougnoel.sentinel.exceptions.NoSuchElementException;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.systems.FileManager;
@@ -69,7 +67,7 @@ public class Element {
 	protected Map<SelectorType,String> selectors;
 	protected String name;
 	protected final String elementType;
-	protected WebDriver driver;
+	private WebDriver driver() { return Driver.getDriver(); }
 
 	/**
 	 * The constructor for a WebElement to initialize how an element is going to be
@@ -91,13 +89,12 @@ public class Element {
 				} catch (IllegalArgumentException e) {
 					var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", locatorType, elementName, PageManager.getPage().getName());
 					log.error(errorMessage);
-					throw new NoSuchSelectorException(errorMessage);
+					throw new InvalidSelectorException(errorMessage);
 				}
 			}
 		});
 		this.elementType = elementType;
 		name = elementName;
-		this.driver = Driver.getDriver();
 	}
 	
 	/**
@@ -118,12 +115,12 @@ public class Element {
 	 */
 	private WebElement getElementWithWait(final By locator, Duration timeout) {
 		try {
-		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 			       .withTimeout(timeout)
 			       .pollingEvery(Time.interval())
 			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-		return wait.until(d -> driver.findElement(locator));
+		return wait.until(d -> driver().findElement(locator));
 		}
 		catch (org.openqa.selenium.TimeoutException e) {
 			return null;
@@ -156,14 +153,13 @@ public class Element {
 				return By.xpath(selectorValue);
 			default:
 				var errorMessage = SentinelStringUtils.format("{} is not a valid selector type. Please fix the element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
-				
 				log.error(errorMessage);
-				throw new NoSuchSelectorException(errorMessage);
+				throw new InvalidSelectorException(errorMessage);
 			}
 		} catch (IllegalArgumentException e) {
 			var errorMessage = SentinelStringUtils.format("{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType, selectorValue, getName(), PageManager.getPage().getName());
 			log.error(errorMessage);
-			throw new MalformedSelectorException(errorMessage, e);
+			throw new InvalidSelectorException(errorMessage, e);
 		}
 	}
 	
@@ -176,7 +172,7 @@ public class Element {
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
 	 */
 	protected WebElement element() {
-		driver.switchTo().defaultContent();
+		driver().switchTo().defaultContent();
 		WebElement element = null;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
@@ -204,12 +200,12 @@ public class Element {
 	 */
 	protected WebElement element(final By locator) {    	
 		try {
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 					.withTimeout(Time.out())
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-			WebElement element = wait.until(d -> driver.findElement(locator));
+			WebElement element = wait.until(d -> driver().findElement(locator));
 			return wait.until(d -> element.findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			return null;
@@ -229,7 +225,7 @@ public class Element {
     		WebElement element = null;
     		List <WebElement> iframes = PageManager.getPage().getIFrames();
     		for (WebElement iframe : iframes) {
-    			driver.switchTo().frame(iframe);
+    			driver().switchTo().frame(iframe);
     			element = findElementInCurrentFrameForDuration(Time.loopInterval());
     			if (element != null) {
     				return element;
@@ -237,7 +233,7 @@ public class Element {
         	    element = findElementInIFrame();
     			if (element != null)
     				return element;
-    			driver.switchTo().parentFrame();
+    			driver().switchTo().parentFrame();
     		}
     	}
     	return null;
@@ -279,15 +275,13 @@ public class Element {
 		}
 		
 		var errorMessage = SentinelStringUtils.format(
-			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time for all click types was {} seconds.",
-				elementType
+			"{} element named \"{}\" cannot receive text. Make sure the element is on the page. The selectors being used are: {} The total attempt time was {} seconds."
+				, elementType
 				, getName()
 				, selectors
 				, Time.out().getSeconds());
 		if (!element().isEnabled()) {
 			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
-			log.error(errorMessage);
-			throw new ElementDisabledException(errorMessage);
 		}
 		log.error(errorMessage);
 		throw new ElementNotVisibleException(errorMessage);
@@ -296,6 +290,7 @@ public class Element {
 	/**
 	 * Loops through all the ways to send text to an element.
 	 * 
+	 * @param text String the text to send
 	 * @return boolean true if the text was sent, false otherwise
 	 */
 	private boolean sendKeysLoop(String text) {
@@ -309,12 +304,17 @@ public class Element {
 
 			return true;
 		} 
-		catch (ElementDisabledException e) {
-			return false;
-		}
 		catch (WebDriverException e) {
+			if(!element.isEnabled()) { // Respect if an element is disabled.
+				var errorMessage = SentinelStringUtils.format(
+						"{} element named \"{}\" is disabled and cannot receive text. The selectors being used are: {}"
+							, elementType
+							, getName()
+							, selectors);
+				throw new ElementNotInteractableException(errorMessage);
+		}
 			try {
-				JavascriptExecutor jse = (JavascriptExecutor) driver;
+				JavascriptExecutor jse = (JavascriptExecutor) driver();
 				jse.executeScript("arguments[0].value='" + text + "';", element());
 
 				constructElementWait(Time.loopInterval())
@@ -353,10 +353,10 @@ public class Element {
 		else if (!element.isEnabled()) {
 				errorMessage += "\nElement is disabled.";
 				log.error(errorMessage);
-				throw new ElementDisabledException(errorMessage);
+				throw new ElementNotInteractableException(errorMessage);
 		}
 		log.error(errorMessage);
-		throw new ElementNotClickableException(errorMessage);
+		throw new ElementNotInteractableException(errorMessage);
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class Element {
 				return true;
 			} catch(WebDriverException e1){
 				if (element.isEnabled()) {
-					JavascriptExecutor executor = (JavascriptExecutor) driver;
+					JavascriptExecutor executor = (JavascriptExecutor) driver();
 					executor.executeScript("arguments[0].click();", element);
 					return true;
 				}
@@ -395,7 +395,7 @@ public class Element {
 	 * @return FluentWait the wait object that can be invoked
 	 */
 	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
-		return new FluentWait<WebDriver>(driver)
+		return new FluentWait<WebDriver>(driver())
 			       .withTimeout(timeout)
 			       .pollingEvery(Time.interval())
 			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
@@ -437,7 +437,7 @@ public class Element {
 	 */
 	public boolean isDisplayed() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
 		}
@@ -457,7 +457,7 @@ public class Element {
 	 */
 	public boolean isHidden() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.invisibilityOf(element()));
 		}
@@ -479,7 +479,7 @@ public class Element {
 	 */
 	public boolean isEnabled() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> element().isEnabled());
 		}
@@ -501,7 +501,7 @@ public class Element {
 	 */
 	public boolean isDisabled() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
 		}
@@ -520,7 +520,7 @@ public class Element {
 	 */
 	public boolean isSelected() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementToBeSelected(element()));
 		}
@@ -539,7 +539,7 @@ public class Element {
 	 */
 	public boolean isNotSelected() {
 		try {
-			return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
 		}
@@ -587,7 +587,7 @@ public class Element {
 	 * @return true if the attribute exists for the element; otherwise false
 	 */
 	public boolean hasAttribute(String attribute) {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
 	}
@@ -604,7 +604,7 @@ public class Element {
 	 * @return true if the attribute does not exist for the element; otherwise false
 	 */
 	public boolean doesNotHaveAttribute(String attribute) {
-		return new WebDriverWait(driver, Time.out().toSeconds(), Time.interval().toMillis())
+		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.not(
 						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
@@ -646,7 +646,7 @@ public class Element {
 	 * @return Element for chaining
 	 */
 	public Element hover() {
-		new Actions(driver).moveToElement(element()).build().perform();
+		new Actions(driver()).moveToElement(element()).build().perform();
 		return this;
 	}
 	
@@ -657,7 +657,7 @@ public class Element {
 	 */
 	public String getTooltipText() {
 		hover();
-		return driver.findElement(By.xpath("//*[contains(text(),'')]")).getText();
+		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}
 	
 }

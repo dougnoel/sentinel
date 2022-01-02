@@ -5,15 +5,11 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.NoSuchElementException;
 
-import com.dougnoel.sentinel.exceptions.ConfigurationMappingException;
-import com.dougnoel.sentinel.exceptions.ConfigurationParseException;
+import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -23,8 +19,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * based on the given environment and the account map within that environment.
  */
 public class PageData {
-	private static final Logger log = LogManager.getLogger(PageData.class); // Create a logger.
-	// page urls to load in the web driver TODO: Annotate correctly.
+	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
 	public Map<String,String> executables;
 	// user account data TODO: Annotate correctly.
@@ -53,27 +48,21 @@ public class PageData {
 	 */
 	public static PageData loadYaml(File fileName) throws IOException{
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				.configure(DeserializationFeature
+				.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		PageData pageData = null;
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
-		} catch (JsonParseException e) {
-			String errorMessage = SentinelStringUtils.format("Page object file is not a valid YAML file: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationParseException(errorMessage, e);
-		} catch (JsonMappingException e) {
-			String errorMessage = SentinelStringUtils.format("Incorrect formatting in the page object file: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationMappingException(errorMessage, e);
+		} catch (Exception e) {
+			throw new YAMLFileException(e, fileName);
 		}
+		
 		if (pageData.urls != null && pageData.executables != null) {
 			String errorMessage = SentinelStringUtils.format("A page object cannot contain both urls and executables: {}.", fileName);
-			log.error(errorMessage);
-			throw new ConfigurationParseException(errorMessage);
+			throw new YAMLFileException(errorMessage, fileName);
 		}
 			
 		return pageData;
-		
 	}
 	
 	/**
@@ -104,7 +93,7 @@ public class PageData {
         	}
     	} else {
     		var errorMessage = SentinelStringUtils.format("There is no elements section defined in the page object {}. Please make sure that elements defined are under an \"elements:\" section. Refer to the Readme for more information.", PageManager.getPage().getName());
-			throw new ConfigurationParseException(errorMessage);
+			throw new NoSuchElementException(errorMessage);
     	}
     	return null;
     }

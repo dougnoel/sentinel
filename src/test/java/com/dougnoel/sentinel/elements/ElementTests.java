@@ -2,16 +2,21 @@ package com.dougnoel.sentinel.elements;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.assertFalse;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.NoSuchElementException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.exceptions.ElementDisabledException;
-import com.dougnoel.sentinel.exceptions.ElementNotClickableException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
@@ -33,7 +38,7 @@ public class ElementTests {
 	}
 
 	
-	@Test(expected = ElementNotClickableException.class)
+	@Test(expected = ElementNotInteractableException.class)
 	public void clickOnDisabledTextbox() {
 		BaseSteps.navigateToPage("TextboxPage");
 		getElement("First Name Field").click();
@@ -135,7 +140,7 @@ public class ElementTests {
 		assertTrue("Expecting element to not exist.", getElement("Bad Element").doesNotExist());
 	}
 	
-	@Test(expected = ElementDisabledException.class)
+	@Test(expected = ElementNotInteractableException.class)
 	public void sendingTextToDisabledTextbox() {
 		BaseSteps.navigateToPage("TextboxPage");
 		getElement("First Name Field").sendKeys("stuff");
@@ -144,7 +149,22 @@ public class ElementTests {
 	@Test
 	public void sendingTextToHiddenTextbox() {
 		BaseSteps.navigateToPage("TextboxPage");
-		assertTrue("Expecting hidden element to receive text.", getElement("Hidden Field").sendKeys("stuff").getText().contains("stuff"));
+		getElement("Hidden Field").sendKeys("stuff");
+		assertTrue("Expecting hidden element to receive text.", getElement("Hidden Field").getText().contains("stuff"));
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void ElementDoesNotExist() {
+		BaseSteps.navigateToPage("TextboxPage");
+		getElement("Blah");
+	}
+
+	@Test(expected = InvalidSelectorException.class)
+	public void InvalidSelectorTest() {
+		BaseSteps.navigateToPage("TextboxPage");
+		Map<String, String> selectors = new HashMap<>();
+		selectors.put("value", "1");
+		new Element("Checkbox", "Checkbox", selectors).element();
 	}
 	
 }

@@ -3,13 +3,12 @@ package com.dougnoel.sentinel.elements;
 import java.util.Map;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
-import com.dougnoel.sentinel.exceptions.NoSuchElementException;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.appium.java_client.MobileBy;
@@ -84,12 +83,12 @@ public class WindowsElement extends Element {
 				var errorMessage = SentinelStringUtils.format("{} is not a valid selector type for WinAppDriver. Please fix the windows element {} in the {}.yml page object.", selectorType, getName(), PageManager.getPage().getName());
 				
 				log.error(errorMessage);
-				throw new NoSuchSelectorException(errorMessage);
+				throw new InvalidSelectorException(errorMessage);
 			}
 		} catch (IllegalArgumentException e) {
 			var errorMessage = SentinelStringUtils.format("{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType, selectorValue, getName(), PageManager.getPage().getName());
 			log.error(errorMessage);
-			throw new MalformedSelectorException(errorMessage, e);
+			throw new InvalidSelectorException(errorMessage, e);
 		}
 	}
 	

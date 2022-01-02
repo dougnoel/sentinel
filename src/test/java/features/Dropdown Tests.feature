@@ -2,6 +2,16 @@
 @example @dropdown
 Feature: Dropdown Tests
   Testing the Dropdown Object Functionality
+
+  @273
+  Scenario: 273 Dropdown
+    Given I am on the Dropdown Page
+    When I select Option 1 from the Dropdown
+      And I verify the Dropdown has the text "Option 1" selected
+      And I select the 2nd option from the Dropdown
+    Then I verify the Dropdown has the text "Option 2" selected
+      And I verify the Dropdown has the value selected for the Dropdown
+      But I verify the Dropdown does not have the text "Twenty" selected
 	
   @22
   Scenario: 22 Prime NG Dropdown

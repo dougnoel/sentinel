@@ -6,7 +6,6 @@ import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.exceptions.SentinelException;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
@@ -24,7 +23,7 @@ public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
 	
     @AfterClass
-    public static void tearDownAfterClass() throws SentinelException {
+    public static void tearDownAfterClass() {
         String totalWaitTime = Configuration.toString("totalWaitTime");
         if (totalWaitTime != null) {
         	log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", totalWaitTime);

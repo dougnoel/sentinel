@@ -5,8 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import com.dougnoel.sentinel.exceptions.ConfigurationNotFoundException;
-import com.dougnoel.sentinel.exceptions.SentinelException;
+import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
@@ -19,7 +18,7 @@ public class ConfigurationDevTests {
 	private static final String REGULARUSER = "RegularUser";
 	
 	@BeforeClass
-	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
+	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(DEV);
 		System.setProperty("download", "downloads");
@@ -33,12 +32,12 @@ public class ConfigurationDevTests {
 	}
 	
 	@Test
-	public void loadValueForNonExistentEnvironment() throws SentinelException {
+	public void loadValueForNonExistentEnvironment() {
 		assertEquals("Expecting the default env RegularUser password", "test", Configuration.accountInformation(REGULARUSER, PASSWORD));
 	}
 	
-	@Test(expected = ConfigurationNotFoundException.class)
-	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() throws SentinelException {
+	@Test(expected = YAMLFileException.class)
+	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() {
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
 	}	
 }

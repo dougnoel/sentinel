@@ -5,15 +5,14 @@ import static org.junit.Assert.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.InvalidSelectorException;
+
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.exceptions.ElementTypeMismatchException;
-import com.dougnoel.sentinel.exceptions.MalformedSelectorException;
-import com.dougnoel.sentinel.exceptions.NoSuchSelectorException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
@@ -38,13 +37,14 @@ public class ElementFunctionsTests {
 	}
 	
 	@Test
+
 	public void createDropDown() {
 		Element element = ElementFunctions.getElementAsDropdown("dropdown");
 		assertTrue("Expecting Dropdown class.", element instanceof Dropdown);
 		assertEquals("Expecting Dropdown Name.", "dropdown", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateDropDown() {
 		ElementFunctions.getElementAsDropdown("generic");
 	}
@@ -70,12 +70,13 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting SelectElement Name.", "select", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateSelect() {
 		ElementFunctions.getElementAsSelectElement("generic");
 	}
 	
 	@Test
+
 	public void createNGXDataTable() {
 		Element element = ElementFunctions.getElement("ngx_data_table");
 		assertTrue("Expecting NGXDataTable class.", element instanceof NGXDataTable);
@@ -89,17 +90,17 @@ public class ElementFunctionsTests {
 		assertEquals("Expecting Table Name.", "table", element.getName());
 	}
 	
-	@Test(expected = ElementTypeMismatchException.class)
+	@Test(expected = ClassCastException.class)
 	public void failToCreateTable() {
 		ElementFunctions.getElementAsTable("generic");
 	}
 
-	@Test(expected = NoSuchSelectorException.class)
+	@Test(expected = InvalidSelectorException.class)
 	public void badSelector() {
 		ElementFunctions.getElement("bad_selector").click();
 	}
 	
-	@Test(expected = MalformedSelectorException.class)
+	@Test(expected = InvalidSelectorException.class)
 	public void creationFailure() {
 		ElementFunctions.getElement("bad_element").click();
 	}

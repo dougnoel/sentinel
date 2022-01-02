@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 
@@ -16,8 +17,9 @@ public class WebdriverFactoryBadBrowserNameTest {
 		Configuration.clear("chromeBrowserBinary");
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.WebDriverException.class)
-	public void passBadBrowserNameTest() {
+	@Test(expected = WebDriverException.class)
+	public void passBadBrowserName() {
+
 		System.setProperty("browser", "badBrowser");
 		Configuration.update("browser", "badBrowser");
 		WebDriverFactory.instantiateWebDriver();
@@ -92,8 +94,8 @@ public class WebdriverFactoryBadBrowserNameTest {
 		}
 	}
 	
-	@Test(expected = com.dougnoel.sentinel.exceptions.WebDriverException.class)
-	public void failCustomChromeBrowserTest() {
+	@Test(expected = WebDriverException.class)
+	public void failCustomChromeBrowser() {
 		System.setProperty("browser", "customChrome");
 		Configuration.update("browser", "customChrome");
 		Configuration.update("chromeBrowserBinary", "fakePath");
