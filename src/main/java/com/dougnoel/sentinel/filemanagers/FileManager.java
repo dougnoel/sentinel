@@ -1,16 +1,17 @@
 package com.dougnoel.sentinel.filemanagers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.AccessDeniedException;
-import com.dougnoel.sentinel.exceptions.FileNotFoundException;
+import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 public class FileManager {
@@ -45,9 +46,8 @@ public class FileManager {
 		File result = searchDirectory(new File("src/"), fileName);
 
 		if (result == null) {
-			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory.", fileName);
-			log.error(errorMessage);
-			throw new FileNotFoundException(fileName);
+			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory or its subdirectories.", fileName);
+			throw new YAMLFileException(errorMessage, new FileNotFoundException(), new File(fileName));
 		}
 
 		return result.getAbsolutePath();
@@ -77,7 +77,7 @@ public class FileManager {
 				}
 			}
 		} else {
-			throw new AccessDeniedException(directory.getAbsoluteFile().toString());
+			throw new YAMLFileException(new AccessDeniedException("Access denied."), directory);
 		}
 		return searchResult;
 	}

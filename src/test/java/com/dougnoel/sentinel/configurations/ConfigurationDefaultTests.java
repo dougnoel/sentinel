@@ -6,13 +6,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.dougnoel.sentinel.exceptions.SentinelException;
-
 public class ConfigurationDefaultTests {
 	private static String originalEnvironment = null;
 	
 	@BeforeClass
-	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
+	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
 		Configuration.environment(null);
 	}

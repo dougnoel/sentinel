@@ -9,7 +9,8 @@ public class Time {
 	
 	private static Duration timeout = Duration.ZERO;
 	private static final Duration interval = Duration.ofMillis(10);
-	
+	private static final Duration loopInterval = Duration.ofMillis(100);
+
 	private Time() {
 		
 	}
@@ -52,6 +53,14 @@ public class Time {
 	 */
 	public static Duration interval() {
 		return interval;
+	}
+
+	/**
+	 * Returns 100 milliseconds in a Duration object for the interval between element searches and interactions.
+	 * @return Duration the interval to loop for when searching / interacting with elements.
+	 */
+	public static Duration loopInterval() {
+		return loopInterval;
 	}
 	
 	/**

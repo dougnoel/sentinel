@@ -1,0 +1,12 @@
+include: RadioButtonPage
+urls:
+  default: https://dougnoel.github.io/sentinel/test/iframe.html
+elements:
+   example_table:
+      elementType: Table
+      css: blah
+      id: mytable
+      xpath: //*[@id="mytable"]
+   iframe_header:
+      elementType: Div
+      xpath: "//h1[contains(text(),'IFrame Test Page')]"

@@ -186,7 +186,7 @@ public class VerificationSteps {
         if (assertion.contentEquals("visible")) {
         	assertTrue(expectedResult, getElement(elementName).isDisplayed());
         } else {
-        	assertTrue(expectedResult, getElement(elementName).isInvisible());
+        	assertTrue(expectedResult, getElement(elementName).isHidden());
         }
     }
     
