@@ -17,6 +17,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 public class YAMLFileException extends RuntimeException {
 	private static final Logger log = LogManager.getLogger(YAMLFileException.class);
     private static final long serialVersionUID = 7430222710522100336L;
+    private static final String CONFIGURATION_FILE = "sentinel.yml";
     private final File file;
 
     /**
@@ -27,7 +28,7 @@ public class YAMLFileException extends RuntimeException {
     public YAMLFileException(File file) {
     	super();
         this.file = file;
-        log.error(this.getMessage(), this);
+        logMessage();
     }
     
     /**
@@ -39,7 +40,7 @@ public class YAMLFileException extends RuntimeException {
     public YAMLFileException(Throwable cause, File file) {
         super(cause);
         this.file = file;
-        log.error(this.getMessage(), this);
+        logMessage();
     }
     
     /**
@@ -51,7 +52,7 @@ public class YAMLFileException extends RuntimeException {
     public YAMLFileException(String message, File file) {
         super(message);
         this.file = file;
-        log.error(this.getMessage(), this);
+        logMessage();
     }
 
     /**
@@ -64,7 +65,7 @@ public class YAMLFileException extends RuntimeException {
     public YAMLFileException(String message, Throwable cause, File file) {
         super(message, cause);
         this.file = file;
-        log.error(this.getMessage(), this);
+        logMessage();
     }
     
     /**
@@ -123,5 +124,20 @@ public class YAMLFileException extends RuntimeException {
 	 */
 	public String filePath() {
 		return file.getAbsoluteFile().toString();
+	}
+	
+	/**
+	 * Logs the error if it is not a missing sentinel.yml configuration file.
+	 * Logs missing sentinel.yml file if DEBUG mode is on.
+	 * Logs the stack trace for all but a missing sentinel.yml file if TRACE mode is on.
+	 */
+	public void logMessage() {
+		if(!filePath().contains(CONFIGURATION_FILE) && !getCause().getClass().getSimpleName().equals("FileNotFoundException")) {
+			if (log.isTraceEnabled()) 
+				log.trace(this.getMessage(), this);
+			else
+				log.error(this.getMessage());
+		}
+		log.debug(this.getMessage());
 	}
 }
