@@ -1,11 +1,16 @@
 package com.dougnoel.sentinel.exceptions;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * Creating an unchecked YAMLFileException so that we can fail a test without failing the entire
@@ -75,24 +80,23 @@ public class YAMLFileException extends RuntimeException {
      */
     @Override
     public String getMessage() {
-    	if (this.getCause() == null) {
+    	Object cause = this.getCause();
+    	
+    	if (cause == null)
     		return nullSafeMessage();
-    	}
-    	switch(this.getCause().getClass().getSimpleName()) {
-    	case "JsonParseException":
-    		return SentinelStringUtils.format("{} is not a valid YAML file. {}", filePath(), super.getMessage());
-    	case "JsonMappingException":
-    		return SentinelStringUtils.format("{} has incorrect formatting and cannot be read. {}", filePath(), super.getMessage());
-    	case "AccessDeniedException":
+    	if (cause instanceof FileNotFoundException)
+    		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
+    	if (cause instanceof AccessDeniedException)
     		return SentinelStringUtils.format("{} could not be accessed. Please ensure the file can be read by the current user and is not password protected. {}", 
     				filePath(), super.getMessage());
-    	case "FileNotFoundException":
-    		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
-    	case "IOException":
+    	if (cause instanceof JsonParseException)
+    		return SentinelStringUtils.format("{} is not a valid YAML file. {}", filePath(), super.getMessage());
+    	if (cause instanceof JsonMappingException)
+    		return SentinelStringUtils.format("{} has incorrect formatting and cannot be read. {}", filePath(), super.getMessage());
+    	if (cause instanceof IOException)
     		return SentinelStringUtils.format("{} cannot be opened. {}", filePath(), super.getMessage());
-    	default:
-    		return nullSafeMessage();
-    	}
+
+   		return nullSafeMessage();
     }
     
     /**
@@ -132,7 +136,7 @@ public class YAMLFileException extends RuntimeException {
 	 * Logs the stack trace for all but a missing sentinel.yml file if TRACE mode is on.
 	 */
 	public void logMessage() {
-		if(this.getCause() == null || (!filePath().contains(CONFIGURATION_FILE) && !getCause().getClass().getSimpleName().equals("FileNotFoundException"))) {
+		if(!filePath().contains(CONFIGURATION_FILE) && this.getCause() instanceof FileNotFoundException) {
 			if (log.isTraceEnabled()) 
 				log.trace(this.getMessage(), this);
 			else
