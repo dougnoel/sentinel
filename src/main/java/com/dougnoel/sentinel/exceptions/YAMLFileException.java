@@ -132,7 +132,7 @@ public class YAMLFileException extends RuntimeException {
 	 * Logs the stack trace for all but a missing sentinel.yml file if TRACE mode is on.
 	 */
 	public void logMessage() {
-		if(!filePath().contains(CONFIGURATION_FILE) && !getCause().getClass().getSimpleName().equals("FileNotFoundException")) {
+		if(this.getCause() == null || (!filePath().contains(CONFIGURATION_FILE) && !getCause().getClass().getSimpleName().equals("FileNotFoundException"))) {
 			if (log.isTraceEnabled()) 
 				log.trace(this.getMessage(), this);
 			else
