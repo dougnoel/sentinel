@@ -7,4 +7,9 @@ elements:
     xpath: "//Button[@Name=1]"
     accessibilityid: "131"
   two_button:
-    name: "2"
+    name: 2
+  add_button:
+    name: Add
+  result:
+    name: Result
+  

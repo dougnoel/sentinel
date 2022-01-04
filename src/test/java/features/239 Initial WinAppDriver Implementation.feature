@@ -20,11 +20,11 @@ Feature: 239 Implement WinAppDriver to automate windows
   	Then I verify the Text Editor field contains the text "test"
   		And I clear the Text Editor field
 
-  #@239B @ButtonInteraction
-  #Scenario: 239B Use Calculator
-  #	Given I open the Calculator Program
-  #	When I click the one button
-  #	  And I press the "Add" button
-  #	  And I press the "2" button
-  #	  And I press the "Equals" button
-  #	Then I expect that "Result" contains "3"
+  @239B @ButtonInteraction
+  Scenario: 239B Use Calculator
+  	Given I open the Calculator Program
+  	When I click the one button
+  	  And I click the Add button
+  	  And I click the two button
+  	  And I click the Equals button
+  	Then I verify the Result contains the text "3"
