@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.elements;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,17 +34,20 @@ public class ElementFactory {
         }
 		
 
-		try {
+//		try {
             mappedAndRetrievedClass = elementClasses.computeIfAbsent(elementType, type -> (retrieveClassBySimpleName(type)));
-		}catch(Exception e){
-            mappedAndRetrievedClass = elementClasses.putIfAbsent(elementType, Element.class);
-        }
+//		}catch(Exception e){
+//            mappedAndRetrievedClass = elementClasses.putIfAbsent(elementType, Element.class);
+//        }
         try{
+        	if (mappedAndRetrievedClass == null) {
+//        		mappedAndRetrievedClass = Configuration.getClassPath(elementType);
+        	}
             return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
         //}catch(NoSuchMethodException nsme){
             
         }catch(Exception e){
-            throw new RuntimeException(e);
+            throw new RuntimeException("Caught", e);
         }
 	}
 	
@@ -53,15 +57,15 @@ public class ElementFactory {
                 .getTopLevelClassesRecursive("elements")
                 .stream();
             ClassInfo filteredClass = allClasses
-                                            .filter(c -> c.getSimpleName().equalsIgnoreCase(elementType)).findFirst().get();
+                                            .filter(c -> c.getSimpleName()
+                                            .equalsIgnoreCase(elementType))
+                                            .findFirst()
+                                            .get();
             return filteredClass.load();
         }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-
-
-			//return Element.class;
-		}
+        catch (java.util.NoSuchElementException|IOException e) {
+        	return null;
+        }
     }
 
     private static Map<String, String> findElement(String elementName, String pageName) {
