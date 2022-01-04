@@ -7,15 +7,12 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
-import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.Element;
+import com.dougnoel.sentinel.elements.ElementFactory;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
-import com.google.common.reflect.ClassPath;
 
 /**
  * Page class to contain a URL and the elements on the page.
@@ -49,49 +46,7 @@ public class Page {
 
 	public Element getElement(String elementName) {
         String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
-        return elements.computeIfAbsent(normalizedName, name -> ((Element)(createElement(name))));
-	}
-	
-	private Map<String, String> findElement(String elementName, String pageName) {
-		Map<String, String> elementData = Configuration.getElement(elementName, pageName);
-		if (elementData == null) {
-			for (String page : Configuration.getPageParts(pageName)) {
-				elementData = findElement(elementName, page);
-				if (elementData != null) {
-					break;
-				}
-			}
-		}
-		return elementData;
-	}
-	
-	private Object createElement(String elementName) {
-		Map<String, String> elementData = findElement(elementName, getName());
-		
-		if (elementData == null) {
-			var errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
-			throw new NoSuchElementException(errorMessage);
-		}
-		
-		String elementType = null;
-		if (elementData.containsKey("elementType")) {
-			elementType = elementData.get("elementType");
-		}
-		else {
-			elementType = "Element";
-		}
-
-		final String finalElementType = elementType;
-		try {
-			var allClasses = ClassPath.from(ClassLoader.getSystemClassLoader())
-			  .getAllClasses()
-			  .stream();
-			var filteredClass = allClasses.filter(c -> c.getSimpleName().equalsIgnoreCase(finalElementType)).findFirst().get();
-		    var mappedAndRetrievedClass = filteredClass.load();
-			return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
-		} catch (Exception e) {
-			return new Element(elementType, elementName, elementData);
-		}
+        return elements.computeIfAbsent(normalizedName, name -> ((Element)(ElementFactory.createElement(name, this))));
 	}
 	
 	/**
