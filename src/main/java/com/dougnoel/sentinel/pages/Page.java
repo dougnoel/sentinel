@@ -81,18 +81,16 @@ public class Page {
 			elementType = "Element";
 		}
 		
-		String fullClassFilePath = Configuration.getClassPath(elementType);
-
 		try {
+			String fullClassFilePath = Configuration.getClassPath(elementType);
+		
 			return Class.forName(fullClassFilePath).getConstructor(String.class, Map.class).newInstance(elementName, elementData);
 		} catch (Exception e) {
-			var errorMessage = SentinelStringUtils.format("{}: {} Element Object creation failed. File location: {}", e.getClass().getSimpleName(), StringUtils.capitalize(elementName), fullClassFilePath);
-			log.error(errorMessage);
-			throw new NoSuchElementException(errorMessage, e);
+			var errorMessage = SentinelStringUtils.format("A specific class of {} element type could not be found for creating element {}. Using the default Element class.", elementType, elementName);
+			log.debug(errorMessage);
+			// This allows people to call their element type whatever they want without needing a child class to implement it.
+			return new Element(elementType, elementName, elementData);
 		}
-
-		 //TODO: This allows people to call their element type whatever they want without needing a child class to implement it.
-//		 return new Element(elementType, elementName, elementData);
 	}
 	
 	/**
