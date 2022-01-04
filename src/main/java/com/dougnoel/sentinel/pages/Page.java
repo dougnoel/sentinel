@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -16,6 +15,7 @@ import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.google.common.reflect.ClassPath;
 
 /**
  * Page class to contain a URL and the elements on the page.
@@ -80,19 +80,18 @@ public class Page {
 		else {
 			elementType = "Element";
 		}
-		
-		String fullClassFilePath = Configuration.getClassPath(elementType);
 
+		final String finalElementType = elementType;
 		try {
-			return Class.forName(fullClassFilePath).getConstructor(String.class, Map.class).newInstance(elementName, elementData);
+			var allClasses = ClassPath.from(ClassLoader.getSystemClassLoader())
+			  .getAllClasses()
+			  .stream();
+			var filteredClass = allClasses.filter(c -> c.getSimpleName().equalsIgnoreCase(finalElementType)).findFirst().get();
+		    var mappedAndRetrievedClass = filteredClass.load();
+			return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
 		} catch (Exception e) {
-			var errorMessage = SentinelStringUtils.format("{}: {} Element Object creation failed. File location: {}", e.getClass().getSimpleName(), StringUtils.capitalize(elementName), fullClassFilePath);
-			log.error(errorMessage);
-			throw new NoSuchElementException(errorMessage, e);
+			return new Element(elementType, elementName, elementData);
 		}
-
-		 //TODO: This allows people to call their element type whatever they want without needing a child class to implement it.
-//		 return new Element(elementType, elementName, elementData);
 	}
 	
 	/**
