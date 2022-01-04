@@ -40,9 +40,9 @@ public class FileManager {
 	 * and any sub directories.
 	 * 
 	 * @param fileName String the full (exact) name of file to be found
-	 * @return String the absolute path of the file found
+	 * @return File the path of the file found
 	 */
-	public static String findFilePath(String fileName)  {
+	public static File findFilePath(String fileName)  {
 		File result = searchDirectory(new File("src/"), fileName);
 
 		if (result == null) {
@@ -50,7 +50,7 @@ public class FileManager {
 			throw new YAMLFileException(errorMessage, new FileNotFoundException(), new File(fileName));
 		}
 
-		return result.getAbsolutePath();
+		return result;
 	}
 	
 	/**

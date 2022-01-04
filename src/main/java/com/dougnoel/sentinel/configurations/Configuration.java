@@ -228,7 +228,7 @@ public class Configuration {
 	 * @return File the OS path to the config file
 	 */
 	private static File findPageObjectFilePath(String pageName)  {
-		return new File(FileManager.findFilePath(pageName + ".yml"));
+		return FileManager.findFilePath(pageName + ".yml");
 	}
 
 	/**
@@ -239,16 +239,10 @@ public class Configuration {
 	 */
 	public static String getClassPath(String className) {
 		//Look for class
-		String filePath = FileManager.findFilePath(className + ".java");
+		String filePath = FileManager.findFilePath(className + ".java").getPath();
 		//if we don't find it, look in the package
-		//if we don't find it, return generic Element
-		String returnValue = StringUtils.removeEnd(filePath.replace(File.separator, "."), ".java");
-		//TODO: This needs to work for any package name, not just ones starting with com.
-		//Option one: handle the most common possible starts
-		//Option 2: if com isn't found do something else
-		//Option 3: find the relative path starting with the root of the project
-		//Option 4: Combine 2 & 3
-		return "com" + StringUtils.substringAfter(returnValue, "com");
+		String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
+		return StringUtils.substringAfter(returnValue, "java.");
 	}
 
 	/**
