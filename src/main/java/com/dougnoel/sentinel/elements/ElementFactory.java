@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.pages.Page;
@@ -16,6 +19,8 @@ import org.openqa.selenium.NoSuchElementException;
 public class ElementFactory {
     
     protected static Map<String,Class<?>> elementClasses = new HashMap<>();
+    
+	private static final Logger log = LogManager.getLogger(Page.class);
 
     /**
      * Returns an Object that is an Element using the element name and Page. 
@@ -27,7 +32,7 @@ public class ElementFactory {
      * @return Object the element that is created
      */
 	public static Object createElement(String elementName, Page page) {
-		Map<String, String> elementData = findElement(elementName, page.getName());
+		Map<String, String> elementData = findElementData(elementName, page.getName());
 		
 		if (elementData == null) {
 			var errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, page.getName());
@@ -44,8 +49,11 @@ public class ElementFactory {
 			Class<?> mappedAndRetrievedClass;
 
             // If the cached Class of the elementType has already been found, create an element of that Class
-			if ((mappedAndRetrievedClass = elementClasses.get(elementType)) != null)
-				return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
+			if ((mappedAndRetrievedClass = elementClasses.get(elementType)) != null){
+                log.debug(SentinelStringUtils.format("Successfully retrieved cached element Class in element factory for {} element of type {}", elementName, elementType));
+                return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
+            }
+				
 			
             // Attempt to look in com.dougnoel.sentinel.elements for the Class corresponding to the elementType
             // This will work in projects extending Sentinel for element types in the Sentinel jar.
@@ -54,12 +62,15 @@ public class ElementFactory {
             // If this ^^^ attempt failed, look on disk
 			if (mappedAndRetrievedClass == null) {
                 // First, look for the Class in "this" project's directories. This is the case where a custom element type is created in a project extending Sentinel.
+                log.debug(SentinelStringUtils.format("Failed to find element type {} in default sentinel element package. Looking in current project.", elementType));
 				String classPath = Configuration.getClassPath(elementType);
 		    	if (classPath == null) {
                     // If the above search (in project directories) fails, default the class to "Element".
+                    log.debug(SentinelStringUtils.format("Failed to find element type {} in current project. Defaulting to type Element.", elementType));
 		    		mappedAndRetrievedClass = Element.class;
 		    	} else {
                     // If the above search is successful, fetch the Class corresponding to the elementType.
+                    log.debug(SentinelStringUtils.format("Successfully found element type {} in current project.", elementType));
 		    		mappedAndRetrievedClass = Class.forName(classPath);
 		    	}
 			}
@@ -76,21 +87,26 @@ public class ElementFactory {
 	}
 	
     /**
-     * 
-     * @param elementType
-     * @return
+     * Returns Class<?> corresponding to the passed elementType if it exists in the com.dougnoel.sentinel.elements package.
+     * If there is no class in the com.dougnoel.sentinel.elements package that matches the elementType, this method returns null.
+     * @param elementType String the elementType from the page object that is spelled the same (case-insensitive) as the class of the element
+     * @return Class<?> the Class corresponding to the passsed elementType. null if not found.
      */
     private static Class<?> retrieveClassBySimpleName(String elementType){
         try{
             var allClasses = ClassPath.from(ClassLoader.getSystemClassLoader())
                 .getTopLevelClassesRecursive("com.dougnoel.sentinel.elements")
                 .stream();
-            ClassInfo filteredClass = allClasses
+            Optional<ClassInfo> optionalFilteredClassInfo = allClasses
                                             .filter(c -> c.getSimpleName()
                                             .equalsIgnoreCase(elementType))
-                                            .findFirst()
-                                            .get();
-            return filteredClass.load();
+                                            .findFirst();
+            ClassInfo filteredClassInfo = optionalFilteredClassInfo.isPresent() ? optionalFilteredClassInfo.get() : null;
+            
+            if(filteredClassInfo == null)
+                return null;
+            else
+                return filteredClassInfo.load();
         }
         catch (java.util.NoSuchElementException|IOException e) {
         	return null;
@@ -98,16 +114,16 @@ public class ElementFactory {
     }
 
     /**
-     * 
-     * @param elementName
-     * @param pageName
-     * @return
+     * Returns a Map<String, String> which contains all data for an element that is declared in the page object YAML file for the given page.
+     * @param elementName String the name of the element
+     * @param pageName String the name of the page
+     * @return Map<String, String> the collection of keys and values which were declared in the page object YAML file for the given element on the given page.
      */
-    private static Map<String, String> findElement(String elementName, String pageName) {
+    private static Map<String, String> findElementData(String elementName, String pageName) {
 		Map<String, String> elementData = Configuration.getElement(elementName, pageName);
 		if (elementData == null) {
 			for (String page : Configuration.getPageParts(pageName)) {
-				elementData = findElement(elementName, page);
+				elementData = findElementData(elementName, page);
 				if (elementData != null) {
 					break;
 				}
