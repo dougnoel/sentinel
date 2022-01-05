@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.elements;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,29 +25,35 @@ public class ElementFactory {
 			var errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, page.getName());
 			throw new NoSuchElementException(errorMessage);
 		}
-		Class mappedAndRetrievedClass;
-		String elementType = null;
-		if (elementData.containsKey("elementType")) {
-			elementType = elementData.get("elementType");
-		}else{
-            elementType = "Element";
-            mappedAndRetrievedClass = elementClasses.putIfAbsent(elementType, Element.class);
-        }
+		try{
 		
+			String elementType = null;
+			if (!elementData.containsKey("elementType"))
+				return new Element(elementName, elementData);
+			
+			elementType = elementData.get("elementType");
+			
+			Class mappedAndRetrievedClass = elementClasses.get(elementType);
+			if (mappedAndRetrievedClass != null)
+				return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
+			
+			mappedAndRetrievedClass = retrieveClassBySimpleName(elementType);
+			
+			if (mappedAndRetrievedClass == null) {
+				String classPath = Configuration.getClassPath(elementType);
+		    	if (classPath == null) {
+		    		mappedAndRetrievedClass = Element.class;
+		    		
+		    	} else {
+		    		mappedAndRetrievedClass = Class.forName(classPath);
+		    	}
+			}
+	    	
+	    	elementClasses.put(elementType, mappedAndRetrievedClass);
+	    	
+	    	return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
 
-//		try {
-            mappedAndRetrievedClass = elementClasses.computeIfAbsent(elementType, type -> (retrieveClassBySimpleName(type)));
-//		}catch(Exception e){
-//            mappedAndRetrievedClass = elementClasses.putIfAbsent(elementType, Element.class);
-//        }
-        try{
-        	if (mappedAndRetrievedClass == null) {
-//        		mappedAndRetrievedClass = Configuration.getClassPath(elementType);
-        	}
-            return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
-        //}catch(NoSuchMethodException nsme){
-            
-        }catch(Exception e){
+        }catch(NoSuchMethodException|InvocationTargetException|IllegalAccessException|InstantiationException|ClassNotFoundException e){
             throw new RuntimeException("Caught", e);
         }
 	}
@@ -54,7 +61,7 @@ public class ElementFactory {
     private static Class retrieveClassBySimpleName(String elementType){
         try{
             var allClasses = ClassPath.from(ClassLoader.getSystemClassLoader())
-                .getTopLevelClassesRecursive("elements")
+                .getTopLevelClassesRecursive("com.dougnoel.sentinel.elements")
                 .stream();
             ClassInfo filteredClass = allClasses
                                             .filter(c -> c.getSimpleName()

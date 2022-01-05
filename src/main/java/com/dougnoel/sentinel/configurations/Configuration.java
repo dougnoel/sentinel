@@ -238,11 +238,13 @@ public class Configuration {
 	 * @return String the path to the class that can be used to create an object
 	 */
 	public static String getClassPath(String className) {
-		//Look for class
-		String filePath = FileManager.findFilePath(className + ".java").getPath();
-		//if we don't find it, look in the package
-		String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
-		return StringUtils.substringAfter(returnValue, "java.");
+		try {
+			String filePath = FileManager.findFilePath(className + ".java").getPath();
+			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
+			return StringUtils.substringAfter(returnValue, "java.");
+		} catch (YAMLFileException yfe) {
+			return null;
+		}
 	}
 
 	/**
