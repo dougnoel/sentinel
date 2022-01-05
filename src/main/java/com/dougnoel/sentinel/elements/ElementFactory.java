@@ -87,10 +87,10 @@ public class ElementFactory {
 	}
 	
     /**
-     * Returns Class<?> corresponding to the passed elementType if it exists in the com.dougnoel.sentinel.elements package.
+     * Returns Class &lt;?&gt; corresponding to the passed elementType if it exists in the com.dougnoel.sentinel.elements package.
      * If there is no class in the com.dougnoel.sentinel.elements package that matches the elementType, this method returns null.
      * @param elementType String the elementType from the page object that is spelled the same (case-insensitive) as the class of the element
-     * @return Class<?> the Class corresponding to the passsed elementType. null if not found.
+     * @return Class &lt;?&gt; the Class corresponding to the passsed elementType. null if not found.
      */
     private static Class<?> retrieveClassBySimpleName(String elementType){
         try{
@@ -114,10 +114,10 @@ public class ElementFactory {
     }
 
     /**
-     * Returns a Map<String, String> which contains all data for an element that is declared in the page object YAML file for the given page.
+     * Returns a Map &lt;String, String&gt; which contains all data for an element that is declared in the page object YAML file for the given page.
      * @param elementName String the name of the element
      * @param pageName String the name of the page
-     * @return Map<String, String> the collection of keys and values which were declared in the page object YAML file for the given element on the given page.
+     * @return Map &lt;String, String&gt; the collection of keys and values which were declared in the page object YAML file for the given element on the given page.
      */
     private static Map<String, String> findElementData(String elementName, String pageName) {
 		Map<String, String> elementData = Configuration.getElement(elementName, pageName);
