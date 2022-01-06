@@ -13,7 +13,10 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -74,34 +77,22 @@ public class PageManager {
 	}
 
 	/**
-	 * Open the URL passed, set the parent window handle and return it.
+	 * Creates a WebDriver if it doesn't exist and opens up the webpage or application.
 	 * 
-	 * @param pageURL String url to open
-	 * @return String WebDriver handle identifying string - unique for a window and
-	 *         for each tab.
+	 * @param pageName String the name of the page object to open
+	 * @param arguments String the arguments to pass as a query string if this is a web page
 	 */
-	public static String openPage(String pageURL) {
-		open(pageURL);
-		return driver().getWindowHandle();
-	}
+	public static void open(String pageName, String arguments) {
+    	PageManager.setPage(pageName);
+    	if (PageManager.getPage().getPageObjectType() == PageObjectType.WEBPAGE) {
+	    	String url = Configuration.url();
+	    	url += arguments == null ? "" : arguments;
+	    	log.debug("Loading the the {} page using the url: {}", pageName, url);
+	    	driver().get(url);
+    	}
+    	else
+    		driver();
 
-	/**
-	 * Opens up the URL passed to it.
-	 * <p>
-	 * <b>TO DO:</b> Return a page object of the page we are on now.
-	 * 
-	 * @param url String Full URL to navigate to.
-	 */
-	protected static void open(String url) {
-		try {
-			driver().get(url);
-		}
-		/* Adding this to catch the case where a unit test breaks encapsulation by using the 
-		 * WebDriver to directly close the browser instead of using the WebDriverManager to do it.
-		 */
-		catch (org.openqa.selenium.NoSuchSessionException e) {
-			Driver.getDriver().get(url);
-		}
 	}
 
 	/**
