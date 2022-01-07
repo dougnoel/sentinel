@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.filemanagers.FileManager;
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -72,7 +72,7 @@ public class Configuration {
 				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
 			} catch (Exception e) {
 				var errorMessage = SentinelStringUtils.format("Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", configurationKey, configurationKey);
-				throw new YAMLFileException(errorMessage, e, CONFIGURATION_FILE);
+				throw new FileException(errorMessage, e, CONFIGURATION_FILE);
 			}
 		}
 	 
@@ -106,7 +106,7 @@ public class Configuration {
 					appProps.setProperty(property, propertyValue);
 				}
 				return propertyValue;
-			} catch (YAMLFileException e) {
+			} catch (FileException e) {
 				log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
 				return null;
 			}
@@ -242,7 +242,7 @@ public class Configuration {
 			String filePath = FileManager.findFilePath(className + ".java").getPath();
 			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
 			return StringUtils.substringAfter(returnValue, "java.");
-		} catch (YAMLFileException yfe) {
+		} catch (FileException fe) {
 			return null;
 		}
 	}
@@ -262,12 +262,12 @@ public class Configuration {
 			if (e.getCause() != null && e.getCause().getClass().getSimpleName().equalsIgnoreCase("AccessDeniedException"))
 				pageName = e.getMessage();
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
-			throw new YAMLFileException(errorMessage, e, new File(pageName + ".yml"));
+			throw new FileException(errorMessage, e, new File(pageName + ".yml"));
 		}
 
 		if (pageData == null) {
 			var errorMessage = "The file appears to contain no data. Please ensure the file is properly formatted.";
-			throw new YAMLFileException(errorMessage, new File(pageName + ".yml"));
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
 		
 		return pageData;
@@ -306,7 +306,7 @@ public class Configuration {
 		}
 		if (StringUtils.isEmpty(baseURL)) {
 			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, pageName);
-			throw new YAMLFileException(errorMessage, new File(pageName + ".yml"));
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
 		return baseURL;
 	}
@@ -332,7 +332,7 @@ public class Configuration {
 		}
 		if (Objects.equals(accountData, null)) {
 			var erroMessage = SentinelStringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
-			throw new YAMLFileException(erroMessage, new File(pageName + ".yml"));
+			throw new FileException(erroMessage, new File(pageName + ".yml"));
 		}
 		String data = accountData.get(key);
 		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);

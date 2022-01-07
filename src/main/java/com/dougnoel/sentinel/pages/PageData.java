@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,7 +53,7 @@ public class PageData {
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
 		} catch (Exception e) {
-			throw new YAMLFileException(e, fileName);
+			throw new FileException(e, fileName);
 		}
 			
 		return pageData;

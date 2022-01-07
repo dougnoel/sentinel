@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 public class FileManager {
@@ -47,7 +47,7 @@ public class FileManager {
 
 		if (result == null) {
 			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory or its subdirectories.", fileName);
-			throw new YAMLFileException(errorMessage, new FileNotFoundException(), new File(fileName));
+			throw new FileException(errorMessage, new FileNotFoundException(), new File(fileName));
 		}
 
 		return result;
@@ -77,7 +77,7 @@ public class FileManager {
 				}
 			}
 		} else {
-			throw new YAMLFileException(new AccessDeniedException("Access denied."), directory);
+			throw new FileException(new AccessDeniedException("Access denied."), directory);
 		}
 		return searchResult;
 	}

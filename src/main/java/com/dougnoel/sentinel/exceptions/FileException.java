@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.exceptions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.AccessDeniedException;
 
 import org.apache.logging.log4j.LogManager;
@@ -19,8 +20,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * @author dougnoel
  *
  */
-public class YAMLFileException extends RuntimeException {
-	private static final Logger log = LogManager.getLogger(YAMLFileException.class);
+public class FileException extends RuntimeException {
+	private static final Logger log = LogManager.getLogger(FileException.class);
     private static final long serialVersionUID = 7430222710522100336L;
     private static final String CONFIGURATION_FILE = "sentinel.yml";
     private final File file;
@@ -30,7 +31,7 @@ public class YAMLFileException extends RuntimeException {
      * 
      * @param file java.io.File the File that caused the exception
      */
-    public YAMLFileException(File file) {
+    public FileException(File file) {
     	super();
         this.file = file;
         logMessage();
@@ -42,7 +43,7 @@ public class YAMLFileException extends RuntimeException {
      * @param cause Throwable the exception that was thrown that caused this exception to be thrown
      * @param file java.io.File the File that caused the exception
      */
-    public YAMLFileException(Throwable cause, File file) {
+    public FileException(Throwable cause, File file) {
         super(cause);
         this.file = file;
         logMessage();
@@ -54,7 +55,7 @@ public class YAMLFileException extends RuntimeException {
      * @param message String the custom text to add to the custom exception message
      * @param file java.io.File the File that caused the exception
      */
-    public YAMLFileException(String message, File file) {
+    public FileException(String message, File file) {
         super(message);
         this.file = file;
         logMessage();
@@ -67,7 +68,7 @@ public class YAMLFileException extends RuntimeException {
      * @param cause Throwable the exception that was thrown that caused this exception to be thrown
      * @param file java.io.File the File that caused the exception
      */
-    public YAMLFileException(String message, Throwable cause, File file) {
+    public FileException(String message, Throwable cause, File file) {
         super(message, cause);
         this.file = file;
         logMessage();
@@ -84,6 +85,16 @@ public class YAMLFileException extends RuntimeException {
     	
     	if (cause == null)
     		return nullSafeMessage();
+        if (cause instanceof NoSuchMethodException)
+            return SentinelStringUtils.format("{} could not find suitable method (constructor, most likely) for element in this file. {}", filePath(), super.getMessage());
+        if (cause instanceof InvocationTargetException)
+            return SentinelStringUtils.format("{} target invocation failure in this file. {}", filePath(), super.getMessage());
+        if (cause instanceof IllegalAccessException)
+            return SentinelStringUtils.format("{} illegal access failure in this file. {}", filePath(), super.getMessage());
+        if (cause instanceof InstantiationException)
+            return SentinelStringUtils.format("{} could not instantiate element in this file. {}", filePath(), super.getMessage());
+        if (cause instanceof ClassNotFoundException)
+            return SentinelStringUtils.format("{} could not find suitable class for element in this file. {}", filePath(), super.getMessage());
     	if (cause instanceof FileNotFoundException)
     		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
     	if (cause instanceof AccessDeniedException)

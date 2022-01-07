@@ -1,14 +1,18 @@
 package com.dougnoel.sentinel.elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.google.common.reflect.ClassPath;
@@ -20,7 +24,11 @@ public class ElementFactory {
     
     protected static Map<String,Class<?>> elementClasses = new HashMap<>();
     
-	private static final Logger log = LogManager.getLogger(Page.class);
+	private static final Logger log = LogManager.getLogger(ElementFactory.class);
+
+    private ElementFactory(){
+        // Exists to defeat instantiation.
+    }
 
     /**
      * Returns an Object that is an Element using the element name and Page. 
@@ -50,7 +58,7 @@ public class ElementFactory {
 
             // If the cached Class of the elementType has already been found, create an element of that Class
 			if ((mappedAndRetrievedClass = elementClasses.get(elementType)) != null){
-                log.debug(SentinelStringUtils.format("Successfully retrieved cached element Class in element factory for {} element of type {}", elementName, elementType));
+                log.log(Level.DEBUG, SentinelStringUtils.format("Successfully retrieved cached element Class in element factory for {} element of type {}", elementName, elementType));
                 return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
             }
 				
@@ -62,15 +70,15 @@ public class ElementFactory {
             // If this ^^^ attempt failed, look on disk
 			if (mappedAndRetrievedClass == null) {
                 // First, look for the Class in "this" project's directories. This is the case where a custom element type is created in a project extending Sentinel.
-                log.debug(SentinelStringUtils.format("Failed to find element type {} in default sentinel element package. Looking in current project.", elementType));
+                log.log(Level.DEBUG, SentinelStringUtils.format("Failed to find element type {} in default sentinel element package. Looking in current project.", elementType));
 				String classPath = Configuration.getClassPath(elementType);
 		    	if (classPath == null) {
                     // If the above search (in project directories) fails, default the class to "Element".
-                    log.debug(SentinelStringUtils.format("Failed to find element type {} in current project. Defaulting to type Element.", elementType));
+                    log.log(Level.DEBUG, SentinelStringUtils.format("Failed to find element type {} in current project. Defaulting to type Element.", elementType));
 		    		mappedAndRetrievedClass = Element.class;
 		    	} else {
                     // If the above search is successful, fetch the Class corresponding to the elementType.
-                    log.debug(SentinelStringUtils.format("Successfully found element type {} in current project.", elementType));
+                    log.log(Level.DEBUG, SentinelStringUtils.format("Successfully found element type {} in current project.", elementType));
 		    		mappedAndRetrievedClass = Class.forName(classPath);
 		    	}
 			}
@@ -82,7 +90,7 @@ public class ElementFactory {
 	    	return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
 
         }catch(NoSuchMethodException|InvocationTargetException|IllegalAccessException|InstantiationException|ClassNotFoundException e){
-            throw new RuntimeException("Caught", e);
+            throw new FileException("Caught", e, new File(page.getName() + ".yml"));
         }
 	}
 	
