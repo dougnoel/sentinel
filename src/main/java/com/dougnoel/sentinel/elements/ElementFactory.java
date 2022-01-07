@@ -59,7 +59,8 @@ public class ElementFactory {
 
             // If the cached Class of the elementType has already been found, create an element of that Class
 			if ((mappedAndRetrievedClass = elementClasses.get(elementType)) != null){
-                log.log(Level.DEBUG, SentinelStringUtils.format("Successfully retrieved cached element Class in element factory for {} element of type {}", elementName, elementType));
+                var debugMessage = SentinelStringUtils.format("Successfully retrieved cached element Class in element factory for {} element of type {}", elementName, elementType);
+                log.debug(debugMessage);
                 return mappedAndRetrievedClass.getConstructor(String.class, Map.class).newInstance(elementName, elementData);
             }
 				
@@ -71,15 +72,18 @@ public class ElementFactory {
             // If this ^^^ attempt failed, look on disk
 			if (mappedAndRetrievedClass == null) {
                 // First, look for the Class in "this" project's directories. This is the case where a custom element type is created in a project extending Sentinel.
-                log.log(Level.DEBUG, SentinelStringUtils.format("Failed to find element type {} in default sentinel element package. Looking in current project.", elementType));
+                var debugMessage =  SentinelStringUtils.format("Failed to find element type {} in default sentinel element package. Looking in current project.", elementType);
+                log.debug(debugMessage);
 				String classPath = FileManager.getClassPath(elementType);
 		    	if (classPath == null) {
                     // If the above search (in project directories) fails, default the class to "Element".
-                    log.log(Level.DEBUG, SentinelStringUtils.format("Failed to find element type {} in current project. Defaulting to type Element.", elementType));
+                    var debugMessage1 = SentinelStringUtils.format("Failed to find element type {} in current project. Defaulting to type Element.", elementType);
+                    log.debug(debugMessage1);
 		    		mappedAndRetrievedClass = Element.class;
 		    	} else {
                     // If the above search is successful, fetch the Class corresponding to the elementType.
-                    log.log(Level.DEBUG, SentinelStringUtils.format("Successfully found element type {} in current project.", elementType));
+                    var debugMessage1 = SentinelStringUtils.format("Successfully found element type {} in current project.", elementType);
+                    log.debug(debugMessage1);
 		    		mappedAndRetrievedClass = Class.forName(classPath);
 		    	}
 			}
