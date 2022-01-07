@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.FileException;
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.google.common.reflect.ClassPath;
@@ -71,7 +72,7 @@ public class ElementFactory {
 			if (mappedAndRetrievedClass == null) {
                 // First, look for the Class in "this" project's directories. This is the case where a custom element type is created in a project extending Sentinel.
                 log.log(Level.DEBUG, SentinelStringUtils.format("Failed to find element type {} in default sentinel element package. Looking in current project.", elementType));
-				String classPath = Configuration.getClassPath(elementType);
+				String classPath = FileManager.getClassPath(elementType);
 		    	if (classPath == null) {
                     // If the above search (in project directories) fails, default the class to "Element".
                     log.log(Level.DEBUG, SentinelStringUtils.format("Failed to find element type {} in current project. Defaulting to type Element.", elementType));

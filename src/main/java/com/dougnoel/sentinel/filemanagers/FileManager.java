@@ -8,6 +8,7 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,5 +81,21 @@ public class FileManager {
 			throw new FileException(new AccessDeniedException("Access denied."), directory);
 		}
 		return searchResult;
+	}
+
+	/**
+	 * Returns a valid class path for instantiating a java class given a class name.
+	 * 
+	 * @param className String the name of the class (case sensitive)
+	 * @return String the path to the class that can be used to create an object
+	 */
+	public static String getClassPath(String className) {
+		try {
+			String filePath = findFilePath(className + ".java").getPath();
+			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
+			return StringUtils.substringAfter(returnValue, "java.");
+		} catch (FileException fe) {
+			return null;
+		}
 	}
 }

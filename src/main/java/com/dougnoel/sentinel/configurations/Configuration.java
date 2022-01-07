@@ -232,22 +232,6 @@ public class Configuration {
 	}
 
 	/**
-	 * Returns a valid class path for instantiating a java class given a class name.
-	 * 
-	 * @param className String the name of the class (case sensitive)
-	 * @return String the path to the class that can be used to create an object
-	 */
-	public static String getClassPath(String className) {
-		try {
-			String filePath = FileManager.findFilePath(className + ".java").getPath();
-			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
-			return StringUtils.substringAfter(returnValue, "java.");
-		} catch (FileException fe) {
-			return null;
-		}
-	}
-
-	/**
 	 * Returns page data through yaml instructions to a config path in given pageName string. 
 	 * 
 	 * @see com.dougnoel.sentinel.configurations.Configuration#findPageObjectFilePath(String)
