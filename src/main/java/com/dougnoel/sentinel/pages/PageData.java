@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,12 +54,12 @@ public class PageData {
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
 		} catch (Exception e) {
-			throw new YAMLFileException(e, fileName);
+			throw new FileException(e, fileName);
 		}
 		
 		if (pageData.urls != null && pageData.executables != null) {
 			String errorMessage = SentinelStringUtils.format("A page object cannot contain both urls and executables: {}.", fileName);
-			throw new YAMLFileException(errorMessage, fileName);
+			throw new FileException(errorMessage, fileName);
 		}
 			
 		return pageData;

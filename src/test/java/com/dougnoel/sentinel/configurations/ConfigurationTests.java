@@ -6,7 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
@@ -57,12 +57,12 @@ public class ConfigurationTests {
 		assertEquals("Expecting the Stage env StageUser password", "BadPassw0rd", Configuration.accountInformation(STAGEUSER, PASSWORD));
 	}
 
-	@Test(expected = YAMLFileException.class)
+	@Test(expected = FileException.class)
 	public void failToLoadNonExistentUsername() {
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
 	}
 
-	@Test(expected = YAMLFileException.class)
+	@Test(expected = FileException.class)
 	public void failToLoadNonExistentPassword() {
 		Configuration.accountInformation(DOESNOTEXIST, PASSWORD);
 	}
@@ -83,7 +83,7 @@ public class ConfigurationTests {
 		assertEquals("Expecting the default env RegularUser password", "test", Configuration.accountInformation(REGULARUSER, PASSWORD));
 	}
 	
-	@Test(expected = YAMLFileException.class)
+	@Test(expected = FileException.class)
 	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() {
 		System.setProperty("env", DEV);
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
@@ -99,12 +99,12 @@ public class ConfigurationTests {
 		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.url("BaseUrl"));
 	}
 	
-	@Test(expected = YAMLFileException.class)
+	@Test(expected = FileException.class)
 	public void failToLoadDefaultUrl() {
 		Configuration.url("NoDefaultUrl");
 	}
 	
-	@Test(expected = YAMLFileException.class)
+	@Test(expected = FileException.class)
 	public void failToLoadPageWhenFindingUrl() {
 		Configuration.url("FakePageObject");
 	}

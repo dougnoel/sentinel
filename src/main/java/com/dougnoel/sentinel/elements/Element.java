@@ -659,5 +659,4 @@ public class Element {
 		hover();
 		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}
-	
 }
