@@ -117,7 +117,7 @@ public class VerificationSteps {
      */
     @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
     public static void verifyElementHasClass(String elementName, String assertion, String className) {
-    	verifyElementAttributeHasValue(elementName, assertion, "class", className);
+    	verifyElementAttributeHasValue(elementName, "class", assertion, className);
     }
     
     /**
@@ -135,7 +135,7 @@ public class VerificationSteps {
      * @param value String value expected
      */
     @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
-    public static void verifyElementAttributeHasValue(String elementName, String assertion, String attribute, String value) {
+    public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String value) {
         String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
                 elementName, assertion, attribute, value);
         if (assertion.contentEquals("has")) {

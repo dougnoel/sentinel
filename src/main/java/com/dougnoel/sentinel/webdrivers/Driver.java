@@ -3,15 +3,15 @@ package com.dougnoel.sentinel.webdrivers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+
 import io.appium.java_client.windows.WindowsDriver;
+import io.appium.java_client.windows.WindowsElement;
 
 /**
  * Manages all drivers. Maintains as few drivers as possible for test execution.
@@ -48,8 +48,8 @@ public class Driver {
      * @return WindowsDriver&lt;WebElement&gt; the cast WebDriver object
      */
     @SuppressWarnings("unchecked")
-	private static WindowsDriver<WebElement> castWindowsDriver(WebDriver driver) {
-    	return (WindowsDriver<WebElement>) driver;
+	private static WindowsDriver<WindowsElement> castWindowsDriver(WebDriver driver) {
+    	return (WindowsDriver<WindowsElement>) driver;
     }
 
     /**

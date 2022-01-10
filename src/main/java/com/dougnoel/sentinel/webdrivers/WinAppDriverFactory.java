@@ -8,12 +8,12 @@ import java.net.URL;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 import io.appium.java_client.windows.WindowsDriver;
+import io.appium.java_client.windows.WindowsElement;
 
 /**
  * @author dougnoel
@@ -57,9 +57,9 @@ public class WinAppDriverFactory {
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("deviceName", "WindowsPC");
 		
-		WindowsDriver<WebElement> driver = null;
+		WindowsDriver<WindowsElement> driver = null;
 		try {
-			driver = new WindowsDriver<WebElement>(url, capabilities);
+			driver = new WindowsDriver<WindowsElement>(url, capabilities);
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
@@ -78,7 +78,7 @@ public class WinAppDriverFactory {
 	 * 
 	 * @param driver WindowsDriver&lt;WebElement&gt; the WindowsDriver to quit
 	 */
-	protected static void quit(WindowsDriver<WebElement> driver) {
+	protected static void quit(WindowsDriver<WindowsElement> driver) {
 		driver.closeApp();
 		numberOfDriversRunning -= 1;
 		if (numberOfDriversRunning <= 0) {

@@ -620,7 +620,7 @@ public class Element {
 	 * </ul>
 	 * 
 	 * @param attribute String the attribute to look for
-	 * @param value String the value to which attribute should be set
+	 * @param value String the value to which attribute should be checked against
 	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
 	 */
 	public boolean attributeEquals(String attribute, String value) {

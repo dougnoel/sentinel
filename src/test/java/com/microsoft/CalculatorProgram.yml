@@ -1,6 +1,5 @@
 executables:
-  default: C:/Windows/System32/calc.exe
-  old: C:/Windows/System32/win32calc.exe
+  default: C:/Windows/System32/win32calc.exe
 elements:
   one_button:
     name: "1"
@@ -12,4 +11,9 @@ elements:
     name: Add
   result:
     name: Result
+  equals_button:
+    name: Equals
+  memory_clear_button:
+    name: "Memory Clear"
+    accessibilityid: 123
   

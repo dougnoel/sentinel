@@ -28,3 +28,10 @@ Feature: 239 Implement WinAppDriver to automate windows
   	  And I click the two button
   	  And I click the Equals button
   	Then I verify the Result contains the text "3"
+
+  @239D @ColorChecking
+  Scenario: 239D Check Colors in Notepad
+  	Given I open the Notepad App
+	When I click the Text Editor field
+  	Then I verify the Text Editor field with the attribute color has the value #FFFFFF
+	Then I verify the status bar with the attribute color has the value #F0F0F0
