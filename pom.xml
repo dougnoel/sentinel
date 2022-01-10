@@ -79,6 +79,7 @@
 
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
+    <appium.version>8.0.0-beta2</appium.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <extentreports.version>4.1.5</extentreports.version>
     <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
@@ -89,15 +90,15 @@
     <io.cucumber.version>5.6.0</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
     <jackson2.version>2.9.9</jackson2.version>
-    <junit.version>5.5.1</junit.version>
+    <junit.version>5.8.2</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
     <lombok.version>1.18.8</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.24</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
-    <selenium-java.version>3.141.59</selenium-java.version>
+    <selenium-java.version>4.1.1</selenium-java.version>
     <swagger-parser.version>2.0.14</swagger-parser.version>
-    <webdrivermanager.version>4.4.1</webdrivermanager.version>
+    <webdrivermanager.version>5.0.3</webdrivermanager.version>
     
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
@@ -392,6 +393,12 @@
         <version>${httpclient.version}</version>
       </dependency>
 
+	  <dependency>
+		<groupId>io.appium</groupId>
+		<artifactId>java-client</artifactId>
+		<version>${appium.version}</version>
+	  </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -564,6 +571,11 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>io.appium</groupId>
+      <artifactId>java-client</artifactId>
     </dependency>
 
     <dependency>
