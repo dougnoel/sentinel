@@ -16,8 +16,9 @@ jobs:
 
     steps:
     - name: Install WinAppDriver
-      run: |
-       choco install winappdriver
+      uses: crazy-max/ghaction-chocolatey@v1.6.0
+      with:
+        args: install winappdriver
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
