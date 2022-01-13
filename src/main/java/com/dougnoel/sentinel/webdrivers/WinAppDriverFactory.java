@@ -110,7 +110,8 @@ public class WinAppDriverFactory {
 					.redirectError(new File(STDERR));
 			try {
 				winAppDriverProcess = builder.start();
-			} catch (IOException e) {
+				Thread.sleep(1000);
+			} catch (IOException | InterruptedException e) {
 				throw new com.dougnoel.sentinel.exceptions.IOException(e);
 			}
 		}
