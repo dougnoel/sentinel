@@ -12,9 +12,12 @@ on:
 jobs:
   build:
 
-    runs-on: windows-2019
+    runs-on: windows-2016
 
     steps:
+    - name: Set resolution to 1920x1080
+      run: |
+       Set-DisplayResolution -Width 1920 -Height 1080 -Force
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
