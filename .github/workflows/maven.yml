@@ -15,10 +15,6 @@ jobs:
     runs-on: windows-2019
 
     steps:
-    - name: Start WinAppDriver
-      run: |
-       cd "C:/Program Files (x86)/Windows Application Driver/" 
-       ./winappdriver.exe 127.0.0.1 4723/wd/hub
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis

@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.appium.java_client.windows.WindowsDriver;
 import io.appium.java_client.windows.WindowsElement;
@@ -23,6 +24,7 @@ import io.appium.java_client.windows.WindowsElement;
 public class WinAppDriverFactory {
 	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
 	private static Process winAppDriverProcess = null;
+	private static final String DRIVER_URL = "http://127.0.0.1:4723/wd/hub";
 	private static final String COMMAND = "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe";
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
@@ -32,6 +34,14 @@ public class WinAppDriverFactory {
 	 * Exists to defeat instantiation.
 	 */
 	private WinAppDriverFactory() {}
+
+	private static URL getDriverUrl(){
+		try {
+			return new URL(DRIVER_URL);
+		} catch (java.net.MalformedURLException e) {
+			throw new MalformedURLException(e);
+		}
+	}
 
 	/**
 	 * Returns a newly created WindowsDriver as a WebDriver, based on the currently
@@ -45,12 +55,7 @@ public class WinAppDriverFactory {
 	 */
 	protected static WebDriver createWinAppDriver() {
 		startWinAppDriverExe();
-		URL url;
-		try {
-			url = new URL("http://127.0.0.1:4723/wd/hub");
-		} catch (java.net.MalformedURLException e) {
-			throw new MalformedURLException(e);
-		}
+		URL url = getDriverUrl();
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", Configuration.executable());
@@ -96,7 +101,10 @@ public class WinAppDriverFactory {
 	 */
 	private static void startWinAppDriverExe() {
 		if (winAppDriverProcess == null) {
-			ProcessBuilder builder = new ProcessBuilder(COMMAND)
+			URL driverUrl = getDriverUrl();
+			ProcessBuilder builder = new ProcessBuilder(COMMAND, 
+														driverUrl.getHost(), 
+														driverUrl.getPort() + driverUrl.getFile())
 					.redirectInput(Redirect.INHERIT)
 					.redirectOutput(new File(STDOUT))
 					.redirectError(new File(STDERR));
