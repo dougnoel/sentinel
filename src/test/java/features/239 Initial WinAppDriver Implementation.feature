@@ -13,13 +13,6 @@ Feature: 239 Implement WinAppDriver to automate windows
   	Then I verify the Text Editor field contains the text "test"
   		And I clear the Text Editor field
 
-  @239C @TextEntry
-  Scenario: 239A Use Notepad
-  	Given I open the Notepad App
-  	When I enter test in the Text Editor field
-  	Then I verify the Text Editor field contains the text "test"
-  		And I clear the Text Editor field
-
   @239B @ButtonInteraction
   Scenario: 239B Use Calculator
   	Given I open the Calculator Program
@@ -29,8 +22,8 @@ Feature: 239 Implement WinAppDriver to automate windows
   	  And I click the Equals button
   	Then I verify the Result contains the text "3"
 
-  @239D @ColorChecking
-  Scenario: 239D Check Colors in Notepad
+  @239C @ColorChecking
+  Scenario: 239C Check Colors in Notepad
   	Given I open the Notepad App
 	When I click the Text Editor field
   	Then I verify the Text Editor field with the attribute color has the value #FFFFFF
