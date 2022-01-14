@@ -47,7 +47,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless
     - name: Attach screen recordings from build
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v2
       with:
         name: ScreenRecordings
         path: C:/**/*.avi
