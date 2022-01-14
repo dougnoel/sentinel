@@ -6,13 +6,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.filemanagers.SentinelScreenRecorder;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
-import com.dougnoel.sentinel.utilities.*;
 import io.cucumber.junit.CucumberOptions;
 
 import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true
@@ -27,10 +26,11 @@ public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
 
     @BeforeClass
-    public static void setUpBeforeClass() {
+    public static void setUpBeforeClass() throws Exception {
         WebDriverFactory.instantiateWebDriver();
-        if(Configuration.toString("addVideoToReport")!=null)
-            SentinelScreenRecorder.startRecording("extent-cucumber");
+//        if(Configuration.toString("addVideoToReport")!=null)
+             
+            SentinelScreenRecorder.startRecording();
     }
 
     @AfterClass
@@ -43,7 +43,7 @@ public class SentinelTests {
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
         	PageManager.quit();
         }
-        if(Configuration.toString("addVideoToReport")!=null)
+//        if(Configuration.toString("addVideoToReport")!=null)
             SentinelScreenRecorder.stopRecording();
     }
 }
