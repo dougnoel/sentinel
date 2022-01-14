@@ -51,4 +51,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ScreenRecordings
-        path: C:/**/*.avi
+        path: C:/**/sentinel/reports/*.avi
