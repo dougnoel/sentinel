@@ -48,14 +48,14 @@ jobs:
       run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless
       continue-on-error: true
 
-    - name: List all files in workspace
-      continue-on-error: true
-      run: |
-       cd $GITHUB_WORKSPACE
-       Get-ChildItem -Recurse
+    # - name: List all files in workspace
+    #   continue-on-error: true
+    #   run: |
+    #    cd $GITHUB_WORKSPACE
+    #    Get-ChildItem -Recurse
 
     - name: Attach screen recordings from build
       uses: actions/upload-artifact@v2
       with:
         name: ScreenRecordings
-        path: $GITHUB_WORKSPACE/**/*.avi
+        path: $GITHUB_WORKSPACE/Videos/*.avi

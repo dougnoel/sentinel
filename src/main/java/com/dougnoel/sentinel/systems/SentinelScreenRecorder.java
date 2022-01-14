@@ -22,8 +22,7 @@ public class SentinelScreenRecorder {
 						CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
 						Rational.valueOf(15), QualityKey, 1.0f, KeyFrameIntervalKey, 15 * 60),
 				new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
-				null,
-				new File("./reports/"));
+				null);
 		screenRecorder.start();
 
 	}
