@@ -100,6 +100,8 @@
     <swagger-parser.version>2.0.14</swagger-parser.version>
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
     
+    <screen-recorder.version>0.7.7.0</screen-recorder.version>
+    
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -543,6 +545,13 @@
 		<artifactId>webdrivermanager</artifactId>
 		<version>${webdrivermanager.version}</version>
 	  </dependency>
+	  
+	        <!-- https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder -->
+		<dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		    <version>${screen-recorder.version}</version>
+		</dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -710,6 +719,11 @@
 	  <groupId>io.github.bonigarcia</groupId>
 	  <artifactId>webdrivermanager</artifactId>
 	</dependency>
+	
+	    <dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		</dependency>
     
   </dependencies>
   <description>A Selenium framework that implements the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.</description>
