@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.systems;
 
 import java.awt.*;
-import java.io.File;
 
 import org.monte.media.Format;
 import org.monte.media.math.Rational;

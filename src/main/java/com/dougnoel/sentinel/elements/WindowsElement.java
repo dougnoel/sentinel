@@ -127,17 +127,7 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	public Element sendKeys(String text) {
-		Driver.getDriver().switchTo().activeElement();
-		WindowsDriver<RemoteWebElement> dr = ((WindowsDriver<RemoteWebElement>)Driver.getDriver());
-		RemoteWebElement elem = dr.findElement(MobileBy.className("Edit"));
-		elem.sendKeys(text);
-		//element().sendKeys(text);
-		// if(!getText().contains(text)){
-		// 	var element = element();
-		// 	Actions action = new Actions(Driver.getDriver());
-		// 	action.sendKeys(element, text)
-		// 	.perform();
-		// }
+		element().sendKeys(text);
 		return this;
 	}
 
@@ -160,7 +150,6 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	public Element clear() {
-		Driver.getDriver().switchTo().activeElement();
 		element().clear();
 		var remainingText = getText();
 		if(!remainingText.isBlank() || !remainingText.isEmpty()){
