@@ -9,7 +9,8 @@ Feature: 239 Implement WinAppDriver to automate windows
   @239A @TextEntry
   Scenario: 239A Use Notepad
   	Given I open the Notepad App
-  	When I enter test in the Text Editor field
+    When I click the Text Editor field
+  	And I enter test in the Text Editor field
   	Then I verify the Text Editor field contains the text "test"
   	When I clear the Text Editor field
 	Then I verify the Text Editor field is empty
