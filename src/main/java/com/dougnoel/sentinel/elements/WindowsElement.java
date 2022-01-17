@@ -129,7 +129,7 @@ public class WindowsElement extends Element {
 	public Element sendKeys(String text) {
 		Driver.getDriver().switchTo().activeElement();
 		WindowsDriver<RemoteWebElement> dr = ((WindowsDriver<RemoteWebElement>)Driver.getDriver());
-		RemoteWebElement elem = dr.findElementByName("Text Editor");
+		RemoteWebElement elem = dr.findElement(MobileBy.className("Edit"));
 		elem.sendKeys(text);
 		//element().sendKeys(text);
 		// if(!getText().contains(text)){
