@@ -21,9 +21,11 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.Color;
 
 import io.appium.java_client.MobileBy;
+import io.appium.java_client.windows.WindowsDriver;
 
 /**
  * WinAppDriver implementation of a Element.
@@ -126,13 +128,16 @@ public class WindowsElement extends Element {
 	@Override
 	public Element sendKeys(String text) {
 		Driver.getDriver().switchTo().activeElement();
-		element().sendKeys(text);
-		if(!getText().contains(text)){
-			var element = element();
-			Actions action = new Actions(Driver.getDriver());
-			action.sendKeys(element, text)
-			.perform();
-		}
+		WindowsDriver<RemoteWebElement> dr = ((WindowsDriver<RemoteWebElement>)Driver.getDriver());
+		RemoteWebElement elem = dr.findElementByName("Text Editor");
+		elem.sendKeys(text);
+		//element().sendKeys(text);
+		// if(!getText().contains(text)){
+		// 	var element = element();
+		// 	Actions action = new Actions(Driver.getDriver());
+		// 	action.sendKeys(element, text)
+		// 	.perform();
+		// }
 		return this;
 	}
 

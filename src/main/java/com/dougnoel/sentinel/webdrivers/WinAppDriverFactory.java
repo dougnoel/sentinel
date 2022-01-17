@@ -9,9 +9,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebElement;
+
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.appium.java_client.windows.WindowsDriver;
 import io.appium.java_client.windows.WindowsElement;
@@ -62,9 +63,9 @@ public class WinAppDriverFactory {
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("deviceName", "WindowsPC");
 		
-		WindowsDriver<WindowsElement> driver = null;
+		WindowsDriver<RemoteWebElement> driver = null;
 		try {
-			driver = new WindowsDriver<WindowsElement>(url, capabilities);
+			driver = new WindowsDriver<RemoteWebElement>(url, capabilities);
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
