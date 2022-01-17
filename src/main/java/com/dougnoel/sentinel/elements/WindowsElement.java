@@ -13,11 +13,14 @@ import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.Color;
 
 import io.appium.java_client.MobileBy;
@@ -122,6 +125,7 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	public Element sendKeys(String text) {
+		Driver.getDriver().switchTo().activeElement();
 		element().sendKeys(text);
 		return this;
 	}
@@ -137,12 +141,46 @@ public class WindowsElement extends Element {
 	}
 
 	/**
+	 * Clear an Element. Clears text in a text box. 
+	 * If the call to selenium's clear() fails to actually remove text, 
+	 * this method will send CTRL+A + BACKSPACE key chord to attempt to clear the element text.
+	 * 
+	 * @return Element (for chaining)
+	 */
+	@Override
+	public Element clear() {
+		Driver.getDriver().switchTo().activeElement();
+		element().clear();
+		var remainingText = getText();
+		if(!remainingText.isBlank() || !remainingText.isEmpty()){
+			var element = element();
+			Actions action = new Actions(Driver.getDriver());
+			action.keyDown(element, Keys.LEFT_CONTROL)
+			.sendKeys("a")
+			.keyUp(Keys.LEFT_CONTROL)
+			.sendKeys(Keys.BACK_SPACE)
+			.perform();
+
+			remainingText = getText();
+			if(!remainingText.isBlank() || !remainingText.isEmpty()){
+				var errorMessage = SentinelStringUtils.format(
+					"{} on the {} was unable to be cleared.", 
+					getName(), PageManager.getPage().getName());
+				log.error(errorMessage);
+				throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage);
+			}
+		}
+		return this;
+	}
+
+	/**
 	 * Click an Element.
 	 * 
 	 * @return Element (for chaining)
 	 */
 	@Override
 	public Element click() {
+		Driver.getDriver().switchTo().activeElement();
 		element().click();
 		return this;
 	}

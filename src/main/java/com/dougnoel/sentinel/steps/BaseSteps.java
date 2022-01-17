@@ -50,6 +50,25 @@ public class BaseSteps {
     public static void click(String elementName) {
         getElement(elementName).click();
     }
+
+    /**
+     * Hovers the element that matches the given elementName as defined on the current Page object. The page object and driver object are defined by the
+     * WebDriverFactory and PageFactory objects. The derived Page Object (extends
+     * Page) should define a method named [element name]_[element type] returning a Element object (e.g. login_button).
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I hover a login button</li>
+     * <li>I hover the Login button</li>
+     * <li>I hover an Operation Button</li>
+     * </ul>
+     * 
+     * @param elementName String the name of the element to hover
+     */
+    @When("^I hover (?:the|a|an|on) (.*?)$")
+    public static void hover(String elementName) {
+        getElement(elementName).hover();
+    }
     
     /**
      * Drags the first element onto the second element.

@@ -8,3 +8,5 @@ elements:
   status_bar:
     accessibilityid: 1025
     class: msctls_statusbar32 
+  file_menu_dropdown:
+    name: File

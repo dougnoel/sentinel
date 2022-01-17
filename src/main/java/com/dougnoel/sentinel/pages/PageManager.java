@@ -92,7 +92,6 @@ public class PageManager {
     	}
     	else
     		driver();
-
 	}
 
 	/**
