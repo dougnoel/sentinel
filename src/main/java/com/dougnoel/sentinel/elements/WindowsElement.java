@@ -127,6 +127,12 @@ public class WindowsElement extends Element {
 	public Element sendKeys(String text) {
 		Driver.getDriver().switchTo().activeElement();
 		element().sendKeys(text);
+		if(!getText().contains(text)){
+			var element = element();
+			Actions action = new Actions(Driver.getDriver());
+			action.keyDown(element, text)
+			.perform();
+		}
 		return this;
 	}
 
