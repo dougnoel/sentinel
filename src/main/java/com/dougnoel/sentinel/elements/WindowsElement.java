@@ -21,11 +21,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.Color;
 
 import io.appium.java_client.MobileBy;
-import io.appium.java_client.windows.WindowsDriver;
 
 /**
  * WinAppDriver implementation of a Element.
@@ -197,7 +195,7 @@ public class WindowsElement extends Element {
 		try {
 			robot = new Robot();
 		} catch (AWTException awte) {
-			throw new RuntimeException(awte);
+			throw new com.dougnoel.sentinel.exceptions.IOException(awte);
 		}
 
 		// Grab the pixel coordinates of the rectangle of the element, relative to the top-left corner of the screen. Positive X = right. Positive Y = down. 
@@ -216,11 +214,11 @@ public class WindowsElement extends Element {
 		try {
 			ImageIO.write(screenshot, "jpg", outputfile);
 		} catch (IOException ioe) {
-			throw new RuntimeException(ioe);
+			throw new com.dougnoel.sentinel.exceptions.IOException(ioe);
 		}
 
 		int argb = screenshot.getRGB(xOffset, yOffset);
-		double a = (double) ((argb >> 24) & 0xFF);
+		double a = (argb >> 24) & 0xFF;
 		int r = (argb >> 16) & 0xFF;
 		int g = (argb >> 8) & 0xFF;
 		int b = (argb >> 0) & 0xFF;

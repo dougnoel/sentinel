@@ -33,6 +33,7 @@ public class Configuration {
 
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
 	
+	private static final String ENV_REPLACE_STRING = "{env}";
 	private static String env = null;
 	
 	private static Properties appProps = new Properties();
@@ -300,10 +301,10 @@ public class Configuration {
 			baseURL = pageData.getUrl(env);
 		} else if (pageData.containsUrl(DEFAULT)){
 			baseURL = pageData.getUrl(DEFAULT);
-			baseURL = StringUtils.replace(baseURL, "{env}", env);
+			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
 		} else if (pageData.containsUrl("base")){
 			baseURL = pageData.getUrl("base");
-			baseURL = StringUtils.replace(baseURL, "{env}", env);
+			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
 		}
 		if (StringUtils.isEmpty(baseURL)) {
 			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, pageName);
@@ -336,7 +337,7 @@ public class Configuration {
 			executablePath = pageData.getExecutable(env);
 		} else if (pageData.containsExecutable(DEFAULT)){
 			executablePath = pageData.getExecutable(DEFAULT);
-			executablePath = StringUtils.replace(executablePath, "{env}", env);
+			executablePath = StringUtils.replace(executablePath, ENV_REPLACE_STRING, env);
 		}
 		if (StringUtils.isEmpty(executablePath)) {
 			var errorMessage = SentinelStringUtils.format("An executable was not found for the {} environment in your {}.yml file. Please add an executable to the yml file. See the project README for details.", env, pageName);

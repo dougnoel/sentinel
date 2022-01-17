@@ -28,13 +28,15 @@ public class OperatingSystemInteractions {
 	    	}
 	
 	    	result.success(process.waitFor(5, TimeUnit.MINUTES));
-	    	if (result.getSuccess()) {
-	    		if (process.exitValue() == 1)
-	    			result.success(false);
+	    	if (result.getSuccess() && process.exitValue() == 1){
+	    		result.success(false);
 	    	}
     	
-		} catch (IOException | InterruptedException e) {
-			result.equals(false);
+		}
+		catch (IOException | InterruptedException e) {
+			if(e instanceof InterruptedException)
+				Thread.currentThread().interrupt();
+			result.success(false);
 			result.appendMessage(e.toString());
 		}
 
@@ -44,7 +46,7 @@ public class OperatingSystemInteractions {
     public static void installChocolatey() {
 		ExecutionResult result = executeCommand("@\"%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command \"[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))\" && SET \"PATH=%PATH%;%ALLUSERSPROFILE%\\chocolatey\\bin\"");
 		
-		if (result.getSuccess() == false)
-			throw new RuntimeException(result.getMessage());
+		if (!result.getSuccess())
+			throw new com.dougnoel.sentinel.exceptions.IOException(result.getMessage());
     }
 }

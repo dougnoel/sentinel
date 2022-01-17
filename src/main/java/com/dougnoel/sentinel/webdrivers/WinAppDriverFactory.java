@@ -63,13 +63,13 @@ public class WinAppDriverFactory {
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("deviceName", "WindowsPC");
 		
-		WindowsDriver<RemoteWebElement> driver = null;
+		WindowsDriver<WindowsElement> driver = null;
 		try {
-			driver = new WindowsDriver<RemoteWebElement>(url, capabilities);
+			driver = new WindowsDriver<>(url, capabilities);
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
-			log.error("Driver creation failed.\n{}",e);
+			log.error("Driver creation failed.\n{}", e);
 			throw e;
 		}
 		
