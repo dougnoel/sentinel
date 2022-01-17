@@ -316,8 +316,6 @@ public class Configuration {
 	 * Returns the Executable for the currently active page based on the environment value set. 
 	 * 
 	 * @return String the desired application executable path
-	 * @throws PageNotFoundException if page is not found
-	 * @throws URLNotFoundException if url is not found for the page
 	 */
 	public static String executable() {
 		return executable(PageManager.getPage().getName());
