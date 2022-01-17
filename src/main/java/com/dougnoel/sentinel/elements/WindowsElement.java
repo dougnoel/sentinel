@@ -130,7 +130,7 @@ public class WindowsElement extends Element {
 		if(!getText().contains(text)){
 			var element = element();
 			Actions action = new Actions(Driver.getDriver());
-			action.keyDown(element, text)
+			action.sendKeys(element, text)
 			.perform();
 		}
 		return this;
