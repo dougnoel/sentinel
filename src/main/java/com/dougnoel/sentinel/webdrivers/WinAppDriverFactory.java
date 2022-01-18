@@ -66,6 +66,13 @@ public class WinAppDriverFactory {
 		WindowsDriver<WindowsElement> driver = null;
 		try {
 			driver = new WindowsDriver<>(url, capabilities);
+			Thread.sleep(5000);
+		}
+		catch(InterruptedException ie){
+			Thread.currentThread().start();
+			stopWinAppDriverExe();
+			log.error("Driver creation failed.\n{}", ie);
+			throw new com.dougnoel.sentinel.exceptions.IOException(ie.getMessage());
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
