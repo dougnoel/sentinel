@@ -62,6 +62,7 @@ public class WinAppDriverFactory {
 		capabilities.setCapability("app", Configuration.executable());
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("deviceName", "WindowsPC");
+		capabilities.setCapability("ms:experimental-webdriver", false);
 		
 		WindowsDriver<WindowsElement> driver = null;
 		try {
