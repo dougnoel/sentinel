@@ -25,7 +25,7 @@ import io.appium.java_client.windows.WindowsElement;
 public class WinAppDriverFactory {
 	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
 	private static Process winAppDriverProcess = null;
-	private static final String DRIVER_URL = "http://127.0.0.1:4723/wd/hub";
+	private static final String DRIVER_URL = "http://127.0.0.1:4723";
 	private static final String COMMAND = "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe";
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
