@@ -70,7 +70,10 @@ public class WindowsElement extends Element {
 	 * Takes a Sentinel SelectorType and string value and returns a Selenium By
 	 * locator
 	 * specifically for Windows elements.
-	 * 
+	 * <p>
+	 * NOTE: TagName (LocalizedControlType) is unsupported at this time for windows element identification.
+	 * This seems to be an appium issue.
+	 * </p>
 	 * @param selectorType  SelectorType the ENUM value indicating how we search for
 	 *                      the element
 	 * @param selectorValue String the value being pulled from the config file for
@@ -93,9 +96,6 @@ public class WindowsElement extends Element {
 					return By.id(selectorValue);
 				case NAME:
 					return By.name(selectorValue);
-				case TAGNAME:
-				case LOCALIZEDCONTROLTYPE:
-					return MobileBy.tagName(selectorValue);
 				case XPATH:
 					return By.xpath(selectorValue);
 				default:

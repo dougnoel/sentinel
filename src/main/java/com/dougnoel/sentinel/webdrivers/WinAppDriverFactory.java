@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.net.URL;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.exceptions.MalformedURLException;
 
 import io.appium.java_client.windows.WindowsDriver;
@@ -26,7 +27,6 @@ public class WinAppDriverFactory {
 	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
 	private static Process winAppDriverProcess = null;
 	private static final String DRIVER_URL = "http://127.0.0.1:4723/wd/hub";
-	private static final String COMMAND = "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe";
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
@@ -69,7 +69,7 @@ public class WinAppDriverFactory {
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
-			log.error("Driver creation failed.\n{}", e);
+			log.error("Driver creation failed.\n{}", e.getMessage());
 			throw e;
 		}
 		
@@ -103,7 +103,8 @@ public class WinAppDriverFactory {
 	private static void startWinAppDriverExe() {
 		if (winAppDriverProcess == null) {
 			URL driverUrl = getDriverUrl();
-			ProcessBuilder builder = new ProcessBuilder(COMMAND, 
+			// Fully-qualified path to the executable is used here to resolve code smell security flag.
+			ProcessBuilder builder = new ProcessBuilder("C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe", 
 														driverUrl.getHost(), 
 														driverUrl.getPort() + driverUrl.getFile())
 					.redirectInput(Redirect.INHERIT)
@@ -111,13 +112,7 @@ public class WinAppDriverFactory {
 					.redirectError(new File(STDERR));
 			try {
 				winAppDriverProcess = builder.start();	
-				Thread.sleep(5000);
-			}
-			catch(InterruptedException ie) {
-				Thread.currentThread().start();
-				stopWinAppDriverExe();
-				log.error("Driver creation failed.\n{}", ie);
-				throw new com.dougnoel.sentinel.exceptions.IOException(ie.getMessage());
+				waitForDriverReady(winAppDriverProcess.pid());
 			} 
 			catch (IOException e) {
 				throw new com.dougnoel.sentinel.exceptions.IOException(e);
@@ -135,5 +130,22 @@ public class WinAppDriverFactory {
 			winAppDriverProcess.destroy();
 			winAppDriverProcess = null;
 		}
+	}
+
+
+	private static boolean isReady(long pid){
+		Optional<ProcessHandle> processHandle = ProcessHandle.of(pid);
+		return processHandle.isPresent() && processHandle.get().isAlive();
+	}
+
+	private static void waitForDriverReady(long pid){
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			if(isReady(pid))
+				return;
+		}
+		throw new com.dougnoel.sentinel.exceptions.IOException("Driver failed to create in allotted time.");
 	}
 }

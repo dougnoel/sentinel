@@ -6,7 +6,6 @@ configurations:
     user.name: "Me"
     download: "download/Directory"
     timeout: 10
-    timeunit: seconds
     build: "1.0.5"
     tags: "new_test"
     os: "Windows 10"
@@ -17,12 +16,12 @@ configurations:
     saucelabsAccessKey: "apikey"
     parent-tunnel: "tunnelname"
     tunnelIdentifier: "tunnelID"
+    recordTests: true
   stage:
     name: "Sentinel.Example Stage Run"
     headless: false
     user.name: "Stage Jenkins"
     timeout: 1
-    timeunit: hour
     os: "Windows 10"
     browser: "IE"
     browserVersion: "latest"

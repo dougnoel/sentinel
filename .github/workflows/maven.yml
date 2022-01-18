@@ -48,6 +48,7 @@ jobs:
       run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless
     - name: Attach screen recordings from build
       if: ${{ failure() }}
+      continue-on-error: true
       uses: actions/upload-artifact@v2
       with:
         name: ScreenRecordings

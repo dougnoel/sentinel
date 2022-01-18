@@ -155,6 +155,22 @@ public class Configuration {
 	}
 
 	/**
+	 * Returns the given configuration value stored in the passed property as a boolean, or false if nothing is
+	 * found.
+	 * 
+	 * @param property String the requested configuration property key
+	 * @return boolean the requested value as a boolean or false if nothing valid is found
+	 */
+	public static boolean toBoolean(String property) {
+		try {
+			return Boolean.valueOf(toString(property));
+		} catch (Exception e) {
+			log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
+			return false;
+		}
+	}
+
+	/**
 	 * Updates a configuration value once runtime has started. This should never be used in a Cucumber runner
 	 * as it will mask any values in the configuration file and on the command line.
 	 * 
