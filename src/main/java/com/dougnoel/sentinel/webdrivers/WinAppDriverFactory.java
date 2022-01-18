@@ -25,7 +25,7 @@ import io.appium.java_client.windows.WindowsElement;
 public class WinAppDriverFactory {
 	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
 	private static Process winAppDriverProcess = null;
-	private static final String DRIVER_URL = "http://127.0.0.1:4723";
+	private static final String DRIVER_URL = "http://127.0.0.1:4723/wd/hub";
 	private static final String COMMAND = "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe";
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
@@ -62,18 +62,10 @@ public class WinAppDriverFactory {
 		capabilities.setCapability("app", Configuration.executable());
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("deviceName", "WindowsPC");
-		capabilities.setCapability("ms:experimental-webdriver", false);
 		
 		WindowsDriver<WindowsElement> driver = null;
 		try {
 			driver = new WindowsDriver<>(url, capabilities);
-			Thread.sleep(5000);
-		}
-		catch(InterruptedException ie){
-			Thread.currentThread().start();
-			stopWinAppDriverExe();
-			log.error("Driver creation failed.\n{}", ie);
-			throw new com.dougnoel.sentinel.exceptions.IOException(ie.getMessage());
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
@@ -118,8 +110,16 @@ public class WinAppDriverFactory {
 					.redirectOutput(new File(STDOUT))
 					.redirectError(new File(STDERR));
 			try {
-				winAppDriverProcess = builder.start();
-			} catch (IOException e) {
+				winAppDriverProcess = builder.start();	
+				Thread.sleep(5000);
+			}
+			catch(InterruptedException ie) {
+				Thread.currentThread().start();
+				stopWinAppDriverExe();
+				log.error("Driver creation failed.\n{}", ie);
+				throw new com.dougnoel.sentinel.exceptions.IOException(ie.getMessage());
+			} 
+			catch (IOException e) {
 				throw new com.dougnoel.sentinel.exceptions.IOException(e);
 			}
 		}
