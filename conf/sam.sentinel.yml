@@ -1,5 +1,0 @@
----
-configurations:
-  default:
-    recordTests: true
-...

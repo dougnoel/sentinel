@@ -23,12 +23,14 @@ import io.cucumber.junit.CucumberOptions;
 
 public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
-	
-    @BeforeClass
-    public static void blah() throws Exception {
-    	SentinelScreenRecorder.startRecording();
-    }
     
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        if(Configuration.toBoolean("recordTests"))
+            SentinelScreenRecorder.startRecording();
+    }
+
+
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         String totalWaitTime = Configuration.toString("totalWaitTime");
@@ -36,7 +38,8 @@ public class SentinelTests {
         	log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", totalWaitTime);
         }
         
-        SentinelScreenRecorder.stopRecording();
+        if(Configuration.toBoolean("recordTests"))
+            SentinelScreenRecorder.stopRecording();
         
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
         	Driver.quit();
