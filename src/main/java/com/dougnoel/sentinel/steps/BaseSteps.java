@@ -131,12 +131,13 @@ public class BaseSteps {
      * <li>I navigate to the Login Page</li>
      * <li>I start the Notepad Application</li>
      * <li>I open the Calculator Executable</li>
+     * <li>I am on the Login Page</li>
      * </ul>
      * <p>
      * SEE ALSO: VerificationSteps.redirectedToPage() for how to switch page objects without starting a new driver.
      * @param pageName String Page Object Name
      */
-    @Given("^I (?:navigate to|start|open) the (.*?)$")
+    @Given("^I (?:navigate to|start|open|am on) the (.*?)$")
     public static void navigateToPage(String pageName) {
     	navigateToPageWithArguments("", pageName);
     }
