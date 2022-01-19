@@ -163,9 +163,14 @@ public class Configuration {
 	 */
 	public static boolean toBoolean(String property) {
 		try {
-			return Boolean.valueOf(toString(property));
-		} catch (Exception e) {
-			log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
+			switch(toString(property).toLowerCase()) {
+				case "true":
+				case "":
+					return true;
+				default:
+					return false;
+			}
+		} catch (NullPointerException e) {
 			return false;
 		}
 	}
