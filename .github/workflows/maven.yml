@@ -52,4 +52,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ScreenRecordings
-        path: ${{env.GITHUB_WORKSPACE}}/sentinel/sentinel/reports/*.avi
+        path: ${{GITHUB_WORKSPACE}}/sentinel/sentinel/reports/*.avi
