@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.systems;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 import org.monte.media.Format;
@@ -33,7 +34,8 @@ public class SentinelScreenRecorder {
 						CompressorNameKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, DepthKey, 24, FrameRateKey,
 						Rational.valueOf(15), QualityKey, 1.0f, KeyFrameIntervalKey, 15 * 60),
 				new Format(MediaTypeKey, MediaType.VIDEO, EncodingKey, "black", FrameRateKey, Rational.valueOf(30)),
-				null);
+				null,
+				new File("./reports/"));
 		screenRecorder.start();
 		setIsRecording(true);
 	}
