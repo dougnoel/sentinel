@@ -293,7 +293,7 @@ public class Configuration {
 		if (pageData.hasExecutables())
 			return PageObjectType.EXECUTABLE;
 
-		return PageObjectType.UNKNOWN;
+		return PageManager.getCurrentPageObjectType();
 	}
 
 	/**

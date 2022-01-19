@@ -122,19 +122,21 @@ public class BaseSteps {
     }
 
     /**
-     * Loads a page based on the environment you are currently testing. The url is set in the page object yaml file.
-     * Refer to the documentation in the sentinel.example project for more information. You cannot load a URL
-     * directly, because once there you would not be able to do anything.
+     * Loads a page or starts an executable based on the environment you are currently testing. 
+     * The url/executable is set in the page object yaml file.
+     * Refer to the documentation in the sentinel.example project for more information. 
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I navigate to the Login Page</li>
-     * <li>I am on the Main Page</li>
-     * <li>I remain on the PopUp Page</li>
+     * <li>I start the Notepad Application</li>
+     * <li>I open the Calculator Executable</li>
      * </ul>
+     * <p>
+     * SEE ALSO: VerificationSteps.redirectedToPage() for how to switch page objects without starting a new driver.
      * @param pageName String Page Object Name
      */
-    @Given("^I (?:navigate to|am on|remain on|open) the (.*?)$")
+    @Given("^I (?:navigate to|start|open) the (.*?)$")
     public static void navigateToPage(String pageName) {
     	navigateToPageWithArguments("", pageName);
     }

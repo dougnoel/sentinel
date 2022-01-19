@@ -30,6 +30,7 @@ public class PageManager {
 	private static final Logger log = LogManager.getLogger(PageManager.class);
 	// Only one page reference should exist. We aren't doing multi-threading.
 	private static Page page = null;
+	private static PageObjectType pageObjectType = PageObjectType.UNKNOWN;
 	// Only one page manager can exist.
 	private static PageManager instance = null;
 	// Page handle for the first window opened.
@@ -84,7 +85,8 @@ public class PageManager {
 	 */
 	public static void open(String pageName, String arguments) {
     	PageManager.setPage(pageName);
-    	if (PageManager.getPage().getPageObjectType() == PageObjectType.WEBPAGE) {
+    	pageObjectType = PageManager.getPage().getPageObjectType();
+    	if (pageObjectType == PageObjectType.WEBPAGE) {
 	    	String url = Configuration.url();
 	    	url += arguments == null ? "" : arguments;
 	    	log.debug("Loading the the {} page using the url: {}", pageName, url);
@@ -316,5 +318,17 @@ public class PageManager {
 		// if we've gotten this far, we haven't timed out so return the
 		// document.readyState check
 		return ((JavascriptExecutor) driver()).executeScript("return document.readyState").equals("complete");
+	}
+	
+	/**
+	 * Returns what the page Manager believes to be the current page object type.
+	 * Will return WEBPAGE, EXECUTABLE, or UNKNOWN if we don't know.
+	 * This value is set every time a new webpage or executable is opened
+	 * using the PageManager.open() method.
+	 * 
+	 * @return PageObjectType the type of page we are on
+	 */
+	public static PageObjectType getCurrentPageObjectType() {
+		return pageObjectType;
 	}
 }

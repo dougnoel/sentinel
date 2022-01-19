@@ -196,15 +196,15 @@ public class VerificationSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I am redirected to the home page</li>
-     * <li>I am redirected to the login page</li>
-     * <li>I am shown the member portal pop-up overlay</li>
+     * <li>I remain on the login page</li>
+     * <li>I switch to the results window</li>
      * </ul>
      * @param pageName String the name of the place to redirect to
      * @throws InterruptedException if the thread gets interrupted while sleeping
      */
-    @Then("^I am (?:redirected to|shown) the (.*) (?:(?:P|p)age|(?:O|o)verlay)$")
+    @Then("^I (?:am redirected to|remain on|switch to) the (.*)$")
     public static void redirectedToPage(String pageName) throws InterruptedException {
-        pageName = pageName.replaceAll("\\s", "") + "Page";
+        pageName = pageName.replaceAll("\\s", "");
         PageManager.setPage(pageName);
         PageManager.waitForPageLoad();
     }

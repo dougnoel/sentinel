@@ -97,6 +97,7 @@ public class Page {
 	 * @return PageObjectType the type of page object (WEBPAGE, EXECUTABLE, UNKNOWN)
 	 */
 	public PageObjectType getPageObjectType() {
+		
 		if (pageType == null) {
 			pageType = Configuration.getPageObjectType(pageName);
 		}
