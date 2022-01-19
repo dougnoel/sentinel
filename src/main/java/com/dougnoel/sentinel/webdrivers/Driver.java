@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.webdrivers;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
 
@@ -19,6 +20,7 @@ import io.appium.java_client.windows.WindowsElement;
 public class Driver {
 	private static final Logger log = LogManager.getLogger(Driver.class);
 	private static Map<String,WebDriver> drivers = new HashMap<>();
+	private static WebDriver currentDriver = null;
 	private Driver() {
         // Exists only to defeat instantiation.
     }
@@ -31,12 +33,15 @@ public class Driver {
     public static WebDriver getDriver() {
     	String pageName = PageManager.getPage().getName();
     	if (PageManager.getPage().getPageObjectType() == PageObjectType.EXECUTABLE) {
-        	return drivers.computeIfAbsent(pageName, driver -> WinAppDriverFactory.createWinAppDriver());
+    		if (Configuration.hasExecutables(pageName)) {
+    			currentDriver = drivers.computeIfAbsent(pageName, driver -> WinAppDriverFactory.createWinAppDriver());
+    		}
     	}
         else {
     		pageName = "WebDriver"; //There can be only one.
-    		return drivers.computeIfAbsent(pageName, driver -> WebDriverFactory.getWebDriver());
+    		currentDriver = drivers.computeIfAbsent(pageName, driver -> WebDriverFactory.getWebDriver());
         }
+    	return currentDriver;
     }
     
     /**

@@ -284,6 +284,7 @@ public class Configuration {
 	 * Returns the type of page object. Most will be WEBPAGE, but if an "executables:"
 	 * section is defined instead of a "urls:" section, this will return EXECUTABLE as the type.
 	 * 
+	 * @param pageName String the name of the page for which the data is retrieved
 	 * @return PageObjectType the type of page object either WEBPAGE or EXECUTABLE
 	 */
 	public static PageObjectType getPageObjectType(String pageName) {
@@ -296,6 +297,16 @@ public class Configuration {
 		return PageManager.getCurrentPageObjectType();
 	}
 
+	/**
+	 * Returns whether the page object has a section for executables.
+	 * 
+	 * @param pageName String the name of the page for which the data is retrieved * @param pageName
+	 * @return boolean true if the page object has an executables section, otherwise false
+	 */
+	public static boolean hasExecutables(String pageName) {
+		return loadPageData(pageName).hasExecutables();
+	}
+	
 	/**
 	 * Returns the URL for the currently active page based on the environment value set. 
 	 * 
