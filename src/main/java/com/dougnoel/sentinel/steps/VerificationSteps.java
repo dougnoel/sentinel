@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
@@ -206,7 +208,7 @@ public class VerificationSteps {
     public static void redirectedToPage(String pageName) throws InterruptedException {
         pageName = pageName.replaceAll("\\s", "");
         PageManager.setPage(pageName);
-        PageManager.waitForPageLoad();
+    	PageManager.waitForPageLoad();
     }
     
     /**

@@ -1,21 +1,34 @@
 package com.dougnoel.sentinel.pages;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.support.ui.FluentWait;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.elements.Element;
+import com.dougnoel.sentinel.elements.ElementFactory;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
@@ -36,6 +49,8 @@ public class PageManager {
 	// Page handle for the first window opened.
 	private static String parentHandle = null;
 	private static String parentPage = null;
+	// Handles page object window handle association
+	private static Map<Page, String[]> pages = new ConcurrentHashMap<>();
 
 	protected static WebDriver driver() { return Driver.getDriver(); }
 
@@ -62,6 +77,7 @@ public class PageManager {
 
 		// Get a page from the page factory
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
+		pages.computeIfAbsent(page, pageObject -> (windowScannerPruner()));
 		return page;
 	}
 
@@ -153,66 +169,172 @@ public class PageManager {
         return driver().getTitle();
     }
     
-	/**
-	 * Switches focus of the WebDriver to a new window assuming there was only one
-	 * before. Finds the handle and passes that to overloaded switchToNewWindow()
-	 * method
-	 * <p>
-	 * <b>Preconditions:</b> Expects a new tab or window to have just been opened,
-	 * and for there to be only two.
-	 * 
-     * @param pageName the new page name to set the window to so it switches correctly
-     * @return String the window handle we are switching to
-	 * @throws InterruptedException if page doesn't load
-     */
-	public static String switchToNewWindow(String pageName) throws InterruptedException {
-		String newHandle = null;
-		parentHandle = driver().getWindowHandle();
-		parentPage = PageManager.getPage().getName();
-		Set<String> handles = driver().getWindowHandles();
-		if (handles.size() == 1) {
-			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
-			log.error(errorMessage);
-			throw new NoSuchWindowException(errorMessage);
-		}
-		if (parentHandle == null) {
-			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
-			log.error(errorMessage);
-			throw new NoSuchWindowException(errorMessage);
-		}
-		for (String handle : handles) {
-			if (!handle.equals(parentHandle)) {
-				newHandle = handle;
-			}
-		}
-		switchToNewWindow(pageName, newHandle);
-		return newHandle;
-	}
-
-	/**
-	 * Overloads sentinel.pages.PageManager#switchToNewWindow() to
-	 * accept a window index. Calls original
-	 * sentinel.pages.PageManager#switchToNewWindow() and passes the
-	 * index. This will allow for more fine grained control at a later date.
-	 * 
-	 * @param pageName the new page name to set the window to so it switches correctly
-	 * @param index String the window to which we want to switch
-	 * @throws InterruptedException if page doesn't load
-	 */
-	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
+//	/**
+//	 * Switches focus of the WebDriver to a new window assuming there was only one
+//	 * before. Finds the handle and passes that to overloaded switchToNewWindow()
+//	 * method
+//	 * <p>
+//	 * <b>Preconditions:</b> Expects a new tab or window to have just been opened,
+//	 * and for there to be only two.
+//	 * 
+//     * @param pageName the new page name to set the window to so it switches correctly
+//     * @return String the window handle we are switching to
+//	 * @throws InterruptedException if page doesn't load
+//     */
+//	public static String switchToNewWindow(String pageName) throws InterruptedException {
+//		String newHandle = null;
+//		parentHandle = driver().getWindowHandle();
+//		parentPage = PageManager.getPage().getName();
+//		Set<String> handles = driver().getWindowHandles();
+//		if (handles.size() == 1) {
+//			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
+//			log.error(errorMessage);
+//			throw new NoSuchWindowException(errorMessage);
+//		}
+//		if (parentHandle == null) {
+//			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
+//			log.error(errorMessage);
+//			throw new NoSuchWindowException(errorMessage);
+//		}
+//		for (String handle : handles) {
+//			if (!handle.equals(parentHandle)) {
+//				newHandle = handle;
+//			}
+//		}
+//		switchToNewWindow(pageName, newHandle);
+//		return newHandle;
+//	}
+//
+//	/**
+//	 * Overloads sentinel.pages.PageManager#switchToNewWindow() to
+//	 * accept a window index. Calls original
+//	 * sentinel.pages.PageManager#switchToNewWindow() and passes the
+//	 * index. This will allow for more fine grained control at a later date.
+//	 * 
+//	 * @param pageName the new page name to set the window to so it switches correctly
+//	 * @param index String the window to which we want to switch
+//	 * @throws InterruptedException if page doesn't load
+//	 */
+//	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
+//		try {
+//			driver().switchTo().window(index);
+//	        setPage(pageName);
+//	        waitForPageLoad();
+//			log.trace("Switched to new window {}", index);
+//		} catch (org.openqa.selenium.NoSuchWindowException e) {
+//			var errorMessage = SentinelStringUtils.format(
+//					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
+//					e.getMessage());
+//			log.error(errorMessage);
+//			throw new NoSuchWindowException(errorMessage);
+//		}
+//	}
+	
+    public static String switchToNewWindow(String pageName) {
 		try {
-			driver().switchTo().window(index);
-	        setPage(pageName);
-	        waitForPageLoad();
-			log.trace("Switched to new window {}", index);
-		} catch (org.openqa.selenium.NoSuchWindowException e) {
-			var errorMessage = SentinelStringUtils.format(
-					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
-					e.getMessage());
-			log.error(errorMessage);
-			throw new NoSuchWindowException(errorMessage);
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
+				       .withTimeout(Time.out().plusSeconds(30))
+				       .pollingEvery(Time.interval())
+				       .ignoring(Exception.class);
+
+			wait.until(d -> {
+				var updatedWindowHandleList = driver().getWindowHandles();
+				
+				if(updatedWindowHandleList.isEmpty()) {
+					return false;
+				}
+				
+				List<String[]> handleTitlePair = new ArrayList<String[]>();
+				
+				for (String windowHandle : updatedWindowHandleList) {
+					driver().switchTo().window(windowHandle);
+			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
+				}
+				
+				var windowLocated = false;
+				for(String[] knownWindow : handleTitlePair) {
+					for(Map.Entry<Page, String[]> entry : pages.entrySet()) {
+						String[] windowToCheck = null;
+						Page windowPage = null;
+						
+						windowToCheck = entry.getValue();
+						windowPage = entry.getKey();
+			
+						if(!knownWindow[0].contentEquals(windowToCheck[0]) && !knownWindow[1].contentEquals(windowToCheck[1])) {
+							driver().switchTo().window(knownWindow[0]);
+							return true;
+						}
+					}
+				}
+				
+				return false;
+			});
 		}
+		catch (TimeoutException e) {
+			throw new TimeoutException("Failed to switch to the new window");
+		}
+		
+		setPage(pageName);
+		return driver().getWindowHandle();
 	}
+	
+	public static String[] windowScannerPruner() {
+		String baseHandle = null;
+		String baseTitle = null;
+		
+		try {
+			baseHandle = driver().getWindowHandle();
+			baseTitle = driver().getTitle();
+		}
+		catch(Exception e) { }
+		
+		try {
+			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
+				       .withTimeout(Time.out().plusSeconds(30))
+				       .pollingEvery(Time.interval())
+				       .ignoring(Exception.class);
+	
+			wait.until(d -> {
+				var updatedWindowHandleList = driver().getWindowHandles();
+				
+				List<String[]> handleTitlePair = new ArrayList<String[]>();
+				
+				for (String windowHandle : updatedWindowHandleList) {
+					driver().switchTo().window(windowHandle);
+			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
+				}
+		
+				for(Map.Entry<Page, String[]> entry : pages.entrySet()) {
+					var windowLocated = false;
+					String[] windowToCheck = null;
+					Page windowPage = null;
+					
+					for(String[] knownWindow : handleTitlePair) {
+						windowToCheck = entry.getValue();
+						windowPage = entry.getKey();
+			
+						if(knownWindow[0].contentEquals(windowToCheck[0]) && knownWindow[1].contentEquals(windowToCheck[1])) {
+							windowLocated = true;
+						}
+					}
+					
+					if(!windowLocated){
+				    	pages.remove(windowPage);
+					}
+				}
+				return true;
+			});
+		}
+		catch (TimeoutException e) {
+			throw new TimeoutException("Window scan failed");
+		}
+		
+		try {
+			driver().switchTo().window(baseHandle);
+		}catch(Exception e) {}
+		
+		return new String[] {baseHandle, baseTitle};
+	}	
 
 	/**
 	 * Closes the child window and returns to using the parent window. Used for
@@ -292,20 +414,22 @@ public class PageManager {
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
-		driver().manage().timeouts().pageLoadTimeout(Time.out().toSeconds(), TimeUnit.SECONDS);
-		while (!isPageLoaded()) {
-			Thread.sleep(20);
+		if(PageManager.getPage().getPageObjectType() != PageObjectType.EXECUTABLE) {
+			driver().manage().timeouts().pageLoadTimeout(Time.out().toSeconds(), TimeUnit.SECONDS);
+			while (!isPageLoaded()) {
+				Thread.sleep(20);
+			}
 		}
 		return true;
 	}
 
 	/**
-	 * Returns true if document.readyState is complete for the current driver,
+	 * Returns true if document.readyState is complete for the current non-windows-application driver,
 	 * meaning the page has loaded successfully. Uses the driver's pageLoadTimeout
 	 * setting to throw a TimeoutException if the body element cannot be found on
 	 * the page.
 	 * 
-	 * @return boolean true if page has loaded, false if not
+	 * @return boolean true if page has loaded or the page is a windows application, false if not.
 	 */
 	private static boolean isPageLoaded() {
 		try {
