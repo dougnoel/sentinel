@@ -1,25 +1,19 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.apache.commons.compress.utils.Lists;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -27,8 +21,6 @@ import org.openqa.selenium.support.ui.FluentWait;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.elements.Element;
-import com.dougnoel.sentinel.elements.ElementFactory;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
@@ -46,11 +38,12 @@ public class PageManager {
 	private static PageObjectType pageObjectType = PageObjectType.UNKNOWN;
 	// Only one page manager can exist.
 	private static PageManager instance = null;
-	// Page handle for the first window opened.
-	private static String parentHandle = null;
-	private static String parentPage = null;
-	// Handles page object window handle association
-	private static Map<Page, String[]> pages = new ConcurrentHashMap<>();
+	// Information regarding the previous page
+	private static Pair<String, Pair<Page, String[]>> previousPageInfo = null;
+	// Information regarding the current page
+	private static Pair<String, Pair<Page, String[]>> currentPageInfo = null;
+	// Information regarding all pages that have been utilized previously
+	private static Map<String, Pair<Page, String[]>> pages = new ConcurrentHashMap<>();
 
 	protected static WebDriver driver() { return Driver.getDriver(); }
 
@@ -74,10 +67,13 @@ public class PageManager {
 		// return the same driver.
 		if (instance == null)
 			instance = new PageManager();
-
+		
 		// Get a page from the page factory
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
-		pages.computeIfAbsent(page, pageObject -> (windowScannerPruner()));
+		String[] pageInformation = windowScannerPruner();
+		currentPageInfo = Pair.of(pageName, Pair.of(page, pageInformation));
+
+		pages.computeIfAbsent(currentPageInfo.getKey(), pageInfo -> currentPageInfo.getValue());
 		return page;
 	}
 
@@ -168,69 +164,38 @@ public class PageManager {
     public static String getPageTitle() {
         return driver().getTitle();
     }
-    
-//	/**
-//	 * Switches focus of the WebDriver to a new window assuming there was only one
-//	 * before. Finds the handle and passes that to overloaded switchToNewWindow()
-//	 * method
-//	 * <p>
-//	 * <b>Preconditions:</b> Expects a new tab or window to have just been opened,
-//	 * and for there to be only two.
-//	 * 
-//     * @param pageName the new page name to set the window to so it switches correctly
-//     * @return String the window handle we are switching to
-//	 * @throws InterruptedException if page doesn't load
-//     */
-//	public static String switchToNewWindow(String pageName) throws InterruptedException {
-//		String newHandle = null;
-//		parentHandle = driver().getWindowHandle();
-//		parentPage = PageManager.getPage().getName();
-//		Set<String> handles = driver().getWindowHandles();
-//		if (handles.size() == 1) {
-//			var errorMessage = "Only one window is open, therefore we cannot switch to a new window. Please open a new window and try again.";
-//			log.error(errorMessage);
-//			throw new NoSuchWindowException(errorMessage);
-//		}
-//		if (parentHandle == null) {
-//			var errorMessage = "Parent Window cannot be found. Please open a window and restart your test.";
-//			log.error(errorMessage);
-//			throw new NoSuchWindowException(errorMessage);
-//		}
-//		for (String handle : handles) {
-//			if (!handle.equals(parentHandle)) {
-//				newHandle = handle;
-//			}
-//		}
-//		switchToNewWindow(pageName, newHandle);
-//		return newHandle;
-//	}
-//
-//	/**
-//	 * Overloads sentinel.pages.PageManager#switchToNewWindow() to
-//	 * accept a window index. Calls original
-//	 * sentinel.pages.PageManager#switchToNewWindow() and passes the
-//	 * index. This will allow for more fine grained control at a later date.
-//	 * 
-//	 * @param pageName the new page name to set the window to so it switches correctly
-//	 * @param index String the window to which we want to switch
-//	 * @throws InterruptedException if page doesn't load
-//	 */
-//	private static void switchToNewWindow(String pageName, String index) throws InterruptedException {
-//		try {
-//			driver().switchTo().window(index);
-//	        setPage(pageName);
-//	        waitForPageLoad();
-//			log.trace("Switched to new window {}", index);
-//		} catch (org.openqa.selenium.NoSuchWindowException e) {
-//			var errorMessage = SentinelStringUtils.format(
-//					"The expected window is already closed or cannot be found. Please check your intended target:  {}",
-//					e.getMessage());
-//			log.error(errorMessage);
-//			throw new NoSuchWindowException(errorMessage);
-//		}
-//	}
+
+    /**
+     * Switches to a previously utilized window which still exists
+     * @param pageName The name of the page to switch to
+     * @return The window handle of the switched-to window
+     * @throws NoSuchWindowException If no page of that name was utilized previously
+     */
+    public static String switchToExistingWindow(String pageName) {
+    	previousPageInfo = currentPageInfo;
+    	
+    	if(pages.containsValue(pageName)) {
+			driver().switchTo().window(pages.get(pageName).getRight()[0]);
+			page = pages.get(pageName).getLeft();
+    	}
+    	else {
+    		throw new NoSuchWindowException("No page of that name was used previously");
+    	}
+    	
+    	return driver().getWindowHandle();
+    }
 	
+    /**
+     * Switches to the first found unvisited page and associates it with the page object
+     * associated with the passed page name.
+     * @param pageName The page object to associate with the newly switched to page
+     * @return The window handle of the switched-to window
+     * @throws TimeoutException if a new window cannot be switched to in the configured
+     * timeout.
+     */
     public static String switchToNewWindow(String pageName) {
+    	previousPageInfo = currentPageInfo;
+    	
 		try {
 			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 				       .withTimeout(Time.out().plusSeconds(30))
@@ -251,15 +216,10 @@ public class PageManager {
 			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
 				}
 				
-				var windowLocated = false;
 				for(String[] knownWindow : handleTitlePair) {
-					for(Map.Entry<Page, String[]> entry : pages.entrySet()) {
-						String[] windowToCheck = null;
-						Page windowPage = null;
+					for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
+						String[] windowToCheck = entry.getValue().getRight();
 						
-						windowToCheck = entry.getValue();
-						windowPage = entry.getKey();
-			
 						if(!knownWindow[0].contentEquals(windowToCheck[0]) && !knownWindow[1].contentEquals(windowToCheck[1])) {
 							driver().switchTo().window(knownWindow[0]);
 							return true;
@@ -278,13 +238,22 @@ public class PageManager {
 		return driver().getWindowHandle();
 	}
 	
-	public static String[] windowScannerPruner() {
-		String baseHandle = null;
-		String baseTitle = null;
+    /**
+     * Attempts to get the data on the current window, and prunes null or old tracked windows
+     * which no longer exist from the history list based on their window handle + title
+     * combination.
+     * @return Returns the handle and title of the current window as a String array
+     * <p>
+     * If the handle and title cannot be retrieved
+     * it will return a String array of [null,null]
+     */
+	private static String[] windowScannerPruner() {
+		String currentHandle = null;
+		String currentTitle = null;
 		
 		try {
-			baseHandle = driver().getWindowHandle();
-			baseTitle = driver().getTitle();
+			currentHandle = driver().getWindowHandle();
+			currentTitle = driver().getTitle();
 		}
 		catch(Exception e) { }
 		
@@ -304,14 +273,14 @@ public class PageManager {
 			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
 				}
 		
-				for(Map.Entry<Page, String[]> entry : pages.entrySet()) {
+				for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
 					var windowLocated = false;
 					String[] windowToCheck = null;
-					Page windowPage = null;
+					String windowPage = null;
 					
 					for(String[] knownWindow : handleTitlePair) {
-						windowToCheck = entry.getValue();
-						windowPage = entry.getKey();
+						windowToCheck = entry.getValue().getRight();
+						windowPage = entry.getKey();	
 			
 						if(knownWindow[0].contentEquals(windowToCheck[0]) && knownWindow[1].contentEquals(windowToCheck[1])) {
 							windowLocated = true;
@@ -322,6 +291,7 @@ public class PageManager {
 				    	pages.remove(windowPage);
 					}
 				}
+
 				return true;
 			});
 		}
@@ -330,10 +300,10 @@ public class PageManager {
 		}
 		
 		try {
-			driver().switchTo().window(baseHandle);
+			driver().switchTo().window(currentHandle);
 		}catch(Exception e) {}
 		
-		return new String[] {baseHandle, baseTitle};
+		return new String[] {currentHandle, currentTitle};
 	}	
 
 	/**
@@ -346,10 +316,10 @@ public class PageManager {
 	 */
 	public static String closeChildWindow() throws InterruptedException {
 		WebDriverFactory.close();
-		driver().switchTo().window(parentHandle);
-        setPage(parentPage);
+		driver().switchTo().window(previousPageInfo.getValue().getRight()[0]);
+        setPage(previousPageInfo.getKey());
         waitForPageLoad();
-		return parentHandle;
+		return previousPageInfo.getValue().getRight()[0];
 	}
 
 	/**
