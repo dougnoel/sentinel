@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.NoSuchWindowException;
-import org.openqa.selenium.NotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -58,7 +58,7 @@ public class PageManager {
 	 * <p>
 	 * <b>NOTE:</b> This function is currently only intended for generic step
 	 * definitions, as it makes the code complex to write otherwise.
-	 * 
+	 *
 	 * @param pageName String Must be an exact string match (including case) to the Page Object name (e.g. LoginPage).
 	 * @return Page Returns a reference to the page in case you want to use it immediately.
 	 */
@@ -67,7 +67,7 @@ public class PageManager {
 		// return the same driver.
 		if (instance == null)
 			instance = new PageManager();
-		
+
 		// Get a page from the page factory
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
 		String[] pageInformation = windowScannerPruner();
@@ -79,19 +79,19 @@ public class PageManager {
 
 	/**
 	 * This method returns the current Page Object stored in the Page Manager.
-	 * 
+	 *
 	 * @return Page the Page Object
 	 */
 	public static Page getPage() {
 		if (instance == null || page == null)
 			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
-		
+
 		return page;
 	}
 
 	/**
 	 * Creates a WebDriver if it doesn't exist and opens up the webpage or application.
-	 * 
+	 *
 	 * @param pageName String the name of the page object to open
 	 * @param arguments String the arguments to pass as a query string if this is a web page
 	 */
@@ -113,7 +113,7 @@ public class PageManager {
 	 * <p>
 	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
 	 * existing page, and if so, passing that off as the new page object.
-	 * 
+	 *
 	 * @return Page the current page object for chaining
 	 */
 	public static Page navigateForward() {
@@ -126,7 +126,7 @@ public class PageManager {
 	 * <p>
 	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
 	 * existing page, and if so, passing that off as the new page object.
-	 * 
+	 *
 	 * @return Page the current page object for chaining
 	 */
 	public static Page navigateBack() {
@@ -136,7 +136,7 @@ public class PageManager {
 
 	/**
 	 * Emulate clicking the browser's refresh button.
-	 * 
+	 *
 	 * @return Page the current page object for chaining
 	 */
 	public static Page refresh() {
@@ -147,7 +147,7 @@ public class PageManager {
     /**
      * Maximizes the browser window. Stores the current window size and position so
      * you can return to the existing settings.
-     * 
+     *
      * @return Page - Returns a page object for chaining.
      */
     public Page maximizeWindow() {
@@ -158,7 +158,7 @@ public class PageManager {
     /**
      * Returns the title of the current web page we are on. Useful for debugging and
      * assertions.
-     * 
+     *
      * @return String
      */
     public static String getPageTitle() {
@@ -167,13 +167,15 @@ public class PageManager {
 
     /**
      * Switches to a previously utilized window which still exists
+     * <p>
+     * <b>Preconditions:</b> Only one page exists for each page object
      * @param pageName The name of the page to switch to
      * @return The window handle of the switched-to window
      * @throws NoSuchWindowException If no page of that name was utilized previously
      */
     public static String switchToExistingWindow(String pageName) {
     	previousPageInfo = currentPageInfo;
-    	
+
     	if(pages.containsValue(pageName)) {
 			driver().switchTo().window(pages.get(pageName).getRight()[0]);
 			page = pages.get(pageName).getLeft();
@@ -181,13 +183,15 @@ public class PageManager {
     	else {
     		throw new NoSuchWindowException("No page of that name was used previously");
     	}
-    	
+
     	return driver().getWindowHandle();
     }
-	
+
     /**
      * Switches to the first found unvisited page and associates it with the page object
      * associated with the passed page name.
+     * <p>
+     * <b>Preconditions:</b> Only one new window should have opened.
      * @param pageName The page object to associate with the newly switched to page
      * @return The window handle of the switched-to window
      * @throws TimeoutException if a new window cannot be switched to in the configured
@@ -195,49 +199,49 @@ public class PageManager {
      */
     public static String switchToNewWindow(String pageName) {
     	previousPageInfo = currentPageInfo;
-    	
+
 		try {
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
+			FluentWait<WebDriver> wait = new FluentWait<>(driver())
 				       .withTimeout(Time.out().plusSeconds(30))
 				       .pollingEvery(Time.interval())
 				       .ignoring(Exception.class);
 
 			wait.until(d -> {
 				var updatedWindowHandleList = driver().getWindowHandles();
-				
+
 				if(updatedWindowHandleList.isEmpty()) {
 					return false;
 				}
-				
-				List<String[]> handleTitlePair = new ArrayList<String[]>();
-				
+
+				List<String[]> handleTitlePair = new ArrayList<>();
+
 				for (String windowHandle : updatedWindowHandleList) {
 					driver().switchTo().window(windowHandle);
 			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
 				}
-				
+
 				for(String[] knownWindow : handleTitlePair) {
 					for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
 						String[] windowToCheck = entry.getValue().getRight();
-						
+
 						if(!knownWindow[0].contentEquals(windowToCheck[0]) && !knownWindow[1].contentEquals(windowToCheck[1])) {
 							driver().switchTo().window(knownWindow[0]);
 							return true;
 						}
 					}
 				}
-				
+
 				return false;
 			});
 		}
 		catch (TimeoutException e) {
 			throw new TimeoutException("Failed to switch to the new window");
 		}
-		
+
 		setPage(pageName);
 		return driver().getWindowHandle();
 	}
-	
+
     /**
      * Attempts to get the data on the current window, and prunes null or old tracked windows
      * which no longer exist from the history list based on their window handle + title
@@ -250,43 +254,43 @@ public class PageManager {
 	private static String[] windowScannerPruner() {
 		String currentHandle = null;
 		String currentTitle = null;
-		
+
 		try {
 			currentHandle = driver().getWindowHandle();
 			currentTitle = driver().getTitle();
 		}
 		catch(Exception e) { }
-		
+
 		try {
-			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
+			FluentWait<WebDriver> wait = new FluentWait<>(driver())
 				       .withTimeout(Time.out().plusSeconds(30))
 				       .pollingEvery(Time.interval())
 				       .ignoring(Exception.class);
-	
+
 			wait.until(d -> {
 				var updatedWindowHandleList = driver().getWindowHandles();
-				
-				List<String[]> handleTitlePair = new ArrayList<String[]>();
-				
+
+				List<String[]> handleTitlePair = new ArrayList<>();
+
 				for (String windowHandle : updatedWindowHandleList) {
 					driver().switchTo().window(windowHandle);
 			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
 				}
-		
+
 				for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
 					var windowLocated = false;
 					String[] windowToCheck = null;
 					String windowPage = null;
-					
+
 					for(String[] knownWindow : handleTitlePair) {
 						windowToCheck = entry.getValue().getRight();
-						windowPage = entry.getKey();	
-			
+						windowPage = entry.getKey();
+
 						if(knownWindow[0].contentEquals(windowToCheck[0]) && knownWindow[1].contentEquals(windowToCheck[1])) {
 							windowLocated = true;
 						}
 					}
-					
+
 					if(!windowLocated){
 				    	pages.remove(windowPage);
 					}
@@ -298,19 +302,19 @@ public class PageManager {
 		catch (TimeoutException e) {
 			throw new TimeoutException("Window scan failed");
 		}
-		
+
 		try {
 			driver().switchTo().window(currentHandle);
 		}catch(Exception e) {}
-		
+
 		return new String[] {currentHandle, currentTitle};
-	}	
+	}
 
 	/**
 	 * Closes the child window and returns to using the parent window. Used for
 	 * things like PDFs or links opening in a new tab or window that need to be
 	 * closed after a test is complete.
-	 * 
+	 *
 	 * @return String the handle of the parent window to which we are returning
 	 * @throws InterruptedException if page does not load
 	 */
@@ -338,7 +342,7 @@ public class PageManager {
 		}
 
 	}
-	
+
 	/**
 	 * Exits existing iFrame.
 	 */
@@ -349,7 +353,7 @@ public class PageManager {
 	/**
 	 * Gets the URL of the page we are currently on by calling the Page Object which
 	 * has access to the driver object..
-	 * 
+	 *
 	 * @return String the URL of currently active window
 	 */
 	public static String getCurrentUrl() {
@@ -375,11 +379,11 @@ public class PageManager {
 
 	/**
 	 * Sets page load timeout on web driver instance using the timeout and timeunit values set in
-	 * the configuration file or on the command line. Then interfaces with isPageLoaded to continually 
+	 * the configuration file or on the command line. Then interfaces with isPageLoaded to continually
 	 * test if a page is loaded until it returns true or times out.
-	 * 
+	 *
 	 * @see PageManager#isPageLoaded()
-	 * 
+	 *
 	 * @return boolean always returns true, will throw exception if page does not load
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
@@ -398,7 +402,7 @@ public class PageManager {
 	 * meaning the page has loaded successfully. Uses the driver's pageLoadTimeout
 	 * setting to throw a TimeoutException if the body element cannot be found on
 	 * the page.
-	 * 
+	 *
 	 * @return boolean true if page has loaded or the page is a windows application, false if not.
 	 */
 	private static boolean isPageLoaded() {
@@ -413,13 +417,13 @@ public class PageManager {
 		// document.readyState check
 		return ((JavascriptExecutor) driver()).executeScript("return document.readyState").equals("complete");
 	}
-	
+
 	/**
 	 * Returns what the page Manager believes to be the current page object type.
 	 * Will return WEBPAGE, EXECUTABLE, or UNKNOWN if we don't know.
 	 * This value is set every time a new webpage or executable is opened
 	 * using the PageManager.open() method.
-	 * 
+	 *
 	 * @return PageObjectType the type of page we are on
 	 */
 	public static PageObjectType getCurrentPageObjectType() {
