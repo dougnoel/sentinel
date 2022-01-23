@@ -213,19 +213,12 @@ public class PageManager {
 					return false;
 				}
 
-				List<String[]> handleTitlePair = new ArrayList<>();
-
-				for (String windowHandle : updatedWindowHandleList) {
-					driver().switchTo().window(windowHandle);
-			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
-				}
-
-				for(String[] knownWindow : handleTitlePair) {
+				for(String knownWindow : updatedWindowHandleList) {
 					for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
 						String[] windowToCheck = entry.getValue().getRight();
 
-						if(!knownWindow[0].contentEquals(windowToCheck[0]) && !knownWindow[1].contentEquals(windowToCheck[1])) {
-							driver().switchTo().window(knownWindow[0]);
+						if(!knownWindow.contentEquals(windowToCheck[0])) {
+							driver().switchTo().window(knownWindow);
 							return true;
 						}
 					}
@@ -254,58 +247,24 @@ public class PageManager {
 	private static String[] windowScannerPruner() {
 		String currentHandle = null;
 		String currentTitle = null;
+		var updatedWindowHandleList = driver().getWindowHandles();
 
 		try {
 			currentHandle = driver().getWindowHandle();
 			currentTitle = driver().getTitle();
+		}catch(Exception e) {}
+		
+		try {
+			for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
+				String[] windowToCheck = entry.getValue().getRight();
+				String windowPage = entry.getKey();
+				
+				if(!updatedWindowHandleList.contains(windowToCheck[0])) {
+					pages.remove(windowPage);
+				}
+			}
 		}
 		catch(Exception e) { }
-
-		try {
-			FluentWait<WebDriver> wait = new FluentWait<>(driver())
-				       .withTimeout(Time.out().plusSeconds(30))
-				       .pollingEvery(Time.interval())
-				       .ignoring(Exception.class);
-
-			wait.until(d -> {
-				var updatedWindowHandleList = driver().getWindowHandles();
-
-				List<String[]> handleTitlePair = new ArrayList<>();
-
-				for (String windowHandle : updatedWindowHandleList) {
-					driver().switchTo().window(windowHandle);
-			        handleTitlePair.add(new String[] {windowHandle, driver().getTitle()});
-				}
-
-				for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
-					var windowLocated = false;
-					String[] windowToCheck = null;
-					String windowPage = null;
-
-					for(String[] knownWindow : handleTitlePair) {
-						windowToCheck = entry.getValue().getRight();
-						windowPage = entry.getKey();
-
-						if(knownWindow[0].contentEquals(windowToCheck[0]) && knownWindow[1].contentEquals(windowToCheck[1])) {
-							windowLocated = true;
-						}
-					}
-
-					if(!windowLocated){
-				    	pages.remove(windowPage);
-					}
-				}
-
-				return true;
-			});
-		}
-		catch (TimeoutException e) {
-			throw new TimeoutException("Window scan failed");
-		}
-
-		try {
-			driver().switchTo().window(currentHandle);
-		}catch(Exception e) {}
 
 		return new String[] {currentHandle, currentTitle};
 	}
