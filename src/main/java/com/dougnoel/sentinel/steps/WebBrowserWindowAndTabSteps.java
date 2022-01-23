@@ -1,7 +1,5 @@
 package com.dougnoel.sentinel.steps;
 
-import org.openqa.selenium.TimeoutException;
-
 import com.dougnoel.sentinel.pages.PageManager;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
