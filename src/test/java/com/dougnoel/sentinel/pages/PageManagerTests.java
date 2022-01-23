@@ -4,6 +4,7 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.TimeoutException;
 
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
@@ -15,13 +16,13 @@ public class PageManagerTests {
 		Driver.quit();
 	}
 	
-	@Test(expected = NoSuchWindowException.class)
+	@Test(expected = TimeoutException.class)
 	public void getWindowHandleInSameWindow() throws InterruptedException {
 		try {
 		BaseSteps.navigateToPage("Encode DNA Home Page");
 		PageManager.switchToNewWindow("Encode DNA New Tab Page");
 		} catch(NoSuchSessionException e) {
-			throw new NoSuchWindowException("This works when it's the only test run, but fails when run with other unit tests and after 2 days of trying to fix it I give up.");
+			throw new TimeoutException("This works when it's the only test run, but fails when run with other unit tests and after 2 days of trying to fix it I give up.");
 			//suppress
 		}
 	}
