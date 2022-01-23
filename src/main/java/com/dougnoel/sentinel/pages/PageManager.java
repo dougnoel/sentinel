@@ -199,6 +199,11 @@ public class PageManager {
      */
     public static String switchToNewWindow(String pageName) {
     	previousPageInfo = currentPageInfo;
+    	ArrayList<String> allKnownHandles = new ArrayList<String>();
+    	
+    	for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
+			allKnownHandles.add(entry.getValue().getRight()[0]);
+		}
 
 		try {
 			FluentWait<WebDriver> wait = new FluentWait<>(driver())
@@ -213,14 +218,10 @@ public class PageManager {
 					return false;
 				}
 
-				for(String knownWindow : updatedWindowHandleList) {
-					for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
-						String[] windowToCheck = entry.getValue().getRight();
-
-						if(!knownWindow.contentEquals(windowToCheck[0])) {
-							driver().switchTo().window(knownWindow);
-							return true;
-						}
+				for(String foundWindowHandle : updatedWindowHandleList) { 
+					if(!allKnownHandles.contains(foundWindowHandle)) {
+						driver().switchTo().window(foundWindowHandle);
+						return true;
 					}
 				}
 
@@ -247,13 +248,14 @@ public class PageManager {
 	private static String[] windowScannerPruner() {
 		String currentHandle = null;
 		String currentTitle = null;
-		var updatedWindowHandleList = driver().getWindowHandles();
-
+		
 		try {
 			currentHandle = driver().getWindowHandle();
 			currentTitle = driver().getTitle();
 		}catch(Exception e) {}
 		
+		var updatedWindowHandleList = driver().getWindowHandles();
+
 		try {
 			for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
 				String[] windowToCheck = entry.getValue().getRight();
