@@ -194,7 +194,7 @@ public class PageManager {
      * <b>Preconditions:</b> Only one new window should have opened.
      * @param pageName The page object to associate with the newly switched to page
      * @return The window handle of the switched-to window
-     * @throws TimeoutException if a new window cannot be switched to in the configured
+     * @throws NoSuchWindowException if a new window cannot be switched to in the configured
      * timeout.
      */
     public static String switchToNewWindow(String pageName) {
@@ -229,7 +229,7 @@ public class PageManager {
 			});
 		}
 		catch (TimeoutException e) {
-			throw new TimeoutException("Failed to switch to the new window");
+			throw new NoSuchWindowException("Failed to switch to the new window");
 		}
 
 		setPage(pageName);

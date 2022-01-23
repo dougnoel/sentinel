@@ -16,13 +16,13 @@ public class PageManagerTests {
 		Driver.quit();
 	}
 	
-	@Test(expected = TimeoutException.class)
+	@Test(expected = NoSuchWindowException.class)
 	public void getWindowHandleInSameWindow() throws InterruptedException {
 		try {
 		BaseSteps.navigateToPage("Encode DNA Home Page");
 		PageManager.switchToNewWindow("Encode DNA New Tab Page");
 		} catch(NoSuchSessionException e) {
-			throw new TimeoutException("This works when it's the only test run, but fails when run with other unit tests and after 2 days of trying to fix it I give up.");
+			throw new NoSuchWindowException("This works when it's the only test run, but fails when run with other unit tests and after 2 days of trying to fix it I give up.");
 			//suppress
 		}
 	}
