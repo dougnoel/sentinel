@@ -256,17 +256,14 @@ public class PageManager {
 		
 		var updatedWindowHandleList = driver().getWindowHandles();
 
-		try {
-			for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
-				String[] windowToCheck = entry.getValue().getRight();
-				String windowPage = entry.getKey();
-				
-				if(!updatedWindowHandleList.contains(windowToCheck[0])) {
-					pages.remove(windowPage);
-				}
+		for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
+			String[] windowToCheck = entry.getValue().getRight();
+			String windowPage = entry.getKey();
+			
+			if(!updatedWindowHandleList.contains(windowToCheck[0])) {
+				pages.remove(windowPage);
 			}
 		}
-		catch(Exception e) { }
 
 		return new String[] {currentHandle, currentTitle};
 	}
