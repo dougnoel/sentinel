@@ -27,6 +27,7 @@ public class WinAppDriverFactory {
 	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
 	private static Process winAppDriverProcess = null;
 	private static final String DRIVER_URL = "http://127.0.0.1:4723/wd/hub";
+	private static final String WINAPPDRIVER_PATH = "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe";
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
@@ -104,7 +105,7 @@ public class WinAppDriverFactory {
 		if (winAppDriverProcess == null) {
 			URL driverUrl = getDriverUrl();
 			// Fully-qualified path to the executable is used here to resolve code smell security flag.
-			ProcessBuilder builder = new ProcessBuilder("C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe", 
+			ProcessBuilder builder = new ProcessBuilder(WINAPPDRIVER_PATH, 
 														driverUrl.getHost(), 
 														driverUrl.getPort() + driverUrl.getFile())
 					.redirectInput(Redirect.INHERIT)
