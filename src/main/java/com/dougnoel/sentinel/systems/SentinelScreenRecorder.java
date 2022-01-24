@@ -20,9 +20,10 @@ public class SentinelScreenRecorder {
 
 	/**
 	 * Starts a recording of the main screen of the computer. Will capture the entire desktop, not just the application.
-	 * For Windows machines, the recording will be at &lt C:/users/(youruser)/Videos/ &gt.
+	 * For Windows machines, the recording will be at &lt; C:/users/(youruser)/Videos/ &gt;.
 	 * For Mac machines, the recording will be at the Movies folder in the user directory.
-	 * @throws Exception
+	 * @throws IOException if the recording cannot be written
+	 * @throws AWTException if AWT does not have access to record
 	 */
 	public static void startRecording() throws IOException, AWTException {
 
@@ -48,13 +49,17 @@ public class SentinelScreenRecorder {
 		return isRecording;
 	}
 
+	/**
+	 * Sets whether or not a recording is happening.
+	 * @param recording boolean true if we are recording, false otherwise
+	 */
 	private static void setIsRecording(boolean recording){
 		isRecording = recording;
 	}
 
 	/**
 	 * Stops the recording of the main screen of the computer.
-	 * @throws Exception
+	 * @throws IOException if the recording cannot be written
 	 */
 	public static void stopRecording() throws IOException {
 		screenRecorder.stop();
