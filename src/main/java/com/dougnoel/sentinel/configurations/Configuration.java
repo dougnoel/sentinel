@@ -162,7 +162,7 @@ public class Configuration {
 	 * @return boolean the requested value as a boolean or false if nothing valid is found
 	 */
 	public static boolean toBoolean(String property) {
-		try {
+		if(toString(property) != null) {
 			switch(toString(property).toLowerCase()) {
 				case "true":
 				case "":
@@ -170,7 +170,8 @@ public class Configuration {
 				default:
 					return false;
 			}
-		} catch (NullPointerException e) {
+		}
+		else {
 			return false;
 		}
 	}

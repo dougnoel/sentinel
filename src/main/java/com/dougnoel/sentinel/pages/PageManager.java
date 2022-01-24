@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -70,8 +69,9 @@ public class PageManager {
 
 		// Get a page from the page factory
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
+
 		String[] pageInformation = windowScannerPruner();
-		currentPageInfo = Pair.of(pageName, Pair.of(page, pageInformation));
+		currentPageInfo = Pair.of(pageName, Pair.of(PageManager.page, pageInformation));
 
 		pages.computeIfAbsent(currentPageInfo.getKey(), pageInfo -> currentPageInfo.getValue());
 		return page;
@@ -176,9 +176,9 @@ public class PageManager {
     public static String switchToExistingWindow(String pageName) {
     	previousPageInfo = currentPageInfo;
 
-    	if(pages.containsValue(pageName)) {
-			driver().switchTo().window(pages.get(pageName).getRight()[0]);
-			page = pages.get(pageName).getLeft();
+    	if(pages.containsKey(pageName)) {
+    		driver().switchTo().window(pages.get(pageName).getRight()[0]);
+    		setPage(pageName);
     	}
     	else {
     		throw new NoSuchWindowException("No page of that name was used previously");
@@ -199,7 +199,7 @@ public class PageManager {
      */
     public static String switchToNewWindow(String pageName) {
     	previousPageInfo = currentPageInfo;
-    	ArrayList<String> allKnownHandles = new ArrayList<String>();
+    	ArrayList<String> allKnownHandles = new ArrayList<>();
     	
     	for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
 			allKnownHandles.add(entry.getValue().getRight()[0]);
@@ -252,7 +252,9 @@ public class PageManager {
 		try {
 			currentHandle = driver().getWindowHandle();
 			currentTitle = driver().getTitle();
-		}catch(Exception e) {}
+		}catch(Exception e) { 
+			//Suppress errors if the window closes rapidly i.e. update windows
+		}
 		
 		var updatedWindowHandleList = driver().getWindowHandles();
 
