@@ -114,6 +114,11 @@ public class WinAppDriverFactory {
 			try {
 				winAppDriverProcess = builder.start();	
 				waitForDriverReady(winAppDriverProcess.pid());
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					Thread.currentThread().resume();
+				}
 			} 
 			catch (IOException e) {
 				throw new com.dougnoel.sentinel.exceptions.IOException(e);
