@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.exceptions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -11,28 +10,16 @@ public class IOExceptionTests {
 	private static final String TEST_MESSAGE = "My test message.";
 	private static final Throwable CAUSE = new Throwable(TEST_MESSAGE);
 
-	@Test
-	public void doesNotHaltExecution() {
-		Exception e = new IOException();
-		return;
-	}
-
 	@Test(expected = IOException.class)
 	public void throwsAsIoException() {
-		Exception e = new IOException();
-		throw (IOException)e;
-	}
-
-	@Test(expected = RuntimeException.class)
-	public void throwsAsRuntime() throws Exception {
-		Exception e = new IOException();
+		IOException e = new IOException();
 		throw e;
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void canBeCastAsRuntimeException() {
-		Exception e = new IOException();
-		throw (RuntimeException)e;
+	public void throwsAsRuntime() throws Exception {
+		RuntimeException e = new IOException();
+		throw e;
 	}
 
 	@Test
@@ -41,7 +28,7 @@ public class IOExceptionTests {
 			throw new IOException();
 		}
 		catch (IOException e) {
-			assertEquals("Expecting exception message to be null by default.", e.getMessage(), null);
+			assertEquals("Expecting exception message to be null by default.", null, e.getMessage());
 		}
 	}
 
@@ -51,7 +38,7 @@ public class IOExceptionTests {
 			throw new IOException(CAUSE);
 		}
 		catch(IOException e) {
-			assertEquals("Expecting exception cause set to be returned.", e.getCause(), CAUSE);
+			assertEquals("Expecting exception cause set to be returned.", CAUSE, e.getCause());
 		}
 	}
 
@@ -62,7 +49,7 @@ public class IOExceptionTests {
 			throw new IOException(exceptionMessage);
 		}
 		catch(IOException e) {
-			assertEquals("Expecting exception message set to be returned.", e.getMessage(), exceptionMessage);
+			assertEquals("Expecting exception message set to be returned.", exceptionMessage, e.getMessage());
 		}
 	}
 
@@ -73,8 +60,8 @@ public class IOExceptionTests {
 			throw new IOException(exceptionMessage, CAUSE);
 		}
 		catch(IOException e) {
-			assertEquals("Expecting exception message set to be returned.", e.getMessage(), exceptionMessage);
-			assertEquals("Expecting exception cause set to be returned.", e.getCause(), CAUSE);
+			assertEquals("Expecting exception message set to be returned.", exceptionMessage, e.getMessage());
+			assertEquals("Expecting exception cause set to be returned.", CAUSE, e.getCause());
 		}
 	}
 
@@ -84,7 +71,7 @@ public class IOExceptionTests {
 			throw new IOException();
 		}
 		catch (RuntimeException e) {
-			assertEquals("Expecting exception message to be null by default.", e.getMessage(), null);
+			assertEquals("Expecting exception message to be null by default.", null, e.getMessage());
 		}
 	}
 
@@ -94,7 +81,7 @@ public class IOExceptionTests {
 			throw new IOException(CAUSE);
 		}
 		catch(RuntimeException e) {
-			assertEquals("Expecting exception cause set to be returned.", e.getCause(), CAUSE);
+			assertEquals("Expecting exception cause set to be returned.", CAUSE, e.getCause());
 		}
 	}
 
@@ -105,7 +92,7 @@ public class IOExceptionTests {
 			throw new IOException(exceptionMessage);
 		}
 		catch(RuntimeException e) {
-			assertEquals("Expecting exception message set to be returned.", e.getMessage(), exceptionMessage);
+			assertEquals("Expecting exception message set to be returned.", exceptionMessage, e.getMessage());
 		}
 	}
 
@@ -116,8 +103,8 @@ public class IOExceptionTests {
 			throw new IOException(exceptionMessage, CAUSE);
 		}
 		catch(RuntimeException e) {
-			assertEquals("Expecting exception message set to be returned.", e.getMessage(), exceptionMessage);
-			assertEquals("Expecting exception cause set to be returned.", e.getCause(), CAUSE);
+			assertEquals("Expecting exception message set to be returned.", exceptionMessage, e.getMessage());
+			assertEquals("Expecting exception cause set to be returned.", CAUSE, e.getCause());
 		}
 	}
 }
