@@ -162,8 +162,9 @@ public class Configuration {
 	 * @return boolean the requested value as a boolean or false if nothing valid is found
 	 */
 	public static boolean toBoolean(String property) {
-		if(toString(property) != null) {
-			switch(toString(property).toLowerCase()) {
+		String prop = toString(property);
+		if(prop != null) {
+			switch(prop.toLowerCase()) {
 				case "true":
 				case "":
 					return true;

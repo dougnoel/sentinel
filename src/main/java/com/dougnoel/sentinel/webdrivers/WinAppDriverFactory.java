@@ -98,8 +98,7 @@ public class WinAppDriverFactory {
 	 * Starts the WinAppDriver executable program if it is not running
 	 * so that Windows programs can be driven using it. Sets the
 	 * winAppDrvierProcess member variable to be the running process.
-	 * 
-	 * TODO: Start this so that it can be left over after the test (parent process) ends.
+	 * Future optimizations of this method are tracked in issues #284 and #285.
 	 */
 	private static void startWinAppDriverExe() {
 		if (winAppDriverProcess == null) {
@@ -117,7 +116,7 @@ public class WinAppDriverFactory {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
-					Thread.currentThread().resume();
+					Thread.currentThread().interrupt();
 				}
 			} 
 			catch (IOException e) {
