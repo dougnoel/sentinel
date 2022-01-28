@@ -19,10 +19,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * based on the given environment and the account map within that environment.
  */
 public class PageData {
-	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
 	public Map<String,String> executables;
-	// user account data TODO: Annotate correctly.
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
 	public String include;
