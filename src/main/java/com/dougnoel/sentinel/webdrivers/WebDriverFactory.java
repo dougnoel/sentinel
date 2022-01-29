@@ -27,7 +27,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  */
 public class WebDriverFactory {
 	private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
-    private static WebDriver driver = null; //TODO: Remove this as it is now tracked in the Driver object
+    private static WebDriver driver = null;
     private static String parentHandle = null;
 
     private WebDriverFactory() {
@@ -102,7 +102,6 @@ public class WebDriverFactory {
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver() {
-    	//TODO: I need to know what page I'm on and return the appropriate driver.
         if (driver == null) {
         	instantiateWebDriver();
         	log.info("Driver created: {}", driver);
