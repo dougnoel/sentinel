@@ -173,8 +173,8 @@ public class DownloadManager {
         PDDocument pdDoc = null;
         String parsedText = null;
 
-        try (BufferedInputStream bis = new BufferedInputStream(url.openStream())) {
-            file = bis;
+        try {
+            file = new BufferedInputStream(url.openStream());
         } catch (IOException e) {
         	var errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
