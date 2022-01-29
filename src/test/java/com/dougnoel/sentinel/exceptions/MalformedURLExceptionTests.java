@@ -3,20 +3,20 @@ package com.dougnoel.sentinel.exceptions;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-public class IOExceptionTests {
+public class MalformedURLExceptionTests {
 	private static final String TEST_MESSAGE = "My test message.";
-	private static final java.io.IOException CAUSE = new java.io.IOException();
+	private static final java.net.MalformedURLException CAUSE = new java.net.MalformedURLException();
 		
-	@Test(expected = IOException.class)
+	@Test(expected = MalformedURLException.class)
 	public void ExceptionThrownWithoutParameters() {
-		throw new IOException();
+		throw new MalformedURLException();
 	}
 	
 	@Test
 	public void WrappingJavaException() {
 		try {
-			throw new IOException(CAUSE);
-		} catch (IOException e) {
+			throw new MalformedURLException(CAUSE);
+		} catch (MalformedURLException e) {
 			assertEquals("Expecting exception cause to be java.net.MalformedURLException", CAUSE, e.getCause());
 		}
 	}
@@ -24,8 +24,8 @@ public class IOExceptionTests {
 	@Test
 	public void ExceptionThrownWithMessage() {
 		try {
-			throw new IOException(TEST_MESSAGE);
-		} catch (IOException e) {
+			throw new MalformedURLException(TEST_MESSAGE);
+		} catch (MalformedURLException e) {
 			assertEquals("Expecting custom exception message.", TEST_MESSAGE, e.getMessage());
 		}
 	}
@@ -33,8 +33,8 @@ public class IOExceptionTests {
 	@Test
 	public void ExceptionThrownWithMessageAndCause() {
 		try {
-			throw new IOException(TEST_MESSAGE, CAUSE);
-		} catch (IOException e) {
+			throw new MalformedURLException(TEST_MESSAGE, CAUSE);
+		} catch (MalformedURLException e) {
 			assertEquals("Expecting custom exception message.", TEST_MESSAGE, e.getMessage());
 			assertEquals("Expecting exception cause to be java.net.MalformedURLException", CAUSE, e.getCause());
 		}
