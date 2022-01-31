@@ -178,7 +178,6 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	public Element click() {
-		Driver.getDriver().switchTo().activeElement();
 		element().click();
 		return this;
 	}
