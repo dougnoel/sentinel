@@ -224,17 +224,23 @@ public class Element {
     	if (PageManager.getPage().hasIFrames()) {
     		WebElement element = null;
     		List <WebElement> iframes = PageManager.getPage().getIFrames();
-    		for (WebElement iframe : iframes) {
-    			driver().switchTo().frame(iframe);
-    			element = findElementInCurrentFrameForDuration(Time.loopInterval());
-    			if (element != null) {
-    				return element;
-    			}
-        	    element = findElementInIFrame();
-    			if (element != null)
-    				return element;
-    			driver().switchTo().parentFrame();
+    		try {
+    			for (WebElement iframe : iframes) {
+        			driver().switchTo().frame(iframe);
+        			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+        			if (element != null) {
+        				return element;
+        			}
+            	    element = findElementInIFrame();
+        			if (element != null)
+        				return element;
+        			driver().switchTo().parentFrame();
+        		}
     		}
+    		catch(StaleElementReferenceException sere) {
+    			return null;
+    		}
+    		
     	}
     	return null;
 	}

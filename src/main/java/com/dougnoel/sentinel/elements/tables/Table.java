@@ -157,18 +157,32 @@ public class Table extends Element {
 	 */
 	protected List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
-			List<WebElement> dataRows = getOrCreateRowElements();
-			for (WebElement row : dataRows) {
-				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
-				ArrayList<String> cells = new ArrayList<>();
-				for (WebElement cell : cellElements) {
-					cells.add(cell.getText());
-				}
-				rows.add(cells);
+			try {
+				createRowData(getOrCreateRowElements());
+			}
+			catch(org.openqa.selenium.StaleElementReferenceException sere) {
+				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
+				rowElements = null;
+				createRowData(getOrCreateRowElements());
 			}
 		}
 		log.trace("Rows Data: {}", rows);
 		return rows;
+	}
+	
+	/**
+	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
+	 * @param dataRows List&lt;WebElement&gt; the webelements of the rows in the table.
+	 */
+	protected void createRowData(List<WebElement> dataRows){
+		for (WebElement row : dataRows) {
+			List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
+			ArrayList<String> cells = new ArrayList<>();
+			for (WebElement cell : cellElements) {
+				cells.add(cell.getText());
+			}
+			rows.add(cells);
+		}
 	}
 
 	/**
@@ -330,9 +344,7 @@ public class Table extends Element {
 		WebElement element;
 		try {
 			element = this.element()
-					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(rowLocator)
-					.findElement(By.xpath(tableSiblingCellLocator))
 					.findElement(elementLocator);
 
 		} catch (org.openqa.selenium.NoSuchElementException e) {
