@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
@@ -44,7 +43,7 @@ public class PageManager {
 	// Information regarding all pages that have been utilized previously
 	private static Map<String, Pair<Page, String[]>> pages = new ConcurrentHashMap<>();
 
-	protected static WebDriver driver() { return Driver.getDriver(); }
+	private static WebDriver driver() { return Driver.getDriver(); }
 
 	private PageManager() {
 		// Exists only to defeat instantiation.
@@ -107,63 +106,6 @@ public class PageManager {
     	else
     		driver();
 	}
-
-	/**
-	 * Emulate clicking the browser's forward button.
-	 * <p>
-	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
-	 * existing page, and if so, passing that off as the new page object.
-	 *
-	 * @return Page the current page object for chaining
-	 */
-	public static Page navigateForward() {
-		driver().navigate().forward();
-		return page;
-	}
-
-	/**
-	 * Emulate clicking the browser's back button.
-	 * <p>
-	 * <b>TO DO:</b> We should be checking the URL to see if we are going to an
-	 * existing page, and if so, passing that off as the new page object.
-	 *
-	 * @return Page the current page object for chaining
-	 */
-	public static Page navigateBack() {
-		driver().navigate().back();
-		return page;
-	}
-
-	/**
-	 * Emulate clicking the browser's refresh button.
-	 *
-	 * @return Page the current page object for chaining
-	 */
-	public static Page refresh() {
-		driver().navigate().refresh();
-		return page;
-	}
-
-    /**
-     * Maximizes the browser window. Stores the current window size and position so
-     * you can return to the existing settings.
-     *
-     * @return Page - Returns a page object for chaining.
-     */
-    public Page maximizeWindow() {
-        driver().manage().window().maximize();
-        return page;
-    }
-
-    /**
-     * Returns the title of the current web page we are on. Useful for debugging and
-     * assertions.
-     *
-     * @return String
-     */
-    public static String getPageTitle() {
-        return driver().getTitle();
-    }
 
     /**
      * Switches to a previously utilized window which still exists
@@ -284,30 +226,6 @@ public class PageManager {
         setPage(previousPageInfo.getKey());
         waitForPageLoad();
 		return previousPageInfo.getValue().getRight()[0];
-	}
-
-	/**
-	 * Switches focus of the WebDriver to an iFrame.
-	 */
-	public static void switchToIFrame() {
-		try {
-			driver().switchTo().frame(0);
-			log.trace("Switched to iFrame on current page");
-		} catch (org.openqa.selenium.NoSuchFrameException e) {
-			var errorMessage = SentinelStringUtils.format(
-					"No iFrames were found on the current page. Ensure you have the correct page open, and please try again. {}",
-					e.getMessage());
-			log.error(errorMessage);
-			throw new NoSuchFrameException(errorMessage);
-		}
-
-	}
-
-	/**
-	 * Exits existing iFrame.
-	 */
-	public static void exitIFrame() {
-		driver().switchTo().defaultContent();
 	}
 
 	/**

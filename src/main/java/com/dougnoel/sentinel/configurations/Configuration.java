@@ -252,7 +252,7 @@ public class Configuration {
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
 	 */
-	private static File findPageObjectFilePath(String pageName)  {
+	public static File findPageObjectFilePath(String pageName)  {
 		return FileManager.findFilePath(pageName + ".yml");
 	}
 

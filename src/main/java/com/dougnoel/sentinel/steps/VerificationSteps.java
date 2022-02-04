@@ -209,31 +209,5 @@ public class VerificationSteps {
         PageManager.setPage(pageName);
     	PageManager.waitForPageLoad();
     }
-    
-    /**
-     * Identifies the first iFrame in a document and switches to it.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I enter the iFrame
-     * </ul>
-     * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
-     */
-    @Then("^I enter the iFrame$")
-    public static void switchToIFrame() {
-        PageManager.switchToIFrame();
-    }
-    
-    /**
-     * Exits iFrame.
-     * <p>
-     * <b>Gherkin Example:</b>
-     * <ul>
-     * <li>I exit the iFrame</li>
-     * </ul>
-     */
-    @Then("^I exit the iFrame$")
-    public static void exitIFrame() {
-        PageManager.exitIFrame();
-    }
+
 }

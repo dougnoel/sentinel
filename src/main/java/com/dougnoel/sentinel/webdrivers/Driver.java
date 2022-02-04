@@ -6,7 +6,6 @@ import java.util.Map;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +20,7 @@ public class Driver {
 	private static final Logger log = LogManager.getLogger(Driver.class);
 	private static Map<String,WebDriver> drivers = new HashMap<>();
 	private static WebDriver currentDriver = null;
+	
 	private Driver() {
         // Exists only to defeat instantiation.
     }
@@ -36,6 +36,7 @@ public class Driver {
     		if (Configuration.hasExecutables(pageName)) {
     			currentDriver = drivers.computeIfAbsent(pageName, driver -> WinAppDriverFactory.createWinAppDriver());
     		}
+    		drivers.putIfAbsent(pageName, currentDriver);
     	}
         else {
     		pageName = "WebDriver"; //There can be only one.
@@ -70,5 +71,43 @@ public class Driver {
     		}
     	});
     	drivers.clear();
+    	currentDriver = null;
     }
+    
+    /**
+     * Closes the current window and moves the driver to the previous window. If no previous window exists,
+     * we call close to clean up.
+     */
+    public static void close() {
+    	
+    }
+    
+    public static void goToNextWindow() {
+    	
+    }
+    
+    public static void goToPreviousWindow() {
+    	
+    }
+    
+	/**
+	 * Emulate clicking the browser's forward button.
+	 */
+	public static void navigateForward() {
+		currentDriver.navigate().forward();
+	}
+
+	/**
+	 * Emulate clicking the browser's back button.
+	 */
+	public static void navigateBack() {
+		currentDriver.navigate().back();
+	}
+
+	/**
+	 * Emulate clicking the browser's refresh button.
+	 */
+	public static void refresh() {
+		currentDriver.navigate().refresh();
+	}
 }

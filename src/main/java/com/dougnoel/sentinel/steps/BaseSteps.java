@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -170,22 +171,19 @@ public class BaseSteps {
      * <li>I press the browser refresh button</li>
      * <li>I press the browser back button</li>
      * </ul>
-     * @see com.dougnoel.sentinel.pages.PageManager#navigateBack()
-     * @see com.dougnoel.sentinel.pages.PageManager#navigateForward()
-     * @see com.dougnoel.sentinel.pages.PageManager#refresh()
      * @param option String the browser action
      */
     @When("^I press the browser (back|forward|refresh) button$")
     public static void pressBrowserButton(String option) {
         switch (option) {
         case "back":
-            PageManager.navigateBack();
+            Driver.navigateBack();
             break;
         case "forward":
-            PageManager.navigateForward();
+        	Driver.navigateForward();
             break;
         default:
-            PageManager.refresh();
+        	Driver.refresh();
             break;
         }
     }    
