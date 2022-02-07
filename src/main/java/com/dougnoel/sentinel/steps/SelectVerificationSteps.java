@@ -1,12 +1,9 @@
 package com.dougnoel.sentinel.steps;
 
-import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelectElement;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
-import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 

@@ -2,9 +2,7 @@ package com.dougnoel.sentinel.elements.dropdowns;
 
 import java.util.Map;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
