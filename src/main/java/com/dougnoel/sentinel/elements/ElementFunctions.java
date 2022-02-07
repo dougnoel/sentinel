@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**

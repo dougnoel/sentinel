@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.systems.SentinelScreenRecorder;
+import com.dougnoel.sentinel.system.SentinelScreenRecorder;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;

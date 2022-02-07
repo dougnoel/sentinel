@@ -4,6 +4,8 @@ import org.junit.AfterClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.NoSuchWindowException;
+
+import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
 

@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.pages;
+package com.dougnoel.sentinel.framework;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,6 +20,8 @@ import org.openqa.selenium.support.ui.FluentWait;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.PageObjectType;
+import com.dougnoel.sentinel.pages.Page;
+import com.dougnoel.sentinel.pages.PageFactory;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;

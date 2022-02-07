@@ -17,7 +17,7 @@ import org.openqa.selenium.NoSuchElementException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
 

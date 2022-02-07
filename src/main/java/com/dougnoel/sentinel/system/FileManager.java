@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.systems;
+package com.dougnoel.sentinel.system;
 
 import java.io.File;
 import java.io.FileNotFoundException;

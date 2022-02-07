@@ -6,7 +6,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ConfigurationDevTests {

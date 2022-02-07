@@ -2,7 +2,8 @@ package com.dougnoel.sentinel.steps;
 
 import org.openqa.selenium.NoSuchWindowException;
 
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
+
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 

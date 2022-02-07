@@ -5,7 +5,8 @@ import java.util.Map;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.PageObjectType;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;

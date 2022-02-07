@@ -17,7 +17,7 @@ import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.systems.DownloadManager;
+import com.dougnoel.sentinel.system.DownloadManager;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 

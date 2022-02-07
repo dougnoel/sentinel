@@ -13,7 +13,7 @@ import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ElementFunctionsTests {

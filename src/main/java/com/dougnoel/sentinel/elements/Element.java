@@ -26,9 +26,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.systems.FileManager;
+import com.dougnoel.sentinel.system.FileManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
