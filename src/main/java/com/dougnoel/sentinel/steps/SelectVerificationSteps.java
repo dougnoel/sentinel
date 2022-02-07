@@ -21,7 +21,7 @@ public class SelectVerificationSteps {
      * </ul>
      * @param elementName String select element to check
      * @param assertion String "has" for a positive check, anything else for negative
-     * @param attribute String text to match against
+     * @param textOfOption String text to match against
      */
     @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the option (.*?)$")
 	public static void verifyDropdownHasOption(String elementName, String assertion, String textOfOption) {
@@ -46,7 +46,7 @@ public class SelectVerificationSteps {
      * </ul>
      * @param elementName String select element to check
      * @param assertion String "has" for a positive check, anything else for negative
-     * @param attribute String text to match against
+     * @param textOfOption String text to match against
      */
     @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the currently selected option (.*?)$")
 	public static void verifyDropdownHasCurrentlySelectedOption(String elementName, String assertion, String textOfOption) {
