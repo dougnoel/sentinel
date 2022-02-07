@@ -15,6 +15,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -237,7 +238,10 @@ public class Element {
         			driver().switchTo().parentFrame();
         		}
     		}
-    		catch(StaleElementReferenceException sere) {
+    		catch(StaleElementReferenceException | NoSuchFrameException e) {
+    			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
+    					elementType, getName(), e);
+    			log.trace(errorMessage);
     			return null;
     		}
     		

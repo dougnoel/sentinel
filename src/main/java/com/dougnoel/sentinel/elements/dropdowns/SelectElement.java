@@ -2,12 +2,18 @@ package com.dougnoel.sentinel.elements.dropdowns;
 
 import java.util.Map;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * Extends Element. Is intended to be a a base class for Dropdown.
@@ -95,5 +101,27 @@ public class SelectElement extends Element {
     public String getSelectedText(){
         Select selectElement = new Select(this.element());
         return selectElement.getFirstSelectedOption().getText();
+    }
+    
+    /**
+     * Checks if the exact passed text is an available option in the select.
+     * @return boolean true if any option of the select element has exactly matching text.
+     */
+    public boolean hasOption(String text) {
+    	Select selectElement = new Select(this.element());
+    	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(d -> selectElement.getOptions().stream().anyMatch(el -> el.getText().endsWith(text)));
+    }
+    
+    /**
+     * Checks if the exact passed text is an available option in the select.
+     * @return boolean true if no option of the select element has exactly matching text.
+     */
+    public boolean doesNotHaveOption(String text) {
+    	Select selectElement = new Select(this.element());
+    	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out().toSeconds(), Time.interval().toMillis())
+				.ignoring(StaleElementReferenceException.class)
+				.until(d -> !selectElement.getOptions().stream().anyMatch(el -> el.getText().endsWith(text)));
     }
 }

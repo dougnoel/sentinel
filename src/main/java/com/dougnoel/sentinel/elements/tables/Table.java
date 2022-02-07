@@ -104,10 +104,10 @@ public class Table extends Element {
 	 * @return List&lt;WebElement&gt; the headers
 	 */
 	protected List<WebElement> getOrCreateHeaderElements() {
-		if (headerElements == null) {
+		if (headerElements == null || headerElements.isEmpty()) {
 			headerElements = getHeaderElements();
 		}
-		if (headerElements == null) {
+		if (headerElements == null || headerElements.isEmpty()) {
 			log.trace("Header tags not found, using first row for headers.");
 			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
 		} else {
@@ -388,6 +388,17 @@ public class Table extends Element {
 	 */
 	public void clickElementInRowThatContains(int ordinalRow, By elementLocator) {
 		getElementInRowThatContains(ordinalRow, elementLocator).click();
+	}
+	
+	
+	/**
+	 * Returns a list of all the cell values in the given column.
+	 * @param columnHeader String the column to search for all cell data
+	 * @return ArrayList&lt;String&gt; a list of all cell data. Each entry in the list corresponds to a cell.
+	 */
+	public ArrayList<String> getAllCellDataForColumn(String columnHeader){
+		getOrCreateHeaders();
+		return getOrCreateColumns().get(columnHeader);
 	}
 	
 	/**
