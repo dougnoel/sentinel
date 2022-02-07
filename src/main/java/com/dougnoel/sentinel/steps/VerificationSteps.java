@@ -117,7 +117,7 @@ public class VerificationSteps {
      */
     @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
     public static void verifyElementHasClass(String elementName, String assertion, String className) {
-    	verifyElementAttributeHasValue(elementName, assertion, "class", className);
+    	verifyElementAttributeHasValue(elementName, "class", assertion, className);
     }
     
     /**
