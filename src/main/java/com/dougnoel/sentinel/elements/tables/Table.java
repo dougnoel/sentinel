@@ -409,8 +409,7 @@ public class Table extends Element {
 	 * @return boolean true if the column contains the given text in every cell, false if not
 	 */
 	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
-		getOrCreateHeaders();
-		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		if (column == null) {
 			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
