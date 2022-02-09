@@ -120,6 +120,6 @@ public class SelectElement extends Element {
     	Select selectElement = new Select(this.element());
     	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(d -> !selectElement.getOptions().stream().anyMatch(el -> el.getText().endsWith(text)));
+				.until(d -> selectElement.getOptions().stream().noneMatch(el -> el.getText().endsWith(text)));
     }
 }

@@ -396,7 +396,7 @@ public class Table extends Element {
 	 * @param columnHeader String the column to search for all cell data
 	 * @return ArrayList&lt;String&gt; a list of all cell data. Each entry in the list corresponds to a cell.
 	 */
-	public ArrayList<String> getAllCellDataForColumn(String columnHeader){
+	public List<String> getAllCellDataForColumn(String columnHeader){
 		getOrCreateHeaders();
 		return getOrCreateColumns().get(columnHeader);
 	}

@@ -186,13 +186,10 @@ public class BaseSteps {
      */
     @When("^I (accept|close) the JS alert$")
     public static void acceptOrCloseJsAlert(String action) {
-        switch (action) {
-        case "accept":
+        if(action.contentEquals("accept"))
             WebDriverFactory.getWebDriver().switchTo().alert().accept();
-            break;
-        default:
+        else
         	WebDriverFactory.getWebDriver().switchTo().alert().dismiss();
-        }
     }  
     
 }
