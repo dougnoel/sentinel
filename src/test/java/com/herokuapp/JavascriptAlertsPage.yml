@@ -1,0 +1,14 @@
+urls:
+   default: https://the-internet.herokuapp.com/javascript_alerts
+elements:
+  click_for_js_alert_button:
+    elementType: Button
+    xpath: //button[.='Click for JS Alert']
+  click_for_js_confirm_button:
+    elementType: Button
+    xpath: //button[.='Click for JS Confirm']
+  click_for_js_prompt_button:
+    elementType: Button
+    xpath: //button[.='Click for JS Prompt']
+  result_message:
+    id: result

@@ -5,8 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.WebDriver;
+
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+
 import io.cucumber.java.en.Then;
 
 /**
@@ -234,5 +239,27 @@ public class VerificationSteps {
     @Then("^I exit the iFrame$")
     public static void exitIFrame() {
         PageManager.exitIFrame();
+    }
+    
+    /**
+     * Verifies the existence of a Javascript alert.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify the JS alert is present</li>
+     * <li>I verify a JS alert is not present</li>
+     * </ul>
+     * @param assertion String any string for a negative check, nothing (null) for a positive check
+     */
+    @Then("^I verify (?:the|a) JS alert is( not)? present$")
+    public static void verifyJsAlertPresent(String assertion)
+    {
+    	String expectedResult = SentinelStringUtils.format("Expected a JS alert to be{} present.", assertion);
+    	var actualResult = PageManager.getPage().isJsAlertPresent();
+        if (assertion != null) {
+        	assertFalse(expectedResult, actualResult);
+        } else {
+        	assertTrue(expectedResult, actualResult);
+        }
     }
 }
