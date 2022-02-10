@@ -206,8 +206,7 @@ public class Element {
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-			WebElement element = wait.until(d -> driver().findElement(locator));
-			return wait.until(d -> element.findElement(locator));
+			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			return null;
 		}

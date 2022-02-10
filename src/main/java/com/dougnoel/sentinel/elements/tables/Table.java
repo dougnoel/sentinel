@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -157,14 +158,7 @@ public class Table extends Element {
 	 */
 	protected List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
-			try {
-				createRowData(getOrCreateRowElements());
-			}
-			catch(org.openqa.selenium.StaleElementReferenceException sere) {
-				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
-				rowElements = null;
-				createRowData(getOrCreateRowElements());
-			}
+			createRowData();
 		}
 		log.trace("Rows Data: {}", rows);
 		return rows;
@@ -174,14 +168,24 @@ public class Table extends Element {
 	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
 	 * @param dataRows List&lt;WebElement&gt; the webelements of the rows in the table.
 	 */
-	protected void createRowData(List<WebElement> dataRows){
-		for (WebElement row : dataRows) {
-			List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
-			ArrayList<String> cells = new ArrayList<>();
-			for (WebElement cell : cellElements) {
-				cells.add(cell.getText());
+	protected void createRowData(){
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			try {
+				var dataRows = getOrCreateRowElements();
+				for (WebElement row : dataRows) {
+					List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
+					ArrayList<String> cells = new ArrayList<>();
+					cellElements.stream().forEach(cellElement -> cells.add(cellElement.getText()));
+					rows.add(cells);
+				}
+				return;
 			}
-			rows.add(cells);
+			catch(org.openqa.selenium.StaleElementReferenceException sere) {
+				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
+				rowElements = null; // reset the row elements so the ones that are stale aren't used in the next iteration
+			}
 		}
 	}
 
@@ -439,8 +443,7 @@ public class Table extends Element {
 	 * @return boolean true if the column contains the given text in at least one of the cells, false if not
 	 */
 	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) {
-		getOrCreateHeaders();
-		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		if (column == null) {
 			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
