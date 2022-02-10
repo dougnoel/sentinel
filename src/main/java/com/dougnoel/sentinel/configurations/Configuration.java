@@ -123,7 +123,7 @@ public class Configuration {
 	 * @param value String the value to be used
 	 */
 	public static void update(String property, String value) {
-			appProps.setProperty(property, value);
+		appProps.setProperty(property, value);
 	}
 	
 	/**

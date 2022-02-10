@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -104,10 +105,10 @@ public class Table extends Element {
 	 * @return List&lt;WebElement&gt; the headers
 	 */
 	protected List<WebElement> getOrCreateHeaderElements() {
-		if (headerElements == null) {
+		if (headerElements == null || headerElements.isEmpty()) {
 			headerElements = getHeaderElements();
 		}
-		if (headerElements == null) {
+		if (headerElements == null || headerElements.isEmpty()) {
 			log.trace("Header tags not found, using first row for headers.");
 			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
 		} else {
@@ -157,18 +158,34 @@ public class Table extends Element {
 	 */
 	protected List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
-			List<WebElement> dataRows = getOrCreateRowElements();
-			for (WebElement row : dataRows) {
-				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
-				ArrayList<String> cells = new ArrayList<>();
-				for (WebElement cell : cellElements) {
-					cells.add(cell.getText());
-				}
-				rows.add(cells);
-			}
+			createRowData();
 		}
 		log.trace("Rows Data: {}", rows);
 		return rows;
+	}
+	
+	/**
+	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
+	 */
+	protected void createRowData(){
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			try {
+				var dataRows = getOrCreateRowElements();
+				for (WebElement row : dataRows) {
+					List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
+					ArrayList<String> cells = new ArrayList<>();
+					cellElements.stream().forEach(cellElement -> cells.add(cellElement.getText()));
+					rows.add(cells);
+				}
+				return;
+			}
+			catch(org.openqa.selenium.StaleElementReferenceException sere) {
+				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
+				rowElements = null; // reset the row elements so the ones that are stale aren't used in the next iteration
+			}
+		}
 	}
 
 	/**
@@ -330,9 +347,7 @@ public class Table extends Element {
 		WebElement element;
 		try {
 			element = this.element()
-					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(rowLocator)
-					.findElement(By.xpath(tableSiblingCellLocator))
 					.findElement(elementLocator);
 
 		} catch (org.openqa.selenium.NoSuchElementException e) {
@@ -378,6 +393,17 @@ public class Table extends Element {
 		getElementInRowThatContains(ordinalRow, elementLocator).click();
 	}
 	
+	
+	/**
+	 * Returns a list of all the cell values in the given column.
+	 * @param columnHeader String the column to search for all cell data
+	 * @return ArrayList&lt;String&gt; a list of all cell data. Each entry in the list corresponds to a cell.
+	 */
+	public List<String> getAllCellDataForColumn(String columnHeader){
+		getOrCreateHeaders();
+		return getOrCreateColumns().get(columnHeader);
+	}
+	
 	/**
 	 * Returns true if all cells in the given column match the text value given.
 	 * 
@@ -386,8 +412,7 @@ public class Table extends Element {
 	 * @return boolean true if the column contains the given text in every cell, false if not
 	 */
 	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
-		getOrCreateHeaders();
-		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		if (column == null) {
 			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
@@ -417,8 +442,7 @@ public class Table extends Element {
 	 * @return boolean true if the column contains the given text in at least one of the cells, false if not
 	 */
 	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) {
-		getOrCreateHeaders();
-		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		if (column == null) {
 			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
 			log.error(errorMessage);
