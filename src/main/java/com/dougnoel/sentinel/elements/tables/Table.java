@@ -166,7 +166,6 @@ public class Table extends Element {
 	
 	/**
 	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
-	 * @param dataRows List&lt;WebElement&gt; the webelements of the rows in the table.
 	 */
 	protected void createRowData(){
 		long searchTime = Time.out().getSeconds() * 1000;
