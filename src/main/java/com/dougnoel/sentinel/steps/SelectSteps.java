@@ -65,5 +65,4 @@ public class SelectSteps {
         String text = getElementAsSelectElement(elementName).select(index).getText(index);
         Configuration.update(elementName, text);
     }
-
 }

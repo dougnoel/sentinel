@@ -117,7 +117,7 @@ public class VerificationSteps {
      */
     @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
     public static void verifyElementHasClass(String elementName, String assertion, String className) {
-    	verifyElementAttributeHasValue(elementName, assertion, "class", className);
+    	verifyElementAttributeHasValue(elementName, "class", assertion, className);
     }
     
     /**
@@ -135,8 +135,8 @@ public class VerificationSteps {
      * @param value String value expected
      */
     @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
-    public static void verifyElementAttributeHasValue(String elementName, String assertion, String attribute, String value) {
-        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
+    public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String value) {
+        String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\" {} the value {}.",
                 elementName, assertion, attribute, value);
         if (assertion.contentEquals("has")) {
             assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
@@ -234,5 +234,27 @@ public class VerificationSteps {
     @Then("^I exit the iFrame$")
     public static void exitIFrame() {
         PageManager.exitIFrame();
+    }
+    
+    /**
+     * Verifies the existence of a Javascript alert.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify the JS alert is present</li>
+     * <li>I verify a JS alert is not present</li>
+     * </ul>
+     * @param assertion String any string for a negative check, nothing (null) for a positive check
+     */
+    @Then("^I verify (?:the|a) JS alert is( not)? present$")
+    public static void verifyJsAlertPresent(String assertion)
+    {
+    	String expectedResult = SentinelStringUtils.format("Expected a JS alert to be{} present.", assertion);
+    	var actualResult = PageManager.getPage().isJsAlertPresent();
+        if (assertion != null) {
+        	assertFalse(expectedResult, actualResult);
+        } else {
+        	assertTrue(expectedResult, actualResult);
+        }
     }
 }
