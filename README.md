@@ -20,7 +20,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### 1.1 Prerequisites
 
 What things you need to install the software and how to install them:
- * Java (11 or later) NOTE: Java 16 does not currently work.
+ * Java (11 or later)
  * Maven (2.5.4 or later)
  * Integrated Development Environment (Eclipse Suggested)
  * Google Chrome (suggested)
