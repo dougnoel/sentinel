@@ -84,7 +84,9 @@ public class WebDriverFactory {
         case "internetexplorer":
             var ieOptions = new InternetExplorerOptions();
         	ieOptions.ignoreZoomSettings();
-        	WebDriverManager.iedriver().setup();
+        	// TODO: Removed call to WebDriverManager when we upgraded to 5.0.3 and logged a bug: https://github.com/bonigarcia/webdrivermanager/issues/771 
+        	// When this bug gets resolved we should put the call back and remove the hard-coded IEServerDriver from the resources directory.
+        	System.setProperty("webdriver.ie.driver", "src/main/resources/drivers/windows/IEDriverServer.exe");
         	driver = new InternetExplorerDriver(ieOptions);
             break;
         case "opera":

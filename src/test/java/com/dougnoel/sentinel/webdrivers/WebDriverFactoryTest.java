@@ -31,7 +31,7 @@ public class WebDriverFactoryTest {
 		WebDriverFactory.quit();
 	}
 	
-	@Test(expected = org.openqa.selenium.remote.UnreachableBrowserException.class)
+	@Test(expected = org.openqa.selenium.SessionNotCreatedException.class)
 	public void createGridShouldFailTest() {
 		System.setProperty(BROWSERVERSION,"1234567");
 		System.setProperty(GRIDURL,"http://gridrul.com");

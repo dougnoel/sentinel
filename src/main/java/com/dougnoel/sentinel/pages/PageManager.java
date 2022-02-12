@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.pages;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
@@ -311,7 +310,7 @@ public class PageManager {
 	 * @throws InterruptedException if the thread gets interrupted
 	 */
 	public static boolean waitForPageLoad() throws InterruptedException {
-		driver().manage().timeouts().pageLoadTimeout(Time.out().toSeconds(), TimeUnit.SECONDS);
+		driver().manage().timeouts().pageLoadTimeout(Time.out());
 		while (!isPageLoaded()) {
 			Thread.sleep(20);
 		}
