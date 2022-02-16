@@ -80,7 +80,7 @@ public class Driver {
      * we call close to clean up.
      */
     public static void close() {
-    	
+    	//close the current SentinelDriver window which calls the WindowList
     }
     
     public static void goToNextWindow() {

@@ -285,6 +285,8 @@ public class Configuration {
 	/**
 	 * Returns the type of page object. Most will be WEBPAGE, but if an "executables:"
 	 * section is defined instead of a "urls:" section, this will return EXECUTABLE as the type.
+	 * If we do not know what the current type is, we infer it by using the current type set in
+	 * the PageManager.
 	 * 
 	 * @param pageName String the name of the page for which the data is retrieved
 	 * @return PageObjectType the type of page object either WEBPAGE or EXECUTABLE

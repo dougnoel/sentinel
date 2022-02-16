@@ -1,8 +1,8 @@
 package com.dougnoel.sentinel.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,14 +36,8 @@ public class PageManager {
 	// Only one page reference should exist. We aren't doing multi-threading.
 	private static Page page = null;
 	private static PageObjectType pageObjectType = PageObjectType.UNKNOWN;
-	// Only one page manager can exist.
-	private static PageManager instance = null;
-	// Information regarding the previous page
-	private static Pair<String, Pair<Page, String[]>> previousPageInfo = null;
-	// Information regarding the current page
-	private static Pair<String, Pair<Page, String[]>> currentPageInfo = null;
 	// Information regarding all pages that have been utilized previously
-	private static Map<String, Pair<Page, String[]>> pages = new ConcurrentHashMap<>();
+	private static Map<String, Page> pages = new HashMap<>();
 
 	private static WebDriver driver() { return Driver.getDriver(); }
 
@@ -63,10 +57,6 @@ public class PageManager {
 	 * @return Page Returns a reference to the page in case you want to use it immediately.
 	 */
 	public static Page setPage(String pageName) {
-		// Ensure we only have one instance of this class, so that we always
-		// return the same driver.
-		if (instance == null)
-			instance = new PageManager();
 
 		// Get a page from the page factory
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
@@ -84,7 +74,7 @@ public class PageManager {
 	 * @return Page the Page Object
 	 */
 	public static Page getPage() {
-		if (instance == null || page == null)
+		if (page == null)
 			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
 
 		return page;
@@ -212,22 +202,6 @@ public class PageManager {
 		}
 
 		return new String[] {currentHandle, currentTitle};
-	}
-
-	/**
-	 * Closes the child window and returns to using the parent window. Used for
-	 * things like PDFs or links opening in a new tab or window that need to be
-	 * closed after a test is complete.
-	 *
-	 * @return String the handle of the parent window to which we are returning
-	 * @throws InterruptedException if page does not load
-	 */
-	public static String closeChildWindow() throws InterruptedException {
-		WebDriverFactory.close();
-		driver().switchTo().window(previousPageInfo.getValue().getRight()[0]);
-        setPage(previousPageInfo.getKey());
-        waitForPageLoad();
-		return previousPageInfo.getValue().getRight()[0];
 	}
 
 	/**

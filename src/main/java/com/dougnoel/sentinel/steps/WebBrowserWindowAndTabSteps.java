@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.steps;
 import org.openqa.selenium.NoSuchWindowException;
 
 import com.dougnoel.sentinel.framework.PageManager;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,18 +11,19 @@ import io.cucumber.java.en.When;
 public class WebBrowserWindowAndTabSteps {
 
     /**
-     * Closes the child browser tab or window
+     * Closes the currently active window or browser tab.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
+     * <li>I close the current window"</li>
+     * <li>I close the current tab"</li>
+     * <li>I close the browser window</li>
      * <li>I close the browser tab</li>
-     * <li>I close the browser window"</li>
      * </ul>
-     * @throws InterruptedException if the page doesn't load
      */
-    @When("^I close the browser (?:tab|window)$")
-    public static void closeBrowserWindow() throws InterruptedException {
-        PageManager.closeChildWindow();
+    @When("^I close the (?:browser|current) (?:tab|window)$")
+    public static void closeCurrentWindow() {
+        Driver.close();
     }
     
     /**
