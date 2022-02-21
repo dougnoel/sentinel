@@ -15,6 +15,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -205,8 +206,7 @@ public class Element {
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-			WebElement element = wait.until(d -> driver().findElement(locator));
-			return wait.until(d -> element.findElement(locator));
+			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			return null;
 		}
@@ -224,17 +224,26 @@ public class Element {
     	if (PageManager.getPage().hasIFrames()) {
     		WebElement element = null;
     		List <WebElement> iframes = PageManager.getPage().getIFrames();
-    		for (WebElement iframe : iframes) {
-    			driver().switchTo().frame(iframe);
-    			element = findElementInCurrentFrameForDuration(Time.loopInterval());
-    			if (element != null) {
-    				return element;
-    			}
-        	    element = findElementInIFrame();
-    			if (element != null)
-    				return element;
-    			driver().switchTo().parentFrame();
+    		try {
+    			for (WebElement iframe : iframes) {
+        			driver().switchTo().frame(iframe);
+        			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+        			if (element != null) {
+        				return element;
+        			}
+            	    element = findElementInIFrame();
+        			if (element != null)
+        				return element;
+        			driver().switchTo().parentFrame();
+        		}
     		}
+    		catch(StaleElementReferenceException | NoSuchFrameException e) {
+    			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
+    					elementType, getName(), e);
+    			log.trace(errorMessage);
+    			return null;
+    		}
+    		
     	}
     	return null;
 	}

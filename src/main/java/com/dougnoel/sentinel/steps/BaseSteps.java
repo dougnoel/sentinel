@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -189,5 +190,23 @@ public class BaseSteps {
             break;
         }
     }    
+    
+    /**
+     * Interacts with the open JS alert. Accept or close.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I accept the JS alert</li>
+     * <li>I close the JS alert</li>
+     * </ul>
+     * @param action String the action to take on the JS alert
+     */
+    @When("^I (accept|close) the JS alert$")
+    public static void acceptOrCloseJsAlert(String action) {
+        if(action.contentEquals("accept"))
+            WebDriverFactory.getWebDriver().switchTo().alert().accept();
+        else
+        	WebDriverFactory.getWebDriver().switchTo().alert().dismiss();
+    }  
     
 }

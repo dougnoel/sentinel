@@ -103,7 +103,7 @@ public class PageData {
      */
     public String[] getPageParts() {
     	if (StringUtils.isNotBlank(include)) {
-    		return include.toString().trim().split(",");
+    		return include.trim().split(",");
     	}
     	return new String[0];
     }
