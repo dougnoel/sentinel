@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/dougnoel/sentinel/tree/HEAD)
+## [v1.0.9-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.9-SNAPSHOT) (2022-02-16)
 
-[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.7-SNAPSHOT...HEAD)
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.7-SNAPSHOT...v1.0.9-SNAPSHOT)
 
 **Implemented enhancements:**
 
@@ -24,6 +24,7 @@
 
 **Merged pull requests:**
 
+- Revving to version 1.0.9-SNAPSHOT [\#290](https://github.com/dougnoel/sentinel/pull/290) ([dougnoel](https://github.com/dougnoel))
 - 287 Fix uncaught StaleElementReferenceException and add multiple enhancements [\#289](https://github.com/dougnoel/sentinel/pull/289) ([sampacos](https://github.com/sampacos))
 - 282 Fix sendKeysLoop [\#283](https://github.com/dougnoel/sentinel/pull/283) ([sampacos](https://github.com/sampacos))
 - Updates logging to show less unnecessary spam. [\#276](https://github.com/dougnoel/sentinel/pull/276) ([dougnoel](https://github.com/dougnoel))
