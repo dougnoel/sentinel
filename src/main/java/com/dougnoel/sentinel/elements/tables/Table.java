@@ -36,6 +36,7 @@ public class Table extends Element {
 	protected String tableRowTag = "tr";
 	protected String tableCellDataTag = "td";
 	protected String tableDataCellLocator = "//" + tableCellDataTag;
+	protected String tableRowLocator = ".//tbody//" + tableRowTag;
 	protected String tableSiblingCellLocator = "//..//*";
 	
 	/**
@@ -146,7 +147,7 @@ public class Table extends Element {
 	 */
 	protected List<WebElement> getOrCreateRowElements() {
 		if (rowElements == null || rowElements.isEmpty()) {
-			rowElements = this.element().findElements(By.xpath(".//tbody//tr"));
+			rowElements = this.element().findElements(By.xpath(tableRowLocator));
 		}
 		return rowElements;
 	}
