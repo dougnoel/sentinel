@@ -146,7 +146,7 @@ public class Table extends Element {
 	 */
 	protected List<WebElement> getOrCreateRowElements() {
 		if (rowElements == null || rowElements.isEmpty()) {
-			rowElements = this.element().findElements(By.tagName(tableRowTag));
+			rowElements = this.element().findElements(By.xpath(".//tbody//tr"));
 		}
 		return rowElements;
 	}
@@ -308,11 +308,12 @@ public class Table extends Element {
 			ordinalRow = getNumberOfRows()-1;
 		}
 		
+		//if the header contains a tr tag, the first "row" will be in the header. 
+		//this will cause the element find to fail if the "find" is meant to be in the table body.
 		ordinalRow--;
 		
 		try {
 			element = getOrCreateRowElements().get(ordinalRow)
-					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
@@ -323,7 +324,6 @@ public class Table extends Element {
 			reset(); //We ended up with a stale element so reset the whole table
 			try {
 				element = getOrCreateRowElements().get(ordinalRow)
-						.findElement(By.xpath(tableDataCellLocator))
 						.findElement(elementLocator);
 			} catch (org.openqa.selenium.NoSuchElementException e) {
 				String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());

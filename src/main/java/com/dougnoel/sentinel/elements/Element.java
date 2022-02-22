@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -294,6 +295,17 @@ public class Element {
 		}
 		log.error(errorMessage);
 		throw new ElementNotVisibleException(errorMessage);
+	}
+	
+	/**
+	 * Sends a unicode character to the element directly. Does not clear element before sending. Does not perform any checks to confirm that the element received the key.
+	 * For use with special characters, such as BACKSPACE.
+	 * @param key Keys the key or character to send
+	 * @return Element (for chaining)
+	 */
+	public Element sendSpecialKey(Keys key) {
+		element().sendKeys(key);
+		return this;
 	}
 	
 	/**
