@@ -308,8 +308,6 @@ public class Table extends Element {
 			ordinalRow = getNumberOfRows()-1;
 		}
 		
-		//if the header contains a tr tag, the first "row" will be in the header. 
-		//this will cause the element find to fail if the "find" is meant to be in the table body.
 		ordinalRow--;
 		
 		try {
