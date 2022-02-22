@@ -13,11 +13,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.steps.TextVerificationSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class ElementTests {
@@ -165,6 +167,16 @@ public class ElementTests {
 		Map<String, String> selectors = new HashMap<>();
 		selectors.put("value", "1");
 		new Element("Checkbox", "Checkbox", selectors).element();
+	}
+	
+	@Test
+	public void sendSpecialKey() {
+		BaseSteps.navigateToPage("KeyPressesPage");
+		var input = (Textbox)getElement("key press input");
+		input.sendKeys("A");
+		input.sendSpecialKey(Keys.BACK_SPACE);
+		TextVerificationSteps.verifyElementTextContains("result text", "", "contains", "BACK_SPACE");
+		assertTrue("Expecting key press input to be empty.", input.getText().isEmpty());
 	}
 	
 }
