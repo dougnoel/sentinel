@@ -2,13 +2,24 @@
 
 ## [Unreleased](https://github.com/dougnoel/sentinel/tree/HEAD)
 
-[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.7-SNAPSHOT...HEAD)
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v2.0.0-SNAPSHOT...HEAD)
+
+**Merged pull requests:**
+
+- 291 table fixes and 292 add element method for sending special keys [\#293](https://github.com/dougnoel/sentinel/pull/293) ([sampacos](https://github.com/sampacos))
+
+## [v2.0.0-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v2.0.0-SNAPSHOT) (2022-02-21)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.9-SNAPSHOT...v2.0.0-SNAPSHOT)
+
+## [v1.0.9-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.9-SNAPSHOT) (2022-02-16)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.7-SNAPSHOT...v1.0.9-SNAPSHOT)
 
 **Implemented enhancements:**
 
 - Move message creation to exception code [\#273](https://github.com/dougnoel/sentinel/issues/273)
 - Cleanup Page Object Locations [\#243](https://github.com/dougnoel/sentinel/issues/243)
-- Refactor PageElement to be Element [\#202](https://github.com/dougnoel/sentinel/issues/202)
 - PrimeNG has been updated again [\#175](https://github.com/dougnoel/sentinel/issues/175)
 - Add find\(By locator\) method to Element objects [\#125](https://github.com/dougnoel/sentinel/issues/125)
 
@@ -24,6 +35,7 @@
 
 **Merged pull requests:**
 
+- Revving to version 1.0.9-SNAPSHOT [\#290](https://github.com/dougnoel/sentinel/pull/290) ([dougnoel](https://github.com/dougnoel))
 - 287 Fix uncaught StaleElementReferenceException and add multiple enhancements [\#289](https://github.com/dougnoel/sentinel/pull/289) ([sampacos](https://github.com/sampacos))
 - 282 Fix sendKeysLoop [\#283](https://github.com/dougnoel/sentinel/pull/283) ([sampacos](https://github.com/sampacos))
 - Updates logging to show less unnecessary spam. [\#276](https://github.com/dougnoel/sentinel/pull/276) ([dougnoel](https://github.com/dougnoel))
@@ -50,6 +62,7 @@
 - Add unit tests for checkboxes [\#216](https://github.com/dougnoel/sentinel/issues/216)
 - Create a Selenium Grid Driver [\#209](https://github.com/dougnoel/sentinel/issues/209)
 - Implement Edge browser driver [\#206](https://github.com/dougnoel/sentinel/issues/206)
+- Refactor PageElement to be Element [\#202](https://github.com/dougnoel/sentinel/issues/202)
 - Implement Drag and Drop action for PageElements. [\#201](https://github.com/dougnoel/sentinel/issues/201)
 - Add a total wait time warning. [\#198](https://github.com/dougnoel/sentinel/issues/198)
 - Implement webdrivermanager [\#193](https://github.com/dougnoel/sentinel/issues/193)
