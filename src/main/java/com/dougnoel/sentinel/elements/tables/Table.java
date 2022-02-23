@@ -36,6 +36,7 @@ public class Table extends Element {
 	protected String tableRowTag = "tr";
 	protected String tableCellDataTag = "td";
 	protected String tableDataCellLocator = "//" + tableCellDataTag;
+	protected String tableRowLocator = ".//tbody//" + tableRowTag;
 	protected String tableSiblingCellLocator = "//..//*";
 	
 	/**
@@ -146,7 +147,7 @@ public class Table extends Element {
 	 */
 	protected List<WebElement> getOrCreateRowElements() {
 		if (rowElements == null || rowElements.isEmpty()) {
-			rowElements = this.element().findElements(By.tagName(tableRowTag));
+			rowElements = this.element().findElements(By.xpath(tableRowLocator));
 		}
 		return rowElements;
 	}
@@ -312,7 +313,6 @@ public class Table extends Element {
 		
 		try {
 			element = getOrCreateRowElements().get(ordinalRow)
-					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
@@ -323,7 +323,6 @@ public class Table extends Element {
 			reset(); //We ended up with a stale element so reset the whole table
 			try {
 				element = getOrCreateRowElements().get(ordinalRow)
-						.findElement(By.xpath(tableDataCellLocator))
 						.findElement(elementLocator);
 			} catch (org.openqa.selenium.NoSuchElementException e) {
 				String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());

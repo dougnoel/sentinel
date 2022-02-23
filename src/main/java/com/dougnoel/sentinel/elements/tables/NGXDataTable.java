@@ -25,6 +25,7 @@ public class NGXDataTable extends Table {
 		tableRowTag = "datatable-body-row";
 		tableCellDataTag = "datatable-body-cell";
 		tableDataCellLocator = "//span";
+		tableRowLocator = ".//" + tableRowTag;
 		tableSiblingCellLocator = "//../../..//*";
 	}
 	

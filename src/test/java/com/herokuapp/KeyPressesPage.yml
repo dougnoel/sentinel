@@ -1,0 +1,8 @@
+urls:
+   default: https://the-internet.herokuapp.com/key_presses
+elements:
+  key_press_input:
+    elementType: Textbox
+    css: input#target
+  result_text:
+    id: result
