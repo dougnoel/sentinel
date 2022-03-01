@@ -196,10 +196,9 @@ public class Table extends Element {
 	 * @return int the number of row elements
 	 */
 	public int getNumberOfRows() {
-		//Selenium counts a <th> tag as a <td> tag and returns it.
 		final int numberOfRows = getOrCreateRowElements().size();
 		log.trace("Number of rows found: {}", numberOfRows);
-		return numberOfRows - 1;
+		return numberOfRows;
 	}
 
 	/**
