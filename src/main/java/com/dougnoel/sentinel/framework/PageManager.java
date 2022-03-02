@@ -1,22 +1,15 @@
 package com.dougnoel.sentinel.framework;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.support.ui.FluentWait;
-
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.PageObjectType;
@@ -24,20 +17,20 @@ import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageFactory;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * The Page Manager is a singleton class that manages what page the test is on.
- * Calling setPage with a strong containing the name of the new page calls the
- * Page Factory to create the new page and return it as a Page Object.
+ * Calling setPage with a string containing the name of the new page calls the
+ * Page Factory to create the new page (if it does not exist) and return it as 
+ * a Page Object.
  */
 public class PageManager {
 	private static final Logger log = LogManager.getLogger(PageManager.class);
 	// Only one page reference should exist. We aren't doing multi-threading.
 	private static Page page = null;
+	// The type of the current page object so that if we are creating a page object that doesn't contain
+	// URLs or Executables, we can infer the current page type from the previous one.
 	private static PageObjectType pageObjectType = PageObjectType.UNKNOWN;
-	// Information regarding all pages that have been utilized previously
-	private static Map<String, Page> pages = new HashMap<>();
 
 	private static WebDriver driver() { return Driver.getDriver(); }
 
@@ -49,23 +42,12 @@ public class PageManager {
 	 * This method sets a Page Object based on the class name passed to it. This
 	 * allows us to operate on pages without knowing they exist when we write step
 	 * definitions.
-	 * <p>
-	 * <b>NOTE:</b> This function is currently only intended for generic step
-	 * definitions, as it makes the code complex to write otherwise.
 	 *
 	 * @param pageName String Must be an exact string match (including case) to the Page Object name (e.g. LoginPage).
-	 * @return Page Returns a reference to the page in case you want to use it immediately.
 	 */
-	public static Page setPage(String pageName) {
-
-		// Get a page from the page factory
+	public static void setPage(String pageName) {
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
-
-		String[] pageInformation = windowScannerPruner();
-		currentPageInfo = Pair.of(pageName, Pair.of(PageManager.page, pageInformation));
-
-		pages.computeIfAbsent(currentPageInfo.getKey(), pageInfo -> currentPageInfo.getValue());
-		return page;
+		pageObjectType = PageManager.getPage().getPageObjectType();
 	}
 
 	/**
@@ -88,7 +70,6 @@ public class PageManager {
 	 */
 	public static void open(String pageName, String arguments) {
     	PageManager.setPage(pageName);
-    	pageObjectType = PageManager.getPage().getPageObjectType();
     	if (pageObjectType == PageObjectType.WEBPAGE) {
 	    	String url = Configuration.url();
 	    	url += arguments == null ? "" : arguments;
@@ -97,111 +78,6 @@ public class PageManager {
     	}
     	else
     		driver();
-	}
-
-    /**
-     * Switches to a previously utilized window which still exists
-     * <p>
-     * <b>Preconditions:</b> Only one page exists for each page object
-     * @param pageName The name of the page to switch to
-     * @return The window handle of the switched-to window
-     * @throws NoSuchWindowException If no page of that name was utilized previously
-     */
-    public static String switchToExistingWindow(String pageName) {
-    	previousPageInfo = currentPageInfo;
-
-    	if(pages.containsKey(pageName)) {
-    		driver().switchTo().window(pages.get(pageName).getRight()[0]);
-    		setPage(pageName);
-    	}
-    	else {
-    		throw new NoSuchWindowException("No page of that name was used previously");
-    	}
-
-    	return driver().getWindowHandle();
-    }
-
-    /**
-     * Switches to the first found unvisited page and associates it with the page object
-     * associated with the passed page name.
-     * <p>
-     * <b>Preconditions:</b> Only one new window should have opened.
-     * @param pageName The page object to associate with the newly switched to page
-     * @return The window handle of the switched-to window
-     * @throws NoSuchWindowException if a new window cannot be switched to in the configured
-     * timeout.
-     */
-    public static String switchToNewWindow(String pageName) {
-    	previousPageInfo = currentPageInfo;
-    	ArrayList<String> allKnownHandles = new ArrayList<>();
-    	
-    	for(Map.Entry<String, Pair<Page, String[]>> entry : pages.entrySet()) {
-			allKnownHandles.add(entry.getValue().getRight()[0]);
-		}
-
-		try {
-			FluentWait<WebDriver> wait = new FluentWait<>(driver())
-				       .withTimeout(Time.out().plusSeconds(30))
-				       .pollingEvery(Time.interval())
-				       .ignoring(Exception.class);
-
-			wait.until(d -> {
-				var updatedWindowHandleList = driver().getWindowHandles();
-
-				if(updatedWindowHandleList.isEmpty()) {
-					return false;
-				}
-
-				for(String foundWindowHandle : updatedWindowHandleList) { 
-					if(!allKnownHandles.contains(foundWindowHandle)) {
-						driver().switchTo().window(foundWindowHandle);
-						return true;
-					}
-				}
-
-				return false;
-			});
-		}
-		catch (TimeoutException e) {
-			throw new NoSuchWindowException("Failed to switch to the new window");
-		}
-
-		setPage(pageName);
-		return driver().getWindowHandle();
-	}
-
-    /**
-     * Attempts to get the data on the current window, and prunes null or old tracked windows
-     * which no longer exist from the history list based on their window handle + title
-     * combination.
-     * @return Returns the handle and title of the current window as a String array
-     * <p>
-     * If the handle and title cannot be retrieved
-     * it will return a String array of [null,null]
-     */
-	private static String[] windowScannerPruner() {
-		String currentHandle = null;
-		String currentTitle = null;
-		
-		try {
-			currentHandle = driver().getWindowHandle();
-			currentTitle = driver().getTitle();
-		}catch(Exception e) { 
-			//Suppress errors if the window closes rapidly i.e. update windows
-		}
-		
-		var updatedWindowHandleList = driver().getWindowHandles();
-
-		for(Map.Entry<String, Pair<Page,String[]>> entry : pages.entrySet()) {
-			String[] windowToCheck = entry.getValue().getRight();
-			String windowPage = entry.getKey();
-			
-			if(!updatedWindowHandleList.contains(windowToCheck[0])) {
-				pages.remove(windowPage);
-			}
-		}
-
-		return new String[] {currentHandle, currentTitle};
 	}
 
 	/**

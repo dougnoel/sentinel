@@ -13,7 +13,7 @@ public class PageManagerTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		Driver.quit();
+		Driver.quitAll();
 	}
 	
 	@Test(expected = NoSuchWindowException.class)

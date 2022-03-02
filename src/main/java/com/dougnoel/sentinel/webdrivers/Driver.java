@@ -19,6 +19,7 @@ import io.appium.java_client.windows.WindowsElement;
  */
 public class Driver {
 	private static final Logger log = LogManager.getLogger(Driver.class);
+	//Map each page object name to a driver, which may be the same driver
 	private static Map<String,WebDriver> drivers = new HashMap<>();
 	private static WebDriver currentDriver = null;
 	
@@ -62,7 +63,7 @@ public class Driver {
     /**
      * Quits all drivers and removes them from the list of active drivers.
      */
-    public static void quit() {
+    public static void quitAll() {
     	drivers.forEach((pageObjectName, driver) -> {
     		log.debug("Closing {} driver: {}", pageObjectName, driver);
     		if (driver.getClass().getSimpleName().contentEquals("WindowsDriver"))
@@ -73,6 +74,14 @@ public class Driver {
     	});
     	drivers.clear();
     	currentDriver = null;
+    }
+    
+    /**
+     * Quit the current driver and remove all references of it.
+     */
+    public static void quit() {
+    	//Search the map for the driver and delete all references to it
+    	
     }
     
     /**

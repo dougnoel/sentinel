@@ -16,7 +16,7 @@ public class PageDataTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		Driver.quit();
+		Driver.quitAll();
 	}
 	
 	@Test
