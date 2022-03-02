@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/dougnoel/sentinel/tree/HEAD)
 
-[Full Changelog](https://github.com/dougnoel/sentinel/compare/v2.0.0-SNAPSHOT...HEAD)
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.10-SNAPSHOT...HEAD)
 
 **Merged pull requests:**
 
+- add method for switching to parent window [\#296](https://github.com/dougnoel/sentinel/pull/296) ([sampacos](https://github.com/sampacos))
+
+## [v1.0.10-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.10-SNAPSHOT) (2022-02-23)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v2.0.0-SNAPSHOT...v1.0.10-SNAPSHOT)
+
+**Merged pull requests:**
+
+- Pre-release 1.0.10-SNAPSHOT on maven central. Updated Changelog and J… [\#294](https://github.com/dougnoel/sentinel/pull/294) ([dougnoel](https://github.com/dougnoel))
 - 291 table fixes and 292 add element method for sending special keys [\#293](https://github.com/dougnoel/sentinel/pull/293) ([sampacos](https://github.com/sampacos))
 
 ## [v2.0.0-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v2.0.0-SNAPSHOT) (2022-02-21)
@@ -20,6 +29,7 @@
 
 - Move message creation to exception code [\#273](https://github.com/dougnoel/sentinel/issues/273)
 - Cleanup Page Object Locations [\#243](https://github.com/dougnoel/sentinel/issues/243)
+- Refactor PageElement to be Element [\#202](https://github.com/dougnoel/sentinel/issues/202)
 - PrimeNG has been updated again [\#175](https://github.com/dougnoel/sentinel/issues/175)
 - Add find\(By locator\) method to Element objects [\#125](https://github.com/dougnoel/sentinel/issues/125)
 
@@ -62,7 +72,6 @@
 - Add unit tests for checkboxes [\#216](https://github.com/dougnoel/sentinel/issues/216)
 - Create a Selenium Grid Driver [\#209](https://github.com/dougnoel/sentinel/issues/209)
 - Implement Edge browser driver [\#206](https://github.com/dougnoel/sentinel/issues/206)
-- Refactor PageElement to be Element [\#202](https://github.com/dougnoel/sentinel/issues/202)
 - Implement Drag and Drop action for PageElements. [\#201](https://github.com/dougnoel/sentinel/issues/201)
 - Add a total wait time warning. [\#198](https://github.com/dougnoel/sentinel/issues/198)
 - Implement webdrivermanager [\#193](https://github.com/dougnoel/sentinel/issues/193)
