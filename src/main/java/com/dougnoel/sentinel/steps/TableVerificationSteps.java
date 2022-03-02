@@ -36,7 +36,7 @@ public class TableVerificationSteps {
      * @param expectedNumberOfRows int The number of rows your are expecting.
      * @param elementName String (Table name) This should be the name of the table element to count.
      */
-    @Then("^I see (\\d+) rows in the (.*)$")
+    @Then("^I see (\\d+) rows? in the (.*)$")
     public static void verifyNumberOfTableRows(int expectedNumberOfRows, String elementName) {
         int numberOfRows = getElementAsTable(elementName).getNumberOfRows();
         var expectedResult = SentinelStringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
