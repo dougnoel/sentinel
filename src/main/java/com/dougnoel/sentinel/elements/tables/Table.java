@@ -36,7 +36,7 @@ public class Table extends Element {
 	protected String tableRowTag = "tr";
 	protected String tableCellDataTag = "td";
 	protected String tableDataCellLocator = "//" + tableCellDataTag;
-	protected String tableRowLocator = ".//tbody//" + tableRowTag;
+	protected String tableRowLocator = ".//tbody//" + tableCellDataTag + "/..";
 	protected String tableSiblingCellLocator = "//..//*";
 	
 	/**

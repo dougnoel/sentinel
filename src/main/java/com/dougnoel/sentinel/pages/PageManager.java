@@ -245,16 +245,17 @@ public class PageManager {
 		WebDriverFactory.close();
 		return switchToParentWindow();
 	}
-	
+
 	/**
 	 * Switches to the parent window without closing the child window.
+	 * 
 	 * @return String the handle of the parent window to which we are returning
 	 * @throws InterruptedException
 	 */
 	public static String switchToParentWindow() throws InterruptedException {
 		driver().switchTo().window(parentHandle);
-        setPage(parentPage);
-        waitForPageLoad();
+		setPage(parentPage);
+		waitForPageLoad();
 		return parentHandle;
 	}
 
