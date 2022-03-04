@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.webdrivers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -20,7 +21,8 @@ import io.appium.java_client.windows.WindowsElement;
 public class Driver {
 	private static final Logger log = LogManager.getLogger(Driver.class);
 	//Map each page object name to a driver, which may be the same driver
-	private static Map<String,WebDriver> drivers = new HashMap<>();
+	private static List<SentinelDriver> drivers = new LinkedList<>();
+//	private static Map<String,WebDriver> drivers = new HashMap<>();
 	private static WebDriver currentDriver = null;
 	
 	private Driver() {

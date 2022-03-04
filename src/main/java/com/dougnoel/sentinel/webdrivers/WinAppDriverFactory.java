@@ -37,7 +37,11 @@ public class WinAppDriverFactory {
 	 */
 	private WinAppDriverFactory() {}
 
-	private static URL getDriverUrl(){
+	/**
+	 * Returns the localhost address for the WinAppDriver server.
+	 * @return URL the localhost address for the WinAppDriver server
+	 */
+	private static URL getWinAppDriverLocalhostUrl(){
 		try {
 			return new URL(DRIVER_URL);
 		} catch (java.net.MalformedURLException e) {
@@ -57,7 +61,7 @@ public class WinAppDriverFactory {
 	 */
 	protected static WebDriver createWinAppDriver() {
 		startWinAppDriverExe();
-		URL url = getDriverUrl();
+		URL url = getWinAppDriverLocalhostUrl();
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", Configuration.executable());
@@ -102,7 +106,7 @@ public class WinAppDriverFactory {
 	 */
 	private static void startWinAppDriverExe() {
 		if (winAppDriverProcess == null) {
-			URL driverUrl = getDriverUrl();
+			URL driverUrl = getWinAppDriverLocalhostUrl();
 			// Fully-qualified path to the executable is used here to resolve code smell security flag.
 			ProcessBuilder builder = new ProcessBuilder(WINAPPDRIVER_PATH, 
 														driverUrl.getHost(), 
