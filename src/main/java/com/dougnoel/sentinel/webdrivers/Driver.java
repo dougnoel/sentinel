@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.webdrivers;
 
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +23,8 @@ import io.appium.java_client.windows.WindowsElement;
 public class Driver {
 	private static final Logger log = LogManager.getLogger(Driver.class);
 	//Map each page object name to a driver, which may be the same driver
-	private static List<SentinelDriver> drivers = new LinkedList<>();
-//	private static Map<String,WebDriver> drivers = new HashMap<>();
-	private static WebDriver currentDriver = null;
+	private static EnumMap<PageObjectType, SentinelDriver> drivers = new EnumMap<> (PageObjectType.class);
+	private static SentinelDriver currentDriver = null;
 	
 	private Driver() {
         // Exists only to defeat instantiation.
@@ -35,45 +36,21 @@ public class Driver {
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getDriver() {
-    	String pageName = PageManager.getPage().getName();
-    	if (PageManager.getPage().getPageObjectType() == PageObjectType.EXECUTABLE) {
-    		if (Configuration.hasExecutables(pageName)) {
-    			currentDriver = drivers.computeIfAbsent(pageName, driver -> WinAppDriverFactory.createWinAppDriver());
-    		}
-    		drivers.putIfAbsent(pageName, currentDriver);
+    	PageObjectType pageObjectType = PageManager.getPage().getPageObjectType();
+    	if (pageObjectType == PageObjectType.EXECUTABLE) {
+    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WinAppDriverFactory.createWinAppDriver()));
     	}
-        else {
-    		pageName = "WebDriver"; //There can be only one.
-    		currentDriver = drivers.computeIfAbsent(pageName, driver -> WebDriverFactory.getWebDriver());
+    		else {
+    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WebDriverFactory.getWebDriver()));
         }
-    	return currentDriver;
-    }
-    
-    /**
-     * Takes a WebDriver object and casts it to a WindowsDriver object.
-     * <p>
-     * Note: This method does no type checking.
-     * 
-     * @param driver WebDriver the WebDriver to be cast
-     * @return WindowsDriver&lt;WebElement&gt; the cast WebDriver object
-     */
-    @SuppressWarnings("unchecked")
-	private static WindowsDriver<WindowsElement> castWindowsDriver(WebDriver driver) {
-    	return (WindowsDriver<WindowsElement>) driver;
+    	return currentDriver.getWebDriver();
     }
 
     /**
      * Quits all drivers and removes them from the list of active drivers.
      */
     public static void quitAll() {
-    	drivers.forEach((pageObjectName, driver) -> {
-    		log.debug("Closing {} driver: {}", pageObjectName, driver);
-    		if (driver.getClass().getSimpleName().contentEquals("WindowsDriver"))
-    			WinAppDriverFactory.quit(castWindowsDriver(driver));
-    		else {
-    			WebDriverFactory.quit();
-    		}
-    	});
+    	drivers.forEach((driverType, driver) -> driver.quit());
     	drivers.clear();
     	currentDriver = null;
     }
