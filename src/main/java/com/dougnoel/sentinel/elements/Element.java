@@ -1,11 +1,19 @@
 package com.dougnoel.sentinel.elements;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -17,6 +25,7 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -695,6 +704,20 @@ public class Element {
 	public String getTooltipText() {
 		hover();
 		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
-	}	
+	}
+	
+	public Color getMostPrevalentColor() throws IOException {
+		byte[] imageAsByteArray = element().getScreenshotAs(OutputType.BYTES);
+		ByteArrayInputStream imageByteStream = new ByteArrayInputStream(imageAsByteArray);
+
+		BufferedImage elementImage = ImageIO.read(imageByteStream);
+		BufferedImage scaledImage = (BufferedImage) elementImage.getScaledInstance(1, 1, Image.SCALE_REPLICATE);
+		var rgb = scaledImage.getRGB(0, 0);
+		return new Color(rgb);
+	}
+	
+	public File getScreenshot() {
+		return element().getScreenshotAs(OutputType.FILE);
+	}
 	
 }

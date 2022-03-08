@@ -98,6 +98,7 @@
     <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.0.14</swagger-parser.version>
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
+    <image-comparison.version>4.4.0</image-comparison.version>
     
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
@@ -537,6 +538,12 @@
 		<version>${webdrivermanager.version}</version>
 	  </dependency>
 
+	  <dependency>
+		<groupId>com.github.romankh3</groupId>
+		<artifactId>image-comparison</artifactId>
+		<version>4.4.0</version>
+	  </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -697,6 +704,11 @@
     <dependency>
 	  <groupId>io.github.bonigarcia</groupId>
 	  <artifactId>webdrivermanager</artifactId>
+	</dependency>
+
+	<dependency>
+	    <groupId>com.github.romankh3</groupId>
+	    <artifactId>image-comparison</artifactId>
 	</dependency>
     
   </dependencies>
