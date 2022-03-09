@@ -16,7 +16,7 @@ public class ImageSteps {
 	 * @param elementName String name of the element to screenshot
 	 * @throws IOException
 	 */
-    @When("^I take a screenshot of (?:the|a) (.*)$")
+    @When("^I take a screenshot of (?:the|a) (page|.*)$")
     public static void storeScreenshotOfElement(String elementName) throws IOException {
     	File screenshotFile = getElement(elementName).getScreenshot();
     	File destinationFile = new File("logs/expected/" + elementName + ".png");

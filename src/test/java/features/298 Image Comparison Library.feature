@@ -16,7 +16,7 @@ the web and windows.
 
   @298B
   Scenario: 298B We need to have a way to store screenshots when tests fail showing the differences.
-    Given I am on the Add Remove Elements Page
-      And I take a screenshot of the page contents
-    When I click the Add Element button
-    Then I verify the page contents matches the expected image
+    Given I am on the Dropdown Page
+      And I take a screenshot of the dropdown
+    When I select the 2nd option from the dropdown 
+    Then I verify the dropdown matches the expected image

@@ -37,7 +37,13 @@ public class ImageVerificationSteps {
 
         //Create ImageComparison object and compare the images.
         //Defaults to 0.1 pixel tolerance level and 5 pixel location threshold
-        ImageComparisonResult imageComparisonResult = new ImageComparison(expectedImage, actualImage).compareImages();
+//        ImageComparisonResult imageComparisonResult = new ImageComparison(expectedImage, actualImage).compareImages();
+        
+        //Create ImageComparison object and compare the images.
+        var comparison = new ImageComparison(expectedImage, actualImage);
+        comparison.setRectangleLineWidth(5);
+        comparison.isFillDifferenceRectangles();
+        ImageComparisonResult imageComparisonResult = comparison.compareImages();
         
         //Image can be saved after comparison, using ImageComparisonUtil.
         ImageComparisonUtil.saveImage(resultDestination, imageComparisonResult.getResult()); 
