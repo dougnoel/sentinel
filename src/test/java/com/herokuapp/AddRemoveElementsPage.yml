@@ -6,3 +6,6 @@ elements:
   add_element_button:
     elementType: Button
     xpath: "//button[contains(text(),'Add Element')]" 
+  delete_element_button:
+    elementType: Button
+    xpath: "//button[contains(text(),'Delete')]" 

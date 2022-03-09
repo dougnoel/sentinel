@@ -24,6 +24,7 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -719,4 +720,10 @@ public class Element {
 		return element().getScreenshotAs(OutputType.FILE);
 	}
 	
+	public Color getBackgroundColor()
+	{  
+		var color = element().getCssValue("background-color");
+		Color bgColor = org.openqa.selenium.support.Color.fromString(color).getColor();
+		return bgColor;
+	}
 }
