@@ -26,7 +26,7 @@ public class ElementFunctionsTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		Driver.quitAll();
+		Driver.quitAllDrivers();
 	}
 
 	@Test

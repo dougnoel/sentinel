@@ -28,7 +28,7 @@ public class ConfigurationDevTests {
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
 		Configuration.environment(originalEnvironment);
-		Driver.quitAll();
+		Driver.quitAllDrivers();
 	}
 	
 	@Test

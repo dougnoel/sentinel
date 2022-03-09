@@ -42,7 +42,7 @@ public class SentinelTests {
             SentinelScreenRecorder.stopRecording();
         
         if (System.getProperty("leaveBrowserOpen", "false") == "false") {
-        	Driver.quitAll();
+        	Driver.quitAllDrivers();
         }
     }
 }

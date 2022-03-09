@@ -32,29 +32,43 @@ public class SentinelDriver {
 		return this.driver;
 	}
 	
-	//close window
+	/**
+	 * Emulate clicking the browser's forward button.
+	 */
+	protected void navigateForward() {
+		driver.navigate().forward();
+	}
+
+	/**
+	 * Emulate clicking the browser's back button.
+	 */
+	protected void navigateBack() {
+		driver.navigate().back();
+	}
+
+	/**
+	 * Emulate clicking the browser's refresh button.
+	 */
+	protected void refresh() {
+		driver.navigate().refresh();
+	}
+	
+	/**
+	 * Close the current window.
+	 */
 	protected void close() {
 		windows.closeCurrentWindow();
 	}
 	
+	/**
+	 * Quit the driver and cleanup.
+	 */
+	@SuppressWarnings("unchecked")
 	protected void quit() {
 		if (driver.getClass().getSimpleName().contentEquals("WindowsDriver"))
-			WinAppDriverFactory.quit(castWindowsDriver(driver));
+			WinAppDriverFactory.quit((WindowsDriver<WindowsElement>) driver);
 		else {
 			WebDriverFactory.quit();
 		}
 	}
-	
-    /**
-     * Takes a WebDriver object and casts it to a WindowsDriver object.
-     * <p>
-     * Note: This method does no type checking.
-     * 
-     * @param driver WebDriver the WebDriver to be cast
-     * @return WindowsDriver&lt;WebElement&gt; the cast WebDriver object
-     */
-    @SuppressWarnings("unchecked")
-	private static WindowsDriver<WindowsElement> castWindowsDriver(WebDriver driver) {
-    	return (WindowsDriver<WindowsElement>) driver;
-    }
 }

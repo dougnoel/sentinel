@@ -13,7 +13,7 @@ public class SelectElementTests {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		Driver.quitAll();
+		Driver.quitAllDrivers();
 	}
 	
 	@Test(expected = InvalidSelectorException.class)

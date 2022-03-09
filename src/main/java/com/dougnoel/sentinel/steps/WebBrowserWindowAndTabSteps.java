@@ -23,7 +23,7 @@ public class WebBrowserWindowAndTabSteps {
      */
     @When("^I close the (?:browser|current) (?:tab|window)$")
     public static void closeCurrentWindow() {
-        Driver.close();
+        Driver.closeWindow();
     }
     
     /**

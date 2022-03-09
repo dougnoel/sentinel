@@ -114,11 +114,11 @@ public class WebDriverFactory {
      */
     public static void close() {
     	if (parentHandle.contentEquals(driver.getWindowHandle())) {
-        	getWebDriver().close();
+        	getWebDriver().closeWindow();
         	driver = null;    		
     	}
     	else
-    		getWebDriver().close();
+    		getWebDriver().closeWindow();
     }
     
     /**

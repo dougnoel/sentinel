@@ -152,7 +152,7 @@ public class WindowsElement extends Element {
 		var remainingText = getText();
 		if(!remainingText.isBlank() || !remainingText.isEmpty()){
 			var element = element();
-			Actions action = new Actions(Driver.getDriver());
+			Actions action = new Actions(Driver.getWebDriver());
 			action.keyDown(element, Keys.LEFT_CONTROL)
 			.sendKeys("a")
 			.keyUp(Keys.LEFT_CONTROL)

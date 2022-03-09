@@ -32,7 +32,7 @@ public class PageManager {
 	// URLs or Executables, we can infer the current page type from the previous one.
 	private static PageObjectType pageObjectType = PageObjectType.UNKNOWN;
 
-	private static WebDriver driver() { return Driver.getDriver(); }
+	private static WebDriver driver() { return Driver.getWebDriver(); }
 
 	private PageManager() {
 		// Exists only to defeat instantiation.

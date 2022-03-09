@@ -34,7 +34,7 @@ public class ElementTests {
 	public static void tearDownAfterClass() throws Exception {
 		Time.reset();
 		Configuration.update("timeout", 10);
-		Driver.quitAll();
+		Driver.quitAllDrivers();
 	}
 
 	
