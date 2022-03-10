@@ -27,7 +27,8 @@ public class ImageSteps {
     	TakesScreenshot pageScreenshotTool =((TakesScreenshot)driver());
     	File screenshotFile;
     	
-    	if(!elementName.contentEquals("page")) {
+    	//Determine if we're taking a screenshot of an element or the whole page.
+    	if(!elementName.toLowerCase().contentEquals("page")) {
     		screenshotFile = getElement(elementName).getScreenshot();
     	}
     	else {

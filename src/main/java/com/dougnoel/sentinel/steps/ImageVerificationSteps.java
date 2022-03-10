@@ -35,16 +35,17 @@ public class ImageVerificationSteps {
 	 * @param elementName String the name of the element to capture and compare.
 	 * @throws IOException
 	 */
+	//TODO: The text parsing can be enhanced here to include match. I found issues trying that with one of the scenarios currently removed that used match alone.
 	@Then("^I verify (?:the|a) (.*) (do not match|does not match|matches) the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String matchCondition) throws IOException {
 		//TODO: This should have the time removed and a name (scenario name?) added so we don't flood the system with screenshots
 		ImageComparisonResult comparisonResult = compareImages(elementName);
 		File resultDestination = new File( "logs/diff/" + System.currentTimeMillis() + "_" + elementName + "_" + comparisonResult.getImageComparisonState() +".png" );
 		
-		//Image can be saved after comparison, using ImageComparisonUtil.
+		//Save the image comparison we obtained.
 		comparisonResult.writeResultTo(resultDestination);
         
-        //Check the result
+        //Check the result after determining if we're doing a should match or should not match.
 		if(matchCondition.contains("not")) {
 			assertNotEquals(ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
 		}
@@ -53,12 +54,22 @@ public class ImageVerificationSteps {
 		}
 	}
 	
+	/**
+	 * Takes an updated screenshot of the current element or page for comparison.
+	 * Resizes the image canvases to be the same if different, and then runs a comparison of the two images.
+	 * @param elementName String the name of the element to capture and compare 
+	 * or any casing of "page" alone to compare the entire page.
+	 * @throws IOException
+	 * 
+	 * @return The image comparison result.
+	 */
     private static ImageComparisonResult compareImages(String elementName) throws IOException {
     	TakesScreenshot pageScreenshotTool =((TakesScreenshot)driver());
     	File screenshotFile;
     	Color backgroundColor;
     	
-    	if(!elementName.contentEquals("page")) {
+    	//Determine if we're taking a screenshot of the page or element.
+    	if(!elementName.toLowerCase().contentEquals("page")) {
     		screenshotFile = getElement(elementName).getScreenshot();
     		backgroundColor = getElement(elementName).getBackgroundColor();
     	}
@@ -74,8 +85,8 @@ public class ImageVerificationSteps {
         BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources("logs/expected/" + elementName + ".png");
         BufferedImage actualImage = ImageComparisonUtil.readImageFromResources("logs/actual/" + elementName + ".png");
         
-        //If the image sizes are different, make them equivalent
-        //TODO: Needs to have the background color handled better
+        //If the image sizes are different, make them equivalent.
+        //TODO: Needs to have the background color handled better.
         if((expectedImage.getWidth() != actualImage.getWidth()) || (expectedImage.getHeight() != actualImage.getHeight())) {
         	int newHeight;
         	int newWidth;
@@ -84,6 +95,7 @@ public class ImageVerificationSteps {
         	int actualHeight = actualImage.getHeight();
         	int actualWidth = actualImage.getWidth();
 
+        	//Calculate the new width and height to set the images to.
         	if(expectedWidth > actualWidth) {
         		newWidth = expectedWidth;
         	}
@@ -101,7 +113,7 @@ public class ImageVerificationSteps {
         	BufferedImage newExpected = new BufferedImage(newWidth, newHeight, expectedImage.getType());
         	BufferedImage newActual = new BufferedImage(newWidth, newHeight, expectedImage.getType());
         	
-        	//Replace backgroundColor with Color.black to see the resize canvas effect
+        	//TODO: Verify this works with different colored backgrounds than white.
         	Graphics2D g2 = newExpected.createGraphics();
         	g2.setPaint(Color.white);
         	g2.fillRect(0, 0, newWidth, newHeight);
@@ -117,20 +129,20 @@ public class ImageVerificationSteps {
         	actualImage = newActual;
         	g2.dispose();
         }
-
-        //Create ImageComparison object and compare the images.
-        //Defaults to 0.1 pixel tolerance level and 5 pixel location threshold
-//ImageComparisonResult imageComparisonResult = new ImageComparison(expectedImage, actualImage).compareImages();
         
         //Create ImageComparison object and compare the images.
-        var comparison = new ImageComparison(expectedImage, actualImage);
-        ImageComparisonResult imageComparisonResult = comparison.compareImages();
-        
-        return imageComparisonResult;
+        ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
+        return comparison.compareImages();
     }
     
+    /**
+	 * Gets the background of the current page body.
+	 * 
+	 * @return the background color of the page body, or white if none has been set.
+	 */
     private static Color getPageBackground()
 	{  
+    	//TODO: This needs to be avoided if we use windows elements, as those cannot get the background colors or utilize CSS!
     	try {
     		WebElement element = driver().findElement(By.tagName("body"));
     		var color = element.getCssValue("background-color");

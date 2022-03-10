@@ -720,8 +720,14 @@ public class Element {
 		return element().getScreenshotAs(OutputType.FILE);
 	}
 	
+	/**
+	 * This method is used to get the background color of the element, or it's inherited background color.
+	 * 
+	 * @return The background color of the element converted to a java color object.
+	 */
 	public Color getBackgroundColor()
 	{  
+		//TODO: Ensure this will get an inherited background color!
 		var color = element().getCssValue("background-color");
 		Color bgColor = org.openqa.selenium.support.Color.fromString(color).getColor();
 		return bgColor;
