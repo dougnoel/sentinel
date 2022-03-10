@@ -728,6 +728,7 @@ public class Element {
 	public Color getBackgroundColor()
 	{  
 		//TODO: Ensure this will get an inherited background color!
+		//TODO: We need to bypass this if we're using a windows element!
 		var color = element().getCssValue("background-color");
 		Color bgColor = org.openqa.selenium.support.Color.fromString(color).getColor();
 		return bgColor;
