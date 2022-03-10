@@ -8,14 +8,20 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-
+import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.When;
 
 public class ImageSteps {
-	private static WebDriver driver() { return WebDriverFactory.getWebDriver(); }
+	private static Scenario scenario;
+	
+	@Before
+	public void before(Scenario scenario) {
+		ImageSteps.scenario = scenario;
+	}
 	
 	/**
 	 * Takes a screenshot of the given element and stores it for later comparison
@@ -24,7 +30,7 @@ public class ImageSteps {
 	 */
     @When("^I take a screenshot of (?:the|a) (page|.*)$")
     public static void storeScreenshotOfElement(String elementName) throws IOException {
-    	TakesScreenshot pageScreenshotTool =((TakesScreenshot)driver());
+    	String imageFileName = elementName + PageManager.getPage().getName() + scenario.getName() + ".png";
     	File screenshotFile;
     	
     	//Determine if we're taking a screenshot of an element or the whole page.
@@ -32,10 +38,10 @@ public class ImageSteps {
     		screenshotFile = getElement(elementName).getScreenshot();
     	}
     	else {
-    		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
+        	TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
+        	screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
     	}
-    	
-    	File destinationFile = new File("logs/expected/" + elementName + ".png");
+    	File destinationFile = new File("logs/expected/" + imageFileName);
     	FileUtils.copyFile(screenshotFile, destinationFile);
     }
 }

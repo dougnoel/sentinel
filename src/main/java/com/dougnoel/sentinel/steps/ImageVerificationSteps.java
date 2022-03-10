@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
@@ -18,39 +19,52 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import com.github.romankh3.image.comparison.ImageComparison;
 import com.github.romankh3.image.comparison.ImageComparisonUtil;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
 
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 
 public class ImageVerificationSteps {
-	private static WebDriver driver() { return WebDriverFactory.getWebDriver(); }
+	private static Scenario scenario;
+	
+	@Before
+	public void before(Scenario scenario) {
+		ImageVerificationSteps.scenario = scenario;
+	}
 	
 	/**
 	 * Takes a screenshot of the given element and compares it to the previously-stored image of that same element.
 	 * Default pixel tolerance level = 0.1. Defaults pixel location threshold = 5.
 	 * @param elementName String the name of the element to capture and compare.
-	 * @throws IOException
+	 * @throws IOException if file creation does not work
 	 */
-	//TODO: The text parsing can be enhanced here to include match. I found issues trying that with one of the scenarios currently removed that used match alone.
-	@Then("^I verify (?:the|a) (.*) (do not match|does not match|matches) the (?:expected|original) image$")
-    public static void verifyImageNotMatch(String elementName, String matchCondition) throws IOException {
-		//TODO: This should have the time removed and a name (scenario name?) added so we don't flood the system with screenshots
+	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the expected image$")
+    public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
+                elementName, (negate ? "not " : ""));
+        
 		ImageComparisonResult comparisonResult = compareImages(elementName);
-		File resultDestination = new File( "logs/diff/" + System.currentTimeMillis() + "_" + elementName + "_" + comparisonResult.getImageComparisonState() +".png" );
+		
+		String imageFileName = elementName + PageManager.getPage().getName() + scenario.getName() + ".png";
+		File resultDestination = new File( "logs/diff/" + imageFileName );
 		
 		//Save the image comparison we obtained.
 		comparisonResult.writeResultTo(resultDestination);
         
         //Check the result after determining if we're doing a should match or should not match.
-		if(matchCondition.contains("not")) {
-			assertNotEquals(ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
+		if(negate) {
+			assertNotEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
 		}
 		else {
-			assertEquals(ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
+			assertEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
 		}
 	}
 	
@@ -59,12 +73,12 @@ public class ImageVerificationSteps {
 	 * Resizes the image canvases to be the same if different, and then runs a comparison of the two images.
 	 * @param elementName String the name of the element to capture and compare 
 	 * or any casing of "page" alone to compare the entire page.
-	 * @throws IOException
+	 * @throws IOException if file creation does not work
 	 * 
-	 * @return The image comparison result.
+	 * @return ImageComparisonResult the image comparison result.
 	 */
     private static ImageComparisonResult compareImages(String elementName) throws IOException {
-    	TakesScreenshot pageScreenshotTool =((TakesScreenshot)driver());
+    	String imageFileName = elementName + PageManager.getPage().getName() + scenario.getName() + ".png";
     	File screenshotFile;
     	Color backgroundColor;
     	
@@ -74,16 +88,17 @@ public class ImageVerificationSteps {
     		backgroundColor = getElement(elementName).getBackgroundColor();
     	}
     	else {
+    		TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
     		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
     		backgroundColor = getPageBackground();
     	}
     	
-    	File destinationFile = new File("logs/actual/" + elementName + ".png");
+    	File destinationFile = new File("logs/actual/" + imageFileName);
     	FileUtils.copyFile(screenshotFile, destinationFile);
 
     	//load images to be compared:
-        BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources("logs/expected/" + elementName + ".png");
-        BufferedImage actualImage = ImageComparisonUtil.readImageFromResources("logs/actual/" + elementName + ".png");
+        BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources("logs/expected/" + imageFileName);
+        BufferedImage actualImage = ImageComparisonUtil.readImageFromResources("logs/actual/" + imageFileName);
         
         //If the image sizes are different, make them equivalent.
         //TODO: Needs to have the background color handled better.
@@ -140,6 +155,7 @@ public class ImageVerificationSteps {
 	 * 
 	 * @return the background color of the page body, or white if none has been set.
 	 */
+    //TODO: Move this to the page object
     private static Color getPageBackground()
 	{  
     	//TODO: This needs to be avoided if we use windows elements, as those cannot get the background colors or utilize CSS!
