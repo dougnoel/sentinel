@@ -30,7 +30,7 @@ public class ImageSteps {
 	 */
     @When("^I take a screenshot of (?:the|a) (page|.*)$")
     public static void storeScreenshotOfElement(String elementName) throws IOException {
-    	String imageFileName = elementName + PageManager.getPage().getName() + scenario.getName() + ".png";
+    	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
     	File screenshotFile;
     	
     	//Determine if we're taking a screenshot of an element or the whole page.

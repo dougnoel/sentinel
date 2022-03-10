@@ -726,10 +726,39 @@ public class Element {
 	 */
 	public Color getBackgroundColor()
 	{  
-		//TODO: Ensure this will get an inherited background color!
 		//TODO: We need to bypass this if we're using a windows element!
-		var color = element().getCssValue("background-color");
-		Color bgColor = org.openqa.selenium.support.Color.fromString(color).getColor();
+		Color bgColor = ascendTransparentColorElements(element());
 		return bgColor;
+	}
+	
+	/**
+	 * This method is used to ascend through elements with transparency to find a parent with a non transparent background color
+	 * until no parents remain.
+	 * 
+	 * @param element The web element to use as the root for checking for background colors
+	 * 
+	 * @return The background color of the first parent with one or white if no inherited background color is found
+	 */
+	private Color ascendTransparentColorElements(WebElement element) {
+		Color transparent = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();
+		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
+		WebElement parentElement = null;
+				
+		if(currentColor.equals(transparent)) {
+			try {
+				parentElement = element.findElement(By.xpath("./.."));
+			} catch(NoSuchElementException e) {
+				//Suppress error when there are no more parents
+			}
+			
+			if(parentElement != null) {
+				return(ascendTransparentColorElements(parentElement));
+			}
+			else {
+				return Color.white;
+			}
+		} else {
+			return currentColor;
+		}
 	}
 }

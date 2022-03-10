@@ -12,13 +12,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -45,7 +40,7 @@ public class ImageVerificationSteps {
 	 * @param elementName String the name of the element to capture and compare.
 	 * @throws IOException if file creation does not work
 	 */
-	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the expected image$")
+	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
@@ -53,7 +48,7 @@ public class ImageVerificationSteps {
         
 		ImageComparisonResult comparisonResult = compareImages(elementName);
 		
-		String imageFileName = elementName + PageManager.getPage().getName() + scenario.getName() + ".png";
+		String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
 		File resultDestination = new File( "logs/diff/" + imageFileName );
 		
 		//Save the image comparison we obtained.
@@ -78,7 +73,7 @@ public class ImageVerificationSteps {
 	 * @return ImageComparisonResult the image comparison result.
 	 */
     private static ImageComparisonResult compareImages(String elementName) throws IOException {
-    	String imageFileName = elementName + PageManager.getPage().getName() + scenario.getName() + ".png";
+    	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
     	File screenshotFile;
     	Color backgroundColor;
     	
@@ -90,7 +85,7 @@ public class ImageVerificationSteps {
     	else {
     		TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
     		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
-    		backgroundColor = getPageBackground();
+    		backgroundColor = PageManager.getPageBackgroundColor();
     	}
     	
     	File destinationFile = new File("logs/actual/" + imageFileName);
@@ -100,15 +95,16 @@ public class ImageVerificationSteps {
         BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources("logs/expected/" + imageFileName);
         BufferedImage actualImage = ImageComparisonUtil.readImageFromResources("logs/actual/" + imageFileName);
         
+        int expectedHeight = expectedImage.getHeight();
+    	int expectedWidth = expectedImage.getWidth();
+    	int actualHeight = actualImage.getHeight();
+    	int actualWidth = actualImage.getWidth();
+    	
         //If the image sizes are different, make them equivalent.
         //TODO: Needs to have the background color handled better.
-        if((expectedImage.getWidth() != actualImage.getWidth()) || (expectedImage.getHeight() != actualImage.getHeight())) {
+        if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
         	int newHeight;
         	int newWidth;
-        	int expectedHeight = expectedImage.getHeight();
-        	int expectedWidth = expectedImage.getWidth();
-        	int actualHeight = actualImage.getHeight();
-        	int actualWidth = actualImage.getWidth();
 
         	//Calculate the new width and height to set the images to.
         	if(expectedWidth > actualWidth) {
@@ -130,14 +126,14 @@ public class ImageVerificationSteps {
         	
         	//TODO: Verify this works with different colored backgrounds than white.
         	Graphics2D g2 = newExpected.createGraphics();
-        	g2.setPaint(Color.white);
+        	g2.setPaint(backgroundColor);
         	g2.fillRect(0, 0, newWidth, newHeight);
         	g2.setColor(backgroundColor);
         	g2.drawImage(expectedImage, null, 0, 0);
         	expectedImage = newExpected;
         	
         	g2 = newActual.createGraphics();
-        	g2.setPaint(Color.white);
+        	g2.setPaint(backgroundColor);
         	g2.fillRect(0, 0, newWidth, newHeight);
         	g2.setColor(backgroundColor);
         	g2.drawImage(actualImage, null, 0, 0);
@@ -149,24 +145,4 @@ public class ImageVerificationSteps {
         ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
         return comparison.compareImages();
     }
-    
-    /**
-	 * Gets the background of the current page body.
-	 * 
-	 * @return the background color of the page body, or white if none has been set.
-	 */
-    //TODO: Move this to the page object
-    private static Color getPageBackground()
-	{  
-    	//TODO: This needs to be avoided if we use windows elements, as those cannot get the background colors or utilize CSS!
-    	try {
-    		WebElement element = driver().findElement(By.tagName("body"));
-    		var color = element.getCssValue("background-color");
-    		Color bgColor = org.openqa.selenium.support.Color.fromString(color).getColor();
-    		return bgColor;
-    	}
-		catch(NoSuchElementException e) {
-			return Color.white;
-		}
-	}
 }

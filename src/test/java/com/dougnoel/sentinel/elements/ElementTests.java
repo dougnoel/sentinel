@@ -3,19 +3,21 @@ package com.dougnoel.sentinel.elements;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
-
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.steps.BaseSteps;
@@ -179,4 +181,41 @@ public class ElementTests {
 		assertTrue("Expecting key press input to be empty.", input.getText().isEmpty());
 	}
 	
+	@Test
+	public void checkParentColorsOfTransparentElement() {
+		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
+		
+		Color startingColor = Color.white;
+		String hexOfStartingColor = "#"+Integer.toHexString(startingColor.getRGB()).substring(2);
+		Color endingColor = Color.blue;
+		String hexOfEndingColor = "#"+Integer.toHexString(endingColor.getRGB()).substring(2);
+		
+		BaseSteps.navigateToPage("TextboxPage");
+		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Body").element(), hexOfStartingColor);
+		Assert.assertEquals(startingColor, getElement("Car Checkbox").getBackgroundColor());
+		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Body").element(), hexOfEndingColor);
+		Assert.assertEquals(endingColor, getElement("Car Checkbox").getBackgroundColor());
+	}
+	
+	@Test
+	public void checkElementBackgroundColor() {
+		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
+		
+		Color startingColor = Color.black;
+		String hexOfStartingColor = "#"+Integer.toHexString(startingColor.getRGB()).substring(2);
+		Color endingColor = Color.red;
+		String hexOfEndingColor = "#"+Integer.toHexString(endingColor.getRGB()).substring(2);
+		
+		BaseSteps.navigateToPage("TextboxPage");
+		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Car Checkbox").element(), hexOfStartingColor);
+		Assert.assertEquals(startingColor, getElement("Car Checkbox").getBackgroundColor());
+		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Car Checkbox").element(), hexOfEndingColor);
+		Assert.assertEquals(endingColor, getElement("Car Checkbox").getBackgroundColor());
+	}
+	
+	@Test
+	public void checkElementBackgroundColorIfAllParentsTransparent() {
+		BaseSteps.navigateToPage("TextboxPage");
+		Assert.assertEquals(Color.white, getElement("Car Checkbox").getBackgroundColor());
+	}
 }

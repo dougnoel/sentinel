@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.pages;
 
+import java.awt.Color;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -10,9 +11,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -347,5 +351,33 @@ public class PageManager {
 		// if we've gotten this far, we haven't timed out so return the
 		// document.readyState check
 		return ((JavascriptExecutor) driver()).executeScript("return document.readyState").equals("complete");
+	}
+	
+	/**
+	 * Gets the background of the current page body.
+	 * 
+	 * @return the background color of the page body, or white if none has been set or all colors found are transparent.
+	 */
+    public static Color getPageBackgroundColor()
+	{  
+    	//TODO: This needs to be avoided if we use windows elements, as those cannot get the background colors or utilize CSS!
+    	try {
+    		WebElement element = WebDriverFactory.getWebDriver().findElement(By.tagName("body"));
+    		var color = element.getCssValue("background-color");
+    		Color bgColor = org.openqa.selenium.support.Color.fromString(color).getColor();
+    		Color transparency = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();
+    		
+    		//If no colors are found, the page background defaults to white
+    		if(bgColor.equals(transparency)) {
+    			return Color.white;
+    		}
+    		else {
+    			return bgColor;
+    		}
+    	}
+		catch(NoSuchElementException e) {
+			//If there is no such body element, the page background defaults to white
+			return Color.white;
+		}
 	}
 }
