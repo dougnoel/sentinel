@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class PageDataTests {
@@ -57,6 +58,12 @@ public class PageDataTests {
 	@Test
 	public void validateTestdataExistsInYaml() {
 		PageManager.setPage("PageWithTestdata");
+		Assert.assertNotNull("Expected testdata to contain data.", Configuration.getTestdataValue("report", "id"));
+	}
+	
+	@Test(expected = FileException.class)
+	public void validateTestdataMissingInYaml() {
+		PageManager.setPage("PageWithCorrectPageObject");
 		Assert.assertNotNull("Expected testdata to contain data.", Configuration.getTestdataValue("report", "id"));
 	}
 	

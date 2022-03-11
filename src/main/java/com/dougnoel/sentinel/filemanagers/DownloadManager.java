@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
@@ -300,7 +301,7 @@ public class DownloadManager {
 				result.writeTo(resultFilePath);
 			
 			return result.isEqual();
-		} catch (RenderingException | IOException e) {
+		} catch (RuntimeException | IOException e) {
 			log.error(e);
 		}
 		return false;

@@ -32,4 +32,11 @@ public class DownloadManagerTests {
 		File file2 = new File("src/test/resources/pdfs/TestPDF_different.pdf");
 		assertFalse("Expecting PDF to match a copy of itself.", DownloadManager.verifyDownloadedPDFViaVisualRendering(file, file2));
 	}
+	
+	@Test
+	public void testVerifyPDFComparisonViaRendering_OutputFileError() {
+		File file = new File("src/test/resources/pdfs/TestPDF.pdf");
+		File file2 = new File("src/test/resources/pdfs/TestPDF_different.pdf");
+		assertFalse("Expecting PDF to match a copy of itself.", DownloadManager.verifyDownloadedPDFViaVisualRendering(file, file2, 0.0, "/bin/bash"));
+	}
 }
