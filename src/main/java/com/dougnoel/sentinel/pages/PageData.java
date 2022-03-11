@@ -87,7 +87,7 @@ public class PageData {
 	 * </pre>
 	 * 
 	 * @param env String the desired environment (qa, sit, etc.)
-	 * @param dataobject String the requested dataobject
+	 * @param dataObject String the requested dataobject
 	 * @return Map&lt;String, String&gt; the dataobject data, or null if the requested environment doesn't exist
 	 */
     public Map<String,String> getTestdata(String env, String dataObject) {
