@@ -150,7 +150,7 @@ public class WebDriverFactory {
      */
     private static void setChromeDownloadDirectory(ChromeOptions options) {
         HashMap<String, Object> chromePrefs = new HashMap<>();
-        //chromePrefs.put("download.prompt_for_download", false);
+        chromePrefs.put("download.prompt_for_download", false);
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
         options.setExperimentalOption("prefs", chromePrefs);
     }

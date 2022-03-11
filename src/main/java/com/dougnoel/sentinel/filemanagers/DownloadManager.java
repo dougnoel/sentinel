@@ -13,12 +13,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -293,7 +291,7 @@ public class DownloadManager {
     public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf, double percentAllowedDifferencePerPage, String resultFilePath) {
     	CompareResult result;
 		try {
-			result = new PdfComparator(expectedPdf, newPdf)
+			result = new PdfComparator<>(expectedPdf, newPdf)
 					.withEnvironment(new SimpleEnvironment()
 					.setAllowedDiffInPercent(percentAllowedDifferencePerPage))
 					.compare();
