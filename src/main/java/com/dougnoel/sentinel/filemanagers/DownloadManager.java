@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
@@ -31,7 +30,6 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import de.redsix.pdfcompare.CompareResult;
 import de.redsix.pdfcompare.PdfComparator;
-import de.redsix.pdfcompare.RenderingException;
 import de.redsix.pdfcompare.env.SimpleEnvironment;
 
 /**
