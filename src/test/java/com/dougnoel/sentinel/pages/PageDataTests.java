@@ -54,4 +54,10 @@ public class PageDataTests {
 		Assert.assertNotNull("Expected text to be male when the include list is empty.", Configuration.getElement(ELEMENT_NAME, "PageWithBlankInclude"));
 	}
 	
+	@Test
+	public void validateTestdataExistsInYaml() {
+		PageManager.setPage("PageWithTestdata");
+		Assert.assertNotNull("Expected testdata to contain data.", Configuration.getTestdataValue("report", "id"));
+	}
+	
 }

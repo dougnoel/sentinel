@@ -149,13 +149,8 @@ public class WebDriverFactory {
      * @param options ChromeOptions object to set
      */
     private static void setChromeDownloadDirectory(ChromeOptions options) {
-        var downloadDirectory = Configuration.toString("download");
-        if (downloadDirectory != null)
-            DownloadManager.setDownloadDirectory(downloadDirectory);
-        else
-        	DownloadManager.setDownloadDirectory("downloads");
-        
         HashMap<String, Object> chromePrefs = new HashMap<>();
+        //chromePrefs.put("download.prompt_for_download", false);
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
         options.setExperimentalOption("prefs", chromePrefs);
     }
