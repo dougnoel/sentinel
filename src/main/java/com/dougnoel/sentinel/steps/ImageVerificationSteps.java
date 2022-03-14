@@ -1,8 +1,8 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -56,10 +56,10 @@ public class ImageVerificationSteps {
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			assertNotEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
+			assertTrue(expectedResult, ImageComparisonState.MATCH.equals(comparisonResult.getImageComparisonState()));
 		}
 		else {
-			assertEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
+			assertFalse(expectedResult, ImageComparisonState.MATCH.equals(comparisonResult.getImageComparisonState()));
 		}
 	}
 	
