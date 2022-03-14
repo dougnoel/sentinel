@@ -359,7 +359,7 @@ public class PageManager {
 	 * @return the background color of the page body, or white if none has been set or all colors found are transparent.
 	 */
     public static Color getPageBackgroundColor()
-	{  
+	{
     	try {
     		WebElement element = WebDriverFactory.getWebDriver().findElement(By.tagName("body"));
     		var color = element.getCssValue("background-color");
