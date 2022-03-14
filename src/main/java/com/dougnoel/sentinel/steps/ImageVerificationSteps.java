@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -42,7 +43,6 @@ public class ImageVerificationSteps {
 	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
-        boolean checkToPerform = true;
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
                 elementName, (negate ? "not " : ""));
         
@@ -56,10 +56,11 @@ public class ImageVerificationSteps {
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			checkToPerform = false;
+			assertNotEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
 		}
-		
-		assertEquals(expectedResult, checkToPerform, ImageComparisonState.MATCH == comparisonResult.getImageComparisonState());
+		else {
+			assertEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
+		}
 	}
 	
 	/**
