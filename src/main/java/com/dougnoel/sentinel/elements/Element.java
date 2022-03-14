@@ -726,9 +726,7 @@ public class Element {
 	 */
 	public Color getBackgroundColor()
 	{  
-		//TODO: We need to bypass this if we're using a windows element!
-		Color bgColor = ascendTransparentColorElements(element());
-		return bgColor;
+		return ascendTransparentColorElements(element());
 	}
 	
 	/**

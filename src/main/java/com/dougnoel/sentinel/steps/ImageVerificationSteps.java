@@ -30,7 +30,7 @@ public class ImageVerificationSteps {
 	private static Scenario scenario;
 	
 	@Before
-	public void before(Scenario scenario) {
+	public static void before(Scenario scenario) {
 		ImageVerificationSteps.scenario = scenario;
 	}
 	
@@ -101,7 +101,6 @@ public class ImageVerificationSteps {
     	int actualWidth = actualImage.getWidth();
     	
         //If the image sizes are different, make them equivalent.
-        //TODO: Needs to have the background color handled better.
         if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
         	int newHeight;
         	int newWidth;
@@ -124,7 +123,6 @@ public class ImageVerificationSteps {
         	BufferedImage newExpected = new BufferedImage(newWidth, newHeight, expectedImage.getType());
         	BufferedImage newActual = new BufferedImage(newWidth, newHeight, expectedImage.getType());
         	
-        	//TODO: Verify this works with different colored backgrounds than white.
         	Graphics2D g2 = newExpected.createGraphics();
         	g2.setPaint(backgroundColor);
         	g2.fillRect(0, 0, newWidth, newHeight);

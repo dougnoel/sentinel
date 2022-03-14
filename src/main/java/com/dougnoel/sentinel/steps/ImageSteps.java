@@ -19,7 +19,7 @@ public class ImageSteps {
 	private static Scenario scenario;
 	
 	@Before
-	public void before(Scenario scenario) {
+	public static void before(Scenario scenario) {
 		ImageSteps.scenario = scenario;
 	}
 	

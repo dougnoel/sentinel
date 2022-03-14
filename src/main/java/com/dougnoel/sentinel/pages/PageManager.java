@@ -360,7 +360,6 @@ public class PageManager {
 	 */
     public static Color getPageBackgroundColor()
 	{  
-    	//TODO: This needs to be avoided if we use windows elements, as those cannot get the background colors or utilize CSS!
     	try {
     		WebElement element = WebDriverFactory.getWebDriver().findElement(By.tagName("body"));
     		var color = element.getCssValue("background-color");
