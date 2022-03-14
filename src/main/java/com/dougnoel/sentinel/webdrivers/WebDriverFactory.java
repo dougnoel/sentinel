@@ -28,7 +28,6 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class WebDriverFactory {
 	private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
     private static WebDriver driver = null;
-    private static String parentHandle = null;
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
@@ -91,8 +90,6 @@ public class WebDriverFactory {
             throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
         }
     	
-    	parentHandle = driver.getWindowHandle();
-
         return driver;
     }
 
@@ -107,18 +104,6 @@ public class WebDriverFactory {
         	log.info("Driver created: {}", driver);
         }
         return driver;
-    }
-    
-    /**
-     * Closes the driver window if it is not the parent.
-     */
-    public static void close() {
-    	if (parentHandle.contentEquals(driver.getWindowHandle())) {
-        	getWebDriver().closeWindow();
-        	driver = null;    		
-    	}
-    	else
-    		getWebDriver().closeWindow();
     }
     
     /**
