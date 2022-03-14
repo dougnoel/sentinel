@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.runners.Suite.SuiteClasses;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -15,11 +16,12 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.When;
 
+@SuiteClasses(ImageSteps.class)
 public class ImageSteps {
 	private static Scenario scenario;
 	
 	@Before
-	public static void before(Scenario scenario) {
+    public static void before(Scenario scenario) {
 		ImageSteps.scenario = scenario;
 	}
 	

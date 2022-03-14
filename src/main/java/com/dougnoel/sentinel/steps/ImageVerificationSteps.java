@@ -1,8 +1,8 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.runners.Suite.SuiteClasses;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -26,11 +27,12 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 
+@SuiteClasses(ImageVerificationSteps.class)
 public class ImageVerificationSteps {
 	private static Scenario scenario;
 	
 	@Before
-	public static void before(Scenario scenario) {
+	public void before(Scenario scenario) {
 		ImageVerificationSteps.scenario = scenario;
 	}
 	
@@ -56,10 +58,10 @@ public class ImageVerificationSteps {
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			assertTrue(expectedResult, ImageComparisonState.MATCH.equals(comparisonResult.getImageComparisonState()));
+			assertNotEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
 		}
 		else {
-			assertFalse(expectedResult, ImageComparisonState.MATCH.equals(comparisonResult.getImageComparisonState()));
+			assertEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
 		}
 	}
 	
@@ -101,6 +103,7 @@ public class ImageVerificationSteps {
     	int actualWidth = actualImage.getWidth();
     	
         //If the image sizes are different, make them equivalent.
+        //TODO: Needs to have the background color handled better.
         if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
         	int newHeight;
         	int newWidth;
@@ -123,6 +126,7 @@ public class ImageVerificationSteps {
         	BufferedImage newExpected = new BufferedImage(newWidth, newHeight, expectedImage.getType());
         	BufferedImage newActual = new BufferedImage(newWidth, newHeight, expectedImage.getType());
         	
+        	//TODO: Verify this works with different colored backgrounds than white.
         	Graphics2D g2 = newExpected.createGraphics();
         	g2.setPaint(backgroundColor);
         	g2.fillRect(0, 0, newWidth, newHeight);
