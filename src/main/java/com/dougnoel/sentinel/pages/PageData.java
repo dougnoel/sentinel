@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.pages;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
@@ -91,10 +92,10 @@ public class PageData {
 	 * @return Map&lt;String, String&gt; the dataobject data, or null if the requested environment doesn't exist
 	 */
     public Map<String,String> getTestdata(String env, String dataObject) {
-    	if (testdata.containsKey(env)) {
+    	if (testdata != null && testdata.containsKey(env)) {
     		return testdata.get(env).get(dataObject);
     	}
-    	return null;
+    	return new ConcurrentHashMap<String, String>();
     }
     
     /**

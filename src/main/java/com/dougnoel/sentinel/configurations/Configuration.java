@@ -351,11 +351,11 @@ public class Configuration {
 		String env = environment();
 		var pageData = loadPageData(pageName);
 		Map <String,String> testdata = pageData.getTestdata(env, testdataObjectName);
-		if (Objects.equals(testdata, null)) {
+		if (testdata.isEmpty()) {
 			env = DEFAULT;
 			testdata = pageData.getTestdata(env, testdataObjectName);
 		}
-		if (Objects.equals(testdata, null)) {
+		if (testdata.isEmpty()) {
 			var erroMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", testdataObjectName, env, pageName);
 			throw new FileException(erroMessage, new File(pageName + ".yml"));
 		}

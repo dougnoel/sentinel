@@ -63,8 +63,8 @@ public class PageDataTests {
 	
 	@Test(expected = FileException.class)
 	public void validateTestdataMissingInYaml() {
-		PageManager.setPage("PageWithCorrectPageObject");
-		Assert.assertNotNull("Expected testdata to contain data.", Configuration.getTestdataValue("report", "id"));
+		PageManager.setPage("CorrectPageObject");
+		Configuration.getTestdataValue("report", "id");
 	}
 	
 }

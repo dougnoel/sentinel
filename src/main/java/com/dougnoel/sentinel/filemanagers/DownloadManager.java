@@ -30,6 +30,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import de.redsix.pdfcompare.CompareResult;
 import de.redsix.pdfcompare.PdfComparator;
+import de.redsix.pdfcompare.RenderingException;
 import de.redsix.pdfcompare.env.SimpleEnvironment;
 
 /**
@@ -286,23 +287,19 @@ public class DownloadManager {
      * @param percentAllowedDifferencePerPage double the percent of allowed difference per page.
      * @param resultFilePath String the file path to write the result PDF to.
      * @return boolean true if the PDFs match, false otherwise
+     * @throws IOException 
+     * @throws RenderingException 
      */
-    public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf, double percentAllowedDifferencePerPage, String resultFilePath) {
-    	CompareResult result;
-		try {
-			result = new PdfComparator<>(expectedPdf, newPdf)
-					.withEnvironment(new SimpleEnvironment()
-					.setAllowedDiffInPercent(percentAllowedDifferencePerPage))
-					.compare();
-			
-			if(resultFilePath != null && !StringUtils.isWhitespace(resultFilePath))
-				result.writeTo(resultFilePath);
-			
-			return result.isEqual();
-		} catch (RuntimeException | IOException e) {
-			log.error(e);
-		}
-		return false;
+    public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf, double percentAllowedDifferencePerPage, String resultFilePath) throws RenderingException, IOException {
+    	CompareResult result = new PdfComparator<>(expectedPdf, newPdf)
+				.withEnvironment(new SimpleEnvironment()
+				.setAllowedDiffInPercent(percentAllowedDifferencePerPage))
+				.compare();
+		
+		if(resultFilePath != null && !StringUtils.isWhitespace(resultFilePath))
+			result.writeTo(resultFilePath);
+		
+		return result.isEqual();
     }
     
     /**
@@ -310,8 +307,10 @@ public class DownloadManager {
      * @param expectedPdf File the file containing the reference PDF.
      * @param newPdf File the PDF file to compare to the reference PDF.
      * @return boolean true if the PDFs match exactly, false otherwise
+     * @throws IOException 
+     * @throws RenderingException 
      */
-    public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf) {
+    public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf) throws RenderingException, IOException {
     	return verifyDownloadedPDFViaVisualRendering(expectedPdf, newPdf, 0.0, null);
     }
     
