@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.Test;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -27,12 +27,11 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 
-@SuiteClasses(ImageVerificationSteps.class)
 public class ImageVerificationSteps {
 	private static Scenario scenario;
 	
 	@Before
-	public void before(Scenario scenario) {
+	public static void before(Scenario scenario) {
 		ImageVerificationSteps.scenario = scenario;
 	}
 	
@@ -42,6 +41,7 @@ public class ImageVerificationSteps {
 	 * @param elementName String the name of the element to capture and compare.
 	 * @throws IOException if file creation does not work
 	 */
+	@Test
 	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
