@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.pages;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
@@ -24,6 +25,7 @@ public class PageData {
 	// user account data TODO: Annotate corretly.
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
+	public Map<String,Map<String,Map<String,String>>> testdata;
 	public String include;
 
 	/**
@@ -75,6 +77,28 @@ public class PageData {
     }
     
     /**
+	 * Returns testdata data for the given environment and the given dataobject (named in the YAML page object).
+	 * <p>Example of test data:</p>
+	 * <pre>
+	 * testdata:
+	 *   alpha:
+	 *     report:
+	 *       id: 123456
+	 *       version: 1
+	 * </pre>
+	 * 
+	 * @param env String the desired environment (qa, sit, etc.)
+	 * @param dataObject String the requested dataobject
+	 * @return Map&lt;String, String&gt; the dataobject data, or null if the requested environment doesn't exist
+	 */
+    public Map<String,String> getTestdata(String env, String dataObject) {
+    	if (testdata != null && testdata.containsKey(env)) {
+    		return testdata.get(env).get(dataObject);
+    	}
+    	return new ConcurrentHashMap<>();
+    }
+    
+    /**
      * Returns an element if it exists in a page object.
      * @param elementName the name of the element in the page object under the 'elements' section
      * @return Map&lt;String, String&gt; the locators for an element
@@ -109,5 +133,4 @@ public class PageData {
     public String getUrl(String env) {
     	return urls.get(env);
     }
-
 }

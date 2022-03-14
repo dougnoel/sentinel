@@ -8,6 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class PageDataTests {
@@ -52,6 +53,18 @@ public class PageDataTests {
 	public void validateIncludeIsBlank() {
 		PageManager.setPage("PageWithBlankInclude");
 		Assert.assertNotNull("Expected text to be male when the include list is empty.", Configuration.getElement(ELEMENT_NAME, "PageWithBlankInclude"));
+	}
+	
+	@Test
+	public void validateTestdataExistsInYaml() {
+		PageManager.setPage("PageWithTestdata");
+		Assert.assertNotNull("Expected testdata to contain data.", Configuration.getTestdataValue("report", "id"));
+	}
+	
+	@Test(expected = FileException.class)
+	public void validateTestdataMissingInYaml() {
+		PageManager.setPage("CorrectPageObject");
+		Configuration.getTestdataValue("report", "id");
 	}
 	
 }
