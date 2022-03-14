@@ -95,7 +95,7 @@ public class PageData {
     	if (testdata != null && testdata.containsKey(env)) {
     		return testdata.get(env).get(dataObject);
     	}
-    	return new ConcurrentHashMap<String, String>();
+    	return new ConcurrentHashMap<>();
     }
     
     /**
