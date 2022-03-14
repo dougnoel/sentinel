@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -29,7 +28,6 @@ public class ImageSteps {
 	 * @param elementName String name of the element to screenshot
 	 * @throws IOException
 	 */
-	@Test
     @When("^I take a screenshot of (?:the|a) (page|.*)$")
     public static void storeScreenshotOfElement(String elementName) throws IOException {
     	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";

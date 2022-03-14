@@ -2,7 +2,6 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,7 +11,6 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -41,10 +39,10 @@ public class ImageVerificationSteps {
 	 * @param elementName String the name of the element to capture and compare.
 	 * @throws IOException if file creation does not work
 	 */
-	@Test
 	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
+        boolean checkToPerform = true;
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
                 elementName, (negate ? "not " : ""));
         
@@ -58,11 +56,10 @@ public class ImageVerificationSteps {
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			assertNotEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
+			checkToPerform = false;
 		}
-		else {
-			assertEquals(expectedResult, ImageComparisonState.MATCH, comparisonResult.getImageComparisonState());
-		}
+		
+		assertEquals(checkToPerform, ImageComparisonState.MATCH == comparisonResult.getImageComparisonState());
 	}
 	
 	/**
