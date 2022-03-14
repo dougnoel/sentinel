@@ -17,3 +17,6 @@ target/
 
 #Ignore sentinel.yml configuration
 conf/sentinel.yml
+
+#Ignore the contents of the downloads folder
+downloads/
