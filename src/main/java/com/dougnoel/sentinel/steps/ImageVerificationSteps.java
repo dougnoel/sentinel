@@ -1,7 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -59,7 +59,7 @@ public class ImageVerificationSteps {
 			checkToPerform = false;
 		}
 		
-		assertEquals(checkToPerform, ImageComparisonState.MATCH == comparisonResult.getImageComparisonState());
+		assertTrue(expectedResult, checkToPerform == (ImageComparisonState.MATCH == comparisonResult.getImageComparisonState()));
 	}
 	
 	/**
