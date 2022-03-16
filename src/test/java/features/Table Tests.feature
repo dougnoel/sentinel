@@ -10,6 +10,7 @@ Feature: Table Tests
     When I click the Name header
     Then I verify the cells in the Name column in the Example Table are sorted in ascending order
       And I see 100 rows in the Example Table
+      And I verify the cell in the 1st row and the Name column of the Example table contains the text Alexander Foley
     	
   @html-table  	
   Scenario: Table
@@ -24,6 +25,9 @@ Feature: Table Tests
       And I verify the cells in the Distance column in the Example Table are sorted in ascending order
       And I verify the cells in the ID Number column in the Example Table are sorted in descending order
       And I view the 1st page of results from the Example Table
+      And I verify the cell in the 1st row and the First Name column of the Example table contains the text Bob
+      And I verify the cell in the 1st row and the First Name column of the Example table does not contain the text Charlotte
+      And I verify the cell in the last row and the City column of the Example table contains the text Boston
     	
   @#44 @link-tests
   Scenario: Testing links inside tables using chaining locators

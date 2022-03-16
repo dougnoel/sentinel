@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
+import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
@@ -184,6 +186,39 @@ public class TableVerificationSteps {
         	assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedAscending(columnName));
         } else {
             assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedDescending(columnName));
+        }
+    }
+    
+    /**
+     * Verifies that a specific cell, given by the row and column, in the table contains the given text.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the cell in the last row and the Employee First Name column of the Employee table does not contain the text Alice</li>
+     * <li>I verify the cell in the 2nd row and the Employee First Name column of the Employee table contains the text Bob</li>
+     * </ul>
+     * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
+     * @param columnName String the name of the column to verify
+     * @param tableName String the name of the table containing the column
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param textToMatch String the text to look for in the column
+     */
+    @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
+    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String textToMatch) {
+    	boolean negate = !StringUtils.isEmpty(assertion);
+    	
+    	var table = (Table)getElement(tableName);
+    	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
+    	String actualText = table.getAllCellDataForColumn(columnName).get(rowIndex - 1);
+    	
+    	var expectedResult = SentinelStringUtils.format(
+                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}. The element contained the text: {}",
+                rowIndex, columnName, tableName, (negate ? "not " : ""), textToMatch, actualText);
+    	log.trace(expectedResult);
+    	if (negate) {
+            assertFalse(expectedResult, actualText.equals(textToMatch));
+        } else {
+            assertTrue(expectedResult, actualText.equals(textToMatch));
         }
     }
 

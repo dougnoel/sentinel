@@ -398,8 +398,10 @@ public class Table extends Element {
 	 * @return ArrayList&lt;String&gt; a list of all cell data. Each entry in the list corresponds to a cell.
 	 */
 	public List<String> getAllCellDataForColumn(String columnHeader){
-		getOrCreateHeaders();
-		return getOrCreateColumns().get(columnHeader);
+		int indexOfHeader = getOrCreateHeaders().indexOf(columnHeader) + 1;
+		List<String> cellData = new ArrayList<>();
+		this.element().findElements(By.xpath(".//" + tableCellDataTag + "[" + indexOfHeader + "]")).stream().forEach(cell -> cellData.add(cell.getText()));
+		return cellData;
 	}
 	
 	/**
