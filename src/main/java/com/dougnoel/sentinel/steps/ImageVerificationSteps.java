@@ -48,7 +48,7 @@ public class ImageVerificationSteps {
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
                 elementName, (negate ? "not " : ""));
         
-		ImageComparisonResult comparisonResult = compareImages(elementName, negate);
+		ImageComparisonResult comparisonResult = compareImages(elementName);
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
@@ -68,7 +68,7 @@ public class ImageVerificationSteps {
 	 * 
 	 * @return ImageComparisonResult the image comparison result.
 	 */
-    private static ImageComparisonResult compareImages(String elementName, Boolean expectedResult) throws IOException {
+    private static ImageComparisonResult compareImages(String elementName) throws IOException {
     	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
     	String resultImageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
     	File screenshotFile;
