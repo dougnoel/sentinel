@@ -72,6 +72,24 @@ public class BaseSteps {
     	getElement(source).dragAndDrop(getElement(target));	
     }
 
+    
+    /**
+     * Moves the mouse to the middle of the given element
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I hover on the comparison dropdown</li>
+     * <li>I hover over the complete button</li>
+     * <li>I hover an icon</li>
+     * </ul>
+     * @param elementName String the name of the element to hover on
+     */
+    
+    @When("I hover (?:on|over) (?:the |an? )?(.*?)$")
+    public void hoverOverElement(String elementName) {
+    	getElement(elementName).hover();
+    }
+    
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
      * This step is used to add in an implicit wait time using a Cucumber step.

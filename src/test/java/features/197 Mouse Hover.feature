@@ -4,7 +4,8 @@
 Feature: 197 Heroku App Mouse Hover
   Login to the HerokuApp 
   And click on the Hovers
-  And Mouse Hover on User Profile and validate the text
+  And hover on User Profile
+  And I verify the text "Name: User1" is visible
 
   @197A
   Scenario: Successfully was able to Mouse Over and validate the text "name: user1"
