@@ -9,16 +9,18 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+
+import com.dougnoel.sentinel.elements.Element;
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import com.github.romankh3.image.comparison.ImageComparison;
-import com.github.romankh3.image.comparison.ImageComparisonUtil;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
 
@@ -46,13 +48,7 @@ public class ImageVerificationSteps {
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
                 elementName, (negate ? "not " : ""));
         
-		ImageComparisonResult comparisonResult = compareImages(elementName);
-		
-		String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
-		File resultDestination = new File( "logs/diff/" + imageFileName );
-		
-		//Save the image comparison we obtained.
-		comparisonResult.writeResultTo(resultDestination);
+		ImageComparisonResult comparisonResult = compareImages(elementName, negate);
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
@@ -72,8 +68,9 @@ public class ImageVerificationSteps {
 	 * 
 	 * @return ImageComparisonResult the image comparison result.
 	 */
-    private static ImageComparisonResult compareImages(String elementName) throws IOException {
+    private static ImageComparisonResult compareImages(String elementName, Boolean expectedResult) throws IOException {
     	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
+    	String resultImageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
     	File screenshotFile;
     	Color backgroundColor;
     	
@@ -85,15 +82,15 @@ public class ImageVerificationSteps {
     	else {
     		TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
     		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
-    		backgroundColor = PageManager.getPageBackgroundColor();
+    		Element body = new Element("body", Map.of("css", "body", "xpath", "//body"));
+    		backgroundColor = body.getBackgroundColor();
     	}
     	
-    	File destinationFile = new File("logs/actual/" + imageFileName);
-    	FileUtils.copyFile(screenshotFile, destinationFile);
+    	FileManager.saveImage("actual", imageFileName, screenshotFile);
 
     	//load images to be compared:
-        BufferedImage expectedImage = ImageComparisonUtil.readImageFromResources("logs/expected/" + imageFileName);
-        BufferedImage actualImage = ImageComparisonUtil.readImageFromResources("logs/actual/" + imageFileName);
+        BufferedImage expectedImage = FileManager.readImage("expected", imageFileName);
+        BufferedImage actualImage = FileManager.readImage("actual", imageFileName);
         
         int expectedHeight = expectedImage.getHeight();
     	int expectedWidth = expectedImage.getWidth();
@@ -141,6 +138,9 @@ public class ImageVerificationSteps {
         
         //Create ImageComparison object and compare the images.
         ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
-        return comparison.compareImages();
+        ImageComparisonResult comparisonResult = comparison.compareImages();
+    	FileManager.saveImage("result", resultImageFileName, comparisonResult.getResult());
+        
+        return comparisonResult;
     }
 }

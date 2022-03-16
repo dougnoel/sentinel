@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +11,7 @@ import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
@@ -188,5 +190,6 @@ public class BaseSteps {
             WebDriverFactory.getWebDriver().switchTo().alert().accept();
         else
         	WebDriverFactory.getWebDriver().switchTo().alert().dismiss();
-    }
+    }  
+    
 }

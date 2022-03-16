@@ -17,6 +17,7 @@ configurations:
     saucelabsAccessKey: "apikey"
     parent-tunnel: "tunnelname"
     tunnelIdentifier: "tunnelID"
+    imageDirectory: "my/path/to/test/images"
   stage:
     name: "Sentinel.Example Stage Run"
     headless: false

@@ -185,14 +185,10 @@ public class ElementTests {
 	public void checkParentColorsOfTransparentElement() {
 		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
 		
-		Color startingColor = Color.white;
-		String hexOfStartingColor = "#"+Integer.toHexString(startingColor.getRGB()).substring(2);
 		Color endingColor = Color.blue;
 		String hexOfEndingColor = "#"+Integer.toHexString(endingColor.getRGB()).substring(2);
 		
 		BaseSteps.navigateToPage("TextboxPage");
-		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Body").element(), hexOfStartingColor);
-		Assert.assertEquals(startingColor, getElement("Car Checkbox").getBackgroundColor());
 		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Body").element(), hexOfEndingColor);
 		Assert.assertEquals(endingColor, getElement("Car Checkbox").getBackgroundColor());
 	}
@@ -201,14 +197,10 @@ public class ElementTests {
 	public void checkElementBackgroundColor() {
 		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
 		
-		Color startingColor = Color.black;
-		String hexOfStartingColor = "#"+Integer.toHexString(startingColor.getRGB()).substring(2);
 		Color endingColor = Color.red;
 		String hexOfEndingColor = "#"+Integer.toHexString(endingColor.getRGB()).substring(2);
 		
 		BaseSteps.navigateToPage("TextboxPage");
-		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Car Checkbox").element(), hexOfStartingColor);
-		Assert.assertEquals(startingColor, getElement("Car Checkbox").getBackgroundColor());
 		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Car Checkbox").element(), hexOfEndingColor);
 		Assert.assertEquals(endingColor, getElement("Car Checkbox").getBackgroundColor());
 	}

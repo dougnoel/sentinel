@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.filemanagers;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import org.apache.commons.io.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,18 +10,22 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.github.romankh3.image.comparison.ImageComparisonUtil;
 
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	
 	private FileManager() {} //Exists to defeat instantiation.
-
+	
 	/**
 	 * Take the path of a javscript file in linux format and converts it to load on any OS.
 	 * (E.G. "src/main/resources/scripts/DragDrop.js")
@@ -97,5 +103,61 @@ public class FileManager {
 		} catch (FileException fe) {
 			return null;
 		}
+	}
+	
+	/**
+	 * Saves an image of type File to the given sub-directory of the configured, or default, image path.
+	 * 
+	 * @param subDirectory the sub-directory within the configured or default image path.
+	 * If the sub-directory is null, the root image directory will be used.
+	 * @param imageFileName the file name of the image to save.
+	 * @param imageFile the File of the image to save.
+	 */
+	public static void saveImage(String subDirectory, String imageFileName, File imageFile) throws IOException {
+		if(subDirectory == null) 
+			subDirectory = "";
+		else
+			subDirectory += "/";
+		
+		File destinationFile = new File(Configuration.imageDirectory() + "/" + subDirectory + imageFileName);
+    	FileUtils.copyFile(imageFile, destinationFile);
+	}
+	
+	/**
+	 * Saves an image of type BufferedImage to the given sub-directory of the configured, or default, image path.
+	 * 
+	 * @param subDirectory the sub-directory within the configured or default image path.
+	 * If the subDirectory is null, the root image directory will be used.
+	 * @param imageFileName the file name of the image to save.
+	 * @param imageFile the BufferedImage of the image to save.
+	 */
+	public static void saveImage(String subDirectory, String imageFileName, BufferedImage imageFile) throws IOException {
+		if(subDirectory == null) 
+			subDirectory = "";
+		else
+			subDirectory += "/";
+		
+		File destinationFile = new File(Configuration.imageDirectory() + "/" + subDirectory + imageFileName);
+		//ImageIO will not create directories. We have to make them ourselves before running the write command.
+		FileUtils.forceMkdir(destinationFile.getParentFile());
+    	ImageIO.write(imageFile, "png", destinationFile);
+	}
+
+	/**
+	 * Reads an image from the sub-directory of the default or configured image directory.
+	 * 
+	 * @param sourceImageSubDirectory the sub-directory within the configured or default image path to read the file from.
+	 * If the sub-directory is null, the root image directory will be used.
+	 * @param imageFileName the file name of the image to read.
+	 * 
+	 * @return a BufferedImage of the image file on disk.
+	 */
+	public static BufferedImage readImage(String sourceImageSubDirectory, String imageFileName) {
+		if(sourceImageSubDirectory == null) 
+			sourceImageSubDirectory = "";
+		else
+			sourceImageSubDirectory += "/";
+		
+		return ImageComparisonUtil.readImageFromResources(Configuration.imageDirectory() + "/" + sourceImageSubDirectory + imageFileName);
 	}
 }

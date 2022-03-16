@@ -705,6 +705,11 @@ public class Element {
 		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}
 	
+	/**
+	 * Gets the most prevalent color present in the element.
+	 * 
+	 * @return A color type of the most common color on the element.
+	 */
 	public Color getMostPrevalentColor() throws IOException {
 		byte[] imageAsByteArray = element().getScreenshotAs(OutputType.BYTES);
 		ByteArrayInputStream imageByteStream = new ByteArrayInputStream(imageAsByteArray);
@@ -715,6 +720,11 @@ public class Element {
 		return new Color(rgb);
 	}
 	
+	/**
+	 * Takes a screenshot of the current element.
+	 * 
+	 * @return A screenshot of the current element as a File output type.
+	 */
 	public File getScreenshot() {
 		return element().getScreenshotAs(OutputType.FILE);
 	}
@@ -730,12 +740,11 @@ public class Element {
 	}
 	
 	/**
-	 * This method is used to ascend through elements with transparency to find a parent with a non transparent background color
-	 * until no parents remain.
+	 * Returns the color of the background behind the element.
 	 * 
-	 * @param element The web element to use as the root for checking for background colors
+	 * @param element The web element to use as the root for checking for background colors.
 	 * 
-	 * @return The background color of the first parent with one or white if no inherited background color is found
+	 * @return The background color of the first parent with one or white if no inherited background color is found.
 	 */
 	private Color ascendTransparentColorElements(WebElement element) {
 		Color transparent = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();

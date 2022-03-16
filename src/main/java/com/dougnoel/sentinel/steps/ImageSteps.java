@@ -5,9 +5,10 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+
+import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -32,7 +33,7 @@ public class ImageSteps {
     public static void storeScreenshotOfElement(String elementName) throws IOException {
     	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
     	File screenshotFile;
-    	
+
     	//Determine if we're taking a screenshot of an element or the whole page.
     	if(!elementName.toLowerCase().contentEquals("page")) {
     		screenshotFile = getElement(elementName).getScreenshot();
@@ -41,7 +42,7 @@ public class ImageSteps {
         	TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
         	screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
     	}
-    	File destinationFile = new File("logs/expected/" + imageFileName);
-    	FileUtils.copyFile(screenshotFile, destinationFile);
+    	
+    	FileManager.saveImage("expected", imageFileName, screenshotFile);
     }
 }
