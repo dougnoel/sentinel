@@ -40,7 +40,8 @@ public class ImageVerificationSteps {
 	 * Takes a screenshot of the given element and compares it to the previously-stored image of that same element.
 	 * Default pixel tolerance level = 0.1. Defaults pixel location threshold = 5.
 	 * @param elementName String the name of the element to capture and compare.
-	 * @throws IOException if file creation does not work
+	 * @param assertion String the user input determining if we expect a match or a mismatch.
+	 * @throws IOException if file creation does not work.
 	 */
 	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
