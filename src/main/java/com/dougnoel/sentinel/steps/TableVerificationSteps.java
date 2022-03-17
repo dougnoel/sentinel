@@ -216,9 +216,9 @@ public class TableVerificationSteps {
                 rowIndex, columnName, tableName, (negate ? "not " : ""), textToMatch, actualText);
     	log.trace(expectedResult);
     	if (negate) {
-            assertFalse(expectedResult, actualText.equals(textToMatch));
+            assertFalse(expectedResult, table.verifySpecificCellContains(columnName, rowIndex, textToMatch));
         } else {
-            assertTrue(expectedResult, actualText.equals(textToMatch));
+            assertTrue(expectedResult, table.verifySpecificCellContains(columnName, rowIndex, textToMatch));
         }
     }
 

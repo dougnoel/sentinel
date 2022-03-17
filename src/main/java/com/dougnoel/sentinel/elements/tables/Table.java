@@ -419,11 +419,6 @@ public class Table extends Element {
 	 */
 	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
 		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
-		if (column == null) {
-			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
-			log.error(errorMessage);
-			throw new NoSuchElementException(errorMessage);
-		}
 		for (String cell : column) {
 			try {
 				if (!cell.contains(textToMatch)) {
@@ -449,11 +444,6 @@ public class Table extends Element {
 	 */
 	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) {
 		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
-		if (column == null) {
-			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
-			log.error(errorMessage);
-			throw new NoSuchElementException(errorMessage);
-		}
 		for (String cell : column) {
 			try {
 				if (cell.contains(textToMatch)) {
@@ -470,6 +460,34 @@ public class Table extends Element {
 
 		}
 		log.debug("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		return false;
+	}
+	
+	/**
+	 * Returns true if the cell in the given column and row match the text value given.
+	 * 
+	 * @param columnHeader String the name of the column
+	 * @param rowIndex int the index of the row
+	 * @param textToMatch String the text that should be in the specified cell
+	 * @return boolean true if the cell given by the passed column, row contains the given text, false otherwise
+	 */
+	public boolean verifySpecificCellContains(String columnHeader, int rowIndex, String textToMatch) {
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
+		var cell = column.get(rowIndex - 1); //subtract 1 from passed rowIndex, which will be 1-indexed, to match List.get which is 0-indexed.
+		try {
+			if (cell.contains(textToMatch)) {
+				return true;
+			}
+			else {
+				log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+			}
+		} catch (NullPointerException e) {
+			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+			log.error(errorMessage);
+			throw new NoSuchElementException(errorMessage, e);
+		}
+
+		log.debug("Value in the {} column and {} row are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
 		return false;
 	}
 	
