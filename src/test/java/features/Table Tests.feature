@@ -11,6 +11,11 @@ Feature: Table Tests
     Then I verify the cells in the Name column in the Example Table are sorted in ascending order
       And I see 100 rows in the Example Table
       And I verify the cell in the 1st row and the Name column of the Example table contains the text Alexander Foley
+      And I verify the cell in the 1st row and the Gender column of the Example table contains the text male
+      And I verify the cell in the 1st row and the Company column of the Example table contains the text Geekosis
+      And I verify the cell in the 2nd row and the Name column of the Example table contains the text Alisha Myers
+      And I verify the cell in the 2nd row and the Gender column of the Example table contains the text female
+      And I verify the cell in the 2nd row and the Company column of the Example table contains the text Intradisk
     	
   @html-table  	
   Scenario: Table
@@ -27,6 +32,8 @@ Feature: Table Tests
       And I view the 1st page of results from the Example Table
       And I verify the cell in the 1st row and the First Name column of the Example table contains the text Bob
       And I verify the cell in the 1st row and the First Name column of the Example table does not contain the text Charlotte
+      And I verify the cell in the 2nd row and the First Name column of the Example table contains the text Charlotte
+      And I verify the cell in the 3rd row and the Zip Code column of the Example table contains the text 02111
       And I verify the cell in the last row and the City column of the Example table contains the text Boston
     	
   @#44 @link-tests
