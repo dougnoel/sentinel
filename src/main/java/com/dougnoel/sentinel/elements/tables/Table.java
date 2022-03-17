@@ -426,7 +426,7 @@ public class Table extends Element {
 					return false;
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in every cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage, e);
 			}
@@ -453,7 +453,7 @@ public class Table extends Element {
 					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage, e);
 			}
@@ -482,12 +482,12 @@ public class Table extends Element {
 				log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 			}
 		} catch (NullPointerException e) {
-			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column, row {}. Value found: {}", textToMatch, columnHeader, rowIndex, cell);
 			log.error(errorMessage);
 			throw new NoSuchElementException(errorMessage, e);
 		}
 
-		log.debug("Value in the {} column and {} row are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		log.debug("Value in the {} column and {} row are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, rowIndex, textToMatch);
 		return false;
 	}
 	
