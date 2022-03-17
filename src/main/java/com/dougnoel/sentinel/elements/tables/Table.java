@@ -398,9 +398,15 @@ public class Table extends Element {
 	 * @return ArrayList&lt;String&gt; a list of all cell data. Each entry in the list corresponds to a cell.
 	 */
 	public List<String> getAllCellDataForColumn(String columnHeader){
-		int indexOfHeader = getOrCreateHeaders().indexOf(columnHeader) + 1; // add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
+		int arrayIndexOfHeader = getOrCreateHeaders().indexOf(columnHeader);
+		if(arrayIndexOfHeader == -1) {
+			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
+			log.error(errorMessage);
+			throw new NoSuchElementException(errorMessage);
+		}
+		int xpathIndexOfHeader = arrayIndexOfHeader	+ 1; // add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
 		List<String> cellData = new ArrayList<>();
-		this.element().findElements(By.xpath(".//" + tableCellDataTag + "[" + indexOfHeader + "]")).stream().forEach(cell -> cellData.add(cell.getText()));
+		this.element().findElements(By.xpath(".//" + tableCellDataTag + "[" + xpathIndexOfHeader + "]")).stream().forEach(cell -> cellData.add(cell.getText()));
 		return cellData;
 	}
 	
