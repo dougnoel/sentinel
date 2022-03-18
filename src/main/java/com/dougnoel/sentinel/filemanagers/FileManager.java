@@ -106,58 +106,75 @@ public class FileManager {
 	}
 	
 	/**
-	 * Saves an image of type File to the given sub-directory of the configured, or default, image path.
+	 * Saves an image File to an optionally set sub-directory of the configured, console set, or default "logs/images" directory.
+	 * Can optionally save to the root image directory if subDirectory is null.
 	 * 
-	 * @param subDirectory the sub-directory within the configured or default image path.
-	 * If the sub-directory is null, the root image directory will be used.
-	 * @param imageFileName the file name of the image to save.
-	 * @param imageFile the File of the image to save.
+	 * @param subDirectory String the sub-directory to use
+	 * @param fileName String the file name of the image
+	 * @param imageFile File the File of the image to save
 	 */
-	public static void saveImage(String subDirectory, String imageFileName, File imageFile) throws IOException {
-		if(subDirectory == null) 
-			subDirectory = "";
-		else
-			subDirectory += "/";
-		
-		File destinationFile = new File(Configuration.imageDirectory() + "/" + subDirectory + imageFileName);
-    	FileUtils.copyFile(imageFile, destinationFile);
+	public static void saveImage(String subDirectory, String fileName, File imageFile) throws IOException {
+		FileUtils.copyFile(imageFile, createImagePath(subDirectory, fileName));
 	}
 	
 	/**
-	 * Saves an image of type BufferedImage to the given sub-directory of the configured, or default, image path.
+	 * Saves a BufferImage to an optionally set sub-directory of the configured, console set, or default "logs/images" directory.
+	 * Can optionally save to the root image directory if subDirectory is null.
 	 * 
-	 * @param subDirectory the sub-directory within the configured or default image path.
-	 * If the subDirectory is null, the root image directory will be used.
-	 * @param imageFileName the file name of the image to save.
-	 * @param imageFile the BufferedImage of the image to save.
+	 * @param subDirectory String the sub-directory to use
+	 * @param fileName String the file name of the image
+	 * @param imageFile BufferdImage the BufferedImage to save
 	 */
-	public static void saveImage(String subDirectory, String imageFileName, BufferedImage imageFile) throws IOException {
+	public static void saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
+		File destinationFile = createImagePath(subDirectory, fileName);
+		FileUtils.forceMkdir(destinationFile);
+		ImageIO.write(imageFile, "png", destinationFile);
+	}
+
+	/**
+	 * Reads an image from disk from the configured, console set, or default "logs/images" directory.
+	 * Optionally can read from the root directory if subDirectory is null.
+	 * 
+	 * @param subDirectory String the sub-directory to use
+	 * @param fileName String the file name of the image
+	 * 
+	 * @return BufferedImage the image file read from disk
+	 */
+	public static BufferedImage readImage(String subDirectory, String fileName) {
+		return ImageComparisonUtil.readImageFromResources(createImagePath(subDirectory, fileName).getAbsolutePath());
+	}
+	
+	 /**
+	 * Returns a String of the directory to use for test images set in the config file, command line,
+	 * or alternatively "logs/images" by default.
+	 * 
+	 * @return String the configured, console set, or default directory if none is found
+	 */
+	public static String getImageDirectory() {
+		String imageDirectory = Configuration.toString("imageDirectory");
+	    if(imageDirectory == null) {
+	    	imageDirectory = "logs/images";
+		}
+	    
+	    return imageDirectory;
+	}
+    
+	/**
+	* Returns a File use for saving an image using an optional sub-directory,
+	* file name, and the configured, console set, or default "logs/images" directory.
+	* Will use the root directory if subDirectory is null.
+	* 
+	* @param subDirectory String the sub-directory to use
+	* @param fileName String the file name of the image
+	* 
+	* @return File the constructed image path
+	*/
+	private static File createImagePath(String subDirectory, String fileName) {
 		if(subDirectory == null) 
 			subDirectory = "";
 		else
 			subDirectory += "/";
 		
-		File destinationFile = new File(Configuration.imageDirectory() + "/" + subDirectory + imageFileName);
-		//ImageIO will not create directories. We have to make them ourselves before running the write command.
-		FileUtils.forceMkdir(destinationFile.getParentFile());
-    	ImageIO.write(imageFile, "png", destinationFile);
-	}
-
-	/**
-	 * Reads an image from the sub-directory of the default or configured image directory.
-	 * 
-	 * @param sourceImageSubDirectory the sub-directory within the configured or default image path to read the file from.
-	 * If the sub-directory is null, the root image directory will be used.
-	 * @param imageFileName the file name of the image to read.
-	 * 
-	 * @return a BufferedImage of the image file on disk.
-	 */
-	public static BufferedImage readImage(String sourceImageSubDirectory, String imageFileName) {
-		if(sourceImageSubDirectory == null) 
-			sourceImageSubDirectory = "";
-		else
-			sourceImageSubDirectory += "/";
-		
-		return ImageComparisonUtil.readImageFromResources(Configuration.imageDirectory() + "/" + sourceImageSubDirectory + imageFileName);
+		return new File(getImageDirectory() + "/" + subDirectory + fileName);
 	}
 }
