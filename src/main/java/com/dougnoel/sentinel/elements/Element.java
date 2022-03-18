@@ -748,23 +748,12 @@ public class Element {
 	private Color getBackgroundColor(WebElement element) {
 		final Color TRANSPARENT = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();
 		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
-		WebElement parentElement = null;
-				
-		if(currentColor.equals(transparent)) {
-			try {
-				parentElement = element.findElement(By.xpath("./.."));
-			} catch(NoSuchElementException e) {
-				//Suppress error when there are no more parents
-			}
-			
-			if(parentElement != null) {
-				return(ascendTransparentColorElements(parentElement));
-			}
-			else {
-				return Color.white;
-			}
-		} else {
+
+		if(!currentColor.equals(transparent))
 			return currentColor;
+		try {
+			return getBackgroundColor(element.findElement(By.xpath("./.."));
+		} catch(NoSuchElementException e) {
+			return Color.white;
 		}
-	}
 }
