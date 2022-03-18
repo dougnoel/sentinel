@@ -27,5 +27,5 @@ Feature: Select Verification Steps
   
   @287F
   Scenario: Verify Dropdown Does Not Have Number Of Options
-    Then I verify the dropdown does not have 2 options
+    Then I verify the dropdown does not have 1 option
   

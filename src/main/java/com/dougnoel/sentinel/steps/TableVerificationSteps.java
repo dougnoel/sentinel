@@ -207,7 +207,7 @@ public class TableVerificationSteps {
     public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String textToMatch) {
     	boolean negate = !StringUtils.isEmpty(assertion);
     	
-    	var table = (Table)getElement(tableName);
+    	var table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
     	String actualText = table.getAllCellDataForColumn(columnName).get(rowIndex - 1);
     	

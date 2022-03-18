@@ -128,7 +128,6 @@ public class SelectElement extends Element {
      * @return int the number of options in this Select element.
      */
     public int getNumberOfOptions() {
-    	Select selectElement = new Select(this.element());
-    	return selectElement.getOptions().size();
+    	return new Select(this.element()).getOptions().size();
     }
 }
