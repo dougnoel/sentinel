@@ -721,7 +721,7 @@ public class Element {
 	}
 	
 	/**
-	 * Takes a screenshot of the current element.
+	 * Returns a screenshot of the current element as a File object.
 	 * 
 	 * @return File the screenshot of the current element
 	 */
