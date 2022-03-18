@@ -210,10 +210,4 @@ public class ElementTests {
 		BaseSteps.navigateToPage("TextboxPage");
 		Assert.assertEquals(Color.white, getElement("Car Checkbox").getBackgroundColor());
 	}
-	
-	@Test(expected = NoSuchElementException.class)
-	public void TableColumnDoesNotExist() {
-		BaseSteps.navigateToPage("TablePage");
-		TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "contains", "Bob");
-	}
 }
