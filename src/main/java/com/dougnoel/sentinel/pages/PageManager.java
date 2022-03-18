@@ -346,6 +346,7 @@ public class PageManager {
 					"This page timed out before it could finish loading. Please increase the timeout, ensure the page you are loading exists, or check your internet connection and try agin.");
 		}
 		// if we've gotten this far, we haven't timed out so return the
+		// document.readyState check
 		return ((JavascriptExecutor) driver()).executeScript("return document.readyState").equals("complete");
 	}
 }
