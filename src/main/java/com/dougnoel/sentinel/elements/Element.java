@@ -708,7 +708,7 @@ public class Element {
 	/**
 	 * Gets the most prevalent color present in the element.
 	 * 
-	 * @return A color type of the most common color on the element.
+	 * @return java.awt.Color the most common color in the element
 	 */
 	public Color getMostPrevalentColor() throws IOException {
 		byte[] imageAsByteArray = element().getScreenshotAs(OutputType.BYTES);
