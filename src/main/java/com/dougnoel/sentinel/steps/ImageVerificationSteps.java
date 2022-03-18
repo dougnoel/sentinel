@@ -41,6 +41,7 @@ public class ImageVerificationSteps {
 	 * Default pixel tolerance level = 0.1. Defaults pixel location threshold = 5.
 	 * @param elementName String the name of the element to capture and compare.
 	 * @param assertion String the user input determining if we expect a match or a mismatch.
+	 * 
 	 * @throws IOException if file creation does not work.
 	 */
 	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
@@ -61,8 +62,11 @@ public class ImageVerificationSteps {
 	}
 	
 	/**
-	 * Takes an updated screenshot of the current element or page for comparison.
-	 * Resizes the image canvases to be the same if different, and then runs a comparison of the two images.
+	 * Takes an updated screenshot of the current element, or page, for comparison to the earlier expected image.
+	 * Will enlarge both images to be the same size using the retrieved background color for
+	 * the new empty space if their sizes are not equal.
+	 * Then runs, and returns, an ImageComparisonResult of the two images.
+	 * 
 	 * @param elementName String the name of the element to capture and compare 
 	 * or any casing of "page" alone to compare the entire page.
 	 * @throws IOException if file creation does not work
@@ -93,54 +97,55 @@ public class ImageVerificationSteps {
         BufferedImage expectedImage = FileManager.readImage("expected", imageFileName);
         BufferedImage actualImage = FileManager.readImage("actual", imageFileName);
         
-        int expectedHeight = expectedImage.getHeight();
-    	int expectedWidth = expectedImage.getWidth();
-    	int actualHeight = actualImage.getHeight();
-    	int actualWidth = actualImage.getWidth();
-    	
-        //If the image sizes are different, make them equivalent.
-        if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
-        	int newHeight;
-        	int newWidth;
+        //If the image sizes are different then enlarge them to the largest size width and height of both
+		int expectedHeight = expectedImage.getHeight();
+		int expectedWidth = expectedImage.getWidth();
+		int actualHeight = actualImage.getHeight();
+		int actualWidth = actualImage.getWidth();
 
-        	//Calculate the new width and height to set the images to.
-        	if(expectedWidth > actualWidth) {
-        		newWidth = expectedWidth;
-        	}
-        	else {
-        		newWidth = actualWidth;
-        	}
-        	
-        	if(expectedHeight > actualHeight) {
-        		newHeight = expectedHeight;
-        	}
-        	else {
-        		newHeight = actualHeight;
-        	}
-        	
-        	BufferedImage newExpected = new BufferedImage(newWidth, newHeight, expectedImage.getType());
-        	BufferedImage newActual = new BufferedImage(newWidth, newHeight, expectedImage.getType());
-        	
-        	Graphics2D g2 = newExpected.createGraphics();
-        	g2.setPaint(backgroundColor);
-        	g2.fillRect(0, 0, newWidth, newHeight);
-        	g2.setColor(backgroundColor);
-        	g2.drawImage(expectedImage, null, 0, 0);
-        	expectedImage = newExpected;
-        	
-        	g2 = newActual.createGraphics();
-        	g2.setPaint(backgroundColor);
-        	g2.fillRect(0, 0, newWidth, newHeight);
-        	g2.setColor(backgroundColor);
-        	g2.drawImage(actualImage, null, 0, 0);
-        	actualImage = newActual;
-        	g2.dispose();
-        }
+		if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
+			int newHeight;
+			int newWidth;
+		
+			//Calculate the largest width and height to set both images to
+			if(expectedWidth > actualWidth) {
+				newWidth = expectedWidth;
+			}
+			else {
+				newWidth = actualWidth;
+			}
+			
+			if(expectedHeight > actualHeight) {
+				newHeight = expectedHeight;
+			}
+			else {
+				newHeight = actualHeight;
+			}
+			
+			BufferedImage newExpected = new BufferedImage(newWidth, newHeight, expectedImage.getType());
+			BufferedImage newActual = new BufferedImage(newWidth, newHeight, expectedImage.getType());
+			
+			//Resize the images, using the background color to draw new space
+			Graphics2D g2 = newExpected.createGraphics();
+			g2.setPaint(backgroundColor);
+			g2.fillRect(0, 0, newWidth, newHeight);
+			g2.setColor(backgroundColor);
+			g2.drawImage(expectedImage, null, 0, 0);
+			expectedImage = newExpected;
+			
+			g2 = newActual.createGraphics();
+			g2.setPaint(backgroundColor);
+			g2.fillRect(0, 0, newWidth, newHeight);
+			g2.setColor(backgroundColor);
+			g2.drawImage(actualImage, null, 0, 0);
+			actualImage = newActual;
+			g2.dispose();
+		}
         
-        //Create ImageComparison object and compare the images.
-        ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
-        ImageComparisonResult comparisonResult = comparison.compareImages();
-    	FileManager.saveImage("result", resultImageFileName, comparisonResult.getResult());
+		//Compare the two images, writing the result to disk
+		ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
+		ImageComparisonResult comparisonResult = comparison.compareImages();
+		FileManager.saveImage("result", resultImageFileName, comparisonResult.getResult());
         
         return comparisonResult;
     }
