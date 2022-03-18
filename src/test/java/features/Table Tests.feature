@@ -12,10 +12,8 @@ Feature: Table Tests
       And I see 100 rows in the Example Table
       And I verify the cell in the 1st row and the Name column of the Example table contains the text Alexander Foley
       And I verify the cell in the 1st row and the Gender column of the Example table contains the text male
-      And I verify the cell in the 1st row and the Company column of the Example table contains the text Geekosis
       And I verify the cell in the 2nd row and the Name column of the Example table contains the text Alisha Myers
       And I verify the cell in the 2nd row and the Gender column of the Example table contains the text female
-      And I verify the cell in the 2nd row and the Company column of the Example table contains the text Intradisk
     	
   @html-table  	
   Scenario: Table
