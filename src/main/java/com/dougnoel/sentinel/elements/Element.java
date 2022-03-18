@@ -745,7 +745,7 @@ public class Element {
 	 * @param element WebElement the web element to search for background colors
 	 * @return java.awt.Color the background color of the first parent with one or white if none is found
 	 */
-	private Color ascendTransparentColorElements(WebElement element) {
+	private Color getBackgroundColor(WebElement element) {
 		Color transparent = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();
 		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
 		WebElement parentElement = null;
