@@ -61,5 +61,31 @@ public class SelectVerificationSteps {
             assertFalse(expectedResult, actualResult);
         }
 	}
-	
+    
+    /**
+     * Verifies a select element has or does not have the given number of options.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the size dropdown has 1 option</li>
+     * <li>I verify the color dropdown does not have 2 options</li>
+     * </ul>
+     * @param elementName String select element to check
+     * @param assertion String "has" for a positive check, anything else for negative
+     * @param numberOfOptions int the number of options to verify
+     */
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) (\\d+) options?$")
+    public static void verifyDropdownHasNumberOfOptions(String elementName, String assertion, int numberOfOptions) {
+    	var dropdown = (SelectElement)getElement(elementName);
+    	var negate = !assertion.contains("has");
+    	String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have {} option{}.",
+                elementName, (negate ? "not " : ""), numberOfOptions, (numberOfOptions > 1 ? "s" : ""));
+		var actualResult = dropdown.getNumberOfOptions() == numberOfOptions;
+    	
+    	if (negate) {
+            assertFalse(expectedResult, actualResult);
+        } else {
+            assertTrue(expectedResult, actualResult);
+        }
+    }
 }

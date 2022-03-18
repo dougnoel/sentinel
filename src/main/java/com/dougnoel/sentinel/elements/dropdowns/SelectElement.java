@@ -122,4 +122,12 @@ public class SelectElement extends Element {
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> selectElement.getOptions().stream().noneMatch(el -> el.getText().endsWith(text)));
     }
+    
+    /**
+     * Returns the number of options in this Select element.
+     * @return int the number of options in this Select element.
+     */
+    public int getNumberOfOptions() {
+    	return new Select(this.element()).getOptions().size();
+    }
 }

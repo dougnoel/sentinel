@@ -19,6 +19,7 @@ import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.steps.TableVerificationSteps;
 import com.dougnoel.sentinel.steps.TextVerificationSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -177,6 +178,12 @@ public class ElementTests {
 		input.sendSpecialKey(Keys.BACK_SPACE);
 		TextVerificationSteps.verifyElementTextContains("result text", "", "contains", "BACK_SPACE");
 		assertTrue("Expecting key press input to be empty.", input.getText().isEmpty());
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void TableColumnDoesNotExist() {
+		BaseSteps.navigateToPage("TablePage");
+		TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "contains", "Bob");
 	}
 	
 }
