@@ -696,9 +696,9 @@ public class Element {
 	}
 	
 	/**
-	 * This method is used to get the text on mouse hover
+	 * Returns the tooltip value of the element.
 	 * 
-	 * @return The value of the tooltip text
+	 * @return String the value of the tooltip text
 	 */
 	public String getTooltipText() {
 		hover();
@@ -721,39 +721,40 @@ public class Element {
 	}
 	
 	/**
-	 * Returns a screenshot of the current element as a File object.
+	 * Returns a screenshot File of the current element.
 	 * 
-	 * @return File the screenshot of the current element
+	 * @return File a screenshot of the current element
 	 */
 	public File getScreenshot() {
 		return element().getScreenshotAs(OutputType.FILE);
 	}
 	
 	/**
-	 * This method is used to get the background color of the element, or it's inherited background color.
+	 * Returns the background color of the element, or it's inherited background color from a parent if transparent.
 	 * 
-	 * @return The background color of the element converted to a java color object.
+	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
 	 */
 	public Color getBackgroundColor()
 	{  
-		return ascendTransparentColorElements(element());
+		return getBackgroundColor(element());
 	}
 	
 	/**
-	 * Returns the color of the background behind the element.
+	 * Returns the background color of the element, or it's inherited background color from a parent if transparent.
 	 * 
-	 * @param element WebElement the web element to search for background colors
-	 * @return java.awt.Color the background color of the first parent with one or white if none is found
+	 * @param element WebElement the web element to get the background color of
+	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
 	 */
 	private Color getBackgroundColor(WebElement element) {
 		final Color TRANSPARENT = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();
 		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
 
-		if(!currentColor.equals(transparent))
+		if(!currentColor.equals(TRANSPARENT))
 			return currentColor;
 		try {
-			return getBackgroundColor(element.findElement(By.xpath("./.."));
+			return getBackgroundColor(element.findElement(By.xpath("./..")));
 		} catch(NoSuchElementException e) {
 			return Color.white;
 		}
+	}
 }

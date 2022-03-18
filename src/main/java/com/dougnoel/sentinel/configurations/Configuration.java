@@ -406,19 +406,6 @@ public class Configuration {
     }
     
     /**
-     * Returns the directory to use for images set in the config file, on the command line, or a default directory in logs.
-     * @return String the directory to use for test image output
-     */
-    public static String imageDirectory() {
-    	String imageDirectory = Configuration.toString("imageDirectory");
-        if(imageDirectory == null) {
-    		imageDirectory = "logs/images";
-    	}
-        
-        return imageDirectory;
-    }
-    
-    /**
      * Returns the simple operating system of windows, mac or linux. Returns the full os name if none of
      * those are matched.
      * @return String operating system
