@@ -706,7 +706,7 @@ public class Element {
 	}
 	
 	/**
-	 * Gets the most prevalent color present in the element.
+	 * Returns the most prevalent color present in the element.
 	 * 
 	 * @return java.awt.Color the most common color in the element
 	 */
