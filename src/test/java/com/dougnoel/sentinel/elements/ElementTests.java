@@ -185,28 +185,28 @@ public class ElementTests {
 	public void checkParentColorsOfTransparentElement() {
 		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
 		
-		Color endingColor = Color.blue;
-		String hexOfEndingColor = "#"+Integer.toHexString(endingColor.getRGB()).substring(2);
+		Color colorBlue = Color.blue;
+		String colorBlueHexValue = "#"+Integer.toHexString(colorBlue.getRGB()).substring(2);
 		
 		BaseSteps.navigateToPage("TextboxPage");
-		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Body").element(), hexOfEndingColor);
-		Assert.assertEquals(endingColor, getElement("Car Checkbox").getBackgroundColor());
+		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Body").element(), colorBlueHexValue);
+		Assert.assertEquals(colorBlue, getElement("Car Checkbox").getBackgroundColor());
 	}
 	
 	@Test
 	public void checkElementBackgroundColor() {
 		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
 		
-		Color endingColor = Color.red;
-		String hexOfEndingColor = "#"+Integer.toHexString(endingColor.getRGB()).substring(2);
+		Color colorRed = Color.red;
+		String colorRedHexValue = "#"+Integer.toHexString(colorRed.getRGB()).substring(2);
 		
 		BaseSteps.navigateToPage("TextboxPage");
-		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Car Checkbox").element(), hexOfEndingColor);
-		Assert.assertEquals(endingColor, getElement("Car Checkbox").getBackgroundColor());
+		js.executeScript("arguments[0].style.backgroundColor=arguments[1];", getElement("Car Checkbox").element(), colorRedHexValue);
+		Assert.assertEquals(colorRed, getElement("Car Checkbox").getBackgroundColor());
 	}
 	
 	@Test
-	public void checkElementBackgroundColorIfAllParentsTransparent() {
+	public void checkElementBackgroundColorDefaultsWhiteIfAllTransparency() {
 		BaseSteps.navigateToPage("TextboxPage");
 		Assert.assertEquals(Color.white, getElement("Car Checkbox").getBackgroundColor());
 	}
