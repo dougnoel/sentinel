@@ -87,7 +87,7 @@ public class ImageVerificationSteps {
     	else {
     		TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
     		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
-    		Element body = new Element("body", Map.of("css", "body", "xpath", "//body"));
+    		Element body = new Element("body", Map.of("xpath", "//body"));
     		backgroundColor = body.getBackgroundColor();
     	}
     	
