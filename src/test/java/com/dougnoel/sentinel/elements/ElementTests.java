@@ -21,6 +21,7 @@ import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.steps.TableVerificationSteps;
 import com.dougnoel.sentinel.steps.TextVerificationSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -209,5 +210,11 @@ public class ElementTests {
 	public void checkElementBackgroundColorDefaultsWhiteIfAllTransparency() {
 		BaseSteps.navigateToPage("TextboxPage");
 		Assert.assertEquals(Color.white, getElement("Car Checkbox").getBackgroundColor());
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void TableColumnDoesNotExist() {
+		BaseSteps.navigateToPage("TablePage");
+		TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "contains", "Bob");
 	}
 }

@@ -20,3 +20,12 @@ Feature: Select Verification Steps
   @287D
   Scenario: Verify Dropdown Does Not Have Currently Selected Option
     Then I verify the dropdown does not have the currently selected option Option 2
+    
+  @287E
+  Scenario: Verify Dropdown Has Number Of Options
+    Then I verify the dropdown has 3 options
+  
+  @287F
+  Scenario: Verify Dropdown Does Not Have Number Of Options
+    Then I verify the dropdown does not have 1 option
+  
