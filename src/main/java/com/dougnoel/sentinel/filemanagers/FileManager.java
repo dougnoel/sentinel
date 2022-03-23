@@ -114,7 +114,7 @@ public class FileManager {
 	 * @param imageFile File the File of the image to save
 	 */
 	public static void saveImage(String subDirectory, String fileName, File imageFile) throws IOException {
-		FileUtils.copyFile(imageFile, createImagePath(subDirectory, fileName));
+		FileUtils.copyFile(imageFile, constructImagePath(subDirectory, fileName));
 	}
 	
 	/**
@@ -126,7 +126,11 @@ public class FileManager {
 	 * @param imageFile BufferdImage the BufferedImage to save
 	 */
 	public static void saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
-		File destinationFile = createImagePath(subDirectory, fileName);
+		File destinationFile = constructImagePath(subDirectory, fileName);
+		if(!destinationFile.mkdirs()) {
+			throw new IOException("Failed to create the full path for: " + destinationFile.getAbsolutePath());
+		}
+		
 		ImageIO.write(imageFile, "png", destinationFile);
 	}
 
@@ -140,7 +144,7 @@ public class FileManager {
 	 * @return BufferedImage the image file read from disk
 	 */
 	public static BufferedImage readImage(String subDirectory, String fileName) {
-		return ImageComparisonUtil.readImageFromResources(createImagePath(subDirectory, fileName).getAbsolutePath());
+		return ImageComparisonUtil.readImageFromResources(constructImagePath(subDirectory, fileName).getAbsolutePath());
 	}
 	
 	 /**
@@ -168,7 +172,7 @@ public class FileManager {
 	* 
 	* @return File the constructed image path
 	*/
-	private static File createImagePath(String subDirectory, String fileName) {
+	private static File constructImagePath(String subDirectory, String fileName) {
 		if(subDirectory == null) 
 			subDirectory = "";
 		else
