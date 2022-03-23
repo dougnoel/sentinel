@@ -127,7 +127,6 @@ public class FileManager {
 	 */
 	public static void saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
 		File destinationFile = createImagePath(subDirectory, fileName);
-		FileUtils.forceMkdir(destinationFile);
 		ImageIO.write(imageFile, "png", destinationFile);
 	}
 
