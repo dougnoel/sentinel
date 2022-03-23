@@ -4,7 +4,7 @@
 Feature: 197 Heroku App Mouse Hover
   Login to the HerokuApp 
   And click on the Hovers
-  And hover on User Profile
+  And I hover on User Profile
   And I verify the text "Name: User1" is visible
 
   @197A

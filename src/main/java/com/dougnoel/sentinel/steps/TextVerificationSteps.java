@@ -5,7 +5,6 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelect
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

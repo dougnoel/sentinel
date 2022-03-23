@@ -7,6 +7,7 @@ Feature: Text Verifcation Tests
   Scenario: Text Verification
   	Given I am on the Internet Page
   	  And I wait 0.001 seconds
+  	Then I wait until the Form Authentication link contains the text "Form Authentication"
   	When I click the Form Authentication link
   	  And I am redirected to the Internet Login Page
   	Then I verify the username field is empty  
