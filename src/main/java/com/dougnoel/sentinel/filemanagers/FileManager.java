@@ -127,9 +127,7 @@ public class FileManager {
 	 */
 	public static void saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
 		File destinationFile = constructImagePath(subDirectory, fileName);
-		if(!destinationFile.mkdirs()) {
-			throw new IOException("Failed to create the full path for: " + destinationFile.getAbsolutePath());
-		}
+		FileUtils.forceMkdir(destinationFile.getParentFile());
 		
 		ImageIO.write(imageFile, "png", destinationFile);
 	}
