@@ -170,7 +170,7 @@ public class FileManager {
 	* @param subDirectory String the sub-directory to use
 	* @param fileName String the file name of the image
 	* 
-	* @return File the constructed image path
+	* @return File the constructed image File from directories and filename
 	*/
 	private static File constructImagePath(String subDirectory, String fileName) {
 		if(subDirectory == null) 
