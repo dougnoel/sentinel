@@ -5,11 +5,18 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelect
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Duration;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -98,6 +105,36 @@ public class TextVerificationSteps {
                 }
             }
         }
+    }
+    
+    /**
+     * Waits until we can verify that an element contains certain text. It uses the text
+     * contained in double quotes for matching. If the condition is not true, it will wait 
+     * until the timeout for it to become true, such as if the text on an element changes.
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait until the header div contains the text "Header"</li>
+     * </ul>
+     * 
+     * @param elementName String The name of the element to be evaluated as defined in the page object.
+     * @param text String The text to verify exists in the element.
+     */
+    @Then("^I wait until the (.*?) contains the text \"([^\"]*)\"$")
+    public static void waitUntilElementTextContains(String elementName, String text) {
+    	Boolean found = getElement(elementName).waitForText(text);	
+        String elementText = getElement(elementName).getText();
+        	
+        var expectedResult = SentinelStringUtils.format(
+        		"Expected the {} element to contain the text {}. The element contained the text: {}",
+                 elementName, text, elementText
+                 	.replace("\n", " "));
+            
+        log.trace(expectedResult);
+        	
+        if (found)
+        	assertTrue(expectedResult, elementText.contains(text));
+        else
+        	assertFalse(expectedResult, elementText.contains(text));
     }
     
     /**
