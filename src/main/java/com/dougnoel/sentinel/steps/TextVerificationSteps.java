@@ -114,7 +114,7 @@ public class TextVerificationSteps {
      */
     @Then("^I wait until the (.*?) contains the text \"([^\"]*)\"$")
     public static void waitUntilElementTextContains(String elementName, String text) {
-    	Boolean found = getElement(elementName).waitForText(text);	
+    	boolean found = getElement(elementName).waitForText(text);	
         String elementText = getElement(elementName).getText();
         	
         var expectedResult = SentinelStringUtils.format(
