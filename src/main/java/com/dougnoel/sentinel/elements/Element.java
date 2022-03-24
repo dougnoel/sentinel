@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -626,17 +628,24 @@ public class Element {
 	/**
 	 * Waits until the text contains a certain value, and returns if it was found
 	 * 
-	 * @return Boolean If the text value was found in the element. */
-	public Boolean waitForText(String text) {
+	 * @return Boolean If the text value was found in the element.
+	 */
+	public Boolean waitForText(String text, boolean present) {
+		ExpectedCondition<Boolean> condition = ExpectedConditions.textToBePresentInElement(element(), text);
+		if (!present)
+			condition = ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(element(), text));
+
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
+
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
 				return new WebDriverWait(driver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
-						.ignoring(StaleElementReferenceException.class).ignoring(TimeoutException.class)
-						.until(ExpectedConditions.textToBePresentInElement(element(), text));
+						.ignoring(StaleElementReferenceException.class)
+						.ignoring(TimeoutException.class)
+						.until(condition);
 			} catch (TimeoutException e) {
-				//suppressing this due to falsely thrown timeout exception
+				// suppressing this due to falsely thrown timeout exception
 			}
 		}
 		return false;

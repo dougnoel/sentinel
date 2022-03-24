@@ -8,6 +8,7 @@ Feature: Text Verifcation Tests
   	Given I am on the Internet Page
   	  And I wait 0.001 seconds
   	Then I wait until the Form Authentication link contains the text "Form Authentication"
+  	And I wait until the Form Authentication link does not contain the text "Zoboomafoo"
   	When I click the Form Authentication link
   	  And I am redirected to the Internet Login Page
   	Then I verify the username field is empty  
