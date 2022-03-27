@@ -161,7 +161,7 @@ public class FileManager {
 	}
     
 	/**
-	* Returns a File use for saving an image using an optional sub-directory,
+	* Returns a File used for saving an image using an optional sub-directory,
 	* file name, and the configured, console set, or default "logs/images" directory.
 	* Will use the root directory if subDirectory is null.
 	* 

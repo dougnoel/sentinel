@@ -30,6 +30,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.Colors;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -784,10 +785,9 @@ public class Element {
 	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
 	 */
 	private Color getBackgroundColor(WebElement element) {
-		final Color TRANSPARENT = org.openqa.selenium.support.Colors.TRANSPARENT.getColorValue().getColor();
 		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
 
-		if(!currentColor.equals(TRANSPARENT))
+		if(!currentColor.equals(Colors.TRANSPARENT.getColorValue().getColor()))
 			return currentColor;
 		try {
 			return getBackgroundColor(element.findElement(By.xpath("./..")));
