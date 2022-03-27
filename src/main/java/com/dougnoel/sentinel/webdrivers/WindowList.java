@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -29,8 +30,9 @@ public class WindowList {
         markCurrentWindow();
     }
 
-	// Search the passed driver for all windows
-	// If any don't exist in our current list, add them
+	/**
+	 * Search the driver for all windows and add any that don't exist.
+	 */
 	private void addNewWindows() {
     	Set<String> currentWindows = driver.getWindowHandles();
     	for (String window : currentWindows) {
@@ -39,7 +41,9 @@ public class WindowList {
     	}
 	}
 	
-	//Track the current window
+	/**
+	 * Track the current window
+	 */
 	private void markCurrentWindow() {
     	String curentWindowHandle = driver.getWindowHandle();
     	if (!curentWindowHandle.equals(windowHandles.get(currentWindow))) {
@@ -47,7 +51,9 @@ public class WindowList {
     	}
 	}
 
-	//If any windows have been closed, remove them from our list.
+	/**
+	 * If any windows have been closed, remove them from our list.
+	 */
 	private void pruneClosedWindows() {
 		Set<String> currentWindows = driver.getWindowHandles();
     	for (String window : windowHandles) {
@@ -55,6 +61,7 @@ public class WindowList {
     			windowHandles.remove(window);
     	}
 	}
+	
     /**
      * Check to see if any windows have been created for the passed driver and if so, add them to the linked list.
      * We then get our current window from the driver and if it doesn't match where we are in our list, we update our position.
@@ -65,10 +72,12 @@ public class WindowList {
     	pruneClosedWindows();
     }
     
-    public void goToWindow(WebDriver currentDriver, String windowHandle) {
-    	//switch to the passed window
-    	currentDriver.switchTo().window(windowHandle);
-    	//run trackWindows
+    /**
+     * 
+     * @param windowHandle
+     */
+    protected void goToWindow(String windowHandle) {
+    	driver.switchTo().window(windowHandle);
     	update();
     }
     
@@ -77,25 +86,30 @@ public class WindowList {
      * we call close to clean up.
      */
     protected void closeCurrentWindow() {
-    	//close window
-    	//if no more windows exist, throw an exception
-    	//set the iterator to the previous window in our list
-    	//delete the old window in our list
-    	//set the driver to the new window
-    	//run trackWindows
+    	driver.close();
+    	try {
+    		goToPreviousWindow();
+    	} catch (NoSuchWindowException nswe) {
+    		driver.quit();
+    	}
     }
     
+    /**
+     * Moves the driver to the next window.
+     */
     protected void goToNextWindow() {
-    	//if no window exists after the current one, throw an exception
-    	//set the iterator to the next window in the list
-    	//set the driver to the new window
-    	//run trackWindows
+    	addNewWindows();
+    	currentWindow++;
+    	driver.switchTo().window(windowHandles.get(currentWindow));
+    	pruneClosedWindows();
     }
     
+    /**
+     * Moves the driver to the previous window.
+     */
     protected void goToPreviousWindow() {
-    	//if no window exists after the current one, throw an exception
-    	//set the iterator to the next window in the list
-    	//set the driver to the new window
-    	//run trackWindows
+    	currentWindow--;
+    	driver.switchTo().window(windowHandles.get(currentWindow));
+    	pruneClosedWindows();
     }
 }

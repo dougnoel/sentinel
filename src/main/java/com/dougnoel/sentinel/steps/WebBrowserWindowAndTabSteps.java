@@ -1,7 +1,5 @@
 package com.dougnoel.sentinel.steps;
 
-import org.openqa.selenium.NoSuchWindowException;
-
 import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
@@ -31,20 +29,36 @@ public class WebBrowserWindowAndTabSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I see a new tab open with the Home page</li>
-     * <li>I see a new tab open with the Login page</li>
-     * <li>I see a new tab open with the Google Maps page</li>
+     * <li>I verify a new tab opens the Home page</li>
+     * <li>I verify a new window opens to the Login page</li>
+     * <li>I verify a new tab opens to the Google Maps page</li>
      * </ul>
      * @param pageName String the page to open
-     * @throws NoSuchWindowException if the page doesn't load
      */
     @Then("^I verify a new (?:tab|window) opens(?: to)? the (.*)$")
-    public static void openNewWindow(String pageName) throws NoSuchWindowException {
-        PageManager.switchToNewWindow(pageName);
+    public static void openNewWindow(String pageName) {
+        PageManager.setPage(pageName);
+        Driver.goToNextWindow();
     }
     
-    @Then("I (?:return|switch) focus (?:to|back to) the (.*)$")
-    public static void switchExistingWindow(String pageName) throws NoSuchWindowException {
-        PageManager.switchToExistingWindow(pageName);
+    /**
+     * Opens the given pageName in an existing window
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify a new tab opens the Home page</li>
+     * <li>I verify a new window opens to the Login page</li>
+     * <li>I verify a new tab opens to the Google Maps page</li>
+     * </ul>
+     * @param pageName String the page to open
+     * @param direction String (next|previous) the window to open
+     */
+    @Then("I switch to the (.*) o?i?n the (previous|next) (?:window|tab)$")
+    public static void switchExistingWindow(String pageName, String direction) {
+    	PageManager.setPage(pageName);
+    	if (direction.equals("next"))
+    		Driver.goToNextWindow();
+    	else
+    		Driver.goToPreviousWindow();
     }
 }

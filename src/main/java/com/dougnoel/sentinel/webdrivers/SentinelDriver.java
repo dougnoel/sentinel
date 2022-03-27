@@ -26,12 +26,18 @@ public class SentinelDriver {
 		pages.add(PageManager.getPage());
 	}
 	
-	//Find out if this driver has been used for a particular page object
-	
 	protected WebDriver getWebDriver() {
 		return this.driver;
 	}
 	
+    protected void goToNextWindow() {
+    	windows.goToNextWindow();
+    }
+    
+    protected void goToPreviousWindow() {
+    	windows.goToPreviousWindow();
+    }
+    
 	/**
 	 * Emulate clicking the browser's forward button.
 	 */

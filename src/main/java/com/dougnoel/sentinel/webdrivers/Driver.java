@@ -60,30 +60,40 @@ public class Driver {
     	getSentinelDriver().close();
     }
     
+    /**
+     * Asks the current driver to move forwards to the next window in the list. Use of this 
+     * method assumes that the user knows the expected state of the software they are testing 
+     * and will test to make sure they are in the correct window.
+     */
     public static void goToNextWindow() {
-    	
+    	getSentinelDriver().goToNextWindow();
     }
     
+    /**
+     * Asks the current driver to move backwards to the previous window in the list. Use of
+     * this method assumes that the user knows the expected state of the software they are 
+     * testing and will test to make sure they are in the correct window.
+     */
     public static void goToPreviousWindow() {
-    	
+    	getSentinelDriver().goToPreviousWindow();
     }
     
 	/**
-	 * Emulate clicking the browser's forward button.
+	 * Asks the current driver to emulate clicking the browser's forward button.
 	 */
 	public static void navigateForward() {
 		getSentinelDriver().navigateForward();
 	}
 
 	/**
-	 * Emulate clicking the browser's back button.
+	 * Asks the current driver to emulate clicking the browser's back button.
 	 */
 	public static void navigateBack() {
 		getSentinelDriver().navigateBack();
 	}
 
 	/**
-	 * Emulate clicking the browser's refresh button.
+	 * Asks the current driver to emulate clicking the browser's refresh button.
 	 */
 	public static void refresh() {
 		getSentinelDriver().refresh();
