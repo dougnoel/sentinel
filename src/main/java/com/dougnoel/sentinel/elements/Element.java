@@ -22,6 +22,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -586,22 +587,33 @@ public class Element {
 	}
 	
 	/**
-	 * Determines with 100 milliseconds (1/10th of a second) if an element is not present.
+	 * Returns true if an element is neither found nor displayed otherwise false.
+	 * Will poll every selector on the page object in a loop until the timeout is reached.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
 	 */
 	public boolean doesNotExist() {
-	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
-	    	if (element == null || !(element.isDisplayed())) {
-	    		log.trace("doesNotExist() return result: true");
-	    		return true;
-	    	}
-	    }
-	    log.trace("doesNotExist() return result: false");
-	    return false;
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
+				log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
+				WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()),
+						Time.interval());
+				try {
+					if (element == null || !(element.isDisplayed())) {
+						log.trace("doesNotExist() return result: true");
+						return true;
+					}
+				} catch (StaleElementReferenceException e) {
+					log.trace("doesNotExist() StaleElementException return result: true");
+					return true;
+				}
+			}
+		}
+		log.trace("doesNotExist() return result: false");
+		return false;
 	}
 
 	/**
@@ -610,6 +622,32 @@ public class Element {
 	 * @return String The text value stored in the element.	 */
 	public String getText() {
 		return element().getText();
+	}
+	
+	/**
+	 * Waits until the text contains a certain value, and returns if it was found
+	 * 
+	 * @return Boolean If the text value was found in the element.
+	 */
+	public Boolean waitForText(String text, boolean present) {
+		ExpectedCondition<Boolean> condition = ExpectedConditions.textToBePresentInElement(element(), text);
+		if (!present)
+			condition = ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(element(), text));
+
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			try {
+				return new WebDriverWait(driver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
+						.ignoring(StaleElementReferenceException.class)
+						.ignoring(TimeoutException.class)
+						.until(condition);
+			} catch (TimeoutException e) {
+				// suppressing this due to falsely thrown timeout exception
+			}
+		}
+		return false;
 	}
 
 	/**
