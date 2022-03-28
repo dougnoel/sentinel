@@ -157,7 +157,7 @@ public class FileManager {
 	    	imageDirectory = "logs/images";
 		}
 	    
-	    return imageDirectory;
+	    return imageDirectory.replace("/", File.separator);
 	}
     
 	/**
@@ -174,8 +174,8 @@ public class FileManager {
 		if(subDirectory == null) 
 			subDirectory = "";
 		else
-			subDirectory += "/";
+			subDirectory += File.separator;
 		
-		return new File(getImageDirectory() + "/" + subDirectory + fileName);
+		return new File(getImageDirectory() + File.separator + subDirectory + fileName);
 	}
 }
