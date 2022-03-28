@@ -4,8 +4,32 @@
 
 [Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.10-SNAPSHOT...HEAD)
 
+**Implemented enhancements:**
+
+- Add verification of specific rows in tables [\#305](https://github.com/dougnoel/sentinel/issues/305)
+- Add ability to send special keys to element [\#292](https://github.com/dougnoel/sentinel/issues/292)
+- Add the ability to pass through Saucelabs configuration options [\#271](https://github.com/dougnoel/sentinel/issues/271)
+- Need to create a findElement\(\) method for Element objects [\#56](https://github.com/dougnoel/sentinel/issues/56)
+
+**Fixed bugs:**
+
+- Hover Cucumber Step Was Removed [\#304](https://github.com/dougnoel/sentinel/issues/304)
+- MaterialUITest Fails on Firefox [\#214](https://github.com/dougnoel/sentinel/issues/214)
+
+**Closed issues:**
+
+- Fix download directory creation and fetching during chrome setup [\#301](https://github.com/dougnoel/sentinel/issues/301)
+- Implement visual PDF comparison [\#300](https://github.com/dougnoel/sentinel/issues/300)
+- Cannot switch back to parent window if child window closes by itself [\#295](https://github.com/dougnoel/sentinel/issues/295)
+- Table getElementInRowThatContains\(int, By\) searches table structure incorrectly for element [\#291](https://github.com/dougnoel/sentinel/issues/291)
+- Log internally created custom steps in results [\#255](https://github.com/dougnoel/sentinel/issues/255)
+
 **Merged pull requests:**
 
+- Adding a mouse hover gherkin command, editing a test to exercise it [\#307](https://github.com/dougnoel/sentinel/pull/307) ([pturchinetz](https://github.com/pturchinetz))
+- add table verification step for getting specific cell data [\#306](https://github.com/dougnoel/sentinel/pull/306) ([sampacos](https://github.com/sampacos))
+- Implement pdf compare and fix download manager [\#302](https://github.com/dougnoel/sentinel/pull/302) ([sampacos](https://github.com/sampacos))
+- Pre-release 1.0.11-SNAPSHOT on maven central. Updated Changelog and J… [\#297](https://github.com/dougnoel/sentinel/pull/297) ([dougnoel](https://github.com/dougnoel))
 - add method for switching to parent window [\#296](https://github.com/dougnoel/sentinel/pull/296) ([sampacos](https://github.com/sampacos))
 
 ## [v1.0.10-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.10-SNAPSHOT) (2022-02-23)
