@@ -98,6 +98,7 @@
     <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.0.14</swagger-parser.version>
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
+    <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
     
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
@@ -532,11 +533,17 @@
         <version>${swagger-parser.version}</version>
       </dependency>
 
-	  <dependency>
-		<groupId>io.github.bonigarcia</groupId>
-		<artifactId>webdrivermanager</artifactId>
-		<version>${webdrivermanager.version}</version>
-	  </dependency>
+	    <dependency>
+		  <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>${webdrivermanager.version}</version>
+	    </dependency>
+
+	    <dependency>
+		    <groupId>com.github.romankh3</groupId>
+		    <artifactId>image-comparison</artifactId>
+		    <version>4.4.0</version>
+	    </dependency>
 
       <dependency>
         <groupId>de.redsix</groupId>
@@ -708,9 +715,14 @@
     
     <!-- Typically WebDriverManager is in a test scope, but it needs to be bundled with the jar -->
     <dependency>
-	  <groupId>io.github.bonigarcia</groupId>
-	  <artifactId>webdrivermanager</artifactId>
-	</dependency>
+	    <groupId>io.github.bonigarcia</groupId>
+	    <artifactId>webdrivermanager</artifactId>
+	  </dependency>
+
+	  <dependency>
+	    <groupId>com.github.romankh3</groupId>
+	    <artifactId>image-comparison</artifactId>
+	  </dependency>
 
     <dependency>
       <groupId>de.redsix</groupId>

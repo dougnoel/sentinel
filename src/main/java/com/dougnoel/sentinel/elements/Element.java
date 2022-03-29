@@ -1,10 +1,17 @@
 package com.dougnoel.sentinel.elements;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,11 +24,13 @@ import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.Colors;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -726,13 +735,64 @@ public class Element {
 	}
 	
 	/**
-	 * This method is used to get the text on mouse hover
+	 * Returns the tooltip value of the element.
 	 * 
-	 * @return The value of the tooltip text
+	 * @return String the value of the tooltip text
 	 */
 	public String getTooltipText() {
 		hover();
 		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
-	}	
+	}
 	
+	/**
+	 * Returns the most prevalent color present in the element.
+	 * 
+	 * @return java.awt.Color the most common color in the element
+	 */
+	public Color getMostPrevalentColor() throws IOException {
+		byte[] imageAsByteArray = element().getScreenshotAs(OutputType.BYTES);
+		ByteArrayInputStream imageByteStream = new ByteArrayInputStream(imageAsByteArray);
+
+		BufferedImage elementImage = ImageIO.read(imageByteStream);
+		BufferedImage scaledImage = (BufferedImage) elementImage.getScaledInstance(1, 1, Image.SCALE_REPLICATE);
+		var rgb = scaledImage.getRGB(0, 0);
+		return new Color(rgb);
+	}
+	
+	/**
+	 * Returns a screenshot File of the current element.
+	 * 
+	 * @return File a screenshot of the current element
+	 */
+	public File getScreenshot() {
+		return element().getScreenshotAs(OutputType.FILE);
+	}
+	
+	/**
+	 * Returns the background color of the element, or it's inherited background color from a parent if transparent.
+	 * 
+	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
+	 */
+	public Color getBackgroundColor()
+	{  
+		return getBackgroundColor(element());
+	}
+	
+	/**
+	 * Returns the background color of the element, or it's inherited background color from a parent if transparent.
+	 * 
+	 * @param element WebElement the web element to get the background color of
+	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
+	 */
+	private Color getBackgroundColor(WebElement element) {
+		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
+
+		if(!currentColor.equals(Colors.TRANSPARENT.getColorValue().getColor()))
+			return currentColor;
+		try {
+			return getBackgroundColor(element.findElement(By.xpath("./..")));
+		} catch(NoSuchElementException e) {
+			return Color.white;
+		}
+	}
 }
