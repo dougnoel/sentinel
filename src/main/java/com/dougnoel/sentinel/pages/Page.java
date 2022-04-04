@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.pages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoAlertPresentException;
@@ -10,6 +11,7 @@ import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.elements.ElementFactory;
+import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -45,6 +47,19 @@ public class Page {
 	public Element getElement(String elementName) {
         String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
         return elements.computeIfAbsent(normalizedName, name -> ((Element)(ElementFactory.createElement(name, this))));
+    }
+	
+	/**
+	 * Clears the cached Table objects for this page. 
+	 * This action prevents StaleElementReferenceException when a table is referenced after previous navigation.
+	 */
+	public void clearTables() {
+		elements = elements.entrySet().stream()
+				.filter(
+						entry -> !(entry.getValue() instanceof Table))
+				.collect(
+						Collectors.toMap(entry -> entry.getKey(), 
+								entry -> entry.getValue()));
 	}
 	
 	/**

@@ -57,6 +57,7 @@ public class PageManager {
 
 		// Get a page from the page factory
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
+		page.clearTables();
 		return page;
 	}
 
@@ -125,6 +126,7 @@ public class PageManager {
 	 */
 	public static Page navigateForward() {
 		driver().navigate().forward();
+		page.clearTables();
 		return page;
 	}
 
@@ -138,6 +140,7 @@ public class PageManager {
 	 */
 	public static Page navigateBack() {
 		driver().navigate().back();
+		page.clearTables();
 		return page;
 	}
 
@@ -148,6 +151,7 @@ public class PageManager {
 	 */
 	public static Page refresh() {
 		driver().navigate().refresh();
+		page.clearTables();
 		return page;
 	}
 
