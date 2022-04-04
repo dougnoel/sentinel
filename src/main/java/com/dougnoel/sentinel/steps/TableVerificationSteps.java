@@ -106,9 +106,9 @@ public class TableVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Name column in the user info table contains the text entered text for the username</li>
-     * <li>I verify the Contact column in the provider info table contains the text used for the phone number field</li>
-     * <li>I verify the Airport Code column in the Airports table contains the text selected for the airport's code RDU</li>
+     * <li>I verify the Name column in the user info table contains the same text entered text for the username</li>
+     * <li>I verify the Contact column in the provider info table contains same the text used for the phone number field</li>
+     * <li>I verify the Airport Code column in the Airports table contains the same text selected for the airport's code RDU</li>
      * </ul>
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
