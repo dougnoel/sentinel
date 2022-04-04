@@ -114,7 +114,7 @@ public class TableVerificationSteps {
      * @param tableName String Name of the table containing the column
      * @param key String the key to retrieve the text to match from the configuration manager
      */
-    @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
+    @Then("^I verify the (.*?) column in the (.*?) contains the same text (?:entered|selected|used) for the (.*)$")
     public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
     	var textToMatch = Configuration.toString(key);
         assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
