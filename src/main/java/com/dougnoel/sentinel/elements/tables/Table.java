@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -38,6 +40,7 @@ public class Table extends Element {
 	protected String tableDataCellLocator = "//" + tableCellDataTag;
 	protected String tableRowLocator = ".//tbody//" + tableCellDataTag + "/..";
 	protected String tableSiblingCellLocator = "//..//*";
+	protected String tableHeaderSortElementLocator = "";
 	
 	/**
 	 * Creates a table object to manipulate. When used the table object finds and creates rows and columns and stores them. 
@@ -138,6 +141,38 @@ public class Table extends Element {
 	 */
 	protected boolean tableHeadersExist()  {
 		return getHeaderElements() != null;
+	}
+	
+	/**
+	 * Returns the WebElement for a column header.
+	 *
+	 * @param columnHeader String the column to return
+	 * @return the header WebElement element for the column
+	 */
+	protected WebElement getColumnHeaderElement(String columnHeader) {
+		Optional<WebElement> header = getOrCreateHeaderElements()
+				.stream()
+				.filter(element -> element.getText().strip().equals(columnHeader))
+				.findFirst();
+
+		if(header.isEmpty())
+			throw new NoSuchElementException("No column found with header " + columnHeader);
+
+		return header.get();
+	}
+
+	/**
+	 * Clicks the element in the given header that sorts the column. 
+	 * If the String member tableHeaderSortElementLocator is not set for this object, this method will click the header element.
+	 *
+	 * @param columnHeader String the name of the column to click
+	 */
+	public void clickColumnHeader(String columnHeader) {
+		WebElement columnHeaderElement = getColumnHeaderElement(columnHeader);
+		if(StringUtils.isEmpty(tableHeaderSortElementLocator))
+			columnHeaderElement.click();
+		else
+			columnHeaderElement.findElement(By.xpath(tableHeaderSortElementLocator)).click();
 	}
 
 	/**

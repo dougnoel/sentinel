@@ -127,4 +127,18 @@ public class TableSteps {
         getElementAsTable(tableName).storeTable(pageNumber);
     }
     
+    /**
+     * Clicks the header element to sort the table on the given column. Does not verify sort direction.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I find and click the header for the Name column in the Users table</li>
+     * </ul>
+     * @param columnName String the name of the column to click the header of
+     * @param tableName String the name of the table element
+     */
+    @When("^I find and click the header for the (.*) column in the (.*)$")
+    public static void clickColumnHeaderToSort(String columnName, String tableName) {
+    	getElementAsTable(tableName).clickColumnHeader(columnName);
+    }
 }

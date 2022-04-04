@@ -7,7 +7,7 @@ Feature: Table Tests
   Scenario: NGX Data Table
     Given I am on the NGX Data Table Page
     Then I verify the Example Table contains the Name column
-    When I click the Name header
+    When I find and click the header for the Name column in the Example table
     Then I verify the cells in the Name column in the Example Table are sorted in ascending order
       And I see 100 rows in the Example Table
       And I verify the cell in the 1st row and the Name column of the Example table contains the text Alexander Foley
