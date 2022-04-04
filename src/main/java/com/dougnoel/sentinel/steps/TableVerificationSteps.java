@@ -106,15 +106,15 @@ public class TableVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Name column in the user info table contains the text entered text for the username</li>
-     * <li>I verify the Contact column in the provider info table contains the text used for the phone number field</li>
-     * <li>I verify the Airport Code column in the Airports table contains the text selected for the airport's code RDU</li>
+     * <li>I verify the Name column in the user info table contains the same text entered text for the username</li>
+     * <li>I verify the Contact column in the provider info table contains the same text used for the phone number field</li>
+     * <li>I verify the Airport Code column in the Airports table contains the same text selected for the airport's code RDU</li>
      * </ul>
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
      * @param key String the key to retrieve the text to match from the configuration manager
      */
-    @Then("^I verify the (.*?) column in the (.*?) contains the text (?:entered|selected|used) for the (.*)$")
+    @Then("^I verify the (.*?) column in the (.*?) contains the same text (?:entered|selected|used) for the (.*)$")
     public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
     	var textToMatch = Configuration.toString(key);
         assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
