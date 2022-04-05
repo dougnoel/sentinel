@@ -222,12 +222,5 @@ public class ElementTests {
 	public void getNonexistantTableHeaderElement() {
 		BaseSteps.navigateToPage("TablePage");
 		ElementFunctions.getElementAsTable("example table").clickColumnHeader("Not a real column");
-	}
-	
-	@Test
-	public void clickBasicTableHeaderElement() {
-		BaseSteps.navigateToPage("TablePage");
-		ElementFunctions.getElementAsTable("example table").clickColumnHeader("ID");
-	}
-	
+	}	
 }

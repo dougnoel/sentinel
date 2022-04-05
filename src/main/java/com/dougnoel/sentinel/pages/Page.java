@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.pages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
@@ -58,8 +59,8 @@ public class Page {
 				.filter(
 						entry -> !(entry.getValue() instanceof Table))
 				.collect(
-						Collectors.toMap(entry -> entry.getKey(), 
-								entry -> entry.getValue()));
+						Collectors.toMap(Entry::getKey, 
+								Entry::getValue));
 	}
 	
 	/**
