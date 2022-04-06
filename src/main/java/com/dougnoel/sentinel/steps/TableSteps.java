@@ -57,16 +57,14 @@ public class TableSteps {
      * @param elementToMatch String the text or xpath of the value that will ensure you are in the correct row
      */
     @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
-    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {
-		if (StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, XPATH)) {
-			By clickLocator = By.xpath(elementToClick);
-			By matchLocator = By.xpath(elementToMatch);
-			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
-		} else if (StringUtils.equals(clickLocatorType, TEXT) && StringUtils.equals(matchLocatorType, TEXT)) {
-			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, elementToClick);
+    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {   	
+    	if (StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, XPATH)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(By.xpath(elementToMatch), By.xpath(elementToClick));
 		} else if(StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, TEXT)) {
-			By clickLocator = By.xpath(elementToClick);
-			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, clickLocator);
+			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, By.xpath(elementToClick)); 
+		}
+    	else if (StringUtils.equals(clickLocatorType, TEXT) && StringUtils.equals(matchLocatorType, TEXT)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, elementToClick);
 		}
 		else {
 			By matchLocator = By.xpath(elementToMatch);
