@@ -1,5 +1,6 @@
 urls:
   default: https://dougnoel.github.io/sentinel/test/table.html
+  local: file:///C:/Users/spacos/source/repos/sentinel/docs/test/table.html
 elements:
    example_table:
       elementType: Table

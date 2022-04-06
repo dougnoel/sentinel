@@ -99,4 +99,18 @@ public class Page {
             return false;
         }
 	}
+	
+	/**
+	 * Gets the text on the JS alert.
+	 * @return String the text in the JS alert
+	 * @throws NoAlertPresentException if no alert is present.
+	 */
+	public String getJsAlertText() throws NoAlertPresentException {
+		var driver = WebDriverFactory.getWebDriver();
+		String text = "";
+        String currentWindow = driver.getWindowHandle();
+        text = driver.switchTo().alert().getText();
+        driver.switchTo().window(currentWindow);
+        return text;
+	}
 }

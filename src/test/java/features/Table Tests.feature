@@ -41,6 +41,12 @@ Feature: Table Tests
   	  And I find the 2nd row in the Example Table and click the text Claudine Neal
       And I find the last row in the Example Table and click the text Humphrey Curtis
     Given I am on the Table Page
-    Then I find the Example Table and click the xpath .//*[contains(text(),'Smith')] in the row containing the xpath .//*[@id='Dave']/..
-  	  And I find the Example Table and click the xpath .//*[contains(text(),'Smith')] in the row containing the text Bob
-  	  And I find the 1st row in the Example Table and click the text Bob
+    Then I find the Example Table and click the xpath .//button in the row containing the xpath .//*[@id='Dave']/..
+      And I verify the JS alert contains the text Alert for Dave
+      And I verify the JS alert does not contain the text Alert for Charlotte
+    When I accept the JS alert
+  	  And I find the Example Table and click the text Alert for Bob in the row containing the text A1356
+    Then I verify the JS alert contains the text Alert for Bob
+    When I accept the JS alert
+  	  And I find the 2nd row in the Example Table and click the text Alert for Charlotte
+    Then I verify the JS alert contains the text Alert for Charlotte
