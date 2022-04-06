@@ -436,7 +436,7 @@ public class Table extends Element {
 	 * Clicks an element containing the given text textToClick which exists inside a row
 	 * specified by the given rowLocator.
 	 * 
-	 * @param elementText org.openqa.selenium.By the locator to use to find the row to search
+	 * @param rowLocator org.openqa.selenium.By the locator to use to find the row to search
 	 * @param textToClick String the text to locate and click in the row
 	 */
 	public void clickElementInRowThatContains(By rowLocator, String textToClick) {
