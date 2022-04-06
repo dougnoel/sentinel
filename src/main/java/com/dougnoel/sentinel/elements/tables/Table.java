@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -38,6 +40,7 @@ public class Table extends Element {
 	protected String tableDataCellLocator = "//" + tableCellDataTag;
 	protected String tableRowLocator = ".//tbody//" + tableCellDataTag + "/..";
 	protected String tableSiblingCellLocator = "//..//*";
+	protected String tableHeaderSortElementLocator = "";
 	
 	/**
 	 * Creates a table object to manipulate. When used the table object finds and creates rows and columns and stores them. 
@@ -138,6 +141,38 @@ public class Table extends Element {
 	 */
 	protected boolean tableHeadersExist()  {
 		return getHeaderElements() != null;
+	}
+	
+	/**
+	 * Returns the WebElement for a column header.
+	 *
+	 * @param columnHeader String the column to return
+	 * @return the header WebElement element for the column
+	 */
+	protected WebElement getColumnHeaderElement(String columnHeader) {
+		Optional<WebElement> header = getOrCreateHeaderElements()
+				.stream()
+				.filter(element -> element.getText().strip().equals(columnHeader))
+				.findFirst();
+
+		if(header.isEmpty())
+			throw new NoSuchElementException("No column found with header " + columnHeader);
+
+		return header.get();
+	}
+
+	/**
+	 * Clicks the element in the given header that sorts the column. 
+	 * If the String member tableHeaderSortElementLocator is not set for this object, this method will click the header element.
+	 *
+	 * @param columnHeader String the name of the column to click
+	 */
+	public void clickColumnHeader(String columnHeader) {
+		WebElement columnHeaderElement = getColumnHeaderElement(columnHeader);
+		if(StringUtils.isEmpty(tableHeaderSortElementLocator))
+			columnHeaderElement.click();
+		else
+			columnHeaderElement.findElement(By.xpath(tableHeaderSortElementLocator)).click();
 	}
 
 	/**
@@ -285,12 +320,38 @@ public class Table extends Element {
 	 * Returns a WebElement found inside the indicated row, taking unique text to find the row and unique 
 	 * text to find a specific element in that row.
 	 * 
-	 * @param elementLocatorText String the text of the element (link) you are looking to find
 	 * @param rowLocatorText String the unique text to locate the row to search
+	 * @param elementLocatorText String the text of the element (link) you are looking to find
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 */
 	public WebElement getElementInRowThatContains(String rowLocatorText, String elementLocatorText) {
-		return getElementInRowThatContains(By.xpath("[contains(text(),'" + rowLocatorText + "')]"), By.xpath("[contains(text(),'" + elementLocatorText + "')]"));
+		return getElementInRowThatContains(By.xpath(".//" + tableRowTag + "[contains(., '" + rowLocatorText + "')]"),
+				By.xpath(".//*[contains(text(),'" + elementLocatorText + "')]"));
+	}
+	
+	/**
+	 * Returns a WebElement found inside the indicated row, taking unique text to find the row and unique 
+	 * By locator to find a specific element in that row.
+	 * 
+	 * @param rowLocatorText String the unique text to locate the row to search
+	 * @param elementLocator By a locator to find in the row
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
+	 */
+	public WebElement getElementInRowThatContains(String rowLocatorText, By elementLocator) {
+		return getElementInRowThatContains(By.xpath(".//" + tableRowTag + "[contains(., '" + rowLocatorText + "')]"),
+				elementLocator);
+	}
+	
+	/**
+	 * Returns a WebElement found inside the indicated row, taking unique text to find the row and unique 
+	 * By locator to find a specific element in that row.
+	 * 
+	 * @param rowLocator By a locator to find in the row
+	 * @param elementLocatorText String the text of the element (link) you are looking to find
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
+	 */
+	public WebElement getElementInRowThatContains(By rowLocator, String elementLocatorText) {
+		return getElementInRowThatContains(rowLocator, By.xpath(".//*[contains(text(),'" + elementLocatorText + "')]"));
 	}
 	
 	/**
@@ -307,8 +368,8 @@ public class Table extends Element {
 			//Set to the last row
 			ordinalRow = getNumberOfRows()-1;
 		}
-		
-		ordinalRow--;
+		else
+			ordinalRow--;
 		
 		try {
 			element = getOrCreateRowElements().get(ordinalRow)
@@ -370,25 +431,47 @@ public class Table extends Element {
 	public void clickElementInRowThatContains(String elementText, String textToClick) {
 		getElementInRowThatContains(elementText, textToClick).click();
 	}
+	
+	/**
+	 * Clicks an element containing the given text textToClick which exists inside a row
+	 * specified by the given rowLocator.
+	 * 
+	 * @param rowLocator org.openqa.selenium.By the locator to use to find the row to search
+	 * @param textToClick String the text to locate and click in the row
+	 */
+	public void clickElementInRowThatContains(By rowLocator, String textToClick) {
+		getElementInRowThatContains(rowLocator, textToClick).click();
+	}
+	
+	/**
+	 * Clicks an element found by the given elementToClick which exists inside a row
+	 * which contains the given text rowElementText.
+	 * 
+	 * @param rowElementText String the text in the row
+	 * @param elementToClick org.openqa.selenium.By the locator to use to find the element to click
+	 */
+	public void clickElementInRowThatContains(String rowElementText, By elementToClick) {
+		getElementInRowThatContains(rowElementText, elementToClick).click();
+	}
 
 	/**
 	 * Clicks on an element found by elementLocator, in a row found by rowLocator.
 	 * 
 	 * @param rowLocator org.openqa.selenium.By the locator to use to find the row to search
-	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
+	 * @param elementToClick org.openqa.selenium.By the locator to use to find the element
 	 */
-	public void clickElementInRowThatContains(By rowLocator, By elementLocator) {
-		getElementInRowThatContains(rowLocator, elementLocator).click();
+	public void clickElementInRowThatContains(By rowLocator, By elementToClick) {
+		getElementInRowThatContains(rowLocator, elementToClick).click();
 	}
 	
 	/**
 	 * Clicks on an element found by elementLocator, in a row found by ordinalRow.
 	 * 
 	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
-	 * @param elementLocator org.openqa.selenium.By the locator to use to find the element
+	 * @param elementToClick org.openqa.selenium.By the locator to use to find the element
 	 */
-	public void clickElementInRowThatContains(int ordinalRow, By elementLocator) {
-		getElementInRowThatContains(ordinalRow, elementLocator).click();
+	public void clickElementInRowThatContains(int ordinalRow, By elementToClick) {
+		getElementInRowThatContains(ordinalRow, elementToClick).click();
 	}
 	
 	

@@ -1,0 +1,9 @@
+urls:
+  default: https://the-internet.herokuapp.com/tables
+elements:
+  table_1:
+    elementType: Table
+    css: table#table1
+  table_2:
+    elementType: Table
+    id: table2

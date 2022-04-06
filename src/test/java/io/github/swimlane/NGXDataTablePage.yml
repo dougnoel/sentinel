@@ -4,6 +4,3 @@ elements:
   example_table:
     elementType: NGXDataTable
     xpath: "/html/body/app-root/div/content/basic-auto-demo/div/ngx-datatable"
-  name_header:
-    elementType: Span
-    xpath: "//datatable-header-cell[1]/div/span[1]/span"

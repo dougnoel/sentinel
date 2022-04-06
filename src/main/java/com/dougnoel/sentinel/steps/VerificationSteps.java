@@ -257,4 +257,24 @@ public class VerificationSteps {
         	assertTrue(expectedResult, actualResult);
         }
     }
+    
+    /**
+     * Verifies the existence of a Javascript alert.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify the JS alert contains the text Hello, World!</li>
+     * <li>I verify the JS alert does not contain the text Goodbye, World!</li>
+     * </ul>
+     * @param assertion String any string for a negative check, nothing (null) for a positive check
+     */
+    @Then("^I verify the JS alert (does not )?contains? the text (.*)?$")
+    public static void verifyJsAlertText(String assertion, String expectedText)
+    {
+    	boolean negate = !StringUtils.isEmpty(assertion);
+    	String expectedResult = SentinelStringUtils.format("Expected the JS alert to {}contain the text {}.", negate ? "not ": "", expectedText);
+    	var actualText = PageManager.getPage().getJsAlertText();
+    	boolean result = actualText.contains(expectedText);
+    	assertTrue(expectedResult, result != negate);
+    }
 }

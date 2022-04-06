@@ -7,7 +7,7 @@ Feature: Table Tests
   Scenario: NGX Data Table
     Given I am on the NGX Data Table Page
     Then I verify the Example Table contains the Name column
-    When I click the Name header
+    When I find and click the header for the Name column in the Example table
     Then I verify the cells in the Name column in the Example Table are sorted in ascending order
       And I see 100 rows in the Example Table
       And I verify the cell in the 1st row and the Name column of the Example table contains the text Alexander Foley
@@ -41,6 +41,16 @@ Feature: Table Tests
   	  And I find the 2nd row in the Example Table and click the text Claudine Neal
       And I find the last row in the Example Table and click the text Humphrey Curtis
     Given I am on the Table Page
-    Then I find the Example Table and click the xpath //*[contains(text(),'Smith')] in the row containing the xpath //*[@id = 'Dave']
-  	  And I find the Example Table and click the xpath //*[contains(text(),'Smith')] in the row containing the text Bob
-  	  And I find the 1st row in the Example Table and click the text Bob
+    Then I find the Example Table and click the xpath .//button in the row containing the xpath .//*[@id='Dave']/..
+      And I verify the JS alert contains the text This is Dave
+      And I verify the JS alert does not contain the text This is Charlotte
+    When I accept the JS alert
+  	  And I find the Example Table and click the xpath .//button in the row containing the text A1356
+    Then I verify the JS alert contains the text This is Bob
+    When I accept the JS alert
+      And I find the Example Table and click the text Alert for Bob in the row containing the xpath .//td[.='Bob']/..
+    Then I verify the JS alert contains the text This is Bob
+    When I accept the JS alert
+  	  And I find the 2nd row in the Example Table and click the text Alert for Charlotte
+    Then I verify the JS alert contains the text This is Charlotte
+      And I accept the JS alert
