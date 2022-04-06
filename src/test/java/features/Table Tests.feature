@@ -53,3 +53,4 @@ Feature: Table Tests
     When I accept the JS alert
   	  And I find the 2nd row in the Example Table and click the text Alert for Charlotte
     Then I verify the JS alert contains the text This is Charlotte
+      And I accept the JS alert
