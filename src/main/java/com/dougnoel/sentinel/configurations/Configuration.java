@@ -125,7 +125,7 @@ public class Configuration {
 	 * @param value String the value to be used
 	 */
 	public static void update(String property, String value) {
-			appProps.setProperty(property, value);
+		appProps.setProperty(property, value);
 	}
 	
 	/**
@@ -413,7 +413,44 @@ public class Configuration {
 	public static Map <String,String> getElement(String elementName, String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
 	}
-
+	
+	/**
+	 * Gets the value of the given key of the given testdata object in the current environment. Defaults to "default" if environment is not set.
+	 * <p>Example of testdata:</p>
+	 * <pre>
+	 * testdata:
+	 *   default:
+	 *     report:
+	 *       id: 09876
+	 *       version: 9
+	 *   alpha:
+	 *     report:
+	 *       id: 123456
+	 *       version: 1
+	 * </pre>
+	 * <p>To retrieve the version of report, call <b>getTestdataValue("report", "version")</b></p>
+	 * @param testdataObjectName String name of the testdata object
+	 * @param testdataObjectKey String name of the property of the given testdata object
+	 * @return String the value of the given key in the given object
+	 */
+	public static String getTestdataValue(String testdataObjectName, String testdataObjectKey){
+		String pageName = PageManager.getPage().getName();
+		String env = environment();
+		var pageData = loadPageData(pageName);
+		Map <String,String> testdata = pageData.getTestdata(env, testdataObjectName);
+		if (testdata.isEmpty()) {
+			env = DEFAULT;
+			testdata = pageData.getTestdata(env, testdataObjectName);
+		}
+		if (testdata.isEmpty()) {
+			var erroMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", testdataObjectName, env, pageName);
+			throw new FileException(erroMessage, new File(pageName + ".yml"));
+		}
+		String data = testdata.get(testdataObjectKey);
+		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", testdataObjectKey, testdataObjectKey, env, pageName, data);
+		return data;
+	}
+	
 	public static String[] getPageParts(String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getPageParts();
 	}

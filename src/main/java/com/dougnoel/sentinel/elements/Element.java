@@ -1,10 +1,17 @@
 package com.dougnoel.sentinel.elements;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,14 +19,19 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.NoSuchFrameException;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.Colors;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -205,8 +217,7 @@ public class Element {
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
 
-			WebElement element = wait.until(d -> driver().findElement(locator));
-			return wait.until(d -> element.findElement(locator));
+			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
 			return null;
 		}
@@ -224,17 +235,26 @@ public class Element {
     	if (PageManager.getPage().hasIFrames()) {
     		WebElement element = null;
     		List <WebElement> iframes = PageManager.getPage().getIFrames();
-    		for (WebElement iframe : iframes) {
-    			driver().switchTo().frame(iframe);
-    			element = findElementInCurrentFrameForDuration(Time.loopInterval());
-    			if (element != null) {
-    				return element;
-    			}
-        	    element = findElementInIFrame();
-    			if (element != null)
-    				return element;
-    			driver().switchTo().parentFrame();
+    		try {
+    			for (WebElement iframe : iframes) {
+        			driver().switchTo().frame(iframe);
+        			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+        			if (element != null) {
+        				return element;
+        			}
+            	    element = findElementInIFrame();
+        			if (element != null)
+        				return element;
+        			driver().switchTo().parentFrame();
+        		}
     		}
+    		catch(StaleElementReferenceException | NoSuchFrameException e) {
+    			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
+    					elementType, getName(), e);
+    			log.trace(errorMessage);
+    			return null;
+    		}
+    		
     	}
     	return null;
 	}
@@ -285,6 +305,17 @@ public class Element {
 		}
 		log.error(errorMessage);
 		throw new ElementNotVisibleException(errorMessage);
+	}
+	
+	/**
+	 * Sends a unicode character to the element directly. Does not clear element before sending. Does not perform any checks to confirm that the element received the key.
+	 * For use with special characters, such as BACKSPACE.
+	 * @param key Keys the key or character to send
+	 * @return Element (for chaining)
+	 */
+	public Element sendSpecialKey(Keys key) {
+		element().sendKeys(key);
+		return this;
 	}
 	
 	/**
@@ -550,22 +581,33 @@ public class Element {
 	}
 	
 	/**
-	 * Determines with 100 milliseconds (1/10th of a second) if an element is not present.
+	 * Returns true if an element is neither found nor displayed otherwise false.
+	 * Will poll every selector on the page object in a loop until the timeout is reached.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
 	 */
 	public boolean doesNotExist() {
-	    for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-	    	log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-	    	WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), Duration.ofMillis(100));
-	    	if (element == null || !(element.isDisplayed())) {
-	    		log.trace("doesNotExist() return result: true");
-	    		return true;
-	    	}
-	    }
-	    log.trace("doesNotExist() return result: false");
-	    return false;
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
+				log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
+				WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()),
+						Time.interval());
+				try {
+					if (element == null || !(element.isDisplayed())) {
+						log.trace("doesNotExist() return result: true");
+						return true;
+					}
+				} catch (StaleElementReferenceException e) {
+					log.trace("doesNotExist() StaleElementException return result: true");
+					return true;
+				}
+			}
+		}
+		log.trace("doesNotExist() return result: false");
+		return false;
 	}
 
 	/**
@@ -574,6 +616,32 @@ public class Element {
 	 * @return String the text value stored in the element	 */
 	public String getText() {
 		return element().getText();
+	}
+	
+	/**
+	 * Waits until the text contains a certain value, and returns if it was found
+	 * 
+	 * @return Boolean If the text value was found in the element.
+	 */
+	public Boolean waitForText(String text, boolean present) {
+		ExpectedCondition<Boolean> condition = ExpectedConditions.textToBePresentInElement(element(), text);
+		if (!present)
+			condition = ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(element(), text));
+
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			try {
+				return new WebDriverWait(driver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
+						.ignoring(StaleElementReferenceException.class)
+						.ignoring(TimeoutException.class)
+						.until(condition);
+			} catch (TimeoutException e) {
+				// suppressing this due to falsely thrown timeout exception
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -652,12 +720,65 @@ public class Element {
 	}
 	
 	/**
-	 * This method is used to get the text on mouse hover
+	 * Returns the tooltip value of the element.
 	 * 
-	 * @return The value of the tooltip text
+	 * @return String the value of the tooltip text
 	 */
 	public String getTooltipText() {
 		hover();
 		return driver().findElement(By.xpath("//*[contains(text(),'')]")).getText();
 	}
+	
+	/**
+	 * Returns the most prevalent color present in the element.
+	 * 
+	 * @return java.awt.Color the most common color in the element
+	 */
+	public Color getMostPrevalentColor() throws IOException {
+		byte[] imageAsByteArray = element().getScreenshotAs(OutputType.BYTES);
+		ByteArrayInputStream imageByteStream = new ByteArrayInputStream(imageAsByteArray);
+
+		BufferedImage elementImage = ImageIO.read(imageByteStream);
+		BufferedImage scaledImage = (BufferedImage) elementImage.getScaledInstance(1, 1, Image.SCALE_REPLICATE);
+		var rgb = scaledImage.getRGB(0, 0);
+		return new Color(rgb);
+	}
+	
+	/**
+	 * Returns a screenshot File of the current element.
+	 * 
+	 * @return File a screenshot of the current element
+	 */
+	public File getScreenshot() {
+		return element().getScreenshotAs(OutputType.FILE);
+	}
+	
+	/**
+	 * Returns the background color of the element, or it's inherited background color from a parent if transparent.
+	 * 
+	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
+	 */
+	public Color getBackgroundColor()
+	{  
+		return getBackgroundColor(element());
+	}
+	
+	/**
+	 * Returns the background color of the element, or it's inherited background color from a parent if transparent.
+	 * 
+	 * @param element WebElement the web element to get the background color of
+	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
+	 */
+	private Color getBackgroundColor(WebElement element) {
+		Color currentColor = org.openqa.selenium.support.Color.fromString(element.getCssValue("background-color")).getColor();
+
+		if(!currentColor.equals(Colors.TRANSPARENT.getColorValue().getColor()))
+			return currentColor;
+		try {
+			return getBackgroundColor(element.findElement(By.xpath("./..")));
+		} catch(NoSuchElementException e) {
+			return Color.white;
+		}
+	}
+
 }

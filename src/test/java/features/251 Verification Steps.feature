@@ -27,9 +27,27 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
   	When I click the Disable Button
   	Then I verify the Input Textbox is disabled
 
-    
   @251E
   Scenario: Element Visibility Tests
   	Given I am on the Guinea Pig Page
   	Then I verify the hidden div is hidden
   	  And I verify the your comments span is visible
+  
+  @251F
+  Scenario: Switch to iFrame
+  Validate you can switch to an iFrame and back out.
+  	Given I am on the Internet IFrame Page
+  	When I enter the iFrame
+  	Then I exit the iFrame
+ 
+  @251G
+  Scenario: Do Not Find JS Alert On Page
+    Given I am on the Javascript Alerts Page
+    Then I verify a JS alert is not present 	
+  
+  @251H
+  Scenario: Find JS Alert On Page
+    Given I am on the Javascript Alerts Page
+      And I click the click for js alert button
+    Then I verify a JS alert is present
+      And I close the JS alert

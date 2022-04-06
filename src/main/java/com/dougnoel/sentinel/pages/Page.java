@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -102,5 +103,24 @@ public class Page {
 			pageType = Configuration.getPageObjectType(pageName);
 		}
 		return pageType;
+	}
+
+	/**
+	 * Returns true if a Javascript alert is present. False if an alert is not found. Driver returns back to the previous window's context if the alert is found.
+	 * @return boolean true if an alert is present, false otherwise.
+	 */
+	public boolean isJsAlertPresent() {
+		var driver = WebDriverFactory.getWebDriver();
+        try
+        {
+            String currentWindow = driver.getWindowHandle();
+            driver.switchTo().alert();
+            driver.switchTo().window(currentWindow);
+            return true;
+        }
+        catch (NoAlertPresentException e)
+        {
+            return false;
+        }
 	}
 }

@@ -101,6 +101,37 @@ public class TextVerificationSteps {
     }
     
     /**
+     * Waits until we can verify that an element contains certain text. It uses the text
+     * contained in double quotes for matching. If the condition is not true, it will wait 
+     * until the timeout for it to become true, such as if the text on an element changes.
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait until the header div contains the text "Header"</li>
+     * <li>I wait until the project details does not contain the text "Loading"</li>
+     * <li>I wait until the titles contain the text "New"</li>
+     * </ul>
+     * 
+     * @param elementName String The name of the element to be evaluated as defined in the page object.
+     * @param text String The text to verify exists in the element.
+     */
+    @Then("^I wait until the (.*?)( does not)? contains? the text \"([^\"]*)\"$")
+    public static void waitUntilElementTextContains(String elementName, String assertion, String text) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+    	boolean found = getElement(elementName).waitForText(text, (!negate));	
+        String elementText = getElement(elementName).getText();
+        	
+        var expectedResult = SentinelStringUtils.format(
+        		"Expected the {} element to {}contain the text {}. The element contained the text: {}",
+                 elementName, negateText, text, elementText
+                 	.replace("\n", " "));
+            
+        log.trace(expectedResult);
+        assertTrue(expectedResult, found);
+
+    }
+    
+    /**
      * Helper function for i_verify_the_element_contains_the_text() for checking
      * text in the URL.
 	 *

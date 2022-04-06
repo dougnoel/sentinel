@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.8-SNAPSHOT</version>
+  <version>1.0.12-SNAPSHOT</version>
   <name>sentinel</name>
   <url>https://github.com/dougnoel/sentinel</url>
 
@@ -99,6 +99,8 @@
     <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.0.14</swagger-parser.version>
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
+    <image-comparison.version>4.4.0</image-comparison.version>
+    <pdfcompare.version>1.1.61</pdfcompare.version>
     
     <screen-recorder.version>0.7.7.0</screen-recorder.version>
     
@@ -540,18 +542,36 @@
         <version>${swagger-parser.version}</version>
       </dependency>
 
-	  <dependency>
-		<groupId>io.github.bonigarcia</groupId>
-		<artifactId>webdrivermanager</artifactId>
-		<version>${webdrivermanager.version}</version>
-	  </dependency>
-	  
-	        <!-- https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder -->
+        <!-- https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder -->
 		<dependency>
 		    <groupId>com.github.stephenc.monte</groupId>
 		    <artifactId>monte-screen-recorder</artifactId>
 		    <version>${screen-recorder.version}</version>
 		</dependency>
+
+	    <dependency>
+		  <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>${webdrivermanager.version}</version>
+	    </dependency>
+
+	    <dependency>
+		    <groupId>com.github.romankh3</groupId>
+		    <artifactId>image-comparison</artifactId>
+		    <version>4.4.0</version>
+	    </dependency>
+
+      <dependency>
+        <groupId>de.redsix</groupId>
+        <artifactId>pdfcompare</artifactId>
+        <version>${pdfcompare.version}</version>
+        <exclusions>
+          <exclusion> 
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -714,7 +734,6 @@
       <artifactId>sauce_junit</artifactId>
     </dependency>
     
-    <!-- Typically WebDriverManager is in a test scope, but it needs to be bundled with the jar -->
     <dependency>
 	  <groupId>io.github.bonigarcia</groupId>
 	  <artifactId>webdrivermanager</artifactId>
@@ -724,6 +743,16 @@
 		    <groupId>com.github.stephenc.monte</groupId>
 		    <artifactId>monte-screen-recorder</artifactId>
 		</dependency>
+
+	  <dependency>
+	    <groupId>com.github.romankh3</groupId>
+	    <artifactId>image-comparison</artifactId>
+	  </dependency>
+
+    <dependency>
+      <groupId>de.redsix</groupId>
+      <artifactId>pdfcompare</artifactId>
+    </dependency>
     
   </dependencies>
   <description>A Selenium framework that implements the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.</description>

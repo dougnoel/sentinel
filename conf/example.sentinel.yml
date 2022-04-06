@@ -17,6 +17,7 @@ configurations:
     parent-tunnel: "tunnelname"
     tunnelIdentifier: "tunnelID"
     recordTests: true
+    imageDirectory: "my/path/to/test/images"
   stage:
     name: "Sentinel.Example Stage Run"
     headless: false

@@ -1,0 +1,11 @@
+urls:
+   default: https://the-internet.herokuapp.com/add_remove_elements/
+elements: 
+  page_contents:
+    id: content
+  add_element_button:
+    elementType: Button
+    xpath: "//button[contains(text(),'Add Element')]" 
+  delete_element_button:
+    elementType: Button
+    xpath: "//button[contains(text(),'Delete')]" 

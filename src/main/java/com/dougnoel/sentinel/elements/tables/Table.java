@@ -12,6 +12,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -35,6 +36,7 @@ public class Table extends Element {
 	protected String tableRowTag = "tr";
 	protected String tableCellDataTag = "td";
 	protected String tableDataCellLocator = "//" + tableCellDataTag;
+	protected String tableRowLocator = ".//tbody//" + tableCellDataTag + "/..";
 	protected String tableSiblingCellLocator = "//..//*";
 	
 	/**
@@ -104,10 +106,10 @@ public class Table extends Element {
 	 * @return List&lt;WebElement&gt; the headers
 	 */
 	protected List<WebElement> getOrCreateHeaderElements() {
-		if (headerElements == null) {
+		if (headerElements == null || headerElements.isEmpty()) {
 			headerElements = getHeaderElements();
 		}
-		if (headerElements == null) {
+		if (headerElements == null || headerElements.isEmpty()) {
 			log.trace("Header tags not found, using first row for headers.");
 			headerElements = getOrCreateRowElements().get(0).findElements(By.tagName(tableCellDataTag));
 		} else {
@@ -145,7 +147,7 @@ public class Table extends Element {
 	 */
 	protected List<WebElement> getOrCreateRowElements() {
 		if (rowElements == null || rowElements.isEmpty()) {
-			rowElements = this.element().findElements(By.tagName(tableRowTag));
+			rowElements = this.element().findElements(By.xpath(tableRowLocator));
 		}
 		return rowElements;
 	}
@@ -157,18 +159,34 @@ public class Table extends Element {
 	 */
 	protected List<ArrayList<String>> getOrCreateRows() {
 		if (rows.isEmpty()) {
-			List<WebElement> dataRows = getOrCreateRowElements();
-			for (WebElement row : dataRows) {
-				List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
-				ArrayList<String> cells = new ArrayList<>();
-				for (WebElement cell : cellElements) {
-					cells.add(cell.getText());
-				}
-				rows.add(cells);
-			}
+			createRowData();
 		}
 		log.trace("Rows Data: {}", rows);
 		return rows;
+	}
+	
+	/**
+	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
+	 */
+	protected void createRowData(){
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); //fetch starting time
+		while((System.currentTimeMillis() - startTime) < searchTime) {
+			try {
+				var dataRows = getOrCreateRowElements();
+				for (WebElement row : dataRows) {
+					List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
+					ArrayList<String> cells = new ArrayList<>();
+					cellElements.stream().forEach(cellElement -> cells.add(cellElement.getText()));
+					rows.add(cells);
+				}
+				return;
+			}
+			catch(org.openqa.selenium.StaleElementReferenceException sere) {
+				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
+				rowElements = null; // reset the row elements so the ones that are stale aren't used in the next iteration
+			}
+		}
 	}
 
 	/**
@@ -178,10 +196,9 @@ public class Table extends Element {
 	 * @return int the number of row elements
 	 */
 	public int getNumberOfRows() {
-		//Selenium counts a <th> tag as a <td> tag and returns it.
 		final int numberOfRows = getOrCreateRowElements().size();
 		log.trace("Number of rows found: {}", numberOfRows);
-		return numberOfRows - 1;
+		return numberOfRows;
 	}
 
 	/**
@@ -295,7 +312,6 @@ public class Table extends Element {
 		
 		try {
 			element = getOrCreateRowElements().get(ordinalRow)
-					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(elementLocator);
 		} catch (org.openqa.selenium.NoSuchElementException e) {
 			String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
@@ -306,7 +322,6 @@ public class Table extends Element {
 			reset(); //We ended up with a stale element so reset the whole table
 			try {
 				element = getOrCreateRowElements().get(ordinalRow)
-						.findElement(By.xpath(tableDataCellLocator))
 						.findElement(elementLocator);
 			} catch (org.openqa.selenium.NoSuchElementException e) {
 				String errorMsg = SentinelStringUtils.format("{} not found in row {} Error: {}", elementLocator, ordinalRow, e.getMessage());
@@ -330,9 +345,7 @@ public class Table extends Element {
 		WebElement element;
 		try {
 			element = this.element()
-					.findElement(By.xpath(tableDataCellLocator))
 					.findElement(rowLocator)
-					.findElement(By.xpath(tableSiblingCellLocator))
 					.findElement(elementLocator);
 
 		} catch (org.openqa.selenium.NoSuchElementException e) {
@@ -378,6 +391,29 @@ public class Table extends Element {
 		getElementInRowThatContains(ordinalRow, elementLocator).click();
 	}
 	
+	
+	/**
+	 * Returns a list of all the cell values in the given column.
+	 * @param columnHeader String the column to search for all cell data
+	 * @return ArrayList&lt;String&gt; a list of all cell data. Each entry in the
+	 *         list corresponds to a cell.
+	 */
+	public List<String> getAllCellDataForColumn(String columnHeader) {
+		int arrayIndexOfHeader = getOrCreateHeaders().indexOf(columnHeader);
+		if (arrayIndexOfHeader == -1) {
+			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
+			log.error(errorMessage);
+			throw new NoSuchElementException(errorMessage);
+		}
+		 // add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
+		int xpathIndexOfHeader = arrayIndexOfHeader + 1;
+		
+		List<String> cellData = new ArrayList<>();
+		this.element().findElements(By.xpath(".//" + tableCellDataTag + "[" + xpathIndexOfHeader + "]")).stream()
+				.forEach(cell -> cellData.add(cell.getText()));
+		return cellData;
+	}
+	
 	/**
 	 * Returns true if all cells in the given column match the text value given.
 	 * 
@@ -386,13 +422,7 @@ public class Table extends Element {
 	 * @return boolean true if the column contains the given text in every cell, false if not
 	 */
 	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
-		getOrCreateHeaders();
-		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
-		if (column == null) {
-			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
-			log.error(errorMessage);
-			throw new NoSuchElementException(errorMessage);
-		}
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		for (String cell : column) {
 			try {
 				if (!cell.contains(textToMatch)) {
@@ -400,7 +430,7 @@ public class Table extends Element {
 					return false;
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in every cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage, e);
 			}
@@ -417,13 +447,7 @@ public class Table extends Element {
 	 * @return boolean true if the column contains the given text in at least one of the cells, false if not
 	 */
 	public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch) {
-		getOrCreateHeaders();
-		ArrayList<String> column = getOrCreateColumns().get(columnHeader);
-		if (column == null) {
-			String errorMessage = SentinelStringUtils.format("{} column does not exist.", columnHeader);
-			log.error(errorMessage);
-			throw new NoSuchElementException(errorMessage);
-		}
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		for (String cell : column) {
 			try {
 				if (cell.contains(textToMatch)) {
@@ -433,13 +457,41 @@ public class Table extends Element {
 					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 				}
 			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage, e);
 			}
 
 		}
 		log.debug("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		return false;
+	}
+	
+	/**
+	 * Returns true if the cell in the given column and row match the text value given.
+	 * 
+	 * @param columnHeader String the name of the column
+	 * @param rowIndex int the index of the row
+	 * @param textToMatch String the text that should be in the specified cell
+	 * @return boolean true if the cell given by the passed column, row contains the given text, false otherwise
+	 */
+	public boolean verifySpecificCellContains(String columnHeader, int rowIndex, String textToMatch) {
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
+		var cell = column.get(rowIndex - 1); //subtract 1 from passed rowIndex, which will be 1-indexed, to match List.get which is 0-indexed.
+		try {
+			if (cell.contains(textToMatch)) {
+				return true;
+			}
+			else {
+				log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+			}
+		} catch (NullPointerException e) {
+			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column, row {}. Value found: {}", textToMatch, columnHeader, rowIndex, cell);
+			log.error(errorMessage);
+			throw new NoSuchElementException(errorMessage, e);
+		}
+
+		log.debug("Value in the {} column and {} row are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, rowIndex, textToMatch);
 		return false;
 	}
 	

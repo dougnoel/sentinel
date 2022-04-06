@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -25,6 +27,11 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+
+import de.redsix.pdfcompare.CompareResult;
+import de.redsix.pdfcompare.PdfComparator;
+import de.redsix.pdfcompare.RenderingException;
+import de.redsix.pdfcompare.env.SimpleEnvironment;
 
 /**
  * Manages Download actions and interactions, which handles CRUD and IO for Sentinel. This includes deleting files, getting/setting files, filenames, or file extensions,
@@ -270,6 +277,43 @@ public class DownloadManager {
 
         return flag;
     }
+    
+    /**
+     * Verifies the content of the two files, specified by the given paths, have the same content based on a graphical pixel-to-pixel comparison.
+     * The given percent of allowed difference per page is applied during the comparison, to allow for some expected variance. The default is 0.0 for an exact match.
+     * The resulting file, with differences highlighted, is written to the given path.
+     * @param expectedPdf File the file containing the reference PDF.
+     * @param newPdf File the PDF file to compare to the reference PDF.
+     * @param percentAllowedDifferencePerPage double the percent of allowed difference per page.
+     * @param resultFilePath String the file path to write the result PDF to.
+     * @return boolean true if the PDFs match, false otherwise
+     * @throws IOException 
+     * @throws RenderingException 
+     */
+    public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf, double percentAllowedDifferencePerPage, String resultFilePath) throws RenderingException, IOException {
+    	CompareResult result = new PdfComparator<>(expectedPdf, newPdf)
+				.withEnvironment(new SimpleEnvironment()
+				.setAllowedDiffInPercent(percentAllowedDifferencePerPage))
+				.compare();
+		
+		if(resultFilePath != null && !StringUtils.isWhitespace(resultFilePath))
+			result.writeTo(resultFilePath);
+		
+		return result.isEqual();
+    }
+    
+    /**
+     * Verifies the content of the two files, specified by the given paths, have the EXACT same content based on a graphical pixel-to-pixel comparison.
+     * @param expectedPdf File the file containing the reference PDF.
+     * @param newPdf File the PDF file to compare to the reference PDF.
+     * @return boolean true if the PDFs match exactly, false otherwise
+     * @throws IOException 
+     * @throws RenderingException 
+     */
+    public static boolean verifyDownloadedPDFViaVisualRendering(File expectedPdf, File newPdf) throws RenderingException, IOException {
+    	return verifyDownloadedPDFViaVisualRendering(expectedPdf, newPdf, 0.0, null);
+    }
+    
     /**
      * Returns the path of an image containing the entire contents of the page using 
      * the index given as the page number to capture
@@ -366,7 +410,10 @@ public class DownloadManager {
     public static String createDownloadDirectory() {
     	var downloadDirectory = Configuration.toString("downloadDirectory");
     	if (downloadDirectory == null) {
-    		downloadDirectory = "../../Downloads";
+    		String parentDirectoryPath = System.getProperty("user.dir");
+    		Path downloadPath = Path.of(parentDirectoryPath, "/downloads/");
+    		downloadPath.toFile().mkdir(); //make download directory if it doesn't already exist
+    		downloadDirectory = downloadPath.toString();
     	}
         return downloadDirectory;
     }
