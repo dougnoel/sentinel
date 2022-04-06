@@ -71,7 +71,8 @@ public class WebDriverFactory {
         // Throw an error if the value isn't found.   	
     	switch (browser) {
         case "chrome":
-        	driver = createChromeDriver();
+            String commandlineOptions = Configuration.toString("chromeOptions");
+        	driver = createChromeDriver(commandlineOptions);
             break;
         case "edge":
         	WebDriverManager.edgedriver().setup();
@@ -157,11 +158,13 @@ public class WebDriverFactory {
     
     /**
      * Creates a ChromeDriver. Makes it headless if the -Dheadless flag is set.
+     * Can pass additional arguments with the -DchromeOptions flag, such as -DchromeOptions="start-maximized" to open all browser windows maximized.
      * @return WebDriver ChromeDrvier
      */
-    private static WebDriver createChromeDriver() {
+    private static WebDriver createChromeDriver(String commandlineOptions) {
     	var chromeOptions = new ChromeOptions();
     	setChromeDownloadDirectory(chromeOptions);
+        chromeOptions.addArguments(commandlineOptions);
     	var headless = Configuration.toString("headless");
     	if (headless != null && !headless.equalsIgnoreCase("false")) {
     		chromeOptions.addArguments("--no-sandbox");
