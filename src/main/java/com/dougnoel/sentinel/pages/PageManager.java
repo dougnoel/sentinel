@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.framework;
+package com.dougnoel.sentinel.pages;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,8 +13,6 @@ import org.openqa.selenium.WebDriverException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.PageObjectType;
-import com.dougnoel.sentinel.pages.Page;
-import com.dougnoel.sentinel.pages.PageFactory;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
@@ -106,7 +104,7 @@ public class PageManager {
 		}
 		return currentUrl;
 	}
-
+	
 	/**
 	 * Sets page load timeout on web driver instance using the timeout and timeunit values set in
 	 * the configuration file or on the command line. Then interfaces with isPageLoaded to continually

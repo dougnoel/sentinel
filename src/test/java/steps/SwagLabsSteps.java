@@ -3,7 +3,7 @@ package steps;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
 import com.dougnoel.sentinel.steps.AccountSteps;
 import com.dougnoel.sentinel.steps.BaseSteps;
-import com.dougnoel.sentinel.steps.VerificationSteps;
+import com.dougnoel.sentinel.steps.WindowAndTabSteps;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Given;
@@ -24,6 +24,6 @@ public class SwagLabsSteps {
 		BaseSteps.click("Login button");
 	  	// And I am redirected to the Sauce Demo Main Page
 		ExtentCucumberAdapter.addTestStepLog("And I am redirected to the Sauce Demo Main Page");
-		VerificationSteps.redirectedToPage("Sauce Demo Main Page");
+		WindowAndTabSteps.switchTo("Sauce Demo Main Page");
 	}
 }

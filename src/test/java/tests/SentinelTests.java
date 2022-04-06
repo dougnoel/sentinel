@@ -30,7 +30,6 @@ public class SentinelTests {
             SentinelScreenRecorder.startRecording();
     }
 
-
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         String totalWaitTime = Configuration.toString("totalWaitTime");
@@ -41,7 +40,7 @@ public class SentinelTests {
         if(Configuration.toBoolean("recordTests"))
             SentinelScreenRecorder.stopRecording();
         
-        if (System.getProperty("leaveBrowserOpen", "false") == "false") {
+        if (!Configuration.toBoolean("leaveBrowserOpen")) {
         	Driver.quitAllDrivers();
         }
     }

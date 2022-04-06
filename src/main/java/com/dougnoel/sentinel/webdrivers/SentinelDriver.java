@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.openqa.selenium.WebDriver;
 
-import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.pages.Page;
+import com.dougnoel.sentinel.pages.PageManager;
 
 import io.appium.java_client.windows.WindowsDriver;
 import io.appium.java_client.windows.WindowsElement;
@@ -30,12 +30,25 @@ public class SentinelDriver {
 		return this.driver;
 	}
 	
+	/**
+	 * Go to next window.
+	 */
     protected void goToNextWindow() {
     	windows.goToNextWindow();
     }
     
+    /**
+     * Go to previous window.
+     */
     protected void goToPreviousWindow() {
     	windows.goToPreviousWindow();
+    }
+
+    /**
+     * Go to last window.
+     */
+    protected void goToLastWindow() {
+    	windows.goToLastWindow();
     }
     
 	/**
@@ -60,6 +73,13 @@ public class SentinelDriver {
 	}
 	
 	/**
+	 * Maximize the window.
+	 */
+    protected void maximizeWindow() {
+    	driver.manage().window().maximize();
+    }
+	
+	/**
 	 * Close the current window.
 	 */
 	protected void close() {
@@ -76,5 +96,7 @@ public class SentinelDriver {
 		else {
 			WebDriverFactory.quit();
 		}
+		pages.clear();
+		windows.clear();
 	}
 }

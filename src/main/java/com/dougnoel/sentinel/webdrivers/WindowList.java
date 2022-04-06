@@ -42,7 +42,7 @@ public class WindowList {
 	}
 	
 	/**
-	 * Track the current window
+	 * Track the current window.
 	 */
 	private void markCurrentWindow() {
     	String curentWindowHandle = driver.getWindowHandle();
@@ -111,5 +111,23 @@ public class WindowList {
     	currentWindow--;
     	driver.switchTo().window(windowHandles.get(currentWindow));
     	pruneClosedWindows();
+    }
+    
+    /**
+     * Moves the driver to the last window in our list, which is presumably the most recent one created.
+     */
+    protected void goToLastWindow() {
+    	addNewWindows();
+    	currentWindow = windowHandles.size() - 1;
+    	driver.switchTo().window(windowHandles.get(currentWindow));
+    	pruneClosedWindows();
+    }
+    
+    /**
+     * Empty out the list of windows.
+     */
+    protected void clear() {
+    	windowHandles.clear();
+    	currentWindow = 0;
     }
 }

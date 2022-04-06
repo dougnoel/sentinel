@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class PageDataTests {

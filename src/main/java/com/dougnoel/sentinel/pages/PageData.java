@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.framework.PageManager;
 import com.dougnoel.sentinel.pages.PageData;
+import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.system.FileManager;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -314,7 +314,7 @@ public class Configuration {
 	/**
 	 * Returns the URL for the currently active page based on the environment value set. 
 	 * 
-	 * @see com.dougnoel.sentinel.framework.PageManager#getPage()
+	 * @see com.dougnoel.sentinel.pages.PageManager#getPage()
 	 * @see com.dougnoel.sentinel.pages.Page#getName()
 	 * @return String the desired URL
 	 */

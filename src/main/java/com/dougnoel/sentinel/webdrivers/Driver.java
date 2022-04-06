@@ -2,7 +2,7 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.util.EnumMap;
 import com.dougnoel.sentinel.enums.PageObjectType;
-import com.dougnoel.sentinel.framework.PageManager;
+import com.dougnoel.sentinel.pages.PageManager;
 
 import org.openqa.selenium.WebDriver;
 
@@ -39,7 +39,7 @@ public class Driver {
     /**
      * Returns the WebDriver instance. This will silently instantiate the WebDriver if that has not been done yet.
      * 
-     * @return WebDriver the created Selenium WebDriver
+     * @return WebDriver the created Selenium WebDriver object
      */
     public static WebDriver getWebDriver() {
     	return getSentinelDriver().getWebDriver();
@@ -78,6 +78,13 @@ public class Driver {
     	getSentinelDriver().goToPreviousWindow();
     }
     
+    /**
+     * Asks the current driver to move to the most recently opened window in its purview.
+     */
+    public static void goToMostRecentWindow() {
+    	getSentinelDriver().goToLastWindow();
+    }
+    
 	/**
 	 * Asks the current driver to emulate clicking the browser's forward button.
 	 */
@@ -98,4 +105,11 @@ public class Driver {
 	public static void refresh() {
 		getSentinelDriver().refresh();
 	}
+	
+    /**
+     * Maximizes the browser window.
+     */
+    public static void maximizeWindow() {
+    	getSentinelDriver().maximizeWindow();
+    }
 }
