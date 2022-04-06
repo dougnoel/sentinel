@@ -41,6 +41,6 @@ Feature: Table Tests
   	  And I find the 2nd row in the Example Table and click the text Claudine Neal
       And I find the last row in the Example Table and click the text Humphrey Curtis
     Given I am on the Table Page
-    Then I find the Example Table and click the xpath //*[contains(text(),'Smith')] in the row containing the xpath //*[@id = 'Dave']
-  	  And I find the Example Table and click the xpath //*[contains(text(),'Smith')] in the row containing the text Bob
+    Then I find the Example Table and click the xpath .//*[contains(text(),'Smith')] in the row containing the xpath .//*[@id='Dave']/..
+  	  And I find the Example Table and click the xpath .//*[contains(text(),'Smith')] in the row containing the text Bob
   	  And I find the 1st row in the Example Table and click the text Bob

@@ -12,7 +12,8 @@ import io.cucumber.java.en.When;
 public class TableSteps {
 	
 	private static final String XPATH = "xpath";
-	private static final String CONTAINS_TEXT = "//*[contains(text(),'";
+	private static final String TEXT = "text";
+	private static final String CONTAINS_TEXT = ".//*[contains(text(),'";
 
     /**
      * Clicks the link in a table row by matching text in another part of the row.
@@ -57,19 +58,20 @@ public class TableSteps {
      */
     @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
     public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {
-    	By clickLocator;
-    	if ( StringUtils.equals(clickLocatorType, XPATH) ) {
-    		clickLocator = By.xpath(elementToClick);
-    	} else {
-    		clickLocator = By.xpath(CONTAINS_TEXT + elementToClick + "')]");
-    	}
-    	By matchLocator;
-    	if ( StringUtils.equals(matchLocatorType, XPATH) ) {
-    		matchLocator = By.xpath(elementToMatch);
-    	} else {
-    		matchLocator = By.xpath(CONTAINS_TEXT + elementToMatch + "')]");
-    	}
-    	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
+		if (StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, XPATH)) {
+			By clickLocator = By.xpath(elementToClick);
+			By matchLocator = By.xpath(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
+		} else if (StringUtils.equals(clickLocatorType, TEXT) && StringUtils.equals(matchLocatorType, TEXT)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, elementToClick);
+		} else if(StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, TEXT)) {
+			By clickLocator = By.xpath(elementToClick);
+			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, clickLocator);
+		}
+		else {
+			By matchLocator = By.xpath(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, elementToClick);
+		}
     }
     
     /**
