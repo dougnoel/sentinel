@@ -15,4 +15,7 @@ elements:
     text: "Drag and Drop"   
   hovers_link:
     elementType: Link
-    text: "Hovers" 
+    text: "Hovers"
+  content:
+    elementType: div
+    id: content

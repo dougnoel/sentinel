@@ -18,6 +18,9 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
   	  But I verify the Header does not have the attribute bob
   	  And I verify the Header has the class heading
   	  But I verify the Header does not have the class footer
+    Then I verify the Content with the attribute class contains the value large-12
+      And I verify the Content with the attribute class has the value large-12 columns
+      And I verify the Content with the attribute class does not have the value lorem
   
   @251D
   Scenario: Enabled and Disabled Tests
