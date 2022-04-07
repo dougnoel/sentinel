@@ -128,20 +128,23 @@ public class VerificationSteps {
      * <li>I verify the boxes table with the attribute class has the value heading"</li>
      * <li>I verify the New Div with the attribute style does not have the value aria"</li>
      * <li>I verify the Submit Button with the attribute color has the value blue</li>
+     * <li>I verify the Title Text with the attribute class contains the value large-12</li>
      * </ul>
      * @param elementName String element to inspect
      * @param assertion String "has" for a positive check, anything else for negative
      * @param attribute String attribute to inspect
      * @param value String value expected
      */
-    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
+    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have|contains) (?:the|a|an) value (.*?)$")
     public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String value) {
         String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\" {} the value {}.",
                 elementName, assertion, attribute, value);
         if (assertion.contentEquals("has")) {
-            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value, false));
+        } else if (assertion.contentEquals("contains")) {
+            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value, true));
         } else {
-            assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+            assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value, false));
         }
     }
     

@@ -695,7 +695,7 @@ public class Element {
 	}
 	
 	/**
-	 * Returns true if the element has an attribute equal to the value passed;
+	 * Returns true if the element has an attribute equal to or containing the value passed;
 	 * otherwise returns false.
 	 * <p>
 	 * <b>Examples:</b>
@@ -705,19 +705,32 @@ public class Element {
 	 * 
 	 * @param attribute String the attribute to look for
 	 * @param value String the value to which attribute should be set
+	 * @param contains Boolean true if the attribute contains the value
 	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
 	 */
-	public boolean attributeEquals(String attribute, String value) {
+	public boolean attributeEquals(String attribute, String value, Boolean contains) {
 		if (hasAttribute(attribute)) {
 			String values = element().getAttribute(attribute);
 			log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 					values);
-			if (values.equals(value)) {
-				return true;
+			if(contains) {
+				if (values.contains(value)) {
+					return true;
+				} else {
+					for (String c : values.split(" ")) {
+						if (c.contains(value)) {
+							return true;
+						}
+					}
+				}
 			} else {
-				for (String c : values.split(" ")) {
-					if (c.equals(value)) {
-						return true;
+				if (values.equals(value)) {
+					return true;
+				} else {
+					for (String c : values.split(" ")) {
+						if (c.equals(value)) {
+							return true;
+						}
 					}
 				}
 			}
