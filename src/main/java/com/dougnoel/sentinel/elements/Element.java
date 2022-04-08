@@ -716,9 +716,9 @@ public class Element {
 					values);
 			BiFunction<String, String, Boolean> function;
 			if (contains)
-				function = (String x, String y) -> x.contains(y);
+				function = String::contains;
 			else
-				function = (String x, String y) -> x.equals(y);
+				function = String::equals;
 
 			if (function.apply(values, value)) {
 				return true;
