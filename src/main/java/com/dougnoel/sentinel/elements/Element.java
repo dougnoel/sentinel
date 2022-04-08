@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import javax.imageio.ImageIO;
 
@@ -698,24 +699,18 @@ public class Element {
 			String values = element().getAttribute(attribute);
 			log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 					values);
-			if(contains) {
-				if (values.contains(value)) {
-					return true;
-				} else {
-					for (String c : values.split(" ")) {
-						if (c.contains(value)) {
-							return true;
-						}
-					}
-				}
+			BiFunction<String, String, Boolean> function;
+			if (contains)
+				function = (String x, String y) -> x.contains(y);
+			else
+				function = (String x, String y) -> x.equals(y);
+
+			if (function.apply(values, value)) {
+				return true;
 			} else {
-				if (values.equals(value)) {
-					return true;
-				} else {
-					for (String c : values.split(" ")) {
-						if (c.equals(value)) {
-							return true;
-						}
+				for (String c : values.split(" ")) {
+					if (function.apply(c, value)) {
+						return true;
 					}
 				}
 			}
