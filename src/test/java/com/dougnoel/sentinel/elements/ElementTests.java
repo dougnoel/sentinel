@@ -214,8 +214,23 @@ public class ElementTests {
 	}
 
 	@Test(expected = NoSuchElementException.class)
-	public void TableColumnDoesNotExist() {
+	public void tableColumnDoesNotExist() {
 		BaseSteps.navigateToPage("TablePage");
 		TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "contains", "Bob");
 	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void getNonexistantTableHeaderElement() {
+		BaseSteps.navigateToPage("TablePage");
+		ElementFunctions.getElementAsTable("example table").clickColumnHeader("Not a real column");
+	}
+	
+	@Test
+	public void clickBasicTableHeaderElement() {
+		BaseSteps.navigateToPage("InternetTablesPage");
+		var table = ElementFunctions.getElementAsTable("table 1");
+		table.clickColumnHeader("Last Name");
+		assertTrue("Last Name column was expected to be sorted in descending order.", table.verifyColumnCellsAreSortedAscending("Last Name"));
+	}
+	
 }

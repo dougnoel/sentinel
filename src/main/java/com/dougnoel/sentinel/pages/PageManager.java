@@ -46,6 +46,7 @@ public class PageManager {
 	public static void setPage(String pageName) {
 		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
 		pageObjectType = PageManager.getPage().getPageObjectType();
+		page.clearTables();
 	}
 
 	/**
@@ -56,7 +57,6 @@ public class PageManager {
 	public static Page getPage() {
 		if (page == null)
 			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
-
 		return page;
 	}
 
@@ -157,4 +157,15 @@ public class PageManager {
 	public static PageObjectType getCurrentPageObjectType() {
 		return pageObjectType;
 	}
+	
+    /**
+     * Maximizes the browser window. Stores the current window size and position so
+     * you can return to the existing settings.
+     * 
+     * @return Page - Returns a page object for chaining.
+     */
+    public Page maximizeWindow() {
+        driver().manage().window().maximize();
+        return page;
+    }
 }

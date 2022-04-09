@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
 
@@ -190,4 +191,46 @@ public class VerificationSteps {
         }
     }
     
+    /**
+     * Verifies the existence of a Javascript alert.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify the JS alert is present</li>
+     * <li>I verify a JS alert is not present</li>
+     * </ul>
+     * @param assertion String any string for a negative check, nothing (null) for a positive check
+     */
+    @Then("^I verify (?:the|a) JS alert is( not)? present$")
+    public static void verifyJsAlertPresent(String assertion)
+    {
+    	String expectedResult = SentinelStringUtils.format("Expected a JS alert to be{} present.", assertion);
+    	var actualResult = PageManager.getPage().isJsAlertPresent();
+        if (assertion != null) {
+        	assertFalse(expectedResult, actualResult);
+        } else {
+        	assertTrue(expectedResult, actualResult);
+        }
+    }
+    
+    /**
+     * Verifies the existence of a Javascript alert.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify the JS alert contains the text Hello, World!</li>
+     * <li>I verify the JS alert does not contain the text Goodbye, World!</li>
+     * </ul>
+     * @param assertion String any string for a negative check, nothing (null) for a positive check
+     */
+    @Then("^I verify the JS alert (does not )?contains? the text (.*)?$")
+    public static void verifyJsAlertText(String assertion, String expectedText)
+    {
+    	boolean negate = !StringUtils.isEmpty(assertion);
+    	String expectedResult = SentinelStringUtils.format("Expected the JS alert to {}contain the text {}.", negate ? "not ": "", expectedText);
+    	var actualText = PageManager.getPage().getJsAlertText();
+    	boolean result = actualText.contains(expectedText);
+    	assertTrue(expectedResult, result != negate);
+    }
+
 }
