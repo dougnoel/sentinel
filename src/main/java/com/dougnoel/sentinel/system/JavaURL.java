@@ -9,6 +9,9 @@ import com.dougnoel.sentinel.exceptions.MalformedURLException;
  *
  */
 public class JavaURL {
+	
+	private JavaURL() {}
+	
 	/**
 	 * 
 	 * @param url String the url as a string to convert.

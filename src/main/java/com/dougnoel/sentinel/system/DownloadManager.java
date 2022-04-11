@@ -161,30 +161,23 @@ public class DownloadManager {
         String parsedText = null;
 
         try ( BufferedInputStream file = new BufferedInputStream(url.openStream())) {
-
-	        try {
-	            pdfStripper = new PDFTextStripper();
-	        } catch (IOException e) {
-	        	var errorMessage = SentinelStringUtils.format("Could not create PDFTextStripper() for PDF file {} Setting -Dssltrust=all on the command line will bypass PKIX errors.", url.toString());
-	            throw new IOException(errorMessage, e);
-	        }
-	        pdfStripper.setStartPage(pageStart);
-	        pdfStripper.setEndPage(pageEnd);
-	
-	        try {
-	            pdDoc = PDDocument.load(file);
-	        } catch (InvalidPasswordException e) {
-	        	var errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
-	            throw new IOException(errorMessage, e);
-	        } catch (IOException e) {
-	        	var errorMessage = SentinelStringUtils.format("Could not load the PDF {}", url.toString());
-	            throw new IOException(errorMessage, e);
-	        }
-
+        	pdDoc = PDDocument.load(file);
+        } catch (InvalidPasswordException e) {
+        	var errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
+            throw new IOException(errorMessage, e);
         } catch (IOException e) {
         	var errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
         }
+
+        try {
+            pdfStripper = new PDFTextStripper();
+        } catch (IOException e) {
+        	var errorMessage = SentinelStringUtils.format("Could not create PDFTextStripper() for PDF file {} Setting -Dssltrust=all on the command line will bypass PKIX errors.", url.toString());
+            throw new IOException(errorMessage, e);
+        }
+        pdfStripper.setStartPage(pageStart);
+        pdfStripper.setEndPage(pageEnd);
         
         try {
             parsedText = pdfStripper.getText(pdDoc);
