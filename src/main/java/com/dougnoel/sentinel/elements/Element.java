@@ -10,7 +10,6 @@ import java.time.Duration;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import javax.imageio.ImageIO;
 
