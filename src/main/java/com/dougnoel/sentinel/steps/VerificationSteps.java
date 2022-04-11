@@ -110,15 +110,17 @@ public class VerificationSteps {
      * <ul>
      * <li>I verify the table has the class heading"</li>
      * <li>I verify the textbox does not have the class style"</li>
-     * <li>I verify the div has the class aria</li>
+     * <li>I verify the div contains the class aria</li>
+     * <li>I verify the button does not contain the class disabled</li>
      * </ul>
      * @param elementName String element to inspect
      * @param assertion String "has" for a positive check, anything else for negative
+     * @param matchType String whether we are doing an exact match or a partial match
      * @param className String class to verify
      */
-    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the class (.*?)$")
-    public static void verifyElementHasClass(String elementName, String assertion, String className) {
-    	verifyElementAttributeHasValue(elementName, "class", assertion, className);
+    @Then("^I verify (?:the|a|an) (.*?)( does not)? (has|have|contains?) the class (.*?)$")
+    public static void verifyElementHasClass(String elementName, String assertion, String matchType, String className) {
+    	verifyElementAttributeHasValue(elementName, "class", assertion, matchType, className);
     }
     
     /**
@@ -126,26 +128,36 @@ public class VerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the boxes table with the attribute class has the value heading"</li>
+     * <li>I verify the boxes table with the attribute color has the value blue"</li>
      * <li>I verify the New Div with the attribute style does not have the value aria"</li>
-     * <li>I verify the Submit Button with the attribute color has the value blue</li>
      * <li>I verify the Title Text with the attribute class contains the value large-12</li>
+     * <li>I verify the Submit Button with the attribute class does not contain the value disabled</li>
      * </ul>
      * @param elementName String element to inspect
      * @param assertion String "has" for a positive check, anything else for negative
+     * @param matchType String whether we are doing an exact match or a partial match
      * @param attribute String attribute to inspect
      * @param value String value expected
      */
-    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have|contains) (?:the|a|an) value (.*?)$")
-    public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String value) {
-        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
-                elementName, assertion, attribute, value);
-        if (assertion.contentEquals("has")) {
-            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value, false));
-        } else if (assertion.contentEquals("contains")) {
-            assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value, true));
+    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?)( does not)? (has|have|contains?) (?:the|a|an) value (.*?)$")
+    public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String matchType, String value) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        boolean partialMatch = matchType.contains("contain");
+        String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\"{} {} the value {}.",
+                elementName, assertion, matchType, attribute, value);
+
+        if (partialMatch) {
+            if (negate) {
+                assertFalse(expectedResult, getElement(elementName).attributeContains(attribute, value));
+            } else {
+                assertTrue(expectedResult, getElement(elementName).attributeContains(attribute, value));
+            }
         } else {
-            assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value, false));
+            if (negate) {
+                assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+            } else {
+                assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+            }
         }
     }
     
@@ -193,7 +205,7 @@ public class VerificationSteps {
         	assertTrue(expectedResult, getElement(elementName).isHidden());
         }
     }
-    
+
     /**
      * Verifies the existence of a Javascript alert.
      * <p>
