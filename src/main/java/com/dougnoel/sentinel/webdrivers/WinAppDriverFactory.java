@@ -13,7 +13,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.exceptions.MalformedURLException;
+import com.dougnoel.sentinel.system.JavaURL;
 
 import io.appium.java_client.windows.WindowsDriver;
 import io.appium.java_client.windows.WindowsElement;
@@ -26,8 +26,8 @@ import io.appium.java_client.windows.WindowsElement;
 public class WinAppDriverFactory {
 	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
 	private static Process winAppDriverProcess = null;
-	private static final String DRIVER_URL = "http://127.0.0.1:4723/wd/hub";
-	private static final String WINAPPDRIVER_PATH = "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe";
+	private static final String DRIVER_URL = Configuration.toString("winAppDriverUrl", "http://127.0.0.1:4723/wd/hub");
+	private static final String WINAPPDRIVER_PATH = Configuration.toString("winAppDriverPath", "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe");
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
@@ -36,18 +36,6 @@ public class WinAppDriverFactory {
 	 * Exists to defeat instantiation.
 	 */
 	private WinAppDriverFactory() {}
-
-	/**
-	 * Returns the localhost address for the WinAppDriver server.
-	 * @return URL the localhost address for the WinAppDriver server
-	 */
-	private static URL getWinAppDriverLocalhostUrl(){
-		try {
-			return new URL(DRIVER_URL);
-		} catch (java.net.MalformedURLException e) {
-			throw new MalformedURLException(e);
-		}
-	}
 
 	/**
 	 * Returns a newly created WindowsDriver as a WebDriver, based on the currently
@@ -61,7 +49,6 @@ public class WinAppDriverFactory {
 	 */
 	protected static WebDriver createWinAppDriver() {
 		startWinAppDriverExe();
-		URL url = getWinAppDriverLocalhostUrl();
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", Configuration.executable());
@@ -70,7 +57,7 @@ public class WinAppDriverFactory {
 		
 		WindowsDriver<WindowsElement> driver = null;
 		try {
-			driver = new WindowsDriver<>(url, capabilities);
+			driver = new WindowsDriver<>(JavaURL.create(DRIVER_URL), capabilities);
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
@@ -106,7 +93,7 @@ public class WinAppDriverFactory {
 	 */
 	private static void startWinAppDriverExe() {
 		if (winAppDriverProcess == null) {
-			URL driverUrl = getWinAppDriverLocalhostUrl();
+			URL driverUrl = JavaURL.create(DRIVER_URL);
 			// Fully-qualified path to the executable is used here to resolve code smell security flag.
 			ProcessBuilder builder = new ProcessBuilder(WINAPPDRIVER_PATH, 
 														driverUrl.getHost(), 

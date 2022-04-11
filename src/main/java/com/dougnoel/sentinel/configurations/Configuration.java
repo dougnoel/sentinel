@@ -118,6 +118,30 @@ public class Configuration {
 	}
 	
 	/**
+	 * Returns the configuration for a given property as a String value. It has the following precedence
+	 * for searching for a value:
+	 * <ol>
+	 * <li>A value stored at runtime.</li>
+	 * <li>A value set on the command line.</li>
+	 * <li>A value set in the configuration file.</li>
+	 * </ol>
+	 * The first time it is run, the value found will be stored for future calls. If no value is found,
+	 * the passed default value is returned.
+	 * 
+	 * @param property String the requested configuration property
+	 * @param defaultValue String the default to return if no value is found
+	 * @return String the value of the requested configuration property (null if nothing is found)
+	 */
+	public static String toString(String property, String defaultValue) {
+		String propertyValue = toString(property);
+		if (propertyValue == null) {
+			appProps.setProperty(property, defaultValue);
+			return defaultValue;
+		}
+		return propertyValue; 
+	}
+	
+	/**
 	 * Updates a configuration value once runtime has started. This should never be used in a Cucumber runner
 	 * as it will mask any values in the configuration file and on the command line.
 	 * 
