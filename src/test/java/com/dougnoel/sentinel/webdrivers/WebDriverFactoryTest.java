@@ -69,7 +69,7 @@ public class WebDriverFactoryTest {
 		WebDriverFactory.instantiateWebDriver();
 	}
 	
-	@Test(expected = org.openqa.selenium.WebDriverException.class)
+	@Test
 	public void createChromeOptionsChromeDriver() {
 		Configuration.update("chromeOptions", "start-maximized");
 		WebDriverFactory.instantiateWebDriver();
