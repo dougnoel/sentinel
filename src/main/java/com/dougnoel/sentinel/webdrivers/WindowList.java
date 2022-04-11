@@ -61,26 +61,7 @@ public class WindowList {
     			windowHandles.remove(window);
     	}
 	}
-	
-    /**
-     * Check to see if any windows have been created for the passed driver and if so, add them to the linked list.
-     * We then get our current window from the driver and if it doesn't match where we are in our list, we update our position.
-     */
-    private void update() {
-    	addNewWindows();
-    	markCurrentWindow();
-    	pruneClosedWindows();
-    }
-    
-    /**
-     * 
-     * @param windowHandle
-     */
-    protected void goToWindow(String windowHandle) {
-    	driver.switchTo().window(windowHandle);
-    	update();
-    }
-    
+	    
     /**
      * Closes the current window and moves the driver to the previous window. If no previous window exists,
      * we call close to clean up.
