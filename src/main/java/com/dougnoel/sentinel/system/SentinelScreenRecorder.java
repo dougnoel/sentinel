@@ -12,7 +12,6 @@ import static org.monte.media.VideoFormatKeys.*;
 
 public class SentinelScreenRecorder {
 	private static ScreenRecorder screenRecorder;
-	private static boolean isRecording;
 
 	private SentinelScreenRecorder(){
 		// This constructor acts only to defeat instantiation
@@ -38,15 +37,6 @@ public class SentinelScreenRecorder {
 				null,
 				new File("./reports/"));
 		screenRecorder.start();
-		setIsRecording(true);
-	}
-
-	/**
-	 * Sets whether or not a recording is happening.
-	 * @param recording boolean true if we are recording, false otherwise
-	 */
-	private static void setIsRecording(boolean recording){
-		isRecording = recording;
 	}
 
 	/**
@@ -55,6 +45,5 @@ public class SentinelScreenRecorder {
 	 */
 	public static void stopRecording() throws IOException {
 		screenRecorder.stop();
-		setIsRecording(false);
 	}
 }
