@@ -23,15 +23,6 @@ Feature: 239 Implement WinAppDriver to automate windows
 	  When I hover the file menu dropdown
 	  Then I verify the file menu dropdown with the attribute color has the value #E5F3FF
 
-  @239C @ButtonInteraction
-  Scenario: 239C Use Calculator
-  	Given I open the Calculator Program
-  	When I click the one button
-  	  And I click the Add button
-  	  And I click the two button
-  	  And I click the Equals button
-  	Then I verify the Result contains the text "3"
-
   @239D
   Scenario: 239D Switch Between Active Tabs and Pages Together
     Open a New Tab and Ensures it Opens

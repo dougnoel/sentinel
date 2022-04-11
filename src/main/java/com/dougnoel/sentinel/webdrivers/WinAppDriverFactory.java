@@ -74,7 +74,7 @@ public class WinAppDriverFactory {
 		}
 		catch (Exception e) {
 			stopWinAppDriverExe();
-			log.error("Driver creation failed.\n{}", e.getMessage());
+			log.error("{} Driver creation failed for: {}\n{}", e.getCause(), Configuration.executable(), e.getMessage());
 			throw e;
 		}
 		
