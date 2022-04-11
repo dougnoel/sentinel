@@ -719,12 +719,8 @@ public class Element {
 		String values = element().getAttribute(attribute);
 		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 				values);
-		for (String c : values.split(" ")) {
-			if (c.equals(value)) {
-				return true;
-			}
-		}
-		return false;
+		values = " "+values+" ";
+		return values.contains(" "+value+" ");
 	}
 
 	/**
