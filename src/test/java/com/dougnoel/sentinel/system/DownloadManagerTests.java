@@ -7,6 +7,9 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.webdrivers.Driver;
+
 import de.redsix.pdfcompare.RenderingException;
 
 public class DownloadManagerTests {
@@ -43,4 +46,16 @@ public class DownloadManagerTests {
 		File file2 = new File("src/test/resources/pdfs/TestPDF_different.pdf");
 		DownloadManager.verifyDownloadedPDFViaVisualRendering(file, file2, 0.0, "/not/a/real/path");
 	}
+	
+	@Test
+	public void verifyFileDownloadFromWebAndSavePDFImage() throws InterruptedException, IOException {
+		BaseSteps.navigateToPage("DownloadPage");
+		BaseSteps.click("sample_download_link");
+		String filename = DownloadManager.monitorDownload();
+		assertTrue("Expecting sample.pdf to be downloaded.", DownloadManager.isFileDownloaded(filename));
+		String savedImage = DownloadManager.saveImageInPDF(0, filename);
+		assertTrue("Expecting "+savedImage+" from sample.pdf to be downloaded.", DownloadManager.isFileDownloaded(savedImage));
+		Driver.quitAllDrivers();
+	}
+	
 }

@@ -25,6 +25,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import de.redsix.pdfcompare.CompareResult;
@@ -44,14 +45,13 @@ public class DownloadManager {
     private DownloadManager(){}
 
     /**
-     * Returns true if the file exists in the directory, given a filename and a path.
+     * Returns true if the file exists in the download directory.
      * 
-     * @param downloadPath String Path to the download directory.
-     * @param fileName String The name of the file for which to look.
+     * @param fileName String the name of the file for which to look.
      * @return boolean Returns true if the file exists, false if it does not.
      */
-    public static boolean isFileDownloaded(String downloadPath, String fileName) {
-    	var dir = new File(downloadPath);
+    public static boolean isFileDownloaded(String fileName) {
+    	var dir = new File(downloadDirectory);
         File[] directoryContents = dir.listFiles();
 
         for (var i = 0; i < directoryContents.length; i++) {
@@ -64,10 +64,9 @@ public class DownloadManager {
 
     /**
      * Returns the name of a downloaded file by monitoring the given download directory and looking for a
-     * file to be downloaded with the given file extension. It checks the given
-     * directory every 1/10th of a second under the file download is complete, and
-     * then returns the name of the file downloaded. If the download takes longer
-     * than 20 seconds, the function times out and throws an error.
+     * file to be downloaded with the given file extension. It checks the given directory every 20 milliseconds 
+     * until the file download is complete, and then returns the name of the file downloaded. If the download 
+     * takes longer than the timeout set, the function times out and throws an error.
      * 
      * @return String The name of the file that was downloaded.
      * @throws InterruptedException if the thread is interrupted during download
@@ -77,12 +76,13 @@ public class DownloadManager {
         String downloadedFileName = null;
         var valid = true;
         
-        // default timeout in seconds
-        long timeOut = 20;
+        long timeOut = Time.out().toSeconds();
+        long loopTime = Time.loopInterval().toMillis();
         var downloadFolderPath = Paths.get(downloadDirectory);
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
         long startTime = System.currentTimeMillis();
+        
         do {
             WatchKey watchKey;
             watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
@@ -100,7 +100,7 @@ public class DownloadManager {
                     if (fileName.endsWith(PDF_FILE_EXTENSION)) {
                         downloadedFileName = fileName;
                         log.debug("Downloaded file found: {}.{}", fileName, PDF_FILE_EXTENSION);
-                        Thread.sleep(100);
+                        Thread.sleep(loopTime);
                         return downloadedFileName;
                     }
                 }
@@ -285,16 +285,18 @@ public class DownloadManager {
     }
     
     /**
-     * Returns the path of an image containing the entire contents of the page using 
-     * the index given as the page number to capture
+     * Returns the path of an image containing the entire contents of the PDF page given.
+     * <br>
+     * NOTE: The PDF is assumed to be in the downloads directory.
      * 
      * @param index int page index of the page to be rendered
-     * @param pdfFile File pdf containing image
-     * @return String file location of image.
-     * @throws IOException if error durring file io or during document load
+     * @param pdfFileName String the name of the pdf containing image
+     * @return String the location of the saved image file
+     * @throws IOException if error during file IO or during document load
      */
-    public static String saveImageInPDF(int index, File pdfFile) throws IOException {
-    	var imageLocation = "test.jpg";
+    public static String saveImageInPDF(int index, String pdfFileName) throws IOException {
+    	var pdfFile = new File(downloadDirectory + File.separator + pdfFileName);
+    	var imageFile = new File(downloadDirectory + File.separator + pdfFileName + "_" + index + ".jpg");
         PDFRenderer pdfRenderer = null;
         BufferedImage image = null;
 
@@ -302,10 +304,10 @@ public class DownloadManager {
 
         pdfRenderer = new PDFRenderer(document);
         image = pdfRenderer.renderImage(index);
-        ImageIO.write(image, "JPEG", new File(imageLocation));
+        ImageIO.write(image, "JPEG", imageFile);
         document.close();
 
-        return imageLocation;
+        return imageFile.getName();
     }
 
     /**
