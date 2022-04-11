@@ -11,8 +11,4 @@ public enum PageObjectType {
 	WEBPAGE,
 	EXECUTABLE,
 	UNKNOWN;
-	
-	public static PageObjectType of(String name) {
-		return valueOf(name.toUpperCase());
-	}
 }
