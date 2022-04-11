@@ -70,8 +70,8 @@ public class WebDriverFactoryTest {
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void createCustomChromeDriver() {
-		System.setProperty("chromeBrowserBinary","fake/path");
+	public void createChromeOptionsChromeDriver() {
+		Configuration.update("chromeOptions", "start-maximized");
 		WebDriverFactory.instantiateWebDriver();
 	}
 }
