@@ -114,7 +114,7 @@ public class FileManager {
 	 * @param imageFile File the File of the image to save
 	 */
 	public static void saveImage(String subDirectory, String fileName, File imageFile) throws IOException {
-		FileUtils.copyFile(imageFile, constructImagePath(subDirectory, fileName));
+		FileUtils.copyFile(imageFile, new File(getImagePath(subDirectory, fileName)));
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class FileManager {
 	 * @param imageFile BufferdImage the BufferedImage to save
 	 */
 	public static void saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
-		File destinationFile = constructImagePath(subDirectory, fileName);
+		File destinationFile = new File(getImagePath(subDirectory, fileName));
 		FileUtils.forceMkdir(destinationFile.getParentFile());
 		
 		ImageIO.write(imageFile, "png", destinationFile);
@@ -142,40 +142,19 @@ public class FileManager {
 	 * @return BufferedImage the image file read from disk
 	 */
 	public static BufferedImage readImage(String subDirectory, String fileName) {
-		return ImageComparisonUtil.readImageFromResources(constructImagePath(subDirectory, fileName).getAbsolutePath());
+		return ImageComparisonUtil.readImageFromResources(getImagePath(subDirectory, fileName));
 	}
 	
-	 /**
-	 * Returns a String of the directory to use for test images set in the config file, command line,
-	 * or alternatively "logs/images" by default.
-	 * 
-	 * @return String the configured, console set, or default directory if none is found
-	 */
-	public static String getImageDirectory() {
-		String imageDirectory = Configuration.toString("imageDirectory");
-	    if(imageDirectory == null) {
-	    	imageDirectory = "logs/images";
-		}
-	    
-	    return imageDirectory.replace("/", File.separator);
-	}
-    
 	/**
-	* Returns a File used for saving an image using an optional sub-directory,
+	* Returns the path for saving an image using the passed sub-directory,
 	* file name, and the configured, console set, or default "logs/images" directory.
-	* Will use the root directory if subDirectory is null.
 	* 
 	* @param subDirectory String the sub-directory to use
 	* @param fileName String the file name of the image
 	* 
-	* @return File the constructed image File from directories and filename
+	* @return String the constructed path as a String
 	*/
-	private static File constructImagePath(String subDirectory, String fileName) {
-		if(subDirectory == null) 
-			subDirectory = "";
-		else
-			subDirectory += File.separator;
-		
-		return new File(getImageDirectory() + File.separator + subDirectory + fileName);
+	private static String getImagePath(String subDirectory, String fileName) {
+		return Configuration.toString("imageDirectory", "logs/images").replace("/", File.separator) + File.separator + subDirectory + File.separator + fileName;
 	}
 }
