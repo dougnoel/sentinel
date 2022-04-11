@@ -42,14 +42,6 @@ public class SentinelScreenRecorder {
 	}
 
 	/**
-	 * Returns the status of the SentinelScreenRecorder. True if recording is ongoing, false otherwise.
-	 * @return boolean the current recording status
-	 */
-	public static boolean getIsRecording(){
-		return isRecording;
-	}
-
-	/**
 	 * Sets whether or not a recording is happening.
 	 * @param recording boolean true if we are recording, false otherwise
 	 */
