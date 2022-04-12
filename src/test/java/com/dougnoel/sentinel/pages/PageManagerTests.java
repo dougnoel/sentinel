@@ -11,6 +11,7 @@ public class PageManagerTests {
 
 	@Test(expected = NotFoundException.class)
 	public void PageNotSet() {
+		PageManager.setPage(null);
 		PageManager.getPage();
 	}
 	

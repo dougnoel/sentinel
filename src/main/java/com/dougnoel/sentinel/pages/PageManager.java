@@ -42,9 +42,13 @@ public class PageManager {
 	 * @param pageName String Must be an exact string match (including case) to the Page Object name (e.g. LoginPage).
 	 */
 	public static void setPage(String pageName) {
-		PageManager.page = PageFactory.buildOrRetrievePage(pageName);
-		pageObjectType = PageManager.getPage().getPageObjectType();
-		page.clearTables();
+		try {
+			PageManager.page = PageFactory.buildOrRetrievePage(pageName);
+			pageObjectType = PageManager.getPage().getPageObjectType();
+			page.clearTables();
+		} catch (NullPointerException npe) {
+			page = null;
+		}
 	}
 
 	/**
@@ -57,7 +61,7 @@ public class PageManager {
 			throw new NotFoundException("Page not created yet. It must be navigated to before it can be used.");
 		return page;
 	}
-
+	
 	/**
 	 * Creates a WebDriver if it doesn't exist and opens up the webpage or application.
 	 *
