@@ -20,7 +20,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.steps.TableVerificationSteps;
 import com.dougnoel.sentinel.steps.TextVerificationSteps;
@@ -33,7 +32,6 @@ public class ElementTests {
 	public static void setUpBeforeClass() throws Exception {
 		Time.reset();
 		Configuration.update("timeout", 1);
-		PageManager.setPage("TextboxPage");
 	}
 
 	@AfterClass

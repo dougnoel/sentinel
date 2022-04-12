@@ -15,6 +15,7 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.Keys;
@@ -150,7 +151,7 @@ public class WindowsElement extends Element {
 	public Element clear() {
 		element().clear();
 		var remainingText = getText();
-		if(!remainingText.isBlank() || !remainingText.isEmpty()){
+		if(StringUtils.isNotEmpty(remainingText)){
 			var element = element();
 			Actions action = new Actions(Driver.getWebDriver());
 			action.keyDown(element, Keys.LEFT_CONTROL)
@@ -160,7 +161,7 @@ public class WindowsElement extends Element {
 			.perform();
 
 			remainingText = getText();
-			if(!remainingText.isBlank() || !remainingText.isEmpty()){
+			if(StringUtils.isNotEmpty(remainingText)){
 				var errorMessage = SentinelStringUtils.format(
 					"{} on the {} was unable to be cleared.", 
 					getName(), PageManager.getPage().getName());

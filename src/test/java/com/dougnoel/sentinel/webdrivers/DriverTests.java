@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.webdrivers;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
@@ -14,7 +14,7 @@ public class DriverTests {
 		PageManager.setPage("CorrectPageObject");
 		var js = (JavascriptExecutor)Driver.getWebDriver();
 		Driver.maximizeWindow();
-		assertTrue("Expecting window to be maximized.", js.executeScript("return document.hidden").toString() == "false");
+		assertSame("Expecting window to be maximized.", js.executeScript("return document.hidden").toString(), "false");
 		Driver.quitAllDrivers();
 	}
 
