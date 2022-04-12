@@ -708,7 +708,7 @@ public class Element {
 	 * <p>
 	 * <b>Examples:</b>
 	 * <ul>
-	 * <li>Determine if "blob-code-context" is within an element that has a class="blob-code blob-code-context js-file-line" attribute set.
+	 * <li>Determine if "display: block;" is within an element that has a style="display: block; color: blue;" attribute set.
 	 * </ul>
 	 *
 	 * @param attribute String the attribute to look for
@@ -719,8 +719,30 @@ public class Element {
 		String values = element().getAttribute(attribute);
 		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 				values);
-		values = " "+values+" ";
-		return values.contains(" "+value+" ");
+		return values.contains(value);
+	}
+
+	/**
+	 * Returns true if the element class contains the value passed;
+	 * otherwise returns false.
+	 * <p>
+	 * <b>Examples:</b>
+	 * <ul>
+	 * <li>Determine if "blob-code-context" is within an element that has a class="blob-code blob-code-context js-file-line" attribute set.
+	 * </ul>
+	 *
+	 * @param value String the value to which attribute should be set
+	 * @return boolean true if the element as an attribute containing the value passed; otherwise returns false
+	 */
+	public boolean classContains(String value) {
+		String values = element().getAttribute("class");
+		log.debug("Values found for class on element {}: {}", this.getClass().getName(), values);
+		for (String c : values.split(" ")) {
+			if (c.equals(value)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

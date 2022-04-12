@@ -144,9 +144,15 @@ public class VerificationSteps {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
         String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\"{} {} the value {}.",
-                elementName, assertion, matchType, attribute, value);
+                elementName, attribute, assertion, matchType, value);
 
-        if (partialMatch) {
+        if (attribute.equals("class") && partialMatch) {
+            if (negate) {
+                assertFalse(expectedResult, getElement(elementName).classContains(value));
+            } else {
+                assertTrue(expectedResult, getElement(elementName).classContains(value));
+            }
+        } else  if (partialMatch) {
             if (negate) {
                 assertFalse(expectedResult, getElement(elementName).attributeContains(attribute, value));
             } else {
