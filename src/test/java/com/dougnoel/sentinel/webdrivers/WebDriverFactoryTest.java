@@ -74,4 +74,10 @@ public class WebDriverFactoryTest {
 		Configuration.update("chromeOptions", "start-maximized");
 		WebDriverFactory.instantiateWebDriver();
 	}
+
+	@Test
+	public void createMultipleChromeOptionsChromeDriver() {
+		Configuration.update("chromeOptions", "--start-maximized --incognito");
+		WebDriverFactory.instantiateWebDriver();
+	}
 }
