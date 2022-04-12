@@ -14,7 +14,7 @@ public class DriverTests {
 		PageManager.setPage("CorrectPageObject");
 		var js = (JavascriptExecutor)Driver.getWebDriver();
 		Driver.maximizeWindow();
-		assertSame("Expecting window to be maximized.", js.executeScript("return document.hidden").toString(), "false");
+		assertSame("Expecting window to be maximized.", "false", js.executeScript("return document.hidden").toString());
 		Driver.quitAllDrivers();
 	}
 

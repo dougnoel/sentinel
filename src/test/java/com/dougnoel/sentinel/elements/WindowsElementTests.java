@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.NoSuchElementException;
+
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.steps.BaseSteps;
@@ -38,19 +39,19 @@ public class WindowsElementTests {
 		new WindowsElement("Foo", selectors).element();
 	}
 	
-	@Test
+	@Test(expected = NoSuchElementException.class)
 	public void AccessibilityIDSelector() {
-		Assert.assertNotNull("Accessibility Id selector should work.", getElement("generic_access"));
+		getElement("generic_access").click();
 	}
 	
-	@Test
+	@Test(expected = NoSuchElementException.class)
 	public void IDSelector() {
-		Assert.assertNotNull("Id selector should work.", getElement("generic_id"));
+		getElement("generic_id").click();
 	}
 
-	@Test
+	@Test(expected = NoSuchElementException.class)
 	public void XPathSelector() {
-		Assert.assertNotNull("XPath selector should work.", getElement("generic_xpath"));
+		getElement("generic_xpath").click();
 	}
 
 	@Test(expected = InvalidSelectorException.class)
