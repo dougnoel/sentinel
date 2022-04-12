@@ -1,9 +1,6 @@
 package com.dougnoel.sentinel.elements;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,13 +27,6 @@ public class WindowsElementTests {
 		Time.reset();
 		Configuration.update("timeout", 10);
 		Driver.quitAllDrivers();
-	}
-
-	@Test(expected = InvalidSelectorException.class)
-	public void InvalidSelectorTest() {
-		Map<String, String> selectors = new HashMap<>();
-		selectors.put("value", "1");
-		new WindowsElement("Foo", selectors).element();
 	}
 	
 	@Test(expected = NoSuchElementException.class)

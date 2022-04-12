@@ -60,5 +60,11 @@ public class PageDataTests {
 		PageManager.setPage("CorrectPageObject");
 		Configuration.getTestdataValue("report", "id");
 	}
+
+	@Test(expected = FileException.class)
+	public void cannotContainBothURLsAndEXEs() {
+		PageManager.setPage("WebAndExe");
+		getElement("generic");
+	}
 	
 }

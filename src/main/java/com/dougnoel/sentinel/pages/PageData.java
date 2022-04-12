@@ -58,8 +58,7 @@ public class PageData {
 		}
 		
 		if (pageData.urls != null && pageData.executables != null) {
-			String errorMessage = SentinelStringUtils.format("A page object cannot contain both urls and executables: {}.", fileName);
-			throw new FileException(errorMessage, fileName);
+			throw new FileException("A page object cannot contain both urls and executables.", fileName);
 		}
 			
 		return pageData;
@@ -170,6 +169,8 @@ public class PageData {
      * @return boolean true if found, otherwise false
      */
     public boolean containsExecutable(String env) {
+    	if (executables == null)
+    		return false;
     	return executables.containsKey(env);
     }
     

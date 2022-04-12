@@ -84,35 +84,27 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	protected By createByLocator(SelectorType selectorType, String selectorValue) {
-		try {
-			switch (selectorType) {
-				case ACCESSIBILITYID:
-				case AUTOMATIONID:
-					return MobileBy.AccessibilityId(selectorValue);
-				case CLASS:
-				case CLASSNAME:
-					return By.className(selectorValue);
-				case ID:
-				case RUNTIMEID:
-					return By.id(selectorValue);
-				case NAME:
-					return By.name(selectorValue);
-				case XPATH:
-					return By.xpath(selectorValue);
-				default:
-					var errorMessage = SentinelStringUtils.format(
-							"{} is not a valid selector type for WinAppDriver. Please fix the windows element {} in the {}.yml page object.",
-							selectorType, getName(), PageManager.getPage().getName());
+		switch (selectorType) {
+			case ACCESSIBILITYID:
+			case AUTOMATIONID:
+				return MobileBy.AccessibilityId(selectorValue);
+			case CLASS:
+			case CLASSNAME:
+				return By.className(selectorValue);
+			case ID:
+			case RUNTIMEID:
+				return By.id(selectorValue);
+			case NAME:
+				return By.name(selectorValue);
+			case XPATH:
+				return By.xpath(selectorValue);
+			default:
+				var errorMessage = SentinelStringUtils.format(
+						"{} is not a valid selector type for WinAppDriver. Please fix the windows element {} in the {}.yml page object.",
+						selectorType, getName(), PageManager.getPage().getName());
 
-					log.error(errorMessage);
-					throw new InvalidSelectorException(errorMessage);
-			}
-		} catch (IllegalArgumentException e) {
-			var errorMessage = SentinelStringUtils.format(
-					"{}: {} is not a valid selector. Fix the element {} in the {}.yml page object.", selectorType,
-					selectorValue, getName(), PageManager.getPage().getName());
-			log.error(errorMessage);
-			throw new InvalidSelectorException(errorMessage, e);
+				log.error(errorMessage);
+				throw new InvalidSelectorException(errorMessage);
 		}
 	}
 

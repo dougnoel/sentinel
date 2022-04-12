@@ -112,4 +112,12 @@ public class Driver {
     public static void maximizeWindow() {
     	getSentinelDriver().maximizeWindow();
     }
+    
+    /**
+     * Returns the URL of the current page.
+     * @return String current active window/tab's url
+     */
+    public static String getCurrentUrl() {
+    	return getSentinelDriver().getWebDriver().getCurrentUrl();
+    }
 }

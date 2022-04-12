@@ -9,11 +9,9 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.PageObjectType;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 /**
@@ -79,33 +77,6 @@ public class PageManager {
 	}
 
 	/**
-	 * Gets the URL of the page we are currently on by calling the Page Object which
-	 * has access to the driver object..
-	 *
-	 * @return String the URL of currently active window
-	 */
-	public static String getCurrentUrl() {
-		String currentUrl = null;
-		try {
-			currentUrl = driver().getCurrentUrl();
-			log.trace("Current URL retrieved: {}", currentUrl);
-		} catch (WebDriverException e) {
-			var errorMessage = SentinelStringUtils.format(
-					"An error occured when trying to find the current URL for {}. Please check the URL and try again: {}",
-					page.getName(), e.getMessage());
-			log.error(errorMessage);
-			throw new NotFoundException(errorMessage);
-
-		}
-		if (currentUrl == null) {
-			var errorMessage = "Current URL could not be found. Please check the URL and try again.";
-			log.error(errorMessage);
-			throw new NotFoundException(errorMessage);
-		}
-		return currentUrl;
-	}
-	
-	/**
 	 * Sets page load timeout on web driver instance using the timeout and timeunit values set in
 	 * the configuration file or on the command line. Then interfaces with isPageLoaded to continually
 	 * test if a page is loaded until it returns true or times out.
@@ -158,14 +129,4 @@ public class PageManager {
 		return pageObjectType;
 	}
 	
-    /**
-     * Maximizes the browser window. Stores the current window size and position so
-     * you can return to the existing settings.
-     * 
-     * @return Page - Returns a page object for chaining.
-     */
-    public Page maximizeWindow() {
-        driver().manage().window().maximize();
-        return page;
-    }
 }

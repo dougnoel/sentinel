@@ -23,6 +23,7 @@ public class ConfigurationTests {
     private static final String LINUX = "linux";
     private static final String MAC = "mac";
     private static final String WINDOWS = "windows";
+    private static final String TEST_VALUE = "test_value";
 	
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() {
@@ -153,5 +154,26 @@ public class ConfigurationTests {
 		System.setProperty("os.name", "redhat");
 		assertEquals("Expecting os to be detected as redhat.", "redhat", Configuration.detectOperatingSystem());
 		System.setProperty("os.name", realOS);
+	}
+	
+	@Test
+	public void ToBooleanReturnsFalseTwice() {
+		Configuration.update(TEST_VALUE, "false");
+		Configuration.toBoolean(TEST_VALUE);
+		assertFalse("Expecting test value to be stored as false after the first check and returned as such.", Configuration.toBoolean(TEST_VALUE));
+		Configuration.clear(TEST_VALUE);
+	}
+	
+	@Test
+	public void TestHasExecutables() {
+		Configuration.update(TEST_VALUE, "false");
+		Configuration.toBoolean(TEST_VALUE);
+		assertFalse("Expecting test value to be stored as false after the first check and returned as such.", Configuration.toBoolean(TEST_VALUE));
+		Configuration.clear(TEST_VALUE);
+	}
+	
+	@Test(expected = FileException.class)
+	public void failToLoadNonExistentExecutable() {
+		Configuration.executable("TextboxPage");
 	}
 }
