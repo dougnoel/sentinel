@@ -70,7 +70,7 @@ public class WebDriverFactoryTest {
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void createCustomChromeDriver() {
+	public void createCustomChromeDriverTest() {
 		System.setProperty("chromeBrowserBinary","fake/path");
 		WebDriverFactory.instantiateWebDriver();
 	}

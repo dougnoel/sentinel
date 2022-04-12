@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
 
@@ -138,7 +138,7 @@ public class TextVerificationSteps {
      * @param text String text to verify in the URL
      */
     private static void verifyURLTextContains(String text) {
-        String currentUrl = PageManager.getCurrentUrl();
+        String currentUrl = Driver.getCurrentUrl();
         var expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));

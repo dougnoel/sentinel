@@ -7,8 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
-
+import com.dougnoel.sentinel.system.SentinelScreenRecorder;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 
@@ -23,21 +23,25 @@ import io.cucumber.junit.CucumberOptions;
 
 public class SentinelTests {
     private static final Logger log = LogManager.getLogger(SentinelTests.class); // Create a logger.
+    
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        if(Configuration.toBoolean("recordTests"))
+            SentinelScreenRecorder.startRecording();
+    }
 
-	@BeforeClass
-	public static void setUpBeforeAnyTestsAreRun() {
-		WebDriverFactory.instantiateWebDriver();
-	}
-	
     @AfterClass
-    public static void tearDownAfterClass() {
+    public static void tearDownAfterClass() throws Exception {
         String totalWaitTime = Configuration.toString("totalWaitTime");
         if (totalWaitTime != null) {
         	log.warn("This test took {} total seconds longer due to explicit waits. Sentinel handles dynamic waits. If you have a reason for adding explicit waits, you should probably be logging a bug ticket to get the framework fixed at: http://https://github.com/dougnoel/sentinel/issues", totalWaitTime);
         }
-    	log.info("Driver: {}", WebDriverFactory.getWebDriver());
-        if (System.getProperty("leaveBrowserOpen", "false") == "false") {
-        	WebDriverFactory.quit();
+        
+        if(Configuration.toBoolean("recordTests"))
+            SentinelScreenRecorder.stopRecording();
+        
+        if (!Configuration.toBoolean("leaveBrowserOpen")) {
+        	Driver.quitAllDrivers();
         }
     }
 }

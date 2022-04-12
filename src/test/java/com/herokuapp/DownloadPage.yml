@@ -1,0 +1,6 @@
+urls:
+   default: https://the-internet.herokuapp.com/download
+elements:
+  sample_download_link:
+    elementType: Link
+    text: "sample.pdf"

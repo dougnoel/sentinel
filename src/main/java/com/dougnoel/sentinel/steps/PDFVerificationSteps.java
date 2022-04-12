@@ -4,8 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
-import com.dougnoel.sentinel.filemanagers.DownloadManager;
-import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.system.DownloadManager;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
 
@@ -33,7 +33,7 @@ public class PDFVerificationSteps {
      */
     @Then("^I see the text (.*) appears (?:on|between) the (\\d+)(?:st|nd|rd|th)(?: and )?(\\d+)?(?:st|nd|rd|th)? pages? of the pdf$")
     public static void i_see_the_text_appears_on_pages_of_the_pdf(String text_to_verify, int firstPageNumber, Integer lastPageNumber) throws Throwable {
-            URL url = new URL(PageManager.getCurrentUrl());
+            URL url = new URL(Driver.getCurrentUrl());
             assertTrue(url.toString().contains(".pdf"));
             if (lastPageNumber == null) {
             	assertTrue(DownloadManager.verifyPDFContent(url, text_to_verify, firstPageNumber));	

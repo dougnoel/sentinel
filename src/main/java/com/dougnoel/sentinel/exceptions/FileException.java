@@ -96,7 +96,7 @@ public class FileException extends RuntimeException {
         if (cause instanceof ClassNotFoundException)
             return SentinelStringUtils.format("{} could not find suitable class for element in this file. {}", filePath(), super.getMessage());
     	if (cause instanceof FileNotFoundException)
-    		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", filePath(), super.getMessage());
+    		return SentinelStringUtils.format("{} cannot be found in the specified location. {}", file.getName(), super.getMessage());
     	if (cause instanceof AccessDeniedException)
     		return SentinelStringUtils.format("{} could not be accessed. Please ensure the file can be read by the current user and is not password protected. {}", 
     				filePath(), super.getMessage());
