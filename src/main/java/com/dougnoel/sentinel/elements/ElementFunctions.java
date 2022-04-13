@@ -5,16 +5,14 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
- * Retrieves as an element as a  Element or as one of the following types:
- * Checkbox, Dropdown, Radiobutton, Select, Table, or Textbox.
+ * Retrieves as an element as an Element or as a child type.
  * 
- * To return as the desired type, we call getElement which returns a Element, and the element is 
+ * To return as the desired type, we call getElement which returns an Element, and the element is 
  * cast as the desired element.
  *
  */
@@ -36,20 +34,6 @@ public class ElementFunctions {
     }
 
     /**
-     * Returns the Checkbox associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Checkbox the checkbox associated with the element name on the currently active page
-     */
-    public static Checkbox getElementAsCheckbox(String elementName) {
-		try {
-			return (Checkbox) getElement(elementName);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Checkbox.class.getSimpleName()));
-		}
-    }
-
-    /**
      * Returns the Dropdown associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
@@ -60,20 +44,6 @@ public class ElementFunctions {
 			return (Dropdown) getElement(elementName);
 		} catch (ClassCastException e) {
 			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Dropdown.class.getSimpleName()));
-		}
-    }
-
-    /**
-     * Returns the Radio button associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Radio the radio button associated with the element name on the currently active page
-     */
-    public static Radiobutton getElementAsRadiobutton(String elementName) {
-		try {
-			return (Radiobutton) getElement(elementName);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Radiobutton.class.getSimpleName()));
 		}
     }
     
@@ -102,20 +72,6 @@ public class ElementFunctions {
 			return (Table) getElement(elementName);
 		} catch (ClassCastException e) {
 			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Table.class.getSimpleName()));
-		}
-    }
-
-    /**
-     * Returns the Textbox associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Textbox the text box associated with the element name on the currently active page
-     */
-    public static Textbox getElementAsTextbox(String elementName) {
-		try {
-			return (Textbox) getElement(elementName);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Textbox.class.getSimpleName()));
 		}
     }
     

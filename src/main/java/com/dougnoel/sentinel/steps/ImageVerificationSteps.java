@@ -16,7 +16,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
 import com.dougnoel.sentinel.elements.Element;
-import com.dougnoel.sentinel.filemanagers.FileManager;
+import com.dougnoel.sentinel.system.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;

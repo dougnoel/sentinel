@@ -12,7 +12,8 @@ import io.cucumber.java.en.When;
 public class TableSteps {
 	
 	private static final String XPATH = "xpath";
-	private static final String CONTAINS_TEXT = "//*[contains(text(),'";
+	private static final String TEXT = "text";
+	private static final String CONTAINS_TEXT = ".//*[contains(text(),'";
 
     /**
      * Clicks the link in a table row by matching text in another part of the row.
@@ -56,20 +57,19 @@ public class TableSteps {
      * @param elementToMatch String the text or xpath of the value that will ensure you are in the correct row
      */
     @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
-    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {
-    	By clickLocator;
-    	if ( StringUtils.equals(clickLocatorType, XPATH) ) {
-    		clickLocator = By.xpath(elementToClick);
-    	} else {
-    		clickLocator = By.xpath(CONTAINS_TEXT + elementToClick + "')]");
-    	}
-    	By matchLocator;
-    	if ( StringUtils.equals(matchLocatorType, XPATH) ) {
-    		matchLocator = By.xpath(elementToMatch);
-    	} else {
-    		matchLocator = By.xpath(CONTAINS_TEXT + elementToMatch + "')]");
-    	}
-    	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
+    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {   	
+    	if (StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, XPATH)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(By.xpath(elementToMatch), By.xpath(elementToClick));
+		} else if(StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, TEXT)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, By.xpath(elementToClick)); 
+		}
+    	else if (StringUtils.equals(clickLocatorType, TEXT) && StringUtils.equals(matchLocatorType, TEXT)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, elementToClick);
+		}
+		else {
+			By matchLocator = By.xpath(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, elementToClick);
+		}
     }
     
     /**
@@ -127,4 +127,18 @@ public class TableSteps {
         getElementAsTable(tableName).storeTable(pageNumber);
     }
     
+    /**
+     * Clicks the header element to sort the table on the given column. Does not verify sort direction.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I find and click the header for the Name column in the Users table</li>
+     * </ul>
+     * @param columnName String the name of the column to click the header of
+     * @param tableName String the name of the table element
+     */
+    @When("^I find and click the header for the (.*) column in the (.*)$")
+    public static void clickColumnHeaderToSort(String columnName, String tableName) {
+    	getElementAsTable(tableName).clickColumnHeader(columnName);
+    }
 }

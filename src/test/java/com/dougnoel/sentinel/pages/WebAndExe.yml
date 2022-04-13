@@ -1,0 +1,7 @@
+urls:
+  default: "https://google.com"
+executables:
+  default: C:/Windows/System32/notepad.exe
+elements:
+  generic:
+    id: "lastName"

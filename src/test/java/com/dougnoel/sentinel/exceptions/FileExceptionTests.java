@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class FileExceptionTests {
 	private static final File FILE = new File("conf/sentinel.yml");
 	private static final String FILEPATH = FILE.getAbsoluteFile().toString();
+	private static final String FILENAME = FILE.getName();
 	private static final String TEST_MESSAGE = "My test message.";
 	private static final Throwable CAUSE = new Throwable(TEST_MESSAGE);
 		
@@ -139,12 +140,12 @@ public class FileExceptionTests {
 			throw new FileException(TEST_MESSAGE, exception, FILE);
 		} catch (FileException e) {
 			String expectedMessage = SentinelStringUtils.format("{} cannot be found in the specified location. {}",
-					FILEPATH, TEST_MESSAGE);
+					FILENAME, TEST_MESSAGE);
 			assertEquals("Expecting custom exception message.", expectedMessage, e.getMessage());
 			assertEquals("Expecting exception cause to be FileNotFoundException", exception, e.getCause());
 		}
 	}
-
+	
 	@Test
 	public void AccessDeniedException() {
 		AccessDeniedException exception = new AccessDeniedException(FILEPATH);

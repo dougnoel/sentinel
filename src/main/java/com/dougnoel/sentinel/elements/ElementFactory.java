@@ -11,10 +11,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.filemanagers.FileManager;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.system.FileManager;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 
@@ -47,7 +48,10 @@ public class ElementFactory {
 			throw new NoSuchElementException(errorMessage);
 		}
 		try{
-		
+            if (page.getPageObjectType().equals(PageObjectType.EXECUTABLE)) {
+                return new WindowsElement(elementName, elementData);
+            }
+            
 			String elementType = null;
 			if (!elementData.containsKey("elementType"))
 				return new Element(elementName, elementData);

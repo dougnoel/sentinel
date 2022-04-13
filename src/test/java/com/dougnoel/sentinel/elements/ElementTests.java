@@ -23,7 +23,8 @@ import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.steps.TableVerificationSteps;
 import com.dougnoel.sentinel.steps.TextVerificationSteps;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
+
 
 public class ElementTests {
 	
@@ -31,15 +32,13 @@ public class ElementTests {
 	public static void setUpBeforeClass() throws Exception {
 		Time.reset();
 		Configuration.update("timeout", 1);
-		WebDriverFactory.instantiateWebDriver();
-		
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		Time.reset();
 		Configuration.update("timeout", 10);
-		WebDriverFactory.quit();
+		Driver.quitAllDrivers();
 	}
 
 	
@@ -184,7 +183,7 @@ public class ElementTests {
 	
 	@Test
 	public void checkParentColorsOfTransparentElement() {
-		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
+		JavascriptExecutor js = (JavascriptExecutor) Driver.getWebDriver(); 
 		
 		Color colorBlue = Color.blue;
 		String colorBlueHexValue = "#"+Integer.toHexString(colorBlue.getRGB()).substring(2);
@@ -196,7 +195,7 @@ public class ElementTests {
 	
 	@Test
 	public void checkElementBackgroundColor() {
-		JavascriptExecutor js = (JavascriptExecutor) WebDriverFactory.getWebDriver(); 
+		JavascriptExecutor js = (JavascriptExecutor) Driver.getWebDriver(); 
 		
 		Color colorRed = Color.red;
 		String colorRedHexValue = "#"+Integer.toHexString(colorRed.getRGB()).substring(2);
@@ -213,8 +212,23 @@ public class ElementTests {
 	}
 
 	@Test(expected = NoSuchElementException.class)
-	public void TableColumnDoesNotExist() {
+	public void tableColumnDoesNotExist() {
 		BaseSteps.navigateToPage("TablePage");
 		TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "contains", "Bob");
 	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void getNonexistantTableHeaderElement() {
+		BaseSteps.navigateToPage("TablePage");
+		ElementFunctions.getElementAsTable("example table").clickColumnHeader("Not a real column");
+	}
+	
+	@Test
+	public void clickBasicTableHeaderElement() {
+		BaseSteps.navigateToPage("InternetTablesPage");
+		var table = ElementFunctions.getElementAsTable("table 1");
+		table.clickColumnHeader("Last Name");
+		assertTrue("Last Name column was expected to be sorted in descending order.", table.verifyColumnCellsAreSortedAscending("Last Name"));
+	}
+	
 }

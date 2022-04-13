@@ -4,22 +4,16 @@ import org.openqa.selenium.InvalidSelectorException;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsDropdown;
 import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.steps.BaseSteps;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class SelectElementTests {
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		WebDriverFactory.instantiateWebDriver();
-	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+		Driver.quitAllDrivers();
 	}
 	
 	@Test(expected = InvalidSelectorException.class)

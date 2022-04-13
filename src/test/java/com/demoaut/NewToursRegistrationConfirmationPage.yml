@@ -1,5 +1,0 @@
-include: NewToursMenuPage
-elements:
-  registration_header:
-    elementType: Div
-    xpath: "//img[contains(@src, 'mast_register.gif')]"

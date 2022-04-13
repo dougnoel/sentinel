@@ -1,8 +1,0 @@
-include: NewToursMenuPage
-elements:
-  sign_on_header:
-    elementType: Div
-    xpath: "//img[contains(@src, 'mast_signon.gif')]"
-  registration_form_link:
-    elementType: Link
-    text: "registration form"

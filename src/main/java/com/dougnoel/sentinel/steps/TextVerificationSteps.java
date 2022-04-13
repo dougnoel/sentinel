@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
 
@@ -138,7 +138,7 @@ public class TextVerificationSteps {
      * @param text String text to verify in the URL
      */
     private static void verifyURLTextContains(String text) {
-        String currentUrl = PageManager.getCurrentUrl();
+        String currentUrl = Driver.getCurrentUrl();
         var expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));
@@ -220,16 +220,15 @@ public class TextVerificationSteps {
     * Used to verify that on mouse over an element contains certain text. 
     * <b>Gherkin Examples:</b>
     * <ul>
-    * <li>I verify the mouse over has the value "Username"</li>
-    * <li>I verify the mouse over does not have the value "VA"</li>
-    * <li>I verify the mouse over have the value "name: user1"</li> 
+    * <li>I verify the mouse over tooltip has the value "Username"</li>
+    * <li>I verify the save tooltip has the value "Click to Save"</li>
+    * <li>I verify the compare button tooltip does not have the value "Please Wait..."</li> 
     * </ul> 
     * @param elementName String The name of the element to be evaluated as defined in the page object.
     * @param assertion String Evaluated as a boolean, where null = false and any text = true. 
     * @param textToMatch String The text to verify exists in the element.
     */
-    
-    @Then("^I verify the (.*?)( does not)? (?:has|have) the value \"([^\"]*)\"$")
+    @Then("^I verify the (.*?) tooltip( does not)? (?:has|have) the value \"([^\"]*)\"$")
 	public static void toolTipText(String elementName, String assertion, String textToMatch) {		
 		String value = getElement(elementName).getTooltipText();
 		boolean negate = !StringUtils.isEmpty(assertion);	

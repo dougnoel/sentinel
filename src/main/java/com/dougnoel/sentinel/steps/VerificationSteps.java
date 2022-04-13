@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
+
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
@@ -136,7 +137,7 @@ public class VerificationSteps {
      */
     @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
     public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String value) {
-        String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\" {} the value {}.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
                 elementName, assertion, attribute, value);
         if (assertion.contentEquals("has")) {
             assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
@@ -191,52 +192,6 @@ public class VerificationSteps {
     }
     
     /**
-     * Redirects to the given pageName
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I am redirected to the home page</li>
-     * <li>I am redirected to the login page</li>
-     * <li>I am shown the member portal pop-up overlay</li>
-     * </ul>
-     * @param pageName String the name of the place to redirect to
-     * @throws InterruptedException if the thread gets interrupted while sleeping
-     */
-    @Then("^I am (?:redirected to|shown) the (.*) (?:(?:P|p)age|(?:O|o)verlay)$")
-    public static void redirectedToPage(String pageName) throws InterruptedException {
-        pageName = pageName.replaceAll("\\s", "") + "Page";
-        PageManager.setPage(pageName);
-        PageManager.waitForPageLoad();
-    }
-    
-    /**
-     * Identifies the first iFrame in a document and switches to it.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I enter the iFrame
-     * </ul>
-     * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
-     */
-    @Then("^I enter the iFrame$")
-    public static void switchToIFrame() {
-        PageManager.switchToIFrame();
-    }
-    
-    /**
-     * Exits iFrame.
-     * <p>
-     * <b>Gherkin Example:</b>
-     * <ul>
-     * <li>I exit the iFrame</li>
-     * </ul>
-     */
-    @Then("^I exit the iFrame$")
-    public static void exitIFrame() {
-        PageManager.exitIFrame();
-    }
-    
-    /**
      * Verifies the existence of a Javascript alert.
      * <p>
      * <b>Gherkin Example:</b>
@@ -257,4 +212,25 @@ public class VerificationSteps {
         	assertTrue(expectedResult, actualResult);
         }
     }
+    
+    /**
+     * Verifies the existence of a Javascript alert.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify the JS alert contains the text Hello, World!</li>
+     * <li>I verify the JS alert does not contain the text Goodbye, World!</li>
+     * </ul>
+     * @param assertion String any string for a negative check, nothing (null) for a positive check
+     */
+    @Then("^I verify the JS alert (does not )?contains? the text (.*)?$")
+    public static void verifyJsAlertText(String assertion, String expectedText)
+    {
+    	boolean negate = !StringUtils.isEmpty(assertion);
+    	String expectedResult = SentinelStringUtils.format("Expected the JS alert to {}contain the text {}.", negate ? "not ": "", expectedText);
+    	var actualText = PageManager.getPage().getJsAlertText();
+    	boolean result = actualText.contains(expectedText);
+    	assertTrue(expectedResult, result != negate);
+    }
+
 }

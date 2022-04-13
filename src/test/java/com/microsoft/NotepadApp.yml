@@ -1,0 +1,12 @@
+executables:
+  default: C:/Windows/System32/notepad.exe
+elements:
+  text_editor_field:
+    elementType: Textbox
+    name: "Text Editor"
+    class: Edit
+  status_bar:
+    accessibilityid: 1025
+    class: msctls_statusbar32 
+  file_menu_dropdown:
+    name: File

@@ -16,8 +16,8 @@ import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.filemanagers.DownloadManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.system.DownloadManager;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -28,8 +28,6 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class WebDriverFactory {
 	private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
     private static WebDriver driver = null;
-    private static WebDriverFactory instance = null;
-    private static String parentHandle = null;
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
@@ -44,13 +42,7 @@ public class WebDriverFactory {
      *         WebDriver</a> object for the specified browser and operating system
      *         combination.
      */
-    public static WebDriver instantiateWebDriver() {
-        // Ensure we only have one instance of this class, so that we always return the
-        // same driver.
-        if (instance == null) {
-            instance = new WebDriverFactory();
-        }
-        
+    protected static WebDriver instantiateWebDriver() {
         //Saucelabs Driver setup
         var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
@@ -98,39 +90,26 @@ public class WebDriverFactory {
             throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
         }
     	
-    	parentHandle = driver.getWindowHandle();
-
         return driver;
     }
 
     /**
-     * Returns the WebDriver instance. This will silently instatntiate the WebDriver if that has not been done yet.
+     * Returns the WebDriver instance. This will silently instantiate the WebDriver if that has not been done yet.
      * 
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver() {
-        if (instance == null || driver == null) {
+        if (driver == null) {
         	instantiateWebDriver();
+        	log.info("Driver created: {}", driver);
         }
         return driver;
     }
     
     /**
-     * Closes the driver window if it is not the parent.
-     */
-    public static void close() {
-    	if (parentHandle.contentEquals(driver.getWindowHandle())) {
-        	getWebDriver().close();
-        	driver = null;    		
-    	}
-    	else
-    		getWebDriver().close();
-    }
-    
-    /**
      * Quits the driver and sets the driver instance back to null.
      */
-    public static void quit() {
+    protected static void quit() {
     	if (exists()) {
     		getWebDriver().quit();
     		driver = null;

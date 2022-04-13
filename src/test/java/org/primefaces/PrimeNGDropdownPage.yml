@@ -1,5 +1,5 @@
 urls:
-  default: "https://www.primefaces.org/primeng/showcase/#/dropdown"
+  default: "https://www.primefaces.org/primeng/dropdown"
 elements:
   city_dropdown:
     elementType: PrimeNGDropdown

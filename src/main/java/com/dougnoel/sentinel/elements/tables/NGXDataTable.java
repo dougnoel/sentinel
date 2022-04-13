@@ -27,6 +27,7 @@ public class NGXDataTable extends Table {
 		tableDataCellLocator = "//span";
 		tableRowLocator = ".//" + tableRowTag;
 		tableSiblingCellLocator = "//../../..//*";
+		tableHeaderSortElementLocator = ".//span[contains(concat(' ', @class, ' '), ' sort-btn ')]";
 	}
 	
 	/**

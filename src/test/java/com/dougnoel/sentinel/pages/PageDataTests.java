@@ -4,25 +4,19 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 public class PageDataTests {
 
 	private final static String ELEMENT_NAME = "male_radio_button";
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		WebDriverFactory.instantiateWebDriver();
-	}
-
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+		Driver.quitAllDrivers();
 	}
 	
 	@Test
@@ -65,6 +59,12 @@ public class PageDataTests {
 	public void validateTestdataMissingInYaml() {
 		PageManager.setPage("CorrectPageObject");
 		Configuration.getTestdataValue("report", "id");
+	}
+
+	@Test(expected = FileException.class)
+	public void cannotContainBothURLsAndEXEs() {
+		PageManager.setPage("WebAndExe");
+		getElement("generic");
 	}
 	
 }
