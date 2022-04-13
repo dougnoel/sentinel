@@ -1,5 +1,5 @@
 urls:
-   default: https://the-internet.herokuapp.com/
+  default: https://the-internet.herokuapp.com/
 elements:
   header:
     elementType: H1
@@ -12,7 +12,10 @@ elements:
     text: Checkboxes
   drag_and_drop_link:
     elementType: Link
-    text: "Drag and Drop"   
+    text: "Drag and Drop"
   hovers_link:
     elementType: Link
-    text: "Hovers" 
+    text: "Hovers"
+  content:
+    elementType: div
+    id: content
