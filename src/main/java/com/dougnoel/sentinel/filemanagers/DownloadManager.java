@@ -26,6 +26,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import de.redsix.pdfcompare.CompareResult;
@@ -97,7 +98,7 @@ public class DownloadManager {
         var valid = true;
         
         // default timeout in seconds
-        long timeOut = 20;
+        long timeOut = Time.out().toSeconds();
         var downloadFolderPath = Paths.get(downloadDir);
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);

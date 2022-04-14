@@ -68,7 +68,7 @@ public class BaseSteps {
      */
     
     @When("I drag (?:the |an? )?(.*?) (?:on|in)?to (?:the |an? )?(.*?)$")
-    public void dragAndDropToObject(String source, String target) throws IOException {
+    public static void dragAndDropToObject(String source, String target) throws IOException {
     	getElement(source).dragAndDrop(getElement(target));	
     }
 
@@ -86,7 +86,7 @@ public class BaseSteps {
      */
     
     @When("I hover (?:on|over) (?:the |an? )?(.*?)$")
-    public void hoverOverElement(String elementName) {
+    public static void hoverOverElement(String elementName) {
     	getElement(elementName).hover();
     }
     
