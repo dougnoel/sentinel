@@ -1,9 +1,13 @@
 package com.dougnoel.sentinel.webdrivers;
 
+import com.dougnoel.sentinel.pages.PageManager;
 import org.junit.After;
 import org.junit.Test;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import org.openqa.selenium.JavascriptExecutor;
+import static junit.framework.TestCase.assertSame;
+
 
 public class WebDriverFactoryTest {
 
@@ -27,8 +31,9 @@ public class WebDriverFactoryTest {
 		System.clearProperty(BROWSER);
 		Configuration.clear("chromeBrowserBinary");
 		System.clearProperty("chromeBrowserBinary");
+		Configuration.clear("chromeOptions");
 		
-		WebDriverFactory.quit();
+		Driver.quitAllDrivers();
 	}
 	
 	@Test(expected = org.openqa.selenium.remote.UnreachableBrowserException.class)
@@ -69,9 +74,22 @@ public class WebDriverFactoryTest {
 		WebDriverFactory.instantiateWebDriver();
 	}
 	
-	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void createCustomChromeDriverTest() {
-		System.setProperty("chromeBrowserBinary","fake/path");
+	@Test
+	public void createChromeOptionsChromeDriver() {
+		Configuration.update("chromeOptions", "start-maximized");
 		WebDriverFactory.instantiateWebDriver();
+		PageManager.setPage("MockTestPage");
+		var js = (JavascriptExecutor)Driver.getWebDriver();
+		assertSame("Expecting window to be maximized.", "true", js.executeScript("return document.fullscreenEnabled").toString());
+	}
+
+	@Test
+	public void createMultipleChromeOptionsChromeDriver() {
+		Configuration.update("chromeOptions", "--start-maximized --incognito");
+		WebDriverFactory.instantiateWebDriver();
+		PageManager.setPage("MockTestPage");
+		var js = (JavascriptExecutor)Driver.getWebDriver();
+		assertSame("Expecting window to be maximized.", "true", js.executeScript("return document.fullscreenEnabled").toString());
+		assertSame("Expecting window to be incognito.", "{}", js.executeScript("return window.webkitRequestFileSystem").toString());
 	}
 }
