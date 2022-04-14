@@ -36,36 +36,6 @@ public class WebDriverFactoryTest {
 		Driver.quitAllDrivers();
 	}
 	
-	@Test(expected = org.openqa.selenium.remote.UnreachableBrowserException.class)
-	public void createGridShouldFailTest() {
-		System.setProperty(BROWSERVERSION,"1234567");
-		System.setProperty(GRIDURL,"http://gridrul.com");
-		WebDriverFactory.instantiateWebDriver();
-	}
-
-// TODO: Selenium Grid not working. Need to setup a self-contained one for testing.
-//	@Test
-//	public void createGridShouldSucceedTest() {
-//		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-//		var driver = GridWebDriverFactory.createGridDriver(FIREFOX, gridUrl);
-//		try {
-//			assertNotNull(driver);
-//		}finally {
-//			driver.close();
-//		}
-//	}
-//	
-//	@Test
-//	public void nullBrowserVersionTest() {
-//		var gridUrl = "http://hub.technologynursery.org/wd/hub";
-//		var driver = GridWebDriverFactory.createGridDriver(CHROME, gridUrl);
-//		try {
-//			assertNotNull(driver);
-//		}finally {
-//			driver.close();
-//		}
-//	}
-	
 	@Test(expected = com.dougnoel.sentinel.exceptions.MalformedURLException.class)
 	public void malFormedUrlTest() {
 		System.setProperty(BROWSER, FIREFOX);
