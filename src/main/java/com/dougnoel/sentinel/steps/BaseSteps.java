@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -18,8 +18,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
 /**
- * Methods used to define basic operations. Other step files can extend or
- * include this one to leverage these actions.
+ * Methods used to define basic operations.
  * 
  * Functionality in this class includes clicking given elements, entering text, selecting items, verifying elements exist, 
  * contains given text, or are active, enabled, or hidden, verifying table columns or table rows have given text, 
@@ -51,6 +50,25 @@ public class BaseSteps {
     @When("^I click (?:the|a|an|on) (.*?)$")
     public static void click(String elementName) {
         getElement(elementName).click();
+    }
+
+    /**
+     * Hovers the element that matches the given elementName as defined on the current Page object. The page object and driver object are defined by the
+     * WebDriverFactory and PageFactory objects. The derived Page Object (extends
+     * Page) should define a method named [element name]_[element type] returning a Element object (e.g. login_button).
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I hover a login button</li>
+     * <li>I hover the Login button</li>
+     * <li>I hover an Operation Button</li>
+     * </ul>
+     * 
+     * @param elementName String the name of the element to hover
+     */
+    @When("^I hover (?:the|a|an|on) (.*?)$")
+    public static void hover(String elementName) {
+        getElement(elementName).hover();
     }
     
     /**
@@ -123,19 +141,22 @@ public class BaseSteps {
     }
 
     /**
-     * Loads a page based on the environment you are currently testing. The url is set in the page object yaml file.
-     * Refer to the documentation in the sentinel.example project for more information. You cannot load a URL
-     * directly, because once there you would not be able to do anything.
+     * Loads a page or starts an executable based on the environment you are currently testing. 
+     * The url/executable is set in the page object yaml file.
+     * Refer to the documentation in the sentinel.example project for more information. 
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I navigate to the Login Page</li>
-     * <li>I am on the Main Page</li>
-     * <li>I remain on the PopUp Page</li>
+     * <li>I start the Notepad Application</li>
+     * <li>I open the Calculator Executable</li>
+     * <li>I am on the Login Page</li>
      * </ul>
+     * <p>
+     * SEE ALSO: VerificationSteps.redirectedToPage() for how to switch page objects without starting a new driver.
      * @param pageName String Page Object Name
      */
-    @Given("^I (?:navigate to|am on|remain on) the (.*?)$")
+    @Given("^I (?:navigate to|start|open|am on) the (.*?)$")
     public static void navigateToPage(String pageName) {
     	navigateToPageWithArguments("", pageName);
     }
@@ -156,11 +177,7 @@ public class BaseSteps {
      */
     @Given("^I pass the arguments? \"([^\"]*)\" to the (.*?)$")
     public static void navigateToPageWithArguments(String arguments, String pageName) {
-    	PageManager.setPage(pageName);
-    	String baseUrl = Configuration.url();
-    	baseUrl += arguments;
-    	log.debug("Loading the the {} page using the url: {}", pageName, baseUrl);
-        PageManager.openPage(baseUrl);
+    	PageManager.open(pageName, arguments);
     }
     
     /**
@@ -172,22 +189,19 @@ public class BaseSteps {
      * <li>I press the browser refresh button</li>
      * <li>I press the browser back button</li>
      * </ul>
-     * @see com.dougnoel.sentinel.pages.PageManager#navigateBack()
-     * @see com.dougnoel.sentinel.pages.PageManager#navigateForward()
-     * @see com.dougnoel.sentinel.pages.PageManager#refresh()
      * @param option String the browser action
      */
     @When("^I press the browser (back|forward|refresh) button$")
     public static void pressBrowserButton(String option) {
         switch (option) {
         case "back":
-            PageManager.navigateBack();
+            Driver.navigateBack();
             break;
         case "forward":
-            PageManager.navigateForward();
+        	Driver.navigateForward();
             break;
         default:
-            PageManager.refresh();
+        	Driver.refresh();
             break;
         }
     }    
@@ -205,9 +219,9 @@ public class BaseSteps {
     @When("^I (accept|close) the JS alert$")
     public static void acceptOrCloseJsAlert(String action) {
         if(action.contentEquals("accept"))
-            WebDriverFactory.getWebDriver().switchTo().alert().accept();
+            Driver.getWebDriver().switchTo().alert().accept();
         else
-        	WebDriverFactory.getWebDriver().switchTo().alert().dismiss();
+        	Driver.getWebDriver().switchTo().alert().dismiss();
     }  
     
 }

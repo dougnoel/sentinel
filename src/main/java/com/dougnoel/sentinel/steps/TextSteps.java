@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
-import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTextbox;
+import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
@@ -69,7 +69,7 @@ public class TextSteps {
      */
     @When("^I enter (.*) in the (.*)$")
     public static void enterText(String text, String elementName) {
-        getElementAsTextbox(elementName).type(text);
+        getElement(elementName).sendKeys(text);
         Configuration.update(elementName, text);
     }
     
@@ -111,6 +111,32 @@ public class TextSteps {
     	var driver = WebDriverFactory.getWebDriver();
         WebElement element = driver.findElement(By.tagName("Body"));
         element.sendKeys(Keys.valueOf(keyName));
+    }
+    
+    /**
+     * Clears the text in a text box that matches the given elementName as defined on the 
+     * current Page object, and clears any value stored in the
+     * Configuration Manager using the element name as the key. The given elementName is
+     * made lower case and whitespaces are replaced with underscores, then it is
+     * sent a sendKeys event to an element defined on a page object with that name.
+     * The page object and driver object are defined by the WebDriverFactory and
+     * PageFactory objects. The derived Page Object (extends Page) should define a
+     * method named [element name]_[element type] returning a Element object
+     * (e.g. password_field).
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I clear the username textbox</li>
+     * <li>I clear the Password field</li>
+     * <li>I clear the email field</li>
+     * </ul>
+     * 
+     * @param elementName String the name of the element to clear
+     */
+    @When("^I clear the (.*)$")
+    public static void clearText(String elementName) {
+        getElement(elementName).clear();
+        Configuration.clear(elementName);
     }
     
 }

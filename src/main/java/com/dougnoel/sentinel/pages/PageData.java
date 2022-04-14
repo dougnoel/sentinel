@@ -20,9 +20,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * based on the given environment and the account map within that environment.
  */
 public class PageData {
-	// page urls to load in the web driver TODO: Annotate corretly.
 	public Map<String,String> urls;
-	// user account data TODO: Annotate corretly.
+	public Map<String,String> executables;
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
 	public Map<String,Map<String,Map<String,String>>> testdata;
@@ -56,6 +55,10 @@ public class PageData {
 			pageData = mapper.readValue(fileName, PageData.class);
 		} catch (Exception e) {
 			throw new FileException(e, fileName);
+		}
+		
+		if (pageData.urls != null && pageData.executables != null) {
+			throw new FileException("A page object cannot contain both urls and executables.", fileName);
 		}
 			
 		return pageData;
@@ -100,6 +103,7 @@ public class PageData {
     
     /**
      * Returns an element if it exists in a page object.
+     * 
      * @param elementName the name of the element in the page object under the 'elements' section
      * @return Map&lt;String, String&gt; the locators for an element
      */
@@ -117,6 +121,7 @@ public class PageData {
     
     /**
      * Returns any page parts to search for elements
+     * 
      * @return String[] list of page parts
      */
     public String[] getPageParts() {
@@ -126,11 +131,66 @@ public class PageData {
     	return new String[0];
     }
     
+    /**
+     * Returns whether or not a URL exists for the given environment
+     * in the page object.
+     * 
+     * @param env String the environment to check
+     * @return boolean true if found, otherwise false
+     */
     public boolean containsUrl(String env) {
     	return urls.containsKey(env);
     }
     
+    /**
+     * Returns a URL based on the environment passed.
+     * 
+     * @param env String the environment to check
+     * @return String the URL
+     */
     public String getUrl(String env) {
     	return urls.get(env);
     }
+    
+    /**
+     * Returns whether or not the page object contains a urls section.
+     * 
+     * @return true if there is a urls section in the page object, false otherwise
+     */
+    public boolean hasUrls() {
+    	return urls != null;
+    }
+    
+    /**
+     * Returns whether or not an executable path exists for the given environment
+     * in the page object.
+     * 
+     * @param env String the environment to check
+     * @return boolean true if found, otherwise false
+     */
+    public boolean containsExecutable(String env) {
+    	if (executables == null)
+    		return false;
+    	return executables.containsKey(env);
+    }
+    
+    /**
+     * Returns an executable path based on the environment passed.
+     * 
+     * @param env String the environment to check
+     * @return String the path to the executable
+     */
+    public String getExecutable(String env) {
+    	return executables.get(env);
+    }
+
+    /**
+     * Returns whether or not the page object contains an executables section.
+     * 
+     * @return true if there is an executables section in the page object, false otherwise
+     */
+    public boolean hasExecutables() {
+    	return executables != null;
+    }
+    
 }

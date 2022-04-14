@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
+
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
@@ -136,7 +137,7 @@ public class VerificationSteps {
      */
     @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?) (has|does not have) (?:the|a|an) value (.*?)$")
     public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String value) {
-        String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\" {} the value {}.",
+        String expectedResult = SentinelStringUtils.format("Expected the element {} {} the attribute \"{}\" with the value {}.",
                 elementName, assertion, attribute, value);
         if (assertion.contentEquals("has")) {
             assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
@@ -191,52 +192,6 @@ public class VerificationSteps {
     }
     
     /**
-     * Redirects to the given pageName
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I am redirected to the home page</li>
-     * <li>I am redirected to the login page</li>
-     * <li>I am shown the member portal pop-up overlay</li>
-     * </ul>
-     * @param pageName String the name of the place to redirect to
-     * @throws InterruptedException if the thread gets interrupted while sleeping
-     */
-    @Then("^I am (?:redirected to|shown) the (.*) (?:(?:P|p)age|(?:O|o)verlay)$")
-    public static void redirectedToPage(String pageName) throws InterruptedException {
-        pageName = pageName.replaceAll("\\s", "") + "Page";
-        PageManager.setPage(pageName);
-        PageManager.waitForPageLoad();
-    }
-    
-    /**
-     * Identifies the first iFrame in a document and switches to it.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I enter the iFrame
-     * </ul>
-     * @see com.dougnoel.sentinel.pages.PageManager#switchToIFrame()
-     */
-    @Then("^I enter the iFrame$")
-    public static void switchToIFrame() {
-        PageManager.switchToIFrame();
-    }
-    
-    /**
-     * Exits iFrame.
-     * <p>
-     * <b>Gherkin Example:</b>
-     * <ul>
-     * <li>I exit the iFrame</li>
-     * </ul>
-     */
-    @Then("^I exit the iFrame$")
-    public static void exitIFrame() {
-        PageManager.exitIFrame();
-    }
-    
-    /**
      * Verifies the existence of a Javascript alert.
      * <p>
      * <b>Gherkin Example:</b>
@@ -277,4 +232,5 @@ public class VerificationSteps {
     	boolean result = actualText.contains(expectedText);
     	assertTrue(expectedResult, result != negate);
     }
+
 }

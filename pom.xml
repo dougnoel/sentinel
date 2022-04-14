@@ -67,7 +67,7 @@
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <!-- <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version> see https://stackoverflow.com/questions/56212981/eclipse-showing-maven-configuration-problem-unknown -->
 
-    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
     <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
     <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
 
@@ -79,6 +79,7 @@
 
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
+    <appium.version>7.3.0</appium.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <extentreports.version>4.1.5</extentreports.version>
     <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
@@ -100,6 +101,8 @@
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
+    
+    <screen-recorder.version>0.7.7.0</screen-recorder.version>
     
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
@@ -394,6 +397,12 @@
         <version>${httpclient.version}</version>
       </dependency>
 
+	  <dependency>
+		<groupId>io.appium</groupId>
+		<artifactId>java-client</artifactId>
+		<version>${appium.version}</version>
+	  </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -533,6 +542,13 @@
         <version>${swagger-parser.version}</version>
       </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder -->
+		<dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		    <version>${screen-recorder.version}</version>
+		</dependency>
+
 	    <dependency>
 		  <groupId>io.github.bonigarcia</groupId>
 		    <artifactId>webdrivermanager</artifactId>
@@ -584,6 +600,11 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>io.appium</groupId>
+      <artifactId>java-client</artifactId>
     </dependency>
 
     <dependency>
@@ -713,11 +734,15 @@
       <artifactId>sauce_junit</artifactId>
     </dependency>
     
-    <!-- Typically WebDriverManager is in a test scope, but it needs to be bundled with the jar -->
     <dependency>
-	    <groupId>io.github.bonigarcia</groupId>
-	    <artifactId>webdrivermanager</artifactId>
-	  </dependency>
+	  <groupId>io.github.bonigarcia</groupId>
+	  <artifactId>webdrivermanager</artifactId>
+	</dependency>
+	
+	    <dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		</dependency>
 
 	  <dependency>
 	    <groupId>com.github.romankh3</groupId>

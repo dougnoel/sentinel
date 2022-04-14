@@ -11,11 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.filemanagers.FileManager;
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.system.FileManager;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -32,6 +33,7 @@ public class Configuration {
 
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
 	
+	private static final String ENV_REPLACE_STRING = "{env}";
 	private static String env = null;
 	
 	private static Properties appProps = new Properties();
@@ -116,6 +118,30 @@ public class Configuration {
 	}
 	
 	/**
+	 * Returns the configuration for a given property as a String value. It has the following precedence
+	 * for searching for a value:
+	 * <ol>
+	 * <li>A value stored at runtime.</li>
+	 * <li>A value set on the command line.</li>
+	 * <li>A value set in the configuration file.</li>
+	 * </ol>
+	 * The first time it is run, the value found will be stored for future calls. If no value is found,
+	 * the passed default value is returned.
+	 * 
+	 * @param property String the requested configuration property
+	 * @param defaultValue String the default to return if no value is found
+	 * @return String the value of the requested configuration property (null if nothing is found)
+	 */
+	public static String toString(String property, String defaultValue) {
+		String propertyValue = toString(property);
+		if (propertyValue == null) {
+			appProps.setProperty(property, defaultValue);
+			return defaultValue;
+		}
+		return propertyValue; 
+	}
+	
+	/**
 	 * Updates a configuration value once runtime has started. This should never be used in a Cucumber runner
 	 * as it will mask any values in the configuration file and on the command line.
 	 * 
@@ -149,6 +175,29 @@ public class Configuration {
 		} catch (Exception e) {
 			log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
 			return 0.0;
+		}
+	}
+
+	/**
+	 * Returns the given configuration value stored in the passed property as a boolean, or false if nothing is
+	 * found.
+	 * 
+	 * @param property String the requested configuration property key
+	 * @return boolean the requested value as a boolean or false if nothing valid is found
+	 */
+	public static boolean toBoolean(String property) {
+		String prop = toString(property);
+		if(prop != null) {
+			switch(prop.toLowerCase()) {
+				case "true":
+				case "":
+					return true;
+				default:
+					return false;
+			}
+		}
+		else {
+			return false;
 		}
 	}
 
@@ -227,7 +276,7 @@ public class Configuration {
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
 	 */
-	private static File findPageObjectFilePath(String pageName)  {
+	public static File findPageObjectFilePath(String pageName)  {
 		return FileManager.findFilePath(pageName + ".yml");
 	}
 
@@ -243,8 +292,8 @@ public class Configuration {
 		try {
 			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
 		} catch (Exception e) {
-			if (e.getCause() != null && e.getCause().getClass().getSimpleName().equalsIgnoreCase("AccessDeniedException"))
-				pageName = e.getMessage();
+			if (e instanceof FileException)
+				throw (FileException)e;
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
 			throw new FileException(errorMessage, e, new File(pageName + ".yml"));
 		}
@@ -256,7 +305,26 @@ public class Configuration {
 		
 		return pageData;
 	}
+	
+	/**
+	 * Returns the type of page object. Most will be WEBPAGE, but if an "executables:"
+	 * section is defined instead of a "urls:" section, this will return EXECUTABLE as the type.
+	 * If we do not know what the current type is, we infer it by using the current type set in
+	 * the PageManager.
+	 * 
+	 * @param pageName String the name of the page for which the data is retrieved
+	 * @return PageObjectType the type of page object either WEBPAGE or EXECUTABLE
+	 */
+	public static PageObjectType getPageObjectType(String pageName) {
+		var pageData = loadPageData(pageName);
+		if (pageData.hasUrls())
+			return PageObjectType.WEBPAGE;
+		if (pageData.hasExecutables())
+			return PageObjectType.EXECUTABLE;
 
+		return PageManager.getCurrentPageObjectType();
+	}
+	
 	/**
 	 * Returns the URL for the currently active page based on the environment value set. 
 	 * 
@@ -264,7 +332,7 @@ public class Configuration {
 	 * @see com.dougnoel.sentinel.pages.Page#getName()
 	 * @return String the desired URL
 	 */
-	public static String url()  {
+	public static String url() {
 		return url(PageManager.getPage().getName());
 	}
 	
@@ -272,7 +340,7 @@ public class Configuration {
 	 * Returns a URL for the given page name based on the environment value set.
 	 
 	 * @param pageName String the name of the page from which the url is retrieved
-	 * @return String baseUrl the url for the given page and current environment
+	 * @return String the url for the given page and current environment
 	 */
 	protected static String url(String pageName) {
 		String baseURL = null;
@@ -283,16 +351,49 @@ public class Configuration {
 			baseURL = pageData.getUrl(env);
 		} else if (pageData.containsUrl(DEFAULT)){
 			baseURL = pageData.getUrl(DEFAULT);
-			baseURL = StringUtils.replace(baseURL, "{env}", env);
+			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
 		} else if (pageData.containsUrl("base")){
 			baseURL = pageData.getUrl("base");
-			baseURL = StringUtils.replace(baseURL, "{env}", env);
+			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
 		}
 		if (StringUtils.isEmpty(baseURL)) {
 			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, pageName);
 			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
 		return baseURL;
+	}
+	
+	/**
+	 * Returns the Executable for the currently active page based on the environment value set. 
+	 * 
+	 * @return String the desired application executable path
+	 */
+	public static String executable() {
+		return executable(PageManager.getPage().getName());
+	}
+	
+	/**
+	 * Returns an Executable path for the given page name based on the environment value set.
+	 
+	 * @param pageName String the name of the page from which the executable is retrieved
+	 * @return String the executable path for the given page and current environment
+	 */
+	protected static String executable(String pageName) {
+		String executablePath = null;
+		var pageData = loadPageData(pageName);
+		String env = Configuration.environment();
+
+		if (pageData.containsExecutable(env)) {
+			executablePath = pageData.getExecutable(env);
+		} else if (pageData.containsExecutable(DEFAULT)){
+			executablePath = pageData.getExecutable(DEFAULT);
+			executablePath = StringUtils.replace(executablePath, ENV_REPLACE_STRING, env);
+		}
+		if (StringUtils.isEmpty(executablePath)) {
+			var errorMessage = SentinelStringUtils.format("An executable was not found for the {} environment in your {}.yml file. Please add an executable to the yml file. See the project README for details.", env, pageName);
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
+		}
+		return executablePath;
 	}
 	
 	/**

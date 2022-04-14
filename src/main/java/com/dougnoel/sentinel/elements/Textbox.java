@@ -3,13 +3,13 @@ package com.dougnoel.sentinel.elements;
 import java.util.Map;
 
 /**
- * Textbox implementation of a Element.
+ * Textbox implementation of a Element. Needed because the text in a text box
+ * is stored in a different place than all other elements.
  */
 public class Textbox extends Element {
 
 	/**
-	 * Implementation of a Element to initialize how an element is going to be found when it is worked on by the 
-	 * WebDriver class. Takes a reference to the WebDriver class that will be exercising its functionality.
+	 * Default Textbox constructor. An override of the Element constructor.
 	 * 
 	 * @param elementName String the name of the element
 	 * @param selectors Map&lt;String,String&gt; the list of selectors to use to find the element
@@ -17,21 +17,11 @@ public class Textbox extends Element {
 	public Textbox(String elementName, Map<String,String> selectors) {
 		super(elementName, selectors);
 	}
-	
-	/**
-	 * Type text into a Textbox Element. Created as an alias for sendKeys.
-	 * <p>
-	 * <b>Alias For:</b> sendKeys(text)
-	 * @param text String (text to type)
-	 * @return Element (for chaining)
-	 */
-	public Element type(String text) {
-        return this.sendKeys(text);
-	}
 
 	/**
 	 * Gets the value entered into the textbox and returns it as a String.
-	 * @return String The value entered into the textbox.
+	 * 
+	 * @return String the value entered into the textbox.
 	 */
 	@Override
 	public String getText() {
