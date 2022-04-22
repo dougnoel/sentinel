@@ -114,18 +114,9 @@ public class BaseSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I click at the point 0,0 on a login button</li>
-     * <ul>
-     * <li>This is the center.</li>
-     * </ul>
-     * <li>I click at the point 0,21 on the name textbox</li>
-     * <ul>
-     * <li>This is the middle of an element with a width of 10, but one pixel above the top of an element with a height of 40.</li>
-     * </ul>
-     * <li>I click at the point 25, -5 on an Opacity slider</li>
-     * <ul>
-     * <li>This is the right side of an element with a width of 50, and the bottom of an element of a height of 10.</li>
-     * </ul>
+     * <li>I click at the point 0,0 on a login button (This is the center.)</li>
+     * <li>I click at the point 0,21 on the name textbox (This is the middle of an element with a width of 10, but one pixel above the top of an element with a height of 40.)</li>
+     * <li>I click at the point 25, -5 on an Opacity slider (This is the right side of an element with a width of 50, and the bottom of an element of a height of 10.)</li>
      * </ul>
      * @param xValue String the X value of the point in pixels
      * @param yValue String the Y value of the point in pixels
