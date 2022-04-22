@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.elements;
 
+import com.dougnoel.sentinel.configurations.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,6 +75,26 @@ public class ElementFunctions {
 			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Table.class.getSimpleName()));
 		}
     }
+
+	/**
+	 * Returns an element from the active page in any type you cast it as.
+	 * @param elementName String the name of the element to return
+	 * @param <T> Class the type of element to return
+	 * @return Class an instance of the class you typed the element as
+	 */
+	public static <T> T getElementAsCustom(String elementName) {
+		try {
+			return (T) getElement(elementName);
+		} catch (ClassCastException e) {
+			String className;
+			try {
+				className = Configuration.getElement(elementName.replaceAll("\\s+", "_"), PageManager.getPage().getName()).get("elementType");
+			} catch (Exception ex) {
+				className = "custom element";
+			}
+			throw new ClassCastException(buildClassCastExceptionMessage(elementName, className));
+		}
+	}
     
     /**
      * Returns an error message that is a clearer casting error and logs it.

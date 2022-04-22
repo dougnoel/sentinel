@@ -76,7 +76,6 @@ public class ElementFunctionsTests {
 	}
 	
 	@Test
-
 	public void createNGXDataTable() {
 		Element element = ElementFunctions.getElement("ngx_data_table");
 		assertTrue("Expecting NGXDataTable class.", element instanceof NGXDataTable);
@@ -89,7 +88,19 @@ public class ElementFunctionsTests {
 		assertTrue("Expecting Table class.", element instanceof Table);
 		assertEquals("Expecting Table Name.", "table", element.getName());
 	}
-	
+
+	@Test
+	public void createCustom() {
+		Element element = ElementFunctions.getElementAsCustom("custom");
+		assertTrue("Expecting Element class.", element instanceof Element);
+		assertEquals("Expecting Custom Name.", "custom", element.getName());
+	}
+
+	@Test(expected = ClassCastException.class)
+	public void failToCreateCustom() {
+		Table element = ElementFunctions.getElementAsCustom("generic");
+	}
+
 	@Test(expected = ClassCastException.class)
 	public void failToCreateTable() {
 		ElementFunctions.getElementAsTable("generic");

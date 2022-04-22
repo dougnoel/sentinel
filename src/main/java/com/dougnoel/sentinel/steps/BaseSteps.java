@@ -16,6 +16,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.Point;
 
 /**
  * Methods used to define basic operations.
@@ -90,7 +91,6 @@ public class BaseSteps {
     	getElement(source).dragAndDrop(getElement(target));	
     }
 
-    
     /**
      * Moves the mouse to the middle of the given element
      * <p>
@@ -102,10 +102,38 @@ public class BaseSteps {
      * </ul>
      * @param elementName String the name of the element to hover on
      */
-    
     @When("I hover (?:on|over) (?:the |an? )?(.*?)$")
     public void hoverOverElement(String elementName) {
     	getElement(elementName).hover();
+    }
+
+    /**
+     * Clicks a point relative in pixels to the center of the elementName as defined on the current Page object.
+     * Positive values for X go right, Positive values for Y go up.
+     * To click the top right corner of an element of a width of 20 and a height of 10, you would need to pass Point(10, 5)
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I click at the point 0,0 on a login button</li>
+     * <ul>
+     * <li>This is the center.</li>
+     * </ul>
+     * <li>I click at the point 0,21 on the name textbox</li>
+     * <ul>
+     * <li>This is the middle of an element with a width of 10, but one pixel above the top of an element with a height of 40.</li>
+     * </ul>
+     * <li>I click at the point 25, -5 on an Opacity slider</li>
+     * <ul>
+     * <li>This is the right side of an element with a width of 50, and the bottom of an element of a height of 10.</li>
+     * </ul>
+     * </ul>
+     * @param xValue String the X value of the point in pixels
+     * @param yValue String the Y value of the point in pixels
+     * @param elementName String the name of the element to click
+     */
+    @When("I mouse to the point (.*?), (.*?) and click on (?:the|a|an) (.*?)$")
+    public static void clickPoint(String xValue, String yValue, String elementName) {
+        getElement(elementName).clickPositionOnElement(new Point(Integer.parseInt(xValue), Integer.parseInt(yValue)));
     }
     
     /**

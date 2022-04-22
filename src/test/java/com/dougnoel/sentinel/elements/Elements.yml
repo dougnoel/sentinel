@@ -33,6 +33,9 @@ elements:
   table:
     elementType: Table
     name: "register"
+  custom:
+    elementType: Element
+    name: "custom"
   bad_selector:
     bad: "blah"
   bad_element:
