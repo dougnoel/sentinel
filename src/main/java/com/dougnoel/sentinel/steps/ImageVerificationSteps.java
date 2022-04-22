@@ -1,8 +1,8 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import com.dougnoel.sentinel.elements.WindowsElement;
+import com.dougnoel.sentinel.enums.PageObjectType;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -19,7 +22,6 @@ import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.system.FileManager;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import com.github.romankh3.image.comparison.ImageComparison;
 import com.github.romankh3.image.comparison.model.ImageComparisonResult;
 import com.github.romankh3.image.comparison.model.ImageComparisonState;
@@ -54,19 +56,21 @@ public class ImageVerificationSteps {
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			assertFalse(expectedResult, comparisonResult.getImageComparisonState().equals(ImageComparisonState.MATCH));
+			assertNotEquals(comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
 		}
 		else {
-			assertTrue(expectedResult, comparisonResult.getImageComparisonState().equals(ImageComparisonState.MATCH));
+			assertEquals(comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
 		}
 	}
 	
 	/**
-	 * Takes an updated screenshot of the current element, or page, for comparison to the earlier expected image.
-	 * Will enlarge both images to be the same size using the retrieved background color for
-	 * the new empty space if their sizes are not equal.
-	 * Then runs, and returns, an ImageComparisonResult of the two images.
-	 * 
+	 * Takes an updated screenshot of the current element, or page, for comparison to an earlier expected image.
+	 * <br><br>
+	 * <i>
+	 *     If screenshots are different sizes, both will be enlarged to the largest dimensions found. Expanded space
+	 * will be set to parent background color for web, upper-left-most color for windows applications.
+	 * </i>
+	 *
 	 * @param elementName String the name of the element to capture and compare 
 	 * or any casing of "page" alone to compare the entire page.
 	 * @throws IOException if file creation does not work
@@ -74,28 +78,42 @@ public class ImageVerificationSteps {
 	 * @return ImageComparisonResult the image comparison result.
 	 */
     private static ImageComparisonResult compareImages(String elementName) throws IOException {
-    	String imageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
-    	String resultImageFileName = scenario.getName()+ "_" + elementName + "_" + PageManager.getPage().getName() + ".png";
+		String outputFolder = "ImageComparison/" + scenario.getName();
+    	String actualFileName = PageManager.getPage().getName() + "_" + elementName + "_ACTUAL" + ".png";
+		String expectedFileName = PageManager.getPage().getName() + "_" + elementName + "_EXPECTED" + ".png";
+    	String resultImageFileName = PageManager.getPage().getName() + "_" + elementName + "_RESULT" + ".png";
     	File screenshotFile;
     	Color backgroundColor;
     	
     	//Determine if we're taking a screenshot of the page or element.
-    	if(!elementName.toLowerCase().contentEquals("page")) {
+    	if(!elementName.toLowerCase().contentEquals("page") && !elementName.toLowerCase().contentEquals("window")) {
     		screenshotFile = getElement(elementName).getScreenshot();
-    		backgroundColor = getElement(elementName).getBackgroundColor();
+			if(PageManager.getCurrentPageObjectType() != PageObjectType.EXECUTABLE){
+				backgroundColor = getElement(elementName).getBackgroundColor();
+			}
+			else{
+				backgroundColor = ((WindowsElement) getElement(elementName)).getColor().getColor();
+			}
     	}
     	else {
-    		TakesScreenshot pageScreenshotTool =((TakesScreenshot) WebDriverFactory.getWebDriver());
+    		TakesScreenshot pageScreenshotTool =((TakesScreenshot) Driver.getWebDriver());
     		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
-    		Element body = new Element("body", Map.of("xpath", "//body"));
-    		backgroundColor = body.getBackgroundColor();
+
+			if(PageManager.getCurrentPageObjectType() != PageObjectType.EXECUTABLE) {
+				Element body = new Element("body", Map.of("xpath", "//body"));
+				backgroundColor = body.getBackgroundColor();
+			}
+			else{
+				WindowsElement appWindow = new WindowsElement("window", Map.of("xpath", "/*"));
+				backgroundColor = appWindow.getColor().getColor();
+			}
     	}
     	
-    	FileManager.saveImage("actual", imageFileName, screenshotFile);
+    	FileManager.saveImage(outputFolder, actualFileName, screenshotFile);
 
     	//load images to be compared:
-        BufferedImage expectedImage = FileManager.readImage("expected", imageFileName);
-        BufferedImage actualImage = FileManager.readImage("actual", imageFileName);
+        BufferedImage expectedImage = FileManager.readImage(outputFolder, expectedFileName);
+        BufferedImage actualImage = FileManager.readImage(outputFolder, actualFileName);
         
         //If the image sizes are different then enlarge them to the largest size width and height of both
 		int expectedHeight = expectedImage.getHeight();
@@ -108,19 +126,8 @@ public class ImageVerificationSteps {
 			int newWidth;
 		
 			//Calculate the largest width and height to set both images to
-			if(expectedWidth > actualWidth) {
-				newWidth = expectedWidth;
-			}
-			else {
-				newWidth = actualWidth;
-			}
-			
-			if(expectedHeight > actualHeight) {
-				newHeight = expectedHeight;
-			}
-			else {
-				newHeight = actualHeight;
-			}
+			newWidth = Math.max(expectedWidth, actualWidth);
+			newHeight = Math.max(expectedHeight, actualHeight);
 			
 			BufferedImage newExpected = new BufferedImage(newWidth, newHeight, expectedImage.getType());
 			BufferedImage newActual = new BufferedImage(newWidth, newHeight, expectedImage.getType());
@@ -145,7 +152,7 @@ public class ImageVerificationSteps {
 		//Compare the two images, writing the result to disk
 		ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
 		ImageComparisonResult comparisonResult = comparison.compareImages();
-		FileManager.saveImage("result", resultImageFileName, comparisonResult.getResult());
+		FileManager.saveImage(outputFolder, resultImageFileName, comparisonResult.getResult());
         
         return comparisonResult;
     }
