@@ -17,7 +17,7 @@ Feature: 239 Implement WinAppDriver to automate windows
 
   @239B @ColorChecking
   Scenario: 239B Check Colors in Notepad
-	Given I am on the Notepad App
+	Given I switch to the Notepad App
 	  When I click the Text Editor field
   	Then I verify the Text Editor field with the attribute color has the value #FFFFFF
 	  When I hover the file menu dropdown
@@ -49,7 +49,7 @@ Feature: 239 Implement WinAppDriver to automate windows
 
   @239E
   Scenario: 239E Verify notepad window has changed after entering text using image comparison
-	Given I am on the Notepad App
+	Given I switch to the Notepad App
 	  And I click the Text Editor field
 	  And I clear the Text Editor field
 	  And I verify the Text Editor field is empty
@@ -59,7 +59,7 @@ Feature: 239 Implement WinAppDriver to automate windows
 
   @239F
   Scenario: 239F Verify notepad window has not changed when no operations have occurred using image comparison
-	Given I am on the Notepad App
+	Given I switch to the Notepad App
 	  And I click the Text Editor field
 	  And I clear the Text Editor field
 	  And I verify the Text Editor field is empty
@@ -68,7 +68,7 @@ Feature: 239 Implement WinAppDriver to automate windows
 
   @239G
   Scenario: 239G Verify notepad text editor field element has changed after entering text using image comparison
-	Given I am on the Notepad App
+	Given I switch to the Notepad App
 	  And I click the Text Editor field
 	  And I take a screenshot of the Text Editor field
 	When I enter test in the Text Editor field
@@ -76,6 +76,6 @@ Feature: 239 Implement WinAppDriver to automate windows
 
   @239H
   Scenario: 239H Verify notepad text editor field element has not changed when no operations have occurred using image comparison
-	Given I am on the Notepad App
+    Given I switch to the Notepad App
 	  And I take a screenshot of the Text Editor Field
 	Then I verify the Text editor Field matches the original image
