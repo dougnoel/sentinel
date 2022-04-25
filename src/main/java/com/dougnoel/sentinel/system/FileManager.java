@@ -184,17 +184,11 @@ public class FileManager {
 	private static void verifyFileCreation(File fileToCheck) throws IOException {
 		var errorMessage = SentinelStringUtils.format("Failed to create the {} image file", fileToCheck.getAbsolutePath());
 
-		try{
-			long searchTime = Time.out().getSeconds() * 1000;
-			long startTime = System.currentTimeMillis(); // fetch starting time
-			while ((System.currentTimeMillis() - startTime) < searchTime) {
-				if (Files.exists(fileToCheck.toPath()))
-					return;
-				else
-					Thread.sleep(Time.loopInterval().toMillis());
-			}
-		}catch(InterruptedException e){
-			throw new IOException(errorMessage);
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			if (Files.exists(fileToCheck.toPath()))
+				return;
 		}
 
 		throw new IOException(errorMessage);
