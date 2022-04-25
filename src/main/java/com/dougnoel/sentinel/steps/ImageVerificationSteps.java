@@ -92,7 +92,7 @@ public class ImageVerificationSteps {
 				backgroundColor = getElement(elementName).getBackgroundColor();
 			}
 			else{
-				backgroundColor = ((WindowsElement) getElement(elementName)).getColor().getColor();
+				backgroundColor = ((WindowsElement) getElement(elementName)).getColorAtOffset().getColor();
 			}
     	}
     	else {
@@ -105,7 +105,7 @@ public class ImageVerificationSteps {
 			}
 			else{
 				WindowsElement appWindow = new WindowsElement("window", Map.of("xpath", "/*"));
-				backgroundColor = appWindow.getColor().getColor();
+				backgroundColor = appWindow.getColorAtOffset().getColor();
 			}
     	}
     	

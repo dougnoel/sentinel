@@ -182,7 +182,7 @@ public class WindowsElement extends Element {
 	 * @param yOffset int the pixels below the top edge of the element
 	 * @return Color the color at the specified pixel offset in the element.
 	 */
-	public Color getColor(int xOffset, int yOffset) {
+	public Color getColorAtOffset(int xOffset, int yOffset) {
 		// Windows (the operating system) contains a scaling setting which affects the "screen resolution" that Robot reads. 
 		// Because Robot respects that setting but the above "BoundingRectangle" coordinates do not, the user must have 100% in that setting so the resolutions are over the same domain.
 		BufferedImage screenshot = screenshotElement();
@@ -207,8 +207,8 @@ public class WindowsElement extends Element {
 	 * WARNING!!! Windows (OS) setting "Make everything bigger" (app and text scaling) must be set to 100% for proper use of this method.
 	 * @return Color the color of the pixel one below and one to the right of the top left pixel of the element.
 	 */
-	public Color getColor() {
-		return getColor(1, 1);
+	public Color getColorAtOffset() {
+		return getColorAtOffset(1, 1);
 	}
 
 	/**
@@ -228,7 +228,7 @@ public class WindowsElement extends Element {
 	@Override
 	public boolean attributeEquals(String attribute, String value) {
 		if (attribute.equalsIgnoreCase("color")) {
-			var hexColor = getColor().asHex();
+			var hexColor = getColorAtOffset().asHex();
 			return hexColor.equalsIgnoreCase(value);
 		}
 		return super.attributeEquals(attribute, value);
