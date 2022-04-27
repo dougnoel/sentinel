@@ -120,7 +120,6 @@ public class FileManager {
 	public static File saveImage(String subDirectory, String fileName, File imageFile) throws IOException {
 		File targetFile = new File(getImagePath(subDirectory, fileName));
 		FileUtils.copyFile(imageFile, targetFile);
-		verifyFileCreation(targetFile);
 
 		return targetFile;
 	}
@@ -139,7 +138,6 @@ public class FileManager {
 		File destinationFile = new File(getImagePath(subDirectory, fileName));
 		FileUtils.forceMkdir(destinationFile.getParentFile());
 		ImageIO.write(imageFile, "png", destinationFile);
-		verifyFileCreation(destinationFile);
 
 		return destinationFile;
 	}
@@ -173,24 +171,5 @@ public class FileManager {
 			outputSubDir = subDirectory;
 		}
 		return Configuration.toString("imageDirectory", "logs/images").replace("/", File.separator) + File.separator + outputSubDir + File.separator + fileName;
-	}
-
-	/**
-	 * Verifies a given file exists within a configured timeout
-	 *
-	 * @param fileToCheck File the file object of the file we wish to verify exists
-	 * @throws IOException in the case the file does not begin existing within the default timeout
-	 */
-	private static void verifyFileCreation(File fileToCheck) throws IOException {
-		var errorMessage = SentinelStringUtils.format("Failed to create the {} image file", fileToCheck.getAbsolutePath());
-
-		long searchTime = Time.out().getSeconds() * 1000;
-		long startTime = System.currentTimeMillis(); // fetch starting time
-		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			if (Files.exists(fileToCheck.toPath()))
-				return;
-		}
-
-		throw new IOException(errorMessage);
 	}
 }
