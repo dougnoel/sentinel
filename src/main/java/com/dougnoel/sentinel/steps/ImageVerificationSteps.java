@@ -15,6 +15,8 @@ import com.dougnoel.sentinel.elements.WindowsElement;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -32,6 +34,7 @@ import io.cucumber.java.en.Then;
 
 public class ImageVerificationSteps {
 	private static Scenario scenario;
+	protected static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
 	
 	@Before
 	public static void before(Scenario scenario) {
@@ -46,7 +49,7 @@ public class ImageVerificationSteps {
 	 * 
 	 * @throws IOException if file creation does not work.
 	 */
-	@Then("^I verify (?:the|an?) (.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
+	@Then("^I verify (?:the|an?) (page|window|.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
     public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
@@ -56,10 +59,10 @@ public class ImageVerificationSteps {
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			assertNotEquals(comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
+			assertNotEquals(expectedResult, comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
 		}
 		else {
-			assertEquals(comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
+			assertEquals(expectedResult, comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
 		}
 	}
 	
@@ -84,30 +87,44 @@ public class ImageVerificationSteps {
     	String resultImageFileName = PageManager.getPage().getName() + "_" + elementName + "_RESULT" + ".png";
     	File screenshotFile;
     	Color backgroundColor;
-    	
-    	//Determine if we're taking a screenshot of the page or element.
-    	if(!elementName.toLowerCase().contentEquals("page") && !elementName.toLowerCase().contentEquals("window")) {
-    		screenshotFile = getElement(elementName).getScreenshot();
-			if(PageManager.getCurrentPageObjectType() != PageObjectType.EXECUTABLE){
-				backgroundColor = getElement(elementName).getBackgroundColor();
-			}
-			else{
-				backgroundColor = ((WindowsElement) getElement(elementName)).getColorAtOffset().getColor();
-			}
-    	}
-    	else {
-    		TakesScreenshot pageScreenshotTool =((TakesScreenshot) Driver.getWebDriver());
-    		screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
+		PageObjectType pageType = PageManager.getCurrentPageObjectType();
 
-			if(PageManager.getCurrentPageObjectType() != PageObjectType.EXECUTABLE) {
-				Element body = new Element("body", Map.of("xpath", "//body"));
-				backgroundColor = body.getBackgroundColor();
+		if(elementName.matches("(?i)^\\s*(page|window)\\s*$")){
+			TakesScreenshot pageScreenshotTool =((TakesScreenshot) Driver.getWebDriver());
+			screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
+
+			switch(pageType){
+				case EXECUTABLE:
+					WindowsElement appWindow = new WindowsElement("window", Map.of("xpath", "/*"));
+					backgroundColor = appWindow.getColorAtOffset().getColor();
+					break;
+				case WEBPAGE:
+					Element body = new Element("body", Map.of("xpath", "//body"));
+					backgroundColor = body.getBackgroundColor();
+					break;
+				case UNKNOWN:
+				default:
+					log.warn("Page object type is of the unhandled {} type. Black will be used as background color fallback.", pageType);
+					backgroundColor = Color.BLACK;
+					break;
 			}
-			else{
-				WindowsElement appWindow = new WindowsElement("window", Map.of("xpath", "/*"));
-				backgroundColor = appWindow.getColorAtOffset().getColor();
+		} else{
+			screenshotFile = getElement(elementName).getScreenshot();
+
+			switch(pageType){
+				case EXECUTABLE:
+					backgroundColor = ((WindowsElement) getElement(elementName)).getColorAtOffset().getColor();
+					break;
+				case WEBPAGE:
+					backgroundColor = getElement(elementName).getBackgroundColor();
+					break;
+				case UNKNOWN:
+				default:
+					log.warn("Page object type is of the unhandled {} type. Black will be used as background color fallback.", pageType);
+					backgroundColor = Color.BLACK;
+					break;
 			}
-    	}
+		}
     	
     	FileManager.saveImage(outputFolder, actualFileName, screenshotFile);
 
@@ -122,6 +139,16 @@ public class ImageVerificationSteps {
 		int actualWidth = actualImage.getWidth();
 
 		if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
+			switch(pageType){
+				case WEBPAGE:
+					break;
+				case EXECUTABLE:
+				case UNKNOWN:
+				default:
+					log.warn("Page object has been detected as {} with different sized comparison snapshots. This may result in an unreliable comparison.", pageType);
+					break;
+			}
+
 			int newHeight;
 			int newWidth;
 		
