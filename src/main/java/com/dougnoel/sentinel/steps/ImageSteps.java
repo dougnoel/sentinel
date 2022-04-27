@@ -29,7 +29,7 @@ public class ImageSteps {
 	 * @param elementName String name of the element to screenshot
 	 * @throws IOException If the expected image to be created fails to save
 	 */
-    @When("^I take a screenshot of (?:the|a) (.*?)$")
+    @When("^I take a screenshot of (?:the|a) (page|window|.*?)$")
     public static void storeScreenshotOfElement(String elementName) throws IOException {
 		String outputFolder = "imageComparison/" + scenario.getName();
     	String imageFileName = PageManager.getPage().getName() + "_" + elementName + "_EXPECTED" + ".png";
