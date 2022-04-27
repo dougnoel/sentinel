@@ -252,10 +252,9 @@ public class WindowsElement extends Element {
 	@Override
 	public File getScreenshot() {
 		BufferedImage temporaryBuffer = screenshotElement();
-		try{
+		try {
 			return FileManager.saveImage(null, "tempScreenshotImage.png", temporaryBuffer);
-		}
-		catch(IOException e){
+		} catch (IOException e) {
 			throw new com.dougnoel.sentinel.exceptions.IOException(e);
 		}
 	}
