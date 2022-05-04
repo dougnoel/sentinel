@@ -41,7 +41,7 @@ public class WindowAndTabSteps {
     @Then("^I verify a new (?:tab|window) opens(?: to)? the (.*?)$")
     public static void openNewWindow(String pageName) throws InterruptedException {
         PageManager.setPage(pageName);
-        Driver.goToMostRecentWindow();
+        Driver.goToNewWindow();
         PageManager.waitForPageLoad();
     }
     
