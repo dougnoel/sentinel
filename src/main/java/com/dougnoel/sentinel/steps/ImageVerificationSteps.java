@@ -43,14 +43,13 @@ public class ImageVerificationSteps {
 	
 	/**
 	 * Takes a screenshot of the given element and compares it to the previously-stored image of that same element.
-	 * Default pixel tolerance level = 0.1. Defaults pixel location threshold = 5.
+	 * Default scaling pixel tolerance level = 0.06%.
+	 * This translates to ~1244 pixels. Roughly a 35x35 image area at 1080p resolution.
 	 * @param elementName String the name of the element to capture and compare.
 	 * @param assertion String the user input determining if we expect a match or a mismatch.
-	 * 
-	 * @throws IOException if file creation does not work.
 	 */
 	@Then("^I verify (?:the|an?) (page|window|.*?) (do(?:es)? not )?match(?:es)? the (?:expected|original) image$")
-    public static void verifyImageNotMatch(String elementName, String assertion) throws IOException {
+    public static void verifyImageComparison(String elementName, String assertion) {
         boolean negate = !StringUtils.isEmpty(assertion);
         var expectedResult = SentinelStringUtils.format("Expected {} to {}match its previous state visually.",
                 elementName, (negate ? "not " : ""));
@@ -70,17 +69,16 @@ public class ImageVerificationSteps {
 	 * Takes an updated screenshot of the current element, or page, for comparison to an earlier expected image.
 	 * <br><br>
 	 * <i>
-	 *     If screenshots are different sizes, both will be enlarged to the largest dimensions found. Expanded space
+	 * If screenshots are different sizes, both will be enlarged to the largest dimensions found. Expanded space
 	 * will be set to parent background color for web, upper-left-most color for windows applications.
 	 * </i>
 	 *
 	 * @param elementName String the name of the element to capture and compare 
 	 * or any casing of "page" alone to compare the entire page.
-	 * @throws IOException if file creation does not work
 	 * 
 	 * @return ImageComparisonResult the image comparison result.
 	 */
-    private static ImageComparisonResult compareImages(String elementName) throws IOException {
+    private static ImageComparisonResult compareImages(String elementName) {
 		String outputFolder = "ImageComparison/" + scenario.getName();
     	String actualFileName = PageManager.getPage().getName() + "_" + elementName + "_ACTUAL" + ".png";
 		String expectedFileName = PageManager.getPage().getName() + "_" + elementName + "_EXPECTED" + ".png";
@@ -95,8 +93,12 @@ public class ImageVerificationSteps {
 
 			switch(pageType){
 				case EXECUTABLE:
+					BufferedImage cropWindow = FileManager.readImage(screenshotFile);
+					BufferedImage croppedImage = cropWindow.getSubimage(2,2,(cropWindow.getWidth()-4),(cropWindow.getHeight()-4));
+					screenshotFile = FileManager.saveImage(null, "tempScreenshotWindow.png", croppedImage);
+
 					WindowsElement appWindow = new WindowsElement("window", Map.of("xpath", "/*"));
-					backgroundColor = appWindow.getColorAtOffset().getColor();
+					backgroundColor = appWindow.getColorAtOffset(3,3).getColor();
 					break;
 				case WEBPAGE:
 					Element body = new Element("body", Map.of("xpath", "//body"));
@@ -178,6 +180,7 @@ public class ImageVerificationSteps {
         
 		//Compare the two images, writing the result to disk
 		ImageComparison comparison = new ImageComparison(expectedImage, actualImage);
+		comparison.setAllowingPercentOfDifferentPixels(0.06); //0.06% Will allow for a ~51 pixel difference. A text cursor is ~38
 		ImageComparisonResult comparisonResult = comparison.compareImages();
 		FileManager.saveImage(outputFolder, resultImageFileName, comparisonResult.getResult());
         
