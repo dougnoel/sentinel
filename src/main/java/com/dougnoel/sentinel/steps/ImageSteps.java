@@ -2,10 +2,15 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import com.dougnoel.sentinel.elements.Element;
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.webdrivers.Driver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -18,7 +23,8 @@ import io.cucumber.java.en.When;
 
 public class ImageSteps {
 	private static Scenario scenario;
-	
+	protected static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
+
 	@Before
     public static void before(Scenario scenario) {
 		ImageSteps.scenario = scenario;
@@ -34,15 +40,28 @@ public class ImageSteps {
 		String outputFolder = "imageComparison/" + scenario.getName();
     	String imageFileName = PageManager.getPage().getName() + "_" + elementName + "_EXPECTED" + ".png";
     	File screenshotFile;
+		PageObjectType pageType = PageManager.getCurrentPageObjectType();
 
-    	//Determine if we're taking a screenshot of an element or the whole page.
-    	if(!elementName.toLowerCase().contentEquals("page") && !elementName.toLowerCase().contentEquals("window")) {
-    		screenshotFile = getElement(elementName).getScreenshot();
-    	}
-    	else {
-        	TakesScreenshot pageScreenshotTool =((TakesScreenshot) Driver.getWebDriver());
-        	screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
-    	}
+		if(elementName.matches("(?i)^\\s*(page|window)\\s*$")){
+			TakesScreenshot pageScreenshotTool =((TakesScreenshot) Driver.getWebDriver());
+			screenshotFile = pageScreenshotTool.getScreenshotAs(OutputType.FILE);
+
+			switch(pageType){
+				case EXECUTABLE:
+					BufferedImage cropWindow = FileManager.readImage(screenshotFile);
+					BufferedImage croppedImage = cropWindow.getSubimage(2,2,(cropWindow.getWidth()-4),(cropWindow.getHeight()-4));
+					screenshotFile = FileManager.saveImage(null, "tempScreenshotWindow.png", croppedImage);
+					break;
+				case WEBPAGE:
+					break;
+				case UNKNOWN:
+				default:
+					log.warn("Page object type is of the unhandled {} type. Screenshot may not be accurate.", pageType);
+					break;
+			}
+		} else{
+			screenshotFile = getElement(elementName).getScreenshot();
+		}
     	
     	FileManager.saveImage(outputFolder, imageFileName, screenshotFile);
     }
