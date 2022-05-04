@@ -74,7 +74,7 @@ public class GoldStandardImageComparisonSteps {
      * </i>
      *
      * @param elementName String the name of the element to capture and compare
-     * or any casing of "page" alone to compare the entire page.     
+     * or any casing of "page" alone to compare the entire page.
      * @return ImageComparisonResult the image comparison result.
      */
     private static ImageComparisonResult performPremadeExpectedImageComparison (String elementName, String testDataImageName) {
