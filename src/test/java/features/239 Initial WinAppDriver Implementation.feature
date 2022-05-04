@@ -54,7 +54,7 @@ Feature: 239 Implement WinAppDriver to automate windows
       And I clear the Text Editor field
       And I verify the Text Editor field is empty
       And I take a screenshot of the window
-    When I enter test in the Text Editor field
+    When I enter test the screenshot does not match in the Text Editor field
     Then I verify the window does not match the original image
 
   @239F
@@ -71,7 +71,7 @@ Feature: 239 Implement WinAppDriver to automate windows
     Given I switch to the Notepad App
       And I click the Text Editor field
       And I take a screenshot of the Text Editor field
-    When I enter test in the Text Editor field
+    When I enter test the screenshot does not match in the Text Editor field
     Then I verify the Text Editor field does not match the original image
 
   @239H
