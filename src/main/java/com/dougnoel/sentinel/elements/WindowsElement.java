@@ -4,7 +4,6 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import com.dougnoel.sentinel.configurations.Time;
@@ -187,11 +186,7 @@ public class WindowsElement extends Element {
 		// Because Robot respects that setting but the above "BoundingRectangle" coordinates do not, the user must have 100% in that setting so the resolutions are over the same domain.
 		BufferedImage screenshot = screenshotElement();
 
-		try {
-			FileManager.saveImage(null, "tempGetColorImage.png", screenshot);
-		} catch (IOException ioe) {
-			throw new com.dougnoel.sentinel.exceptions.IOException(ioe);
-		}
+		FileManager.saveImage(null, "tempGetColorImage.png", screenshot);
 
 		int argb = screenshot.getRGB(xOffset, yOffset);
 		double a = ((argb >> 24) & 0xFF)/255.0; //The selenium color object will take any double for alpha, but requires 0.0-1.0 for correct operation. This converts the alpha from 0-255 to the correct range.
@@ -237,11 +232,11 @@ public class WindowsElement extends Element {
 	/**
 	 * Windows does not support color information, as such this is an unsupported operation for windows elements.
 	 *
-	 * @return NotImplementedException
+	 * @return Color Java color object of the background color of the element
 	 */
 	@Override
-	public java.awt.Color getBackgroundColor() throws NotImplementedException {
-		throw new NotImplementedException("Windows elements do not support background color retrieving");
+	public java.awt.Color getBackgroundColor() {
+		throw new NotImplementedException("Windows elements do not support background color");
 	}
 
 	/**
@@ -252,11 +247,7 @@ public class WindowsElement extends Element {
 	@Override
 	public File getScreenshot() {
 		BufferedImage temporaryBuffer = screenshotElement();
-		try {
-			return FileManager.saveImage(null, "tempScreenshotImage.png", temporaryBuffer);
-		} catch (IOException e) {
-			throw new com.dougnoel.sentinel.exceptions.IOException(e);
-		}
+		return FileManager.saveImage(null, "tempScreenshotImage.png", temporaryBuffer);
 	}
 
 	/**
@@ -269,7 +260,8 @@ public class WindowsElement extends Element {
 		try {
 			robot = new Robot();
 		} catch (AWTException awte) {
-			throw new com.dougnoel.sentinel.exceptions.IOException(awte);
+			String errorMessage = SentinelStringUtils.format("Failed to screenshot the element {} on the page {}", getName(), PageManager.getPage().getName());
+			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, awte);
 		}
 
 		// Grab the pixel coordinates of the rectangle of the element, relative to the top-left corner of the screen. Positive X = right. Positive Y = down.
