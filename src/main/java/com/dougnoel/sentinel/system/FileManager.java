@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.system;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import com.dougnoel.sentinel.configurations.Time;
 import org.apache.commons.io.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +24,8 @@ import com.github.romankh3.image.comparison.ImageComparisonUtil;
 
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
-	
+	private static final String IMAGEDIRECTORY = "logs/images";
+
 	private FileManager() {} //Exists to defeat instantiation.
 	
 	/**
@@ -117,9 +117,15 @@ public class FileManager {
 	 *
 	 * @return File the resulting file object generated while saving to disk
 	 */
-	public static File saveImage(String subDirectory, String fileName, File imageFile) throws IOException {
+	public static File saveImage(String subDirectory, String fileName, File imageFile) {
 		File targetFile = new File(getImagePath(subDirectory, fileName));
-		FileUtils.copyFile(imageFile, targetFile);
+
+		try {
+			FileUtils.copyFile(imageFile, targetFile);
+		} catch (IOException origException) {
+			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, subDirectory);
+			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, origException);
+		}
 
 		return targetFile;
 	}
@@ -134,10 +140,16 @@ public class FileManager {
 	 *
 	 * @return File the resulting file object generated while saving to disk
 	 */
-	public static File saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
+	public static File saveImage(String subDirectory, String fileName, BufferedImage imageFile) {
 		File destinationFile = new File(getImagePath(subDirectory, fileName));
-		FileUtils.forceMkdir(destinationFile.getParentFile());
-		ImageIO.write(imageFile, "png", destinationFile);
+
+		try {
+			FileUtils.forceMkdir(destinationFile.getParentFile());
+			ImageIO.write(imageFile, "png", destinationFile);
+		} catch (IOException origException) {
+			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, subDirectory);
+			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, origException);
+		}
 
 		return destinationFile;
 	}
@@ -153,6 +165,17 @@ public class FileManager {
 	 */
 	public static BufferedImage readImage(String subDirectory, String fileName) {
 		return ImageComparisonUtil.readImageFromResources(getImagePath(subDirectory, fileName));
+	}
+
+	/**
+	 * Reads an image from disk using the path passed with a File Object
+	 *
+	 * @param filePath File the file object that refers to the location of the file
+	 *
+	 * @return BufferedImage the image file read from disk
+	 */
+	public static BufferedImage readImage(File filePath) {
+		return ImageComparisonUtil.readImageFromResources(filePath.getAbsolutePath().replace("/", File.separator));
 	}
 	
 	/**
@@ -170,6 +193,6 @@ public class FileManager {
 		if(subDirectory != null){
 			outputSubDir = subDirectory;
 		}
-		return Configuration.toString("imageDirectory", "logs/images").replace("/", File.separator) + File.separator + outputSubDir + File.separator + fileName;
+		return Configuration.toString("imageDirectory", IMAGEDIRECTORY).replace("/", File.separator) + File.separator + outputSubDir + File.separator + fileName;
 	}
 }
