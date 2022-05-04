@@ -1,11 +1,17 @@
 package com.dougnoel.sentinel.webdrivers;
 
+import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.openqa.selenium.NoSuchWindowException;
-import org.openqa.selenium.WebDriver;
 
 /**
  * Keeps track of all windows a driver has open and which one the user is currently on.
@@ -32,13 +38,23 @@ public class WindowList {
 
 	/**
 	 * Search the driver for all windows and add any that don't exist.
+	 *
+	 * @return int Returns the number of added windows
 	 */
-	private void addNewWindows() {
+	private int addNewWindows() {
+		int numWindowsAdded = 0;
+		Collection<String> windowsToAdd = new HashSet<>();
+
     	Set<String> currentWindows = driver.getWindowHandles();
     	for (String window : currentWindows) {
-    		if (!windowHandles.contains(window))
-    			windowHandles.add(window);
-    	}
+			if (!windowHandles.contains(window)) {
+				numWindowsAdded += 1;
+				windowsToAdd.add(window);
+			}
+		}
+
+		windowHandles.addAll(windowsToAdd); //Prevents concurrency issue
+		return numWindowsAdded;
 	}
 	
 	/**
@@ -53,13 +69,55 @@ public class WindowList {
 
 	/**
 	 * If any windows have been closed, remove them from our list.
+	 *
+	 * @return int Returns the number of pruned windows
 	 */
-	private void pruneClosedWindows() {
+	private int pruneClosedWindows() {
+		int numberOfWindowsPruned = 0;
 		Set<String> currentWindows = driver.getWindowHandles();
+		Collection<String> windowsToRemove = new HashSet<>();
+
     	for (String window : windowHandles) {
-    		if (!currentWindows.contains(window))
-    			windowHandles.remove(window);
+    		if (!currentWindows.contains(window)){
+				numberOfWindowsPruned += 1;
+				windowsToRemove.add(window);
+
+				//If an earlier window than the current closes, decrement the window position
+				if(windowHandles.indexOf(window) < windowHandles.indexOf(currentWindow))
+					currentWindow--;
+			}
     	}
+
+		windowHandles.removeAll(windowsToRemove); //Prevents concurrency issue
+		return numberOfWindowsPruned;
+	}
+
+	/**
+	 * Wait for a new window to be added, and moves the driver to the last window added.
+	 */
+	protected void goToNewWindow() {
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			int addedWindows = 0;
+			try {
+				addedWindows = addNewWindows();
+			}
+			catch (WebDriverException e) {
+				//Suppress the generic web driver exception error as this can occur if 0 windows currently exist (waiting on new window with all previous windows closed)
+			}
+
+			if(addedWindows > 0){
+				currentWindow = windowHandles.size()-1;
+				driver.switchTo().window(windowHandles.get(currentWindow));
+				pruneClosedWindows();
+				return;
+			}
+		}
+
+		String timeoutMessage = SentinelStringUtils.format("A new window/page/tab did not load in the configured new window timeout of {} seconds.", Time.out().getSeconds());
+		throw new TimeoutException(timeoutMessage);
 	}
 	    
     /**
@@ -79,10 +137,10 @@ public class WindowList {
      * Moves the driver to the next window.
      */
     protected void goToNextWindow() {
-    	addNewWindows();
+		addNewWindows();
     	currentWindow++;
     	driver.switchTo().window(windowHandles.get(currentWindow));
-    	pruneClosedWindows();
+		pruneClosedWindows();
     }
     
     /**
