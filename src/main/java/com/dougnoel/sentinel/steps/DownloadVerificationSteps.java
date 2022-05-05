@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.dougnoel.sentinel.filemanagers.DownloadManager;
+import com.dougnoel.sentinel.system.DownloadManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;

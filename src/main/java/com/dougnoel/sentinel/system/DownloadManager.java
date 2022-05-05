@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -39,7 +40,11 @@ import de.redsix.pdfcompare.env.SimpleEnvironment;
  */
 public class DownloadManager {
     private static final Logger log = LogManager.getLogger(DownloadManager.class.getName()); // Create a logger.
-    private static final String PDF_FILE_EXTENSION = "pdf";
+
+    private static String filename = null; // Current filename
+    private static String fileExtension = "pdf"; // Current file extension - Default of pdf
+    private static File file = null; // Current file
+
     private static String downloadDirectory = createDownloadDirectory();
 
     private DownloadManager(){}
@@ -63,16 +68,31 @@ public class DownloadManager {
     }
 
     /**
-     * Returns the name of a downloaded file by monitoring the given download directory and looking for a
-     * file to be downloaded with the given file extension. It checks the given directory every 20 milliseconds 
-     * until the file download is complete, and then returns the name of the file downloaded. If the download 
-     * takes longer than the timeout set, the function times out and throws an error.
+     * Monitors the current set download directory and returns a filename once the
+     * file is downloaded.
      * 
+     * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the file download is interrupted
+     * @throws IOException if the file cannot be created.
+     */
+    public static String monitorDownload() throws InterruptedException, IOException {
+        return monitorDownload(downloadDirectory, fileExtension);
+    }
+
+    /**
+     * Returns the name of a downloaded file by monitoring the given download directory and looking for a
+     * file to be downloaded with the given file extension. It checks the given
+     * directory every 1/10th of a second under the file download is complete, and
+     * then returns the name of the file downloaded. If the download takes longer
+     * than 20 seconds, the function times out and throws an error.
+     * 
+     * @param downloadDir String path to the download directory.
+     * @param fileExtension String extension of the file type you are expecting to be  downloaded.
      * @return String The name of the file that was downloaded.
      * @throws InterruptedException if the thread is interrupted during download
      * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload() throws InterruptedException, IOException {
+    public static String monitorDownload(String downloadDir, String fileExtension) throws InterruptedException, IOException {
         String downloadedFileName = null;
         var valid = true;
         
@@ -97,9 +117,9 @@ public class DownloadManager {
                 if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                 	var fileName = event.context().toString();
                     log.debug("New File Created: {}", fileName);
-                    if (fileName.endsWith(PDF_FILE_EXTENSION)) {
+                    if (fileName.endsWith(fileExtension)) {
                         downloadedFileName = fileName;
-                        log.debug("Downloaded file found: {}.{}", fileName, PDF_FILE_EXTENSION);
+                        log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
                         Thread.sleep(loopTime);
                         return downloadedFileName;
                     }
@@ -156,18 +176,19 @@ public class DownloadManager {
         
     	var flag = false;
 
+        BufferedInputStream file = null;
         PDFTextStripper pdfStripper = null;
         PDDocument pdDoc = null;
         String parsedText = null;
 
-        try ( BufferedInputStream file = new BufferedInputStream(url.openStream())) {
-        	pdDoc = PDDocument.load(file);
-        } catch (InvalidPasswordException e) {
-        	var errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
-            throw new IOException(errorMessage, e);
+        try {
+            file = new BufferedInputStream(url.openStream());
         } catch (IOException e) {
         	var errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
+        } finally {
+        	if (file != null)
+        		file.close();
         }
 
         try {
@@ -178,6 +199,16 @@ public class DownloadManager {
         }
         pdfStripper.setStartPage(pageStart);
         pdfStripper.setEndPage(pageEnd);
+
+        try {
+            pdDoc = PDDocument.load(file);
+        } catch (InvalidPasswordException e) {
+        	var errorMessage = SentinelStringUtils.format("PDF file {} was password protected.", url.toString());
+            throw new IOException(errorMessage, e);
+        } catch (IOException e) {
+        	var errorMessage = SentinelStringUtils.format("Could not load the PDF {}", url.toString());
+            throw new IOException(errorMessage, e);
+        }
         
         try {
             parsedText = pdfStripper.getText(pdDoc);
@@ -309,7 +340,65 @@ public class DownloadManager {
 
         return imageFile.getName();
     }
-
+    
+    /**
+     * Returns true if given file is successfully deleted.
+     * 
+     * @param file File file to delete
+     * @return boolean true if file exists and is successfully deleted
+     * @throws IOException if there is an error while deleting the file
+     */
+    public static boolean deleteFile(File file) throws IOException {
+        return Files.deleteIfExists(file.toPath());
+    }
+    /**
+     * Returns filename
+     * 
+     * @return String the filename
+     */
+    public static String getFilename() {
+        return filename;
+    }
+    /**
+     * Sets filename for given file
+     * 
+     * @param filename String file to set
+     */
+    public static void setFilename(String filename) {
+        DownloadManager.filename = filename;
+    }
+    /**
+     * Returns string of current file extension
+     * 
+     * @return String file extension
+     */
+    public static String getFileExtension() {
+        return fileExtension;
+    }
+    /**
+     * Sets given file extension
+     * 
+     * @param fileExtension String file ext to set
+     */
+    public static void setFileExtension(String fileExtension) {
+        DownloadManager.fileExtension = fileExtension;
+    }
+    /**
+     * Returns file
+     * 
+     * @return File returns a File object
+     */
+    public static File getFile() {
+        return file;
+    }
+    /**
+     * Sets given file
+     * 
+     * @param file File file to set
+     */
+    public static void setFile(File file) {
+        DownloadManager.file = file;
+    }
     /**
      * Returns the download directory
      * 
@@ -318,9 +407,8 @@ public class DownloadManager {
     public static String getDownloadDirectory() {
         return downloadDirectory;
     }
-    
     /**
-     * Sets downloadDirectory upon creation of the Download manager.
+     * Sets downlaodDirectory upon creation of the Download manager.
      * @return String the download directory path
      */
     public static String createDownloadDirectory() {
@@ -333,5 +421,12 @@ public class DownloadManager {
     	}
         return downloadDirectory;
     }
-
+    /**
+     * Sets given downloadDirectory object
+     * 
+     * @param downloadDirectory String the downdloadDirectory to set
+     */
+    public static void setDownloadDirectory(String downloadDirectory) {
+        DownloadManager.downloadDirectory = downloadDirectory;
+    }
 }
