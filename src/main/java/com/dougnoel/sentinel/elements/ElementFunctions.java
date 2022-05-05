@@ -83,17 +83,7 @@ public class ElementFunctions {
 	 * @return Class an instance of the class you typed the element as
 	 */
 	public static <T> T getElementAsCustom(String elementName) {
-		try {
-			return (T) getElement(elementName);
-		} catch (ClassCastException e) {
-			String className;
-			try {
-				className = Configuration.getElement(elementName.replaceAll("\\s+", "_"), PageManager.getPage().getName()).get("elementType");
-			} catch (Exception ex) {
-				className = "custom element";
-			}
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, className));
-		}
+		return (T) getElement(elementName);
 	}
     
     /**

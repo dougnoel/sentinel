@@ -91,14 +91,14 @@ public class ElementFunctionsTests {
 
 	@Test
 	public void createCustom() {
-		Element element = ElementFunctions.getElementAsCustom("custom");
-		assertTrue("Expecting Element class.", element instanceof Element);
-		assertEquals("Expecting Custom Name.", "custom", element.getName());
+		Textbox element = ElementFunctions.getElementAsCustom("textbox");
+		assertTrue("Expecting Element class.", element instanceof Textbox);
+		assertEquals("Expecting Custom Name.", "textbox", element.getName());
 	}
 
 	@Test(expected = ClassCastException.class)
 	public void failToCreateCustom() {
-		Table element = ElementFunctions.getElementAsCustom("generic");
+		Table element = ElementFunctions.getElementAsCustom("foobar");
 	}
 
 	@Test(expected = ClassCastException.class)

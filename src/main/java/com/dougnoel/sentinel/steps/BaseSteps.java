@@ -122,8 +122,8 @@ public class BaseSteps {
      * @param yValue String the Y value of the point in pixels
      * @param elementName String the name of the element to click
      */
-    @When("I mouse to the point (.*?), (.*?) and click on (?:the|a|an) (.*?)$")
-    public static void clickPoint(String xValue, String yValue, String elementName) {
+    @When("I move the mouse over (?:the|a|an) (.*?) and click on the point (.*?), (.*?)$")
+    public static void clickPoint(String elementName, String xValue, String yValue) {
         getElement(elementName).clickPositionOnElement(new Point(Integer.parseInt(xValue), Integer.parseInt(yValue)));
     }
     

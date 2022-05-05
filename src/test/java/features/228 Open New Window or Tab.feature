@@ -24,3 +24,8 @@ Feature: 228 Open New Window or Tab.feature
   		And I verify the Header contains the text "Window Opened in a New Tab"
   	When I close the browser tab
   	Then I verify the Header contains the text "Demo - Open New Browser Window(s) using JavaScript"
+
+	Scenario: Download a file
+		Given I am on the Download Page
+		When I click the text file download link
+		Then I verify the "some-file.txt" file was successfully downloaded

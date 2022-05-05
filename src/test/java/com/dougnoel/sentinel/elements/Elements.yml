@@ -33,9 +33,9 @@ elements:
   table:
     elementType: Table
     name: "register"
-  custom:
+  foobar:
     elementType: Element
-    name: "custom"
+    name: "barfoo"
   bad_selector:
     bad: "blah"
   bad_element:

@@ -1,5 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.system.DownloadManager;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dougnoel.sentinel.pages.PageManager;
@@ -7,6 +9,8 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
+import static org.junit.Assert.assertTrue;
 
 public class WindowAndTabSteps {
 
@@ -85,5 +89,21 @@ public class WindowAndTabSteps {
         		Driver.goToPreviousWindow();	
     	}
     	PageManager.waitForPageLoad();
+    }
+
+    /**
+     * Verifies a file was downloaded successfully
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the results.csv file was successfully downloaded</li>
+     * <li>I verify the lorem.zip file was successfully downloaded</li>
+     * </ul>
+     * @param fileName String the name of the vile to verify
+     */
+    @Then("^I verify the \"([^\"]*)\" file was successfully downloaded")
+    public static void verifyFileDownloaded(String fileName) {
+        String expectedResult = SentinelStringUtils.format("Expecting {} to be downloaded.", fileName);
+        assertTrue(expectedResult, DownloadManager.isFileDownloaded(fileName));
     }
 }
