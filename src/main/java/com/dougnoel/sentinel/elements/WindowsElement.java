@@ -202,9 +202,9 @@ public class WindowsElement extends Element {
 		// Windows (the operating system) contains a scaling setting which affects the "screen resolution" that Robot reads. 
 		// Because Robot respects that setting but the above "BoundingRectangle" coordinates do not, the user must have 100% in that setting so the resolutions are over the same domain.
 		BufferedImage screenshot = robot.createScreenCapture(elementCoords);
-		File outputfile = new File("logs/bufferedimage.jpg");
+		File outputfile = new File("logs/bufferedimage.png");
 		try {
-			ImageIO.write(screenshot, "jpg", outputfile);
+			ImageIO.write(screenshot, "png", outputfile);
 		} catch (IOException ioe) {
 			throw new com.dougnoel.sentinel.exceptions.IOException(ioe);
 		}

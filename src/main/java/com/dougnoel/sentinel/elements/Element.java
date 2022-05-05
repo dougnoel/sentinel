@@ -678,7 +678,7 @@ public class Element {
 				.until(ExpectedConditions.not(
 						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
 	}
-	
+
 	/**
 	 * Returns true if the element has an attribute equal to the value passed;
 	 * otherwise returns false.
@@ -687,9 +687,9 @@ public class Element {
 	 * <ul>
 	 * <li>Determine if an element has a style="display:none" attribute set.
 	 * </ul>
-	 * 
+	 *
 	 * @param attribute String the attribute to look for
-	 * @param value String the value to which attribute should be checked against
+	 * @param value String the value to which attribute should be set
 	 * @return boolean true if the element as an attribute equal to the value passed; otherwise returns false
 	 */
 	public boolean attributeEquals(String attribute, String value) {
@@ -697,14 +697,49 @@ public class Element {
 			String values = element().getAttribute(attribute);
 			log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
 					values);
-			if (values.equals(value)) {
+			return values.equals(value);
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if the element has an attribute containing to the value passed;
+	 * otherwise returns false.
+	 * <p>
+	 * <b>Examples:</b>
+	 * <ul>
+	 * <li>Determine if "display: block;" is within an element that has a style="display: block; color: blue;" attribute set.
+	 * </ul>
+	 *
+	 * @param attribute String the attribute to look for
+	 * @param value String the value to which attribute should be set
+	 * @return boolean true if the element as an attribute containing the value passed; otherwise returns false
+	 */
+	public boolean attributeContains(String attribute, String value) {
+		String values = element().getAttribute(attribute);
+		log.debug("Values found for attribute {} on element {}: {}", attribute, this.getClass().getName(),
+				values);
+		return values.contains(value);
+	}
+
+	/**
+	 * Returns true if the element class contains the value passed;
+	 * otherwise returns false.
+	 * <p>
+	 * <b>Examples:</b>
+	 * <ul>
+	 * <li>Determine if "blob-code-context" is within an element that has a class="blob-code blob-code-context js-file-line" attribute set.
+	 * </ul>
+	 *
+	 * @param value String the value to which attribute should be set
+	 * @return boolean true if the element as an attribute containing the value passed; otherwise returns false
+	 */
+	public boolean classContains(String value) {
+		String values = element().getAttribute("class");
+		log.debug("Values found for class on element {}: {}", this.getClass().getName(), values);
+		for (String c : values.split(" ")) {
+			if (c.equals(value)) {
 				return true;
-			} else {
-				for (String c : values.split(" ")) {
-					if (c.equals(value)) {
-						return true;
-					}
-				}
 			}
 		}
 		return false;
@@ -758,8 +793,7 @@ public class Element {
 	 * 
 	 * @return java.awt.Color the background color of the element or first parent with background color. White if only transparency is found
 	 */
-	public Color getBackgroundColor()
-	{  
+	public Color getBackgroundColor() {
 		return getBackgroundColor(element());
 	}
 	

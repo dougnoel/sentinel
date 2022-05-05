@@ -140,11 +140,15 @@ public class WebDriverFactory {
     
     /**
      * Creates a ChromeDriver. Makes it headless if the -Dheadless flag is set.
+     * Can pass additional arguments with the -DchromeOptions flag, such as -DchromeOptions="start-maximized" to open all browser windows maximized.
      * @return WebDriver ChromeDrvier
      */
     private static WebDriver createChromeDriver() {
     	var chromeOptions = new ChromeOptions();
     	setChromeDownloadDirectory(chromeOptions);
+        String commandlineOptions = Configuration.toString("chromeOptions");
+        if (commandlineOptions != null)
+            chromeOptions.addArguments(commandlineOptions);
     	var headless = Configuration.toString("headless");
     	if (headless != null && !headless.equalsIgnoreCase("false")) {
     		chromeOptions.addArguments("--no-sandbox");
