@@ -815,7 +815,6 @@ public class Element {
 		}
 	}
 	
-	
 	/**
 	 * <p>
 	 * From selenium's javadoc: </br>

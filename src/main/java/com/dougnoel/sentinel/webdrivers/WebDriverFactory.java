@@ -131,11 +131,7 @@ public class WebDriverFactory {
         HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("download.prompt_for_download", false);
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
-        chromePrefs.put("download.extensions_to_open", "application/spl");
-        chromePrefs.put("safebrowsing.enabled", true);
         options.setExperimentalOption("prefs", chromePrefs);
-        options.addArguments("--safebrowsing-disable-download-protection");
-        options.addArguments("--safebrowsing-disable-extension-blacklist");
     }
     
     /**

@@ -173,7 +173,6 @@ public class DownloadManager {
      * @throws IOException if error while opening, stripping, loading, parsing, or closing PDF
      */
     public static boolean verifyPDFContent(URL url, String expectedText, int pageStart, int pageEnd) throws IOException {
-        
     	var flag = false;
 
         BufferedInputStream file = null;
@@ -351,6 +350,7 @@ public class DownloadManager {
     public static boolean deleteFile(File file) throws IOException {
         return Files.deleteIfExists(file.toPath());
     }
+
     /**
      * Returns filename
      * 
@@ -359,6 +359,7 @@ public class DownloadManager {
     public static String getFilename() {
         return filename;
     }
+
     /**
      * Sets filename for given file
      * 
@@ -367,6 +368,7 @@ public class DownloadManager {
     public static void setFilename(String filename) {
         DownloadManager.filename = filename;
     }
+
     /**
      * Returns string of current file extension
      * 
@@ -375,6 +377,7 @@ public class DownloadManager {
     public static String getFileExtension() {
         return fileExtension;
     }
+
     /**
      * Sets given file extension
      * 
@@ -383,6 +386,7 @@ public class DownloadManager {
     public static void setFileExtension(String fileExtension) {
         DownloadManager.fileExtension = fileExtension;
     }
+
     /**
      * Returns file
      * 
@@ -396,6 +400,7 @@ public class DownloadManager {
      * 
      * @param file File file to set
      */
+
     public static void setFile(File file) {
         DownloadManager.file = file;
     }
@@ -404,11 +409,13 @@ public class DownloadManager {
      * 
      * @return String the downloadDirectory 
      */
+
     public static String getDownloadDirectory() {
         return downloadDirectory;
     }
+
     /**
-     * Sets downlaodDirectory upon creation of the Download manager.
+     * Sets downloadDirectory upon creation of the Download manager.
      * @return String the download directory path
      */
     public static String createDownloadDirectory() {
@@ -421,6 +428,7 @@ public class DownloadManager {
     	}
         return downloadDirectory;
     }
+
     /**
      * Sets given downloadDirectory object
      * 
