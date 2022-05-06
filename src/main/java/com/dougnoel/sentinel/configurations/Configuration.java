@@ -73,7 +73,8 @@ public class Configuration {
 						.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
 			} catch (Exception e) {
-				var errorMessage = SentinelStringUtils.format("Could not load the {} property. Please fix the file or pass the property in on the commandline using the -D{}= option.", configurationKey, configurationKey);
+				String errorMessage = SentinelStringUtils.format("Could not load the {} property because of the exception: {}." + System.lineSeparator() +
+						"Please fix the file or pass the property in on the commandline using the -D{}= option.", configurationKey, e.getMessage(), configurationKey, configurationKey);
 				throw new FileException(errorMessage, e, CONFIGURATION_FILE);
 			}
 		}
