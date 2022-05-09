@@ -48,34 +48,24 @@ Feature: 239 Implement WinAppDriver to automate windows
     Then I verify the Header contains the text "Window Opened in a New Tab"
 
   @239E
-  Scenario: 239E Verify notepad window has changed after entering text using image comparison
+  Scenario: 239E Verify notepad element and window screenshot conditions
+    Takes a screenshot of a window
+    Verifies the current state of the window unchanged matches the previous window screenshot
+    Verifies when window is changed that the previous window screenshot no longer matches
+    Takes a screenshot of an element
+    Verifies the current state of the element unchanged matches the previous element screenshot
+    Verifies when element is changed that the previous element screenshot no longer matches
     Given I switch to the Notepad App
       And I click the Text Editor field
       And I clear the Text Editor field
       And I verify the Text Editor field is empty
       And I take a screenshot of the window
-    When I enter test the screenshot does not match in the Text Editor field
-    Then I verify the window does not match the original image
-
-  @239F
-  Scenario: 239F Verify notepad window has not changed when no operations have occurred using image comparison
-    Given I switch to the Notepad App
-      And I click the Text Editor field
+    Then I verify the window matches the previous image
+    When I enter test the window screenshot no longer matches in the Text Editor field
+    Then I verify the window does not match the previous image
+    When I take a screenshot of the Text Editor field
+    Then I verify the Text Editor field matches the previous image
+    When I take a screenshot of the Text Editor field
       And I clear the Text Editor field
-      And I verify the Text Editor field is empty
-      And I take a screenshot of the window
-    Then I verify the window matches the original image
-
-  @239G
-  Scenario: 239G Verify notepad text editor field element has changed after entering text using image comparison
-    Given I switch to the Notepad App
-      And I click the Text Editor field
-      And I take a screenshot of the Text Editor field
-    When I enter test the screenshot does not match in the Text Editor field
-    Then I verify the Text Editor field does not match the original image
-
-  @239H
-  Scenario: 239H Verify notepad text editor field element has not changed when no operations have occurred using image comparison
-    Given I switch to the Notepad App
-      And I take a screenshot of the Text Editor Field
-    Then I verify the Text editor Field matches the original image
+      And I enter test the element screenshot no longer matches in the Text Editor field
+    Then I verify the Text Editor field does not match the previous image
