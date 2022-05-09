@@ -24,7 +24,7 @@ import com.github.romankh3.image.comparison.ImageComparisonUtil;
 
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
-	private static final String IMAGEDIRECTORY = "logs/images";
+	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -39,7 +39,7 @@ public class FileManager {
 	 */
 	
 	public static String loadJavascript(String path) throws IOException {
-		path = path.replace("/", File.separator);
+		path = convertPathSeparators(path);
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 	    return new String(encoded, StandardCharsets.UTF_8);
 	}
@@ -52,7 +52,7 @@ public class FileManager {
 	 * @return File the path of the file found
 	 */
 	public static File findFilePath(String fileName)  {
-		File result = searchDirectory(new File("src/"), fileName);
+		File result = searchDirectory(new File("src" + File.separator), fileName);
 
 		if (result == null) {
 			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory or its subdirectories.", fileName);
@@ -100,7 +100,7 @@ public class FileManager {
 	public static String getClassPath(String className) {
 		try {
 			String filePath = findFilePath(className + ".java").getPath();
-			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
+			String returnValue = convertPathSeparators(StringUtils.removeEnd(filePath, ".java"));
 			return StringUtils.substringAfter(returnValue, "java.");
 		} catch (FileException fe) {
 			return null;
@@ -118,16 +118,16 @@ public class FileManager {
 	 * @return File the resulting file object generated while saving to disk
 	 */
 	public static File saveImage(String subDirectory, String fileName, File imageFile) {
-		File targetFile = new File(getImagePath(subDirectory, fileName));
+		File destinationFile = new File(getImagePath(subDirectory, fileName));
 
 		try {
-			FileUtils.copyFile(imageFile, targetFile);
+			FileUtils.copyFile(imageFile, destinationFile);
 		} catch (IOException origException) {
-			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, subDirectory);
+			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, destinationFile.getPath());
 			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, origException);
 		}
 
-		return targetFile;
+		return destinationFile;
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class FileManager {
 			FileUtils.forceMkdir(destinationFile.getParentFile());
 			ImageIO.write(imageFile, "png", destinationFile);
 		} catch (IOException origException) {
-			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, subDirectory);
+			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, destinationFile.getPath());
 			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, origException);
 		}
 
@@ -175,7 +175,7 @@ public class FileManager {
 	 * @return BufferedImage the image file read from disk
 	 */
 	public static BufferedImage readImage(File filePath) {
-		return ImageComparisonUtil.readImageFromResources(filePath.getAbsolutePath().replace("/", File.separator));
+		return ImageComparisonUtil.readImageFromResources(filePath.getAbsolutePath());
 	}
 	
 	/**
@@ -193,6 +193,15 @@ public class FileManager {
 		if(subDirectory != null){
 			outputSubDir = subDirectory;
 		}
-		return Configuration.toString("imageDirectory", IMAGEDIRECTORY).replace("/", File.separator) + File.separator + outputSubDir + File.separator + fileName;
+
+		return convertPathSeparators(Configuration.toString("imageDirectory", IMAGE_DIRECTORY) + File.separator + outputSubDir + File.separator + fileName);
+	}
+
+	public static String convertPathSeparators(String path) {
+		return path.replace("/", File.separator);
+	}
+
+	public static String sanitizeString(String toSanitize) {
+		return toSanitize.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
 	}
 }
