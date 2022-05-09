@@ -1,8 +1,8 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -42,11 +42,14 @@ public class ImageVerificationSteps {
 	}
 	
 	/**
-	 * Takes a screenshot of the given element and compares it to the previously-stored image of that same element.
+	 * Takes a screenshot of the given element or page/window
+	 * and compares it to the previously-stored or taken image of that same element or page/window.
+	 * <br><br>
 	 * Default scaling pixel tolerance level = 0.06%.
 	 * This translates to ~1244 pixels. Roughly a 35x35 image area at 1080p resolution.
 	 * @param elementName String the name of the element to capture and compare.
 	 * @param assertion String the user input determining if we expect a match or a mismatch.
+	 * @param optionalStoredImage String the user input indicating if we use a previously taken snapshot, or one whose path is stored in testData
 	 */
 	@Then("^I verify (?:the|an?) (page|window|.*?) (do(?:es)? not )?match(?:es)? the (expected|original|previous|.*?) image$")
     public static void verifyImageComparison(String elementName, String assertion, String optionalStoredImage) {
@@ -59,43 +62,55 @@ public class ImageVerificationSteps {
 			storedImage = optionalStoredImage;
 		}
         
-		ImageComparisonResult comparisonResult = compareImages(elementName, storedImage);
+		boolean didTheyMatch = checkIfImagesMatch(elementName, negate, storedImage);
         
         //Check the result after determining if we're doing a should match or should not match.
 		if(negate) {
-			assertNotEquals(expectedResult, comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
+			assertFalse(expectedResult, didTheyMatch);
 		}
 		else {
-			assertEquals(expectedResult, comparisonResult.getImageComparisonState(), ImageComparisonState.MATCH);
+			assertTrue(expectedResult, didTheyMatch);
 		}
 	}
 	
 	/**
-	 * Takes an updated screenshot of the current element, or page, for comparison to an earlier expected image.
+	 * Takes an updated screenshot of the current element or page/window for comparison to an earlier or stored image.
 	 * <br><br>
 	 * <i>
 	 * If screenshots are different sizes, both will be enlarged to the largest dimensions found. Expanded space
-	 * will be set to parent background color for web, upper-left-most color for windows applications.
+	 * will be set to the first found background color for web, red for other page object types
 	 * </i>
 	 *
 	 * @param elementName String the name of the element to capture and compare 
 	 * or any casing of "page" alone to compare the entire page.
+	 * @param negate String indicating if a match is or is not expected
+	 * @param optionalStoredImage String the user input indicating stored or previously taken screenshot for comparison
 	 * 
-	 * @return ImageComparisonResult the image comparison result.
+	 * @return Boolean if the images matched
 	 */
-    private static ImageComparisonResult compareImages(String elementName, String optionalStoredImage) {
-		//Set file output/input strings and page type
-		String outputFolder = "ImageComparison/" + scenario.getName();
-		String actualFileName = PageManager.getPage().getName() + "_" + elementName + "_ACTUAL" + ".png";
-		String expectedFileName = PageManager.getPage().getName() + "_" + elementName + "_EXPECTED" + ".png";
-		String resultImageFileName = PageManager.getPage().getName() + "_" + elementName + "_RESULT" + ".png";
-		PageObjectType pageType = PageManager.getCurrentPageObjectType();
+    private static boolean checkIfImagesMatch(String elementName, Boolean negate, String optionalStoredImage) {
+		String imageId = String.valueOf(System.currentTimeMillis());
 
 		//Load stored image if we're not comparing to a previous step screenshot
 		File testDataImageLocation = null;
 		if(optionalStoredImage != null){
 			testDataImageLocation = new File(Configuration.getTestdataValue("images", optionalStoredImage));
 		}
+
+		String appendToResult;
+		if(negate) {
+			appendToResult = "_NO_MATCH_";
+		} else {
+			appendToResult = "_MATCH_";
+		}
+
+		//Set file output/input strings and page type
+		String outputFolder = "ImageComparison" + File.separator + FileManager.sanitizeString(scenario.getName());
+		appendToResult += PageManager.getPage().getName() + "_" + elementName;
+		String expectedFileName = "tempToCompare.png";
+		String failureImageName = imageId + "_" + "FAILED" + appendToResult + ".png";
+		String passedImageName = imageId + "_" + "PASSED" + appendToResult + ".png";
+		PageObjectType pageType = PageManager.getCurrentPageObjectType();
 
     	//load images to be compared
 		BufferedImage expectedImage;
@@ -104,26 +119,39 @@ public class ImageVerificationSteps {
 		if(optionalStoredImage != null) {
 			expectedImage = FileManager.readImage(testDataImageLocation);
 		} else {
-			expectedImage = FileManager.readImage(outputFolder, expectedFileName);
+			expectedImage = FileManager.readImage(null, expectedFileName);
 		}
 
         //Ensure image sizes are equalized to enforce writing of a result file regardless of sizes
 		Map<String, BufferedImage> equalizedImages;
-		equalizedImages = equalizeImages(pageType, elementName, expectedImage, actualImage);
+		Color backgroundColor = processBackgroundColor(pageType, elementName);
+		equalizedImages = equalizeImages(backgroundColor, expectedImage, actualImage);
         
 		//Compare the two images
-		ImageComparison comparison = new ImageComparison(equalizedImages.get("expected"), equalizedImages.get("actual"));
-		comparison.setAllowingPercentOfDifferentPixels(0.06); //0.06% Will allow for a ~51 pixel difference. A text cursor is ~38
-		ImageComparisonResult comparisonResult = comparison.compareImages();
+		ImageComparison compareTool = new ImageComparison(equalizedImages.get("expected"), equalizedImages.get("actual"));
+		compareTool.setAllowingPercentOfDifferentPixels(0.06); //0.06% Will allow for a ~51 pixel difference. A text cursor is ~38
+		ImageComparisonResult comparisonResult = compareTool.compareImages();
 
-		//Write results to disk
-		FileManager.saveImage(outputFolder, actualFileName, actualScreenshot);
-		FileManager.saveImage(outputFolder, expectedFileName, expectedImage);
-		FileManager.saveImage(outputFolder, resultImageFileName, comparisonResult.getResult());
+		//Write result to disk
+		boolean didTheyMatch = comparisonResult.getImageComparisonState() == ImageComparisonState.MATCH;
+		if(didTheyMatch == negate) {
+			FileManager.saveImage(outputFolder, failureImageName, comparisonResult.getResult());
+		}
+		else {
+			FileManager.saveImage(outputFolder, passedImageName, comparisonResult.getResult());
+		}
         
-        return comparisonResult;
+        return didTheyMatch;
     }
 
+	/**
+	 * Takes a screenshot of the given page/window/element, using the page type to dictate how it shall process the output,
+	 * and returns the generated file.
+	 *
+	 * @param pageType the type of page to screenshot
+	 * @param elementName the name of the element, or page/window
+	 * @return File the generated temporary screenshot file
+	 */
 	private static File processActualScreenshot(PageObjectType pageType, String elementName){
 		File screenshotFile;
 
@@ -136,7 +164,7 @@ public class ImageVerificationSteps {
 				case EXECUTABLE:
 					BufferedImage cropWindow = FileManager.readImage(screenshotFile);
 					BufferedImage croppedImage = cropWindow.getSubimage(2,2,(cropWindow.getWidth()-4),(cropWindow.getHeight()-4));
-					screenshotFile = FileManager.saveImage(null, "tempScreenshotWindow.png", croppedImage);
+					screenshotFile = FileManager.saveImage(null, "tempExecutableScreenshotWindow.png", croppedImage);
 					break;
 				case WEBPAGE:
 				case UNKNOWN:
@@ -151,6 +179,14 @@ public class ImageVerificationSteps {
 		return screenshotFile;
 	}
 
+	/**
+	 * Uses the element/page/window name and page object type to return the appropriate background color for image
+	 * expansion
+	 *
+	 * @param pageType the type of page to screenshot
+	 * @param elementName the name of the element, or window/page
+	 * @return Color the processed background color
+	 */
 	private static Color processBackgroundColor(PageObjectType pageType, String elementName){
 		//Return web page/element background or default red for other types
 		if(elementName.matches("(?i)^\\s*(page|window)\\s*$")){
@@ -182,18 +218,28 @@ public class ImageVerificationSteps {
 		return Color.red;
 	}
 
-	private static Map<String, BufferedImage> equalizeImages(PageObjectType pageType, String elementName, BufferedImage expectedImage, BufferedImage actualImage){
+	/**
+	 * Takes a background color and two images, and returns a map of processed images.
+	 * The processed images will be resized to the largest dimensions with the type of page and element name used to
+	 * process the background color for expansion. If the images are the same size, the map will return the unprocessed
+	 * BufferedImages.
+	 *
+	 * @param backgroundColor the background color to use for newly generated empty space on image expansion
+	 * @param expectedImage the previously stored expected image
+	 * @param actualImage the previously stored actual image
+	 * @return Map of key string expected or actual with the processed BufferedImage stored as the value
+	 */
+	private static Map<String, BufferedImage> equalizeImages(Color backgroundColor, BufferedImage expectedImage, BufferedImage actualImage){
 		int expectedHeight = expectedImage.getHeight();
 		int expectedWidth = expectedImage.getWidth();
 		int actualHeight = actualImage.getHeight();
 		int actualWidth = actualImage.getWidth();
-		Color backgroundColor = processBackgroundColor(pageType, elementName);
 		Map<String, BufferedImage> equalizedImages = new HashMap<>();
 
 		//If image sizes are not equal, equalize them
 		//If they are equal, return as-is
 		if((expectedWidth != actualWidth) || (expectedHeight != actualHeight)) {
-			log.warn("Page object has been detected as {} with different sized comparison snapshots. This may result in an unreliable comparison.", pageType);
+			log.warn("The compared screenshots are of different sizes, and may result in an inaccurate comparison.");
 
 			int newHeight;
 			int newWidth;
