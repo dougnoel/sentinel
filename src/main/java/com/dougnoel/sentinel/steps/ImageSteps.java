@@ -37,8 +37,7 @@ public class ImageSteps {
 	 */
     @When("^I take a screenshot of (?:the|a) (page|window|.*?)$")
     public static void storeScreenshotOfElement(String elementName) throws IOException {
-		String outputFolder = "imageComparison/" + scenario.getName();
-    	String imageFileName = PageManager.getPage().getName() + "_" + elementName + "_EXPECTED" + ".png";
+    	String imageFileName = "tempTocompare" + ".png";
     	File screenshotFile;
 		PageObjectType pageType = PageManager.getCurrentPageObjectType();
 
@@ -50,19 +49,19 @@ public class ImageSteps {
 				case EXECUTABLE:
 					BufferedImage cropWindow = FileManager.readImage(screenshotFile);
 					BufferedImage croppedImage = cropWindow.getSubimage(2,2,(cropWindow.getWidth()-4),(cropWindow.getHeight()-4));
-					screenshotFile = FileManager.saveImage(null, "tempScreenshotWindow.png", croppedImage);
-					break;
+					FileManager.saveImage(null, imageFileName, croppedImage);
+					return;
 				case WEBPAGE:
 					break;
 				case UNKNOWN:
 				default:
-					log.warn("Page object type is of the unhandled {} type. Screenshot may not be accurate.", pageType);
+					log.warn("Page object type is of the unhandled {} type. Page/Window screenshot may not be accurate or supported.", pageType);
 					break;
 			}
 		} else{
 			screenshotFile = getElement(elementName).getScreenshot();
 		}
-    	
-    	FileManager.saveImage(outputFolder, imageFileName, screenshotFile);
+
+		FileManager.saveImage(null, imageFileName, screenshotFile);
     }
 }
