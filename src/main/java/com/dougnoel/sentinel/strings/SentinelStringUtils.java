@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.strings;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.message.ParameterizedMessage;
+import org.openqa.selenium.InvalidArgumentException;
 
 public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 
@@ -35,5 +36,25 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
     		return text.substring(1, text.length()-1);
     	return text;
     }
+
+	/**
+	 * Constructs the ordinal string of the given int. For example "1st", "2nd", "111th"
+	 * @param i int the integer to create an ordinal string for
+	 * @return String the ordinal string
+	 */
+	public static String ordinal(int i) {
+		if(i < 0)
+			throw new InvalidArgumentException("Integer must be non-negative to produce ordinal.");
+
+		String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+		switch (i % 100) {
+			case 11:
+			case 12:
+			case 13:
+				return i + "th";
+			default:
+				return i + suffixes[i % 10];
+		}
+	}
 
 }
