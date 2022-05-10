@@ -16,8 +16,8 @@ public class DownloadVerificationSteps {
 	/**
 	 * Uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given extension to appear.
 	 * <p>
-     * <b>Gherkin Example:</b>
-     * <li>I verify a new docx file is downloaded</li>
+     * <b>Gherkin Example:</b><br>
+     * - I verify a new docx file is downloaded
      * <p>
 	 * @param fileExtension String the file extension to wait for. Do not use a leading period.
 	 * @throws InterruptedException When the thread is interrupted

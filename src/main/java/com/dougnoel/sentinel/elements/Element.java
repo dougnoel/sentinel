@@ -817,22 +817,22 @@ public class Element {
 	
 	/**
 	 * <p>
-	 * From selenium's javadoc: </br>
+	 * From selenium's javadoc: <br>
 	 * Get the value of the given attribute of the element. Will return the current value, 
-	 * even if this has been modified after the page has been loaded. </br>
+	 * even if this has been modified after the page has been loaded. <br>
 	 * More exactly, this method will return the value of the property with the given name,
 	 * if it exists. If it does not, then the value of the attribute with the given name is returned. 
-	 * If neither exists, null is returned. </br>
-	 * The "style" attribute is converted as best can be to a text representation with a trailingsemi-colon. </br></br>
+	 * If neither exists, null is returned. <br>
+	 * The "style" attribute is converted as best can be to a text representation with a trailingsemi-colon. <br>
 	 * The following are deemed to be "boolean" attributes, and will return either "true" or null: 
 	 * async, autofocus, autoplay, checked, compact, complete, controls, declare, defaultchecked,
 	 * defaultselected, defer, disabled, draggable, ended, formnovalidate, hidden, indeterminate,
 	 * iscontenteditable, ismap, itemscope, loop, multiple, muted, nohref, noresize, noshade, 
 	 * novalidate, nowrap, open, paused, pubdate, readonly, required, reversed, scoped, seamless,
-	 * seeking, selected, truespeed, willvalidate 
-	 * </br></br>
-	 * Finally, the following commonly mis-capitalized attribute/property names are evaluated as expected: 
-	 * •If the given name is "class", the "className" property is returned. 
+	 * seeking, selected, truespeed, willvalidate
+	 * <br>
+	 * Finally, the following commonly mis-capitalized attribute/property names are evaluated as expected: <br>
+	 * •If the given name is "class", the "className" property is returned. <br>
 	 * •If the given name is "readonly", the "readOnly" property is returned. 
 	 * 
 	 * Note: The reason for this behavior is that users frequently confuse attributes andproperties. If you need to do something more precise, e.g., refer to an attribute even when aproperty of the same name exists, then you should evaluate Javascript to obtain the resultyou desire.
