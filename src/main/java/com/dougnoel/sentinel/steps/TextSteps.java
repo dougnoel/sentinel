@@ -10,7 +10,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.en.When;
 
