@@ -34,7 +34,7 @@ import io.cucumber.java.en.Then;
 
 public class ImageVerificationSteps {
 	private static Scenario scenario;
-	protected static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
+	protected static final Logger log = LogManager.getLogger(ImageVerificationSteps.class.getName()); // Create a logger.
 	
 	@Before
 	public static void before(Scenario scenario) {
@@ -88,7 +88,7 @@ public class ImageVerificationSteps {
 	 * 
 	 * @return Boolean if the images matched
 	 */
-    private static boolean checkIfImagesMatch(String elementName, Boolean negate, String optionalStoredImage) {
+    private static boolean checkIfImagesMatch(String elementName, boolean negate, String optionalStoredImage) {
 		String imageId = String.valueOf(System.currentTimeMillis());
 
 		//Load stored image if we're not comparing to a previous step screenshot
@@ -196,6 +196,7 @@ public class ImageVerificationSteps {
 					return body.getBackgroundColor();
 				case EXECUTABLE:
 					log.warn("Page object type is of the {} type. Red will be used as background color fallback.", pageType);
+					break;
 				case UNKNOWN:
 				default:
 					log.warn("Page object type is of the unhandled {} type. Comparison may be inaccurate and red will be used as background color fallback.", pageType);
