@@ -83,7 +83,7 @@ public class WindowList {
 				windowsToRemove.add(window);
 
 				//If an earlier window than the current closes, decrement the window position
-				if(windowHandles.indexOf(window) < windowHandles.indexOf(currentWindow))
+				if(windowHandles.indexOf(window) < currentWindow)
 					currentWindow--;
 			}
     	}
