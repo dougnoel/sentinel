@@ -3,7 +3,10 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
+import io.cucumber.java.en.When;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dougnoel.sentinel.system.DownloadManager;
@@ -32,5 +35,35 @@ public class DownloadVerificationSteps {
                 fileExtension);
 		
 		assertTrue(expectedResult, !StringUtils.isEmpty(fileName));
+	}
+
+	/**
+	 * Uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given filename to appear.
+	 * <p>
+	 * <b>Gherkin Example:</b><br>
+	 * - I verify a new file with the name "example.docx" is downloaded
+	 * <p>
+	 * @param expectedFilename String the filename to wait for. Do not need to fully qualify the path.
+	 * @throws InterruptedException When the thread is interrupted
+	 * @throws IOException When a file or folder cannot be opened or any generic IO error occurs
+	 */
+	@Then("^I verify a new file with the name \"(.*)\" is downloaded$")
+	public static void verifyFileWithFilenameDownloaded(String expectedFilename) throws InterruptedException, IOException {
+		DownloadManager.setFileExtension(FilenameUtils.getExtension(expectedFilename));
+		var downloadedFilename = DownloadManager.monitorDownload();
+		String expectedResult = SentinelStringUtils.format("Expected a new file with the filename \"{}\"  to be downloaded. "
+						+ "Perhaps the download did not complete in time. Check your timeout.",
+				expectedFilename);
+
+		assertTrue(expectedResult, downloadedFilename.equals(expectedFilename));
+	}
+
+	/**
+	 * Clears all files from the download directory. Does not delete the directory itself.
+     * @throws IOException When the directory is undefined / does not exist, or any generic IO error occurs.
+	 */
+	@When("I clear all files from the downloads folder")
+	public static void clearDownloadsFolder() throws IOException {
+		DownloadManager.clearDownloadDirectory();
 	}
 }

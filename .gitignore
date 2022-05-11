@@ -20,6 +20,7 @@ conf/sentinel.yml
 
 #Ignore VS Code files
 .vscode/
+
 #Ignore the contents of the downloads folder
 downloads/
 

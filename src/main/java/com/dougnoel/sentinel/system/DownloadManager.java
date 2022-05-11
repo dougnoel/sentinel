@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -436,5 +437,13 @@ public class DownloadManager {
      */
     public static void setDownloadDirectory(String downloadDirectory) {
         DownloadManager.downloadDirectory = downloadDirectory;
+    }
+
+    /**
+     * Clears the download directory. Does not delete the directory itself.
+     * @throws IOException in the case that an IOException occurs while clearing the directory
+     */
+    public static void clearDownloadDirectory() throws IOException {
+        FileUtils.cleanDirectory(new File(downloadDirectory));
     }
 }
