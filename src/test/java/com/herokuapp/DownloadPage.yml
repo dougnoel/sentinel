@@ -4,6 +4,3 @@ elements:
   sample_download_link:
     elementType: Link
     text: "sample.pdf"
-  text_file_download_link:
-    elementType: Link
-    text: "some-file.txt"

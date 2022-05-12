@@ -90,20 +90,4 @@ public class WindowAndTabSteps {
     	}
     	PageManager.waitForPageLoad();
     }
-
-    /**
-     * Verifies a file was downloaded successfully
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I verify the results.csv file was successfully downloaded</li>
-     * <li>I verify the lorem.zip file was successfully downloaded</li>
-     * </ul>
-     * @param fileName String the name of the vile to verify
-     */
-    @Then("^I verify the \"([^\"]*)\" file was successfully downloaded")
-    public static void verifyFileDownloaded(String fileName) {
-        String expectedResult = SentinelStringUtils.format("Expecting {} to be downloaded.", fileName);
-        assertTrue(expectedResult, DownloadManager.isFileDownloaded(fileName));
-    }
 }

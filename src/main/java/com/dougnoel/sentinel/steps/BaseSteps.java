@@ -106,26 +106,6 @@ public class BaseSteps {
     public void hoverOverElement(String elementName) {
     	getElement(elementName).hover();
     }
-
-    /**
-     * Clicks a point relative in pixels to the center of the elementName as defined on the current Page object.
-     * Positive values for X go right, Positive values for Y go up.
-     * To click the top right corner of an element of a width of 20 and a height of 10, you would need to pass Point(10, 5)
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I click at the point 0,0 on a login button (This is the center.)</li>
-     * <li>I click at the point 0,21 on the name textbox (This is the middle of an element with a width of 10, but one pixel above the top of an element with a height of 40.)</li>
-     * <li>I click at the point 25, -5 on an Opacity slider (This is the right side of an element with a width of 50, and the bottom of an element of a height of 10.)</li>
-     * </ul>
-     * @param xValue String the X value of the point in pixels
-     * @param yValue String the Y value of the point in pixels
-     * @param elementName String the name of the element to click
-     */
-    @When("I move the mouse over (?:the|a|an) (.*?) and click on the point (.*?), (.*?)$")
-    public static void clickPoint(String elementName, String xValue, String yValue) {
-        getElement(elementName).clickPositionOnElement(new Point(Integer.parseInt(xValue), Integer.parseInt(yValue)));
-    }
     
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.

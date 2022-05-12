@@ -10,8 +10,6 @@ Feature: Base Steps Tests
     	
   Scenario: Accept JS Alert
     Given I am on the Javascript Alerts Page
-    When I move the mouse over the click for js alert button and click on the point -90, 23
-    Then I verify the result message does not have the text "You successfully clicked an alert"
-    When I move the mouse over the click for js alert button and click on the point -80, 20
+      And I click the click for js alert button
       And I accept the JS alert
     Then I verify the result message has the text "You successfully clicked an alert"
