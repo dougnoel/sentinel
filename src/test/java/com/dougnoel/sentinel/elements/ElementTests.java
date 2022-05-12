@@ -230,5 +230,19 @@ public class ElementTests {
 		table.clickColumnHeader("Last Name");
 		assertTrue("Last Name column was expected to be sorted in descending order.", table.verifyColumnCellsAreSortedAscending("Last Name"));
 	}
+
+	@Test
+	public void assertTableColumnEmpty(){
+		BaseSteps.navigateToPage("InternetTablesPage");
+		var table = ElementFunctions.getElementAsTable("table 1");
+		assertFalse("All cells in Last Name column not empty.", table.verifyAllColumnCellsEmpty("Last Name"));
+	}
+
+	@Test
+	public void assertTableColumnNotEmpty(){
+		BaseSteps.navigateToPage("InternetTablesPage");
+		var table = ElementFunctions.getElementAsTable("table 1");
+		assertTrue("All cells in Last Name column not empty.", table.verifyAllColumnCellsNotEmpty("Last Name"));
+	}
 	
 }
