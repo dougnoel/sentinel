@@ -522,28 +522,28 @@ public class Table extends Element {
 		return true;
 	}
 
-	/**
-	 * Returns true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
-	 *
-	 * @param columnHeader String the name of the column
-	 * @return boolean true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
-	 */
-	public boolean verifyAllColumnCellsNotEmpty(String columnHeader) {
-		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
-		for (String cell : column) {
-			try {
-				if (StringUtils.isEmpty(cell)) {
-					log.debug("Not all cells in the {} column are populated. False result returned.", columnHeader);
-					return false;
-				}
-			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for non-emptiness in every cell in the {} column.", columnHeader);
-				log.error(errorMessage);
-				throw new NoSuchElementException(errorMessage, e);
-			}
-		}
-		return true;
-	}
+    /**
+     * Returns true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
+     *
+     * @param columnHeader String the name of the column
+     * @return boolean true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
+     */
+    public boolean verifyAllColumnCellsNotEmpty(String columnHeader) {
+        ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
+        for (String cell : column) {
+            try {
+                if (StringUtils.isEmpty(cell)) {
+                    log.debug("Not all cells in the {} column are populated. False result returned.", columnHeader);
+                    return false;
+                }
+            } catch (NullPointerException e) {
+                String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for non-emptiness in every cell in the {} column.", columnHeader);
+                log.error(errorMessage);
+                throw new NoSuchElementException(errorMessage, e);
+            }
+        }
+        return true;
+    }
 
 	/**
 	 * Returns true if every cell in the given column contains no text (not even whitespace), false if any cell has any text or whitespace
@@ -551,21 +551,21 @@ public class Table extends Element {
 	 * @param columnHeader String the name of the column
 	 * @return boolean true if every cell in the given column contains no text (not even whitespace), false if any cell has any text or whitespace
 	 */
-	public boolean verifyAllColumnCellsEmpty(String columnHeader) {
-		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
-		for (String cell : column) {
-			try {
-				if (!StringUtils.isEmpty(cell)) {
-					log.debug("Not all cells in the {} column are empty. False result returned.", columnHeader);
-					return false;
-				}
-			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for emptiness in every cell in the {} column.", columnHeader);
-				log.error(errorMessage);
-				throw new NoSuchElementException(errorMessage, e);
-			}
-		}
-		return true;
+    public boolean verifyAllColumnCellsEmpty(String columnHeader) {
+        ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
+        for (String cell : column) {
+            try {
+                if (!StringUtils.isEmpty(cell)) {
+                    log.debug("Not all cells in the {} column are empty. False result returned.", columnHeader);
+                    return false;
+                }
+            } catch (NullPointerException e) {
+                String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for emptiness in every cell in the {} column.", columnHeader);
+                log.error(errorMessage);
+                throw new NoSuchElementException(errorMessage, e);
+            }
+        }
+        return true;
 	}
 
 	/**
