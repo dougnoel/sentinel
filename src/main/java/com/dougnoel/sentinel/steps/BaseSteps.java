@@ -16,6 +16,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.Point;
 
 /**
  * Methods used to define basic operations.
@@ -90,7 +91,6 @@ public class BaseSteps {
     	getElement(source).dragAndDrop(getElement(target));	
     }
 
-    
     /**
      * Moves the mouse to the middle of the given element
      * <p>
@@ -102,7 +102,6 @@ public class BaseSteps {
      * </ul>
      * @param elementName String the name of the element to hover on
      */
-    
     @When("I hover (?:on|over) (?:the |an? )?(.*?)$")
     public void hoverOverElement(String elementName) {
     	getElement(elementName).hover();
