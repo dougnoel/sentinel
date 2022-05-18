@@ -15,7 +15,12 @@ Feature: Dropdown Tests
 	
   @22
   Scenario: 22 Prime NG Dropdown
-    Given I am on the Prime NG Dropdown Page
+    Given I am on the Prime NG Home Page
+    When I click the Components Button
+    Then I am redirected to the Prime NG Setup Page
+      And I verify the Get Started Header exists
+    When I click the Dropdown Button
+    Then I am redirected to the Prime NG Dropdown Page
     When I select New York from the City Dropdown
     Then I verify the City Dropdown has the text "New York" selected
       And I press the escape key

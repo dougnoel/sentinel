@@ -1,0 +1,11 @@
+urls:
+  default: "https://www.primefaces.org/primeng/setup"
+
+elements:
+  dropdown_button:
+    elementType: Button
+    xpath: "//a[@href='/primeng/dropdown']"
+  get_started_header:
+    text: "Get Started"
+
+    
