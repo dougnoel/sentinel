@@ -6,6 +6,6 @@ elements:
     elementType: Button
     xpath: "//a[@href='/primeng/dropdown']"
   get_started_header:
-    text: "Get Started"
+    xpath: "//h1[text()='Get Started']"
 
     
