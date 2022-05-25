@@ -10,42 +10,55 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  setup:
     runs-on: windows-latest
-
     steps:
-    - name: Set resolution to 1920x1080
-      run: |
-       Set-DisplayResolution -Width 1920 -Height 1080 -Force
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v1
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-    - name: Cache Maven packages
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-    - name: Install Google Chrome # Using shell script to install Google Chrome
-      run: |
-       chmod +x ./src/test/resources/scripts/InstallChrome.sh
-        ./src/test/resources/scripts/InstallChrome.sh
-    - name: Build with Maven and Analyze with Sonar
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dheadless -DrecordTests
+      - name: Set resolution to 1920x1080
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Install Google Chrome # Using shell script to install Google Chrome
+        run: |
+          chmod +x ./src/test/resources/scripts/InstallChrome.sh
+           ./src/test/resources/scripts/InstallChrome.sh
+
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Build with Maven and Analyze with Sonar
+        uses: actions/checkout@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipTests
+
+  test:
+    runs-on: windows-latest
+    steps:
+      - name: Build with Maven and Analyze with Sonar
+        uses: actions/checkout@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn test -Dheadless -DrecordTests
     - name: Attach screen recordings from build
       if: ${{ failure() }}
       continue-on-error: true
