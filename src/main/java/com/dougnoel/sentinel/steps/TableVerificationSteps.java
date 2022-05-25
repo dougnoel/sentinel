@@ -238,7 +238,7 @@ public class TableVerificationSteps {
         boolean negate = !StringUtils.isEmpty(assertion);
 
         var expectedResult = SentinelStringUtils.format(
-                "Expected all cells in the {} column of the {} to be {}empty.",
+                "Expected all cells in the {} column of the {} to {}be empty.",
                 columnName, tableName, (negate ? "not " : ""));
         log.trace(expectedResult);
 
