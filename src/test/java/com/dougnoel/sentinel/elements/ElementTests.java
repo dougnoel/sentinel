@@ -13,6 +13,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -229,6 +231,17 @@ public class ElementTests {
 		var table = ElementFunctions.getElementAsTable("table 1");
 		table.clickColumnHeader("Last Name");
 		assertTrue("Last Name column was expected to be sorted in descending order.", table.verifyColumnCellsAreSortedAscending("Last Name"));
+	}
+
+	@Test
+	public void clickOnPoint() {
+		BaseSteps.navigateToPage("TextboxPage");
+		Element e = getElement("car checkbox");
+		e.clickPositionOnElement(new Point(0, 200));
+		assertTrue(e.isNotSelected());
+		Element body = getElement("body");
+		body.clickPositionOnChildElement(new Point(0, 0), By.xpath(".//label[@for='vehicle2']"));
+		assertTrue(e.isSelected());
 	}
 	
 }

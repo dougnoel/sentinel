@@ -121,32 +121,57 @@ public class TableVerificationSteps {
     }
     
     /**
-     * Verifies a table column does or does not have the indicated text. It can check that any cell in the
-     * column matches, or that all (or none) of the cells in the column match.
+     * Verifies all the cells in a table column does or does not contain the indicated text.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Name column in the user info table contains the text Bill</li>
-     * <li>I verify the State column in the Provider Info Table does not contain the text North Carolina</li>
      * <li>I verify all the cells in the Zip Code column in the Airports table contain the text 10001</li>
      * <li>I verify all the cells in the Store column in the Coffee Shop Table do not contain the text Roast</li>
      * </ul>
-     * @param allCells String all cells must match if any value is passed, if null is passed on ly one cell must match
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param textToMatch String the text to look for in the column
      */
-    @Then("^I verify( all the cells in)? the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
-    public static void verifyTextAppearsInColumn(String allCells, String columnName, String tableName, String assertion, String textToMatch) {
+    @Then("^I verify all the cells in the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
+    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String textToMatch) {
         boolean negate = !StringUtils.isEmpty(assertion);
-        boolean orMatch = StringUtils.isEmpty(allCells);
         
         var expectedResult = SentinelStringUtils.format(
-                "Expected the {} column of the {} to {}{} with the text {}. The element contained the text: {}",
-                columnName, tableName, (negate ? "not " : ""), (orMatch ? "contain at least one cell" : "only contain cells"), textToMatch);
+                "Expected the {} column of the {} to {}only contain cells with the text {}. The element contained the text: {}",
+                columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
-        if (orMatch) {
+
+        if (negate) {
+            assertFalse(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+        } else {
+            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+        }
+    }
+
+    /**
+     * Verifies a table column does or does not have a cell that matches the indicated text.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the Name column in the user info table has the text Bill</li>
+     * <li>I verify the Result column in the status table does not have the text ERROR</li>
+     * <li>I verify the Role column in the user info table contains the text Engineer</li>
+     * <li>I verify the State column in the Provider Info Table does not contain the text North Carolina</li>
+     * </ul>
+     * @param columnName String Name of the column to verify
+     * @param tableName String Name of the table containing the column
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param textToMatch String the text to look for in the column
+     */
+    @Then("^I verify the (.*?) column in the (.*?)( does not)? (has|have|contains?) the text (.*?)$")
+    public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        boolean partialMatch = matchType.contains("contain");
+        String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} {}{} the text {}.",
+                columnName, tableName, (negate ? " does not" : ""), matchType, textToMatch);
+
+        if (partialMatch) {
             if (negate) {
                 assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
             } else {
@@ -154,12 +179,13 @@ public class TableVerificationSteps {
             }
         } else {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+                assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellHas(columnName, textToMatch));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+                assertTrue(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellHas(columnName, textToMatch));
             }
         }
     }
+
     
     /**
      * Verifies a table column's values are sorted in ascending or descending order.

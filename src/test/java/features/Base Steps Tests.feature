@@ -12,3 +12,4 @@ Feature: Base Steps Tests
     Given I am on the Javascript Alerts Page
       And I click the click for js alert button
       And I accept the JS alert
+    Then I verify the result message has the text "You successfully clicked an alert"
