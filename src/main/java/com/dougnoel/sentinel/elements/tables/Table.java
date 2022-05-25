@@ -85,7 +85,7 @@ public class Table extends Element {
 		if (headers.isEmpty()) {
 			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
-				String headerText = header.getText();
+				String headerText = header.getText().replaceAll("[\\t\\n\\r]+"," ");
 				headers.add(headerText);
 			}
 		}
@@ -523,7 +523,7 @@ public class Table extends Element {
 	}
 
 	/**
-	 * Returns true if any cells in the given column match the text value given.
+	 * Returns true if any cells in the given column contain the text value given.
 	 * 
 	 * @param columnHeader String the name of the column
 	 * @param textToMatch String the text that should be in at least one of the cells
@@ -535,8 +535,34 @@ public class Table extends Element {
 			try {
 				if (cell.contains(textToMatch)) {
 					return true;
+				} else {
+					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 				}
-				else {
+			} catch (NullPointerException e) {
+				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
+				log.error(errorMessage);
+				throw new NoSuchElementException(errorMessage, e);
+			}
+
+		}
+		log.debug("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
+		return false;
+	}
+
+	/**
+	 * Returns true if any cells in the given column exactly match the text value given.
+	 *
+	 * @param columnHeader String the name of the column
+	 * @param textToMatch String the text that at least one of the cells should be equal to
+	 * @return boolean true if the column has the given text in at least one of the cells, false if not
+	 */
+	public boolean verifyAnyColumnCellHas(String columnHeader, String textToMatch) {
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
+		for (String cell : column) {
+			try {
+				if (cell.equals(textToMatch)) {
+					return true;
+				} else {
 					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
 				}
 			} catch (NullPointerException e) {
@@ -611,7 +637,6 @@ public class Table extends Element {
 	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
-		@SuppressWarnings("unchecked")
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
 		
 		// We needs to sort the strings taking into account there might be numbers in the strings.
