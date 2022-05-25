@@ -1,7 +1,0 @@
-urls:
-  default: "https://www.primefaces.org/primeng"
-
-elements:
-  components_button:
-    elementType: Button
-    xpath: "//a[@href='/primeng/setup']//span[text()='Components']"
