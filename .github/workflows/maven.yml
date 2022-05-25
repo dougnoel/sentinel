@@ -59,10 +59,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn test -Dheadless -DrecordTests
-    - name: Attach screen recordings from build
-      if: ${{ failure() }}
-      continue-on-error: true
-      uses: actions/upload-artifact@v2
-      with:
-        name: ScreenRecordings
-        path: ${{ github.workspace }}/reports/*.avi
+      - name: Attach screen recordings from build
+        if: ${{ failure() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v2
+        with:
+          name: ScreenRecordings
+          path: ${{ github.workspace }}/reports/*.avi
