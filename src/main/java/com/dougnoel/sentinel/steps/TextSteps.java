@@ -2,13 +2,14 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import com.dougnoel.sentinel.elements.Element;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.cucumber.java.en.When;
 
@@ -108,9 +109,26 @@ public class TextSteps {
     @When("^I press the (escape|enter|return|tab) key$")
     public static void keyPress(String keyName) {
     	keyName = keyName.toUpperCase();
-    	var driver = WebDriverFactory.getWebDriver();
+    	var driver = Driver.getWebDriver();
         WebElement element = driver.findElement(By.tagName("Body"));
         element.sendKeys(Keys.valueOf(keyName));
+    }
+
+    /**
+     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, or TAB to a given element.
+     * @param keyName
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I press the escape key on the search box</li>
+     * <li>I press the enter key in the search box</li>
+     * </ul>
+     */
+    @When("^I press the (escape|enter|return|tab) key (?:to|on|in) the (.*)$")
+    public static void keyPressElement(String keyName, String element) {
+        keyName = keyName.toUpperCase();
+        Element targetElement = getElement(element);
+        targetElement.sendSpecialKey(Keys.valueOf(keyName));
     }
     
     /**

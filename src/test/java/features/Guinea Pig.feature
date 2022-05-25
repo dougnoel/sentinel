@@ -15,3 +15,7 @@ Feature: Example Feature
   		And I press the return key
   		And I press the tab key
   		And I press the escape key
+      And I press the enter key on the Send Button
+      And I press the return key on the Send Button
+      And I press the tab key in the Comments Text Area
+      And I press the escape key to the Comments Text Area

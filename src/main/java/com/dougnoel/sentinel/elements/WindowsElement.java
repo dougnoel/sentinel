@@ -4,17 +4,16 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.SelectorType;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.system.FileManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.InvalidSelectorException;
@@ -53,7 +52,7 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	protected WebElement element() {
-		WebElement element = null;
+		WebElement element;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
@@ -182,38 +181,18 @@ public class WindowsElement extends Element {
 	 * @param yOffset int the pixels below the top edge of the element
 	 * @return Color the color at the specified pixel offset in the element.
 	 */
-	public Color getColor(int xOffset, int yOffset) {
-		Robot robot;
-		try {
-			robot = new Robot();
-		} catch (AWTException awte) {
-			throw new com.dougnoel.sentinel.exceptions.IOException(awte);
-		}
-
-		// Grab the pixel coordinates of the rectangle of the element, relative to the top-left corner of the screen. Positive X = right. Positive Y = down. 
-		// These coordinates are given in the "true" pixel count of the screen. That is, on a 3840 x 2160 pixel (4K) screen, the coordinates given here are in that domain.
-		var elementRectangle = element().getAttribute("BoundingRectangle").split(" ");
-		var topLeftX = Integer.parseInt(elementRectangle[0].split(":")[1]);
-		var topLeftY = Integer.parseInt(elementRectangle[1].split(":")[1]);
-		var width = Integer.parseInt(elementRectangle[2].split(":")[1]);
-		var height = Integer.parseInt(elementRectangle[3].split(":")[1]);
-
-		var elementCoords = new java.awt.Rectangle(topLeftX, topLeftY, width, height);
+	public Color getColorAtOffset(int xOffset, int yOffset) {
 		// Windows (the operating system) contains a scaling setting which affects the "screen resolution" that Robot reads. 
 		// Because Robot respects that setting but the above "BoundingRectangle" coordinates do not, the user must have 100% in that setting so the resolutions are over the same domain.
-		BufferedImage screenshot = robot.createScreenCapture(elementCoords);
-		File outputfile = new File("logs/bufferedimage.png");
-		try {
-			ImageIO.write(screenshot, "png", outputfile);
-		} catch (IOException ioe) {
-			throw new com.dougnoel.sentinel.exceptions.IOException(ioe);
-		}
+		BufferedImage screenshot = screenshotElement();
+
+		FileManager.saveImage(null, "tempGetColorImage.png", screenshot);
 
 		int argb = screenshot.getRGB(xOffset, yOffset);
-		double a = (argb >> 24) & 0xFF;
+		double a = ((argb >> 24) & 0xFF)/255.0; //The selenium color object will take any double for alpha, but requires 0.0-1.0 for correct operation. This converts the alpha from 0-255 to the correct range.
 		int r = (argb >> 16) & 0xFF;
 		int g = (argb >> 8) & 0xFF;
-		int b = (argb >> 0) & 0xFF;
+		int b = (argb) & 0xFF;
 
 		return new Color(r, g, b, a);
 	}
@@ -223,8 +202,8 @@ public class WindowsElement extends Element {
 	 * WARNING!!! Windows (OS) setting "Make everything bigger" (app and text scaling) must be set to 100% for proper use of this method.
 	 * @return Color the color of the pixel one below and one to the right of the top left pixel of the element.
 	 */
-	public Color getColor() {
-		return getColor(1, 1);
+	public Color getColorAtOffset() {
+		return getColorAtOffset(1, 1);
 	}
 
 	/**
@@ -244,9 +223,58 @@ public class WindowsElement extends Element {
 	@Override
 	public boolean attributeEquals(String attribute, String value) {
 		if (attribute.equalsIgnoreCase("color")) {
-			var hexColor = getColor().asHex();
+			var hexColor = getColorAtOffset().asHex();
 			return hexColor.equalsIgnoreCase(value);
 		}
 		return super.attributeEquals(attribute, value);
+	}
+
+	/**
+	 * Windows does not support color information, as such this is an unsupported operation for windows elements.
+	 *
+	 * @return Color Java color object of the background color of the element
+	 */
+	@Override
+	public java.awt.Color getBackgroundColor() {
+		throw new NotImplementedException("Windows elements do not support background color");
+	}
+
+	/**
+	 * Returns a screenshot File of the current element.
+	 *
+	 * @return File a screenshot of the current element
+	 */
+	@Override
+	public File getScreenshot() {
+		BufferedImage temporaryBuffer = screenshotElement();
+		return FileManager.saveImage(null, "tempScreenshotImage.png", temporaryBuffer);
+	}
+
+	/**
+	 * Returns a BufferedImage taken of the current element
+	 *
+	 * @return BufferedImage A robot screenshot cropped to the current element
+	 */
+	private BufferedImage screenshotElement() {
+		Robot robot;
+		try {
+			robot = new Robot();
+		} catch (AWTException awte) {
+			String errorMessage = SentinelStringUtils.format("Failed to screenshot the element {} on the page {}", getName(), PageManager.getPage().getName());
+			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, awte);
+		}
+
+		// Grab the pixel coordinates of the rectangle of the element, relative to the top-left corner of the screen. Positive X = right. Positive Y = down.
+		// These coordinates are given in the "true" pixel count of the screen. That is, on a 3840 x 2160 pixel (4K) screen, the coordinates given here are in that domain.
+		var elementRectangle = element().getAttribute("BoundingRectangle").split(" ");
+		var topLeftX = Integer.parseInt(elementRectangle[0].split(":")[1]);
+		var topLeftY = Integer.parseInt(elementRectangle[1].split(":")[1]);
+		var width = Integer.parseInt(elementRectangle[2].split(":")[1]);
+		var height = Integer.parseInt(elementRectangle[3].split(":")[1]);
+
+		var elementCoords = new java.awt.Rectangle(topLeftX, topLeftY, width, height);
+		// Windows (the operating system) contains a scaling setting which affects the "screen resolution" that Robot reads.
+		// Because Robot respects that setting but the above "BoundingRectangle" coordinates do not, the user must have 100% in that setting so the resolutions are over the same domain.
+		return robot.createScreenCapture(elementCoords);
 	}
 }
