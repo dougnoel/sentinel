@@ -19,3 +19,5 @@ elements:
   sixty_one_to_one_hundred_radio_button:
     elementType: Radiobutton
     id: "age3"
+  sample_download_link:
+    id: "pdf"
