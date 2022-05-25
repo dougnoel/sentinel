@@ -43,21 +43,23 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Build with Maven and Analyze with Sonar
+      - name: Setup Build
         uses: actions/checkout@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Perform Build with Maven and Analyze with Sonar
         run: mvn -B org.jacoco:jacoco-maven-plugin:prepare-agent verify org.jacoco:jacoco-maven-plugin:report org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -DskipTests
 
   test:
     runs-on: windows-latest
     steps:
-      - name: Build with Maven and Analyze with Sonar
+      - name: Setup Build
         uses: actions/checkout@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Perform Tests
         run: mvn test -Dheadless -DrecordTests
       - name: Attach screen recordings from build
         if: ${{ failure() }}
