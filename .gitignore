@@ -23,6 +23,7 @@ conf/sentinel.yml
 
 #Ignore the contents of the downloads folder
 downloads/
+
 #Ignore IntelliJ files
 .idea/
 *.iml
