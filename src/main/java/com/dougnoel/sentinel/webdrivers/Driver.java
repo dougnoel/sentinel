@@ -68,6 +68,16 @@ public class Driver {
     public static void goToNextWindow() {
     	getSentinelDriver().goToNextWindow();
     }
+
+	/**
+	 * Asks the current driver to wait for, and move forwards to, the next new window in the list.
+	 * <br><br>Use of this method assumes:
+	 * <br>That the user knows the expected state of the software they are testing,
+	 * and will test to make sure they are in the correct window.
+	 */
+	public static void goToNewWindow() {
+		getSentinelDriver().goToNewWindow();
+	}
     
     /**
      * Asks the current driver to move backwards to the previous window in the list. Use of
@@ -76,13 +86,6 @@ public class Driver {
      */
     public static void goToPreviousWindow() {
     	getSentinelDriver().goToPreviousWindow();
-    }
-    
-    /**
-     * Asks the current driver to move to the most recently opened window in its purview.
-     */
-    public static void goToMostRecentWindow() {
-    	getSentinelDriver().goToLastWindow();
     }
     
 	/**

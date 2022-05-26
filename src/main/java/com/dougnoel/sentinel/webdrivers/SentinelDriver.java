@@ -29,26 +29,24 @@ public class SentinelDriver {
 	protected WebDriver getWebDriver() {
 		return this.driver;
 	}
-	
+
 	/**
 	 * Go to next window.
 	 */
     protected void goToNextWindow() {
     	windows.goToNextWindow();
     }
+
+	/**
+	 * Wait for, and go to, next window.
+	 */
+	protected void goToNewWindow() { windows.goToNewWindow(); }
     
     /**
      * Go to previous window.
      */
     protected void goToPreviousWindow() {
     	windows.goToPreviousWindow();
-    }
-
-    /**
-     * Go to last window.
-     */
-    protected void goToLastWindow() {
-    	windows.goToLastWindow();
     }
     
 	/**

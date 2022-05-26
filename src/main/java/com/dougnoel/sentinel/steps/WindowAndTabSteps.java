@@ -1,16 +1,10 @@
 package com.dougnoel.sentinel.steps;
 
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import com.dougnoel.sentinel.system.DownloadManager;
 import org.apache.commons.lang3.StringUtils;
-
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
-
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
-import static org.junit.Assert.assertTrue;
 
 public class WindowAndTabSteps {
 
@@ -45,7 +39,7 @@ public class WindowAndTabSteps {
     @Then("^I verify a new (?:tab|window) opens(?: to)? the (.*?)$")
     public static void openNewWindow(String pageName) throws InterruptedException {
         PageManager.setPage(pageName);
-        Driver.goToMostRecentWindow();
+        Driver.goToNewWindow();
         PageManager.waitForPageLoad();
     }
     

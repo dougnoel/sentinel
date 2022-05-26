@@ -19,3 +19,10 @@ elements:
   your_comments_span:
     elementType: Span
     id: "your_comments"
+  comments_text_area:
+    id: "comments"
+    name: "comments"
+  send_button:
+    class: "jumpButton"
+    id: "submit"
+    name: "submit"

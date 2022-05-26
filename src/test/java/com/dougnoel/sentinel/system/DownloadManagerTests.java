@@ -49,12 +49,12 @@ public class DownloadManagerTests {
 	
 	@Test
 	public void verifyFileDownloadFromWebAndSavePDFImage() throws InterruptedException, IOException {
-		BaseSteps.navigateToPage("DownloadPage");
+		BaseSteps.navigateToPage("RadioButtonPage");
 		BaseSteps.click("sample_download_link");
 		String filename = DownloadManager.monitorDownload();
-		assertTrue("Expecting sample.pdf to be downloaded.", DownloadManager.isFileDownloaded(filename));
+		assertTrue("Expecting TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(filename));
 		String savedImage = DownloadManager.saveImageInPDF(0, filename);
-		assertTrue("Expecting "+savedImage+" from sample.pdf to be downloaded.", DownloadManager.isFileDownloaded(savedImage));
+		assertTrue("Expecting "+savedImage+" from TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(savedImage));
 		Driver.quitAllDrivers();
 	}
 	
