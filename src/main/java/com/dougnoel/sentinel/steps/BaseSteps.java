@@ -65,7 +65,7 @@ public class BaseSteps {
      *
      * @param elementName String the name of the element to hover
      */
-    @When("^I hover (?:on |over )?(?:the |a |an )(.*?)$")
+    @When("^I hover (?:on |over )?(?:the|a|an)[ ](.*?)$")
     public static void hover(String elementName) {
         getElement(elementName).hover();
     }

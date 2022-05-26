@@ -26,7 +26,7 @@ public class DownloadVerificationSteps {
 	 * @throws InterruptedException When the thread is interrupted
 	 * @throws IOException When a file or folder cannot be opened or any generic IO error occurs
 	 */
-	@Then("^I verify a new (.*) file is downloaded$")
+	@Then("^I verify a new file is downloaded with the extension (.*?)$")
 	public static void verifyFileWithExtensionDownloaded(String fileExtension) throws InterruptedException, IOException {
 		DownloadManager.setFileExtension(fileExtension);
 		var fileName = DownloadManager.monitorDownload();
@@ -47,7 +47,7 @@ public class DownloadVerificationSteps {
 	 * @throws InterruptedException When the thread is interrupted
 	 * @throws IOException When a file or folder cannot be opened or any generic IO error occurs
 	 */
-	@Then("^I verify a new file with the name \"(.*)\" is downloaded$")
+	@Then("^I verify a new file is downloaded with the name (.*?)$")
 	public static void verifyFileWithFilenameDownloaded(String expectedFilename) throws InterruptedException, IOException {
 		DownloadManager.setFileExtension(FilenameUtils.getExtension(expectedFilename));
 		var downloadedFilename = DownloadManager.monitorDownload();
