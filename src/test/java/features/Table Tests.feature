@@ -35,6 +35,7 @@ Feature: Table Tests
       And I verify the cell in the 2nd row and the First Name column of the Example table contains the text Charlotte
       And I verify the cell in the 3rd row and the Zip Code column of the Example table contains the text 02111
       And I verify the cell in the last row and the City column of the Example table contains the text Boston
+      And I verify all cells in the City column in the Example table are not empty
     	
   @#44 @link-tests
   Scenario: Testing links inside tables using chaining locators
@@ -56,3 +57,4 @@ Feature: Table Tests
   	  And I find the 2nd row in the Example Table and click the text Alert for Charlotte
     Then I verify the JS alert contains the text This is Charlotte
       And I accept the JS alert
+    Then I verify all cells in the Empty Column column in the Example Table are empty

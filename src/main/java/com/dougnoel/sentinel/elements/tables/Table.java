@@ -522,6 +522,38 @@ public class Table extends Element {
 		return true;
 	}
 
+	private boolean verifyColumnEmptiness(String columnHeader, boolean checkForAllCellsEmpty) {
+		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
+		for (String cell : column) {
+			if (StringUtils.isEmpty(cell) != checkForAllCellsEmpty) {
+				log.debug("Not all cells in the {} column are {}. False result returned.", columnHeader, checkForAllCellsEmpty ? "empty" : "populated");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Returns true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
+	 *
+	 * @param columnHeader String the name of the column
+	 * @return boolean true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
+	 */
+	public boolean verifyAllColumnCellsNotEmpty(String columnHeader) {
+		return verifyColumnEmptiness(columnHeader, false);
+	}
+
+
+	/**
+	 * Returns true if every cell in the given column contains no text (not even whitespace), false if any cell has any text or whitespace
+	 *
+	 * @param columnHeader String the name of the column
+	 * @return boolean true if every cell in the given column contains no text (not even whitespace), false if any cell has any text or whitespace
+	 */
+	public boolean verifyAllColumnCellsEmpty(String columnHeader) {
+		return verifyColumnEmptiness(columnHeader, true);
+	}
+
 	/**
 	 * Returns true if any cells in the given column contain the text value given.
 	 * 
@@ -536,7 +568,7 @@ public class Table extends Element {
 				if (cell.contains(textToMatch)) {
 					return true;
 				} else {
-					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+					log.trace("Looking for any cell in the {} column to contain {}. Found: {}", columnHeader, textToMatch, cell);
 				}
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
@@ -563,7 +595,7 @@ public class Table extends Element {
 				if (cell.equals(textToMatch)) {
 					return true;
 				} else {
-					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+					log.trace("Looking for any cell in the {} column to have the exact text {}. Found: {}", columnHeader, textToMatch, cell);
 				}
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
@@ -592,7 +624,7 @@ public class Table extends Element {
 				return true;
 			}
 			else {
-				log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+				log.trace("Looking for row {}, column {} to contain {}. Found: {}", rowIndex, columnHeader, textToMatch, cell);
 			}
 		} catch (NullPointerException e) {
 			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column, row {}. Value found: {}", textToMatch, columnHeader, rowIndex, cell);

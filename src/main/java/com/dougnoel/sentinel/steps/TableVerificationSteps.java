@@ -246,4 +246,33 @@ public class TableVerificationSteps {
         }
     }
 
+    /**
+     * Verifies all cells in the table column are or are not empty.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify all cells in the Zip Code column in the list table are not empty</li>
+     * <li>I verify all cells in the Name column in the list table are empty</li>
+     * </ul>
+     *
+     * @param columnName String Name of the column to verify
+     * @param tableName  String Name of the table containing the column
+     * @param assertion  String if null, checks that all cells are empty. Otherwise, checks that all cells are not empty.
+     */
+    @Then("^I verify all cells in the (.*?) column in the (.*?) are( not)? empty$")
+    public static void verifyColumnIsEmpty(String columnName, String tableName, String assertion) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected all cells in the {} column of the {} to {}be empty.",
+                columnName, tableName, (negate ? "not " : ""));
+        log.trace(expectedResult);
+
+        if (negate) {
+            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsNotEmpty(columnName));
+        } else {
+            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsEmpty(columnName));
+        }
+    }
+
 }

@@ -20,6 +20,10 @@ conf/sentinel.yml
 
 #Ignore VS Code files
 .vscode/
+
+#Ignore IntelliJ files
+.idea/
+
 #Ignore the contents of the downloads folder
 downloads/
 #Ignore IntelliJ files
