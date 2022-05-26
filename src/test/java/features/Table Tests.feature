@@ -57,3 +57,4 @@ Feature: Table Tests
   	  And I find the 2nd row in the Example Table and click the text Alert for Charlotte
     Then I verify the JS alert contains the text This is Charlotte
       And I accept the JS alert
+    Then I verify all cells in the Empty Column column in the Example Table are empty
