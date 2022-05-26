@@ -568,7 +568,7 @@ public class Table extends Element {
 				if (cell.contains(textToMatch)) {
 					return true;
 				} else {
-					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+					log.trace("Looking for any cell in the {} column to contain {}. Found: {}", columnHeader, textToMatch, cell);
 				}
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
@@ -595,7 +595,7 @@ public class Table extends Element {
 				if (cell.equals(textToMatch)) {
 					return true;
 				} else {
-					log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+					log.trace("Looking for any cell in the {} column to have the exact text {}. Found: {}", columnHeader, textToMatch, cell);
 				}
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in any cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
@@ -624,7 +624,7 @@ public class Table extends Element {
 				return true;
 			}
 			else {
-				log.trace("Looking for {} in the {} column. Found: {}", textToMatch, columnHeader, cell);
+				log.trace("Looking for row {}, column {} to contain {}. Found: {}", rowIndex, columnHeader, textToMatch, cell);
 			}
 		} catch (NullPointerException e) {
 			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column, row {}. Value found: {}", textToMatch, columnHeader, rowIndex, cell);
