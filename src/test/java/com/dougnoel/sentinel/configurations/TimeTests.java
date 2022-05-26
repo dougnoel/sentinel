@@ -23,7 +23,12 @@ public class TimeTests {
     
 	@Test
 	public void defaultTimeoutTest() {
+		var previousTimeout = Time.out();
+		Time.reset();
+		System.clearProperty("timeout");
 		assertEquals("Time.out() is using the default when none is set.", Duration.ofSeconds(10), Time.out());
+		System.setProperty("timeout", Long.toString(previousTimeout.getSeconds()));
+		Configuration.update("timeout", previousTimeout.getSeconds());
 	}
 
 	@Test
