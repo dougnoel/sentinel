@@ -525,15 +525,9 @@ public class Table extends Element {
 	private boolean verifyColumnEmptiness(String columnHeader, boolean checkForAllCellsEmpty) {
 		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		for (String cell : column) {
-			try {
-				if (StringUtils.isEmpty(cell) != checkForAllCellsEmpty) {
-					log.debug("Not all cells in the {} column are {}. False result returned.", columnHeader, checkForAllCellsEmpty ? "empty" : "populated");
-					return false;
-				}
-			} catch (NullPointerException e) {
-				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for {}emptiness in every cell in the {} column.", columnHeader, checkForAllCellsEmpty ? "" : "non-");
-				log.error(errorMessage);
-				throw new NoSuchElementException(errorMessage, e);
+			if (StringUtils.isEmpty(cell) != checkForAllCellsEmpty) {
+				log.debug("Not all cells in the {} column are {}. False result returned.", columnHeader, checkForAllCellsEmpty ? "empty" : "populated");
+				return false;
 			}
 		}
 		return true;
