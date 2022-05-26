@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.junit.Test;
 
@@ -56,6 +58,17 @@ public class DownloadManagerTests {
 		String savedImage = DownloadManager.saveImageInPDF(0, filename);
 		assertTrue("Expecting "+savedImage+" from TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(savedImage));
 		Driver.quitAllDrivers();
+	}
+
+	@Test
+	public void verifyUrlPdfDownloadFromWeb() throws IOException {
+		assertTrue("Verifying text on PDF downloaded via stream.",
+				DownloadManager.verifyPDFContent(new URL("https://dougnoel.github.io/sentinel/test/TestPDF.pdf"), "This is page one.", 1, 1));
+	}
+
+	@Test(expected = IOException.class)
+	public void verifyUrlStreamDownloadFromWebCannotOpenHtmlAsPdf() throws IOException {
+		DownloadManager.verifyPDFContent(new URL("https://dougnoel.github.io/sentinel/test/radiobutton.html"), "This is page one.", 1, 1);
 	}
 	
 }

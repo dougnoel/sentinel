@@ -186,9 +186,6 @@ public class DownloadManager {
         } catch (IOException e) {
         	var errorMessage = SentinelStringUtils.format("Could not open the PDF file: {}", url.toString());
             throw new IOException(errorMessage, e);
-        } finally {
-        	if (file != null)
-        		file.close();
         }
 
         try {
