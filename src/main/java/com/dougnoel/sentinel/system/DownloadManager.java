@@ -108,8 +108,8 @@ public class DownloadManager {
             WatchKey watchKey;
             watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
             long currentTime = (System.currentTimeMillis() - startTime) / 1000;
-            if (currentTime > timeOut) {
-                log.error("Download operation timed out.. Expected file was not downloaded");
+            if (currentTime > timeOut || watchKey == null) {
+                log.error("Download operation timed out. Expected file was not downloaded.");
                 return downloadedFileName;
             }
 
@@ -129,7 +129,7 @@ public class DownloadManager {
             
             currentTime = (System.currentTimeMillis() - startTime) / 1000;
             if (currentTime > timeOut) {
-                log.error("Failed to download expected file");
+                log.error("Failed to download expected file.");
                 return downloadedFileName;
             }
             valid = watchKey.reset();
