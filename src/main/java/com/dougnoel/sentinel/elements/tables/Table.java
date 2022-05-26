@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -523,17 +522,7 @@ public class Table extends Element {
 		return true;
 	}
 
-    /**
-     * Returns true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
-     *
-     * @param columnHeader String the name of the column
-     * @return boolean true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
-     */
-    public boolean verifyAllColumnCellsNotEmpty(String columnHeader) {
-        return verifyColumnEmptiness(columnHeader, false);
-    }
-
-	private boolean verifyColumnEmptiness(String columnHeader, boolean checkForAllCellsEmpty){
+	private boolean verifyColumnEmptiness(String columnHeader, boolean checkForAllCellsEmpty) {
 		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		for (String cell : column) {
 			try {
@@ -551,13 +540,24 @@ public class Table extends Element {
 	}
 
 	/**
+	 * Returns true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
+	 *
+	 * @param columnHeader String the name of the column
+	 * @return boolean true if every cell in the given column contains any text or whitespace, false if any cell is completely blank
+	 */
+	public boolean verifyAllColumnCellsNotEmpty(String columnHeader) {
+		return verifyColumnEmptiness(columnHeader, false);
+	}
+
+
+	/**
 	 * Returns true if every cell in the given column contains no text (not even whitespace), false if any cell has any text or whitespace
 	 *
 	 * @param columnHeader String the name of the column
 	 * @return boolean true if every cell in the given column contains no text (not even whitespace), false if any cell has any text or whitespace
 	 */
-    public boolean verifyAllColumnCellsEmpty(String columnHeader) {
-       return verifyColumnEmptiness(columnHeader, true);
+	public boolean verifyAllColumnCellsEmpty(String columnHeader) {
+		return verifyColumnEmptiness(columnHeader, true);
 	}
 
 	/**
