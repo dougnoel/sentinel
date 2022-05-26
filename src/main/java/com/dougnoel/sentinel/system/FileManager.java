@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.system;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+
 import org.apache.commons.io.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +24,8 @@ import com.github.romankh3.image.comparison.ImageComparisonUtil;
 
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
-	
+	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
+
 	private FileManager() {} //Exists to defeat instantiation.
 	
 	/**
@@ -37,7 +39,7 @@ public class FileManager {
 	 */
 	
 	public static String loadJavascript(String path) throws IOException {
-		path = path.replace("/", File.separator);
+		path = convertPathSeparators(path);
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 	    return new String(encoded, StandardCharsets.UTF_8);
 	}
@@ -50,7 +52,7 @@ public class FileManager {
 	 * @return File the path of the file found
 	 */
 	public static File findFilePath(String fileName)  {
-		File result = searchDirectory(new File("src/"), fileName);
+		File result = searchDirectory(new File("src" + File.separator), fileName);
 
 		if (result == null) {
 			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory or its subdirectories.", fileName);
@@ -98,7 +100,7 @@ public class FileManager {
 	public static String getClassPath(String className) {
 		try {
 			String filePath = findFilePath(className + ".java").getPath();
-			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
+			String returnValue = convertPathSeparators(StringUtils.removeEnd(filePath, ".java"));
 			return StringUtils.substringAfter(returnValue, "java.");
 		} catch (FileException fe) {
 			return null;
@@ -112,9 +114,20 @@ public class FileManager {
 	 * @param subDirectory String the sub-directory to use
 	 * @param fileName String the file name of the image
 	 * @param imageFile File the File of the image to save
+	 *
+	 * @return File the resulting file object generated while saving to disk
 	 */
-	public static void saveImage(String subDirectory, String fileName, File imageFile) throws IOException {
-		FileUtils.copyFile(imageFile, new File(getImagePath(subDirectory, fileName)));
+	public static File saveImage(String subDirectory, String fileName, File imageFile) {
+		File destinationFile = new File(getImagePath(subDirectory, fileName));
+
+		try {
+			FileUtils.copyFile(imageFile, destinationFile);
+		} catch (IOException origException) {
+			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, destinationFile.getPath());
+			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, origException);
+		}
+
+		return destinationFile;
 	}
 	
 	/**
@@ -124,12 +137,21 @@ public class FileManager {
 	 * @param subDirectory String the sub-directory to use
 	 * @param fileName String the file name of the image
 	 * @param imageFile BufferdImage the BufferedImage to save
+	 *
+	 * @return File the resulting file object generated while saving to disk
 	 */
-	public static void saveImage(String subDirectory, String fileName, BufferedImage imageFile) throws IOException {
+	public static File saveImage(String subDirectory, String fileName, BufferedImage imageFile) {
 		File destinationFile = new File(getImagePath(subDirectory, fileName));
-		FileUtils.forceMkdir(destinationFile.getParentFile());
-		
-		ImageIO.write(imageFile, "png", destinationFile);
+
+		try {
+			FileUtils.forceMkdir(destinationFile.getParentFile());
+			ImageIO.write(imageFile, "png", destinationFile);
+		} catch (IOException origException) {
+			String errorMessage = SentinelStringUtils.format("Failed to save the image {} in the directory {}", fileName, destinationFile.getPath());
+			throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage, origException);
+		}
+
+		return destinationFile;
 	}
 
 	/**
@@ -144,6 +166,17 @@ public class FileManager {
 	public static BufferedImage readImage(String subDirectory, String fileName) {
 		return ImageComparisonUtil.readImageFromResources(getImagePath(subDirectory, fileName));
 	}
+
+	/**
+	 * Reads an image from disk using the path passed with a File Object
+	 *
+	 * @param filePath File the file object that refers to the location of the file
+	 *
+	 * @return BufferedImage the image file read from disk
+	 */
+	public static BufferedImage readImage(File filePath) {
+		return ImageComparisonUtil.readImageFromResources(filePath.getAbsolutePath());
+	}
 	
 	/**
 	* Returns the path for saving an image using the passed sub-directory,
@@ -155,6 +188,20 @@ public class FileManager {
 	* @return String the constructed path as a String
 	*/
 	private static String getImagePath(String subDirectory, String fileName) {
-		return Configuration.toString("imageDirectory", "logs/images").replace("/", File.separator) + File.separator + subDirectory + File.separator + fileName;
+		String outputSubDir = "";
+
+		if(subDirectory != null){
+			outputSubDir = subDirectory;
+		}
+
+		return convertPathSeparators(Configuration.toString("imageDirectory", IMAGE_DIRECTORY) + File.separator + outputSubDir + File.separator + fileName);
+	}
+
+	public static String convertPathSeparators(String path) {
+		return path.replace("/", File.separator);
+	}
+
+	public static String sanitizeString(String toSanitize) {
+		return toSanitize.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
 	}
 }

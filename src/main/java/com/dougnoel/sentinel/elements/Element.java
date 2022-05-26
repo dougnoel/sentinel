@@ -20,6 +20,7 @@ import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -743,6 +744,37 @@ public class Element {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Clicks a point relative to the center of the element.
+	 * To click the top right corner of an element of a width of 20 and a height of 10, you would need to pass Point(10, 5)
+	 * @param point The offset from the center of the element to click on
+	 * @return Element (for chaining)
+	 */
+	public Element clickPositionOnElement(Point point) {
+		clickPositionAction(point, element());
+		return this;
+	}
+
+	/**
+	 * Clicks a point relative to the center of the element.
+	 * To click the top right corner of an element of a width of 20 and a height of 10, you would need to pass Point(10, 5)
+	 * @param point The offset from the center of the element to click on
+	 * @return Element (for chaining)
+	 */
+	public Element clickPositionOnChildElement(Point point, By elementBy) {
+		clickPositionAction(point, element().findElement(elementBy));
+		return this;
+	}
+
+	/**
+	 * Helper function to move the mouse to a point on an element and clicks there.
+	 * @param point Point the point to click on
+	 * @param element WebElement the element to click
+	 */
+	private void clickPositionAction(Point point, WebElement element){
+		new Actions(driver()).moveToElement(element, point.getX(), point.getY()).click().build().perform();
 	}
 
 	/**

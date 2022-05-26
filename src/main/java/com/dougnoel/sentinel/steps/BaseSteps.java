@@ -16,6 +16,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import org.openqa.selenium.Point;
 
 /**
  * Methods used to define basic operations.
@@ -87,7 +88,7 @@ public class BaseSteps {
     public static void dragAndDropToObject(String source, String target) throws IOException {
     	getElement(source).dragAndDrop(getElement(target));	
     }
-    
+
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
      * This step is used to add in an implicit wait time using a Cucumber step.
