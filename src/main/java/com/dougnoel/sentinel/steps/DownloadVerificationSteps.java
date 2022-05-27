@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FilenameUtils;

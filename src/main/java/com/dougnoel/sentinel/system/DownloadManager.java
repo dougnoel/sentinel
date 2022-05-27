@@ -99,7 +99,7 @@ public class DownloadManager {
         
         long timeOut = Time.out().toSeconds();
         long loopTime = Time.loopInterval().toMillis();
-        var downloadFolderPath = Paths.get(downloadDirectory);
+        var downloadFolderPath = Paths.get(downloadDir);
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
         long startTime = System.currentTimeMillis();
