@@ -94,7 +94,7 @@ public class ImageVerificationSteps {
 		//Load stored image if we're not comparing to a previous step screenshot
 		File testDataImageLocation = null;
 		if(optionalStoredImage != null){
-			testDataImageLocation = new File(Configuration.getTestdataValue("images", optionalStoredImage));
+			testDataImageLocation = FileManager.findFilePath(Configuration.getTestdataValue("images", optionalStoredImage));
 		}
 
 		String appendToResult;

@@ -417,8 +417,8 @@ public class Configuration {
 			accountData = pageData.getAccount(env, account);
 		}
 		if (Objects.equals(accountData, null)) {
-			var erroMessage = SentinelStringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
-			throw new FileException(erroMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
 		String data = accountData.get(key);
 		log.debug("{} loaded for account {} in {} environment from {}.yml: {}", key, account, env, pageName, data);
@@ -458,10 +458,14 @@ public class Configuration {
 			testdata = pageData.getTestdata(env, testdataObjectName);
 		}
 		if (testdata.isEmpty()) {
-			var erroMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", testdataObjectName, env, pageName);
-			throw new FileException(erroMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", testdataObjectName, env, pageName);
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
 		String data = testdata.get(testdataObjectKey);
+		if (data == null) {
+			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testdataObjectKey, testdataObjectName, env, pageName);
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
+		}
 		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", testdataObjectKey, testdataObjectKey, env, pageName, data);
 		return data;
 	}
