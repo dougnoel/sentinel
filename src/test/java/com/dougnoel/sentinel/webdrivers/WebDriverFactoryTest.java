@@ -54,6 +54,15 @@ public class WebDriverFactoryTest {
 	}
 
 	@Test
+	public void createChromiumDriver() {
+		Configuration.update("browser", "chromium");
+		WebDriverFactory.instantiateWebDriver();
+		PageManager.setPage("MockTestPage");
+		var js = (JavascriptExecutor)Driver.getWebDriver();
+		assertSame("Expecting chromium.", true, js.executeScript("return !!window.chrome"));
+	}
+
+	@Test
 	public void createMultipleChromeOptionsChromeDriver() {
 		Configuration.update("chromeOptions", "--start-maximized --incognito");
 		WebDriverFactory.instantiateWebDriver();
