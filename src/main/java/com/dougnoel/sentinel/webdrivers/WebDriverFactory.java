@@ -65,6 +65,9 @@ public class WebDriverFactory {
         case "chrome":
         	driver = createChromeDriver();
             break;
+        case "chromium":
+            driver = createChromiumDriver();
+            break;
         case "edge":
         	WebDriverManager.edgedriver().setup();
         	driver = new EdgeDriver();
@@ -133,29 +136,48 @@ public class WebDriverFactory {
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
         options.setExperimentalOption("prefs", chromePrefs);
     }
-    
+
     /**
-     * Creates a ChromeDriver. Makes it headless if the -Dheadless flag is set.
-     * Can pass additional arguments with the -DchromeOptions flag, such as -DchromeOptions="start-maximized" to open all browser windows maximized.
-     * @return WebDriver ChromeDrvier
+     * Creates ChromeOptions for use in the chrome and chromium driver.
+     * @return ChromeOptions
      */
-    private static WebDriver createChromeDriver() {
-    	var chromeOptions = new ChromeOptions();
-    	setChromeDownloadDirectory(chromeOptions);
+    private static ChromeOptions createChromeOptions()  {
+        var chromeOptions = new ChromeOptions();
+        setChromeDownloadDirectory(chromeOptions);
         String commandlineOptions = Configuration.toString("chromeOptions");
         if (commandlineOptions != null)
             chromeOptions.addArguments(commandlineOptions);
-    	var headless = Configuration.toString("headless");
-    	if (headless != null && !headless.equalsIgnoreCase("false")) {
-    		chromeOptions.addArguments("--no-sandbox");
-    		chromeOptions.addArguments("--disable-dev-shm-usage");
-    		chromeOptions.addArguments("--headless");        		
-    	}
-    	var binary = Configuration.toString("chromeBrowserBinary");
-    	if (binary != null)
-    		chromeOptions.setBinary(binary);
+        var headless = Configuration.toString("headless");
+        if (headless != null && !headless.equalsIgnoreCase("false")) {
+            chromeOptions.addArguments("--no-sandbox");
+            chromeOptions.addArguments("--disable-dev-shm-usage");
+            chromeOptions.addArguments("--headless");
+        }
+        var binary = Configuration.toString("chromeBrowserBinary");
+        if (binary != null)
+            chromeOptions.setBinary(binary);
+
+        return chromeOptions;
+    }
+
+    /**
+     * Creates a ChromeDriver. Makes it headless if the -Dheadless flag is set.
+     * Can pass additional arguments with the -DchromeOptions flag, such as -DchromeOptions="start-maximized" to open all browser windows maximized.
+     * @return WebDriver ChromeDriver
+     */
+    private static WebDriver createChromeDriver() {
+        var chromeOptions = createChromeOptions();
     	WebDriverManager.chromedriver().setup();
     	return new ChromeDriver(chromeOptions);
     }
 
+    /**
+     * Creates a ChromeDriver configured with the Chromium browser. See {@link #createChromeDriver()} for supported options.
+     * @return WebDriver ChromeDriver
+     */
+    private static WebDriver createChromiumDriver() {
+        var chromeOptions = createChromeOptions();
+        WebDriverManager.chromiumdriver().setup();
+        return new ChromeDriver(chromeOptions);
+    }
 }
