@@ -42,9 +42,7 @@ import de.redsix.pdfcompare.env.SimpleEnvironment;
 public class DownloadManager {
     private static final Logger log = LogManager.getLogger(DownloadManager.class.getName()); // Create a logger.
 
-    private static String filename = null; // Current filename
     private static String fileExtension = "pdf"; // Current file extension - Default of pdf
-    private static File file = null; // Current file
 
     private static String downloadDirectory = createDownloadDirectory();
 
@@ -337,44 +335,6 @@ public class DownloadManager {
 
         return imageFile.getName();
     }
-    
-    /**
-     * Returns true if given file is successfully deleted.
-     * 
-     * @param file File file to delete
-     * @return boolean true if file exists and is successfully deleted
-     * @throws IOException if there is an error while deleting the file
-     */
-    public static boolean deleteFile(File file) throws IOException {
-        return Files.deleteIfExists(file.toPath());
-    }
-
-    /**
-     * Returns filename
-     * 
-     * @return String the filename
-     */
-    public static String getFilename() {
-        return filename;
-    }
-
-    /**
-     * Sets filename for given file
-     * 
-     * @param filename String file to set
-     */
-    public static void setFilename(String filename) {
-        DownloadManager.filename = filename;
-    }
-
-    /**
-     * Returns string of current file extension
-     * 
-     * @return String file extension
-     */
-    public static String getFileExtension() {
-        return fileExtension;
-    }
 
     /**
      * Sets given file extension
@@ -386,28 +346,10 @@ public class DownloadManager {
     }
 
     /**
-     * Returns file
-     * 
-     * @return File returns a File object
-     */
-    public static File getFile() {
-        return file;
-    }
-    /**
-     * Sets given file
-     * 
-     * @param file File file to set
-     */
-
-    public static void setFile(File file) {
-        DownloadManager.file = file;
-    }
-    /**
      * Returns the download directory
      * 
      * @return String the downloadDirectory 
      */
-
     public static String getDownloadDirectory() {
         return downloadDirectory;
     }
