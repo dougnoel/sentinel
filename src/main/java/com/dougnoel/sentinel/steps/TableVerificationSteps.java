@@ -237,7 +237,7 @@ public class TableVerificationSteps {
     	
     	var expectedResult = SentinelStringUtils.format(
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}. The element contained the text: {}",
-                rowIndex, columnName, tableName, (negate ? "not " : ""), textToMatch, actualText);
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch, actualText);
     	log.trace(expectedResult);
     	if (negate) {
             assertFalse(expectedResult, table.verifySpecificCellContains(columnName, rowIndex, textToMatch));

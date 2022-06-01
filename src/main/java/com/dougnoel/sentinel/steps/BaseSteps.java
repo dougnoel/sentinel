@@ -54,24 +54,22 @@ public class BaseSteps {
     }
 
     /**
-     * Hovers the element that matches the given elementName as defined on the current Page object. The page object and driver object are defined by the
-     * WebDriverFactory and PageFactory objects. The derived Page Object (extends
-     * Page) should define a method named [element name]_[element type] returning a Element object (e.g. login_button).
+     * Hovers the middle of the given element
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I hover a login button</li>
-     * <li>I hover the Login button</li>
+     * <li>I hover over the Login button</li>
      * <li>I hover an Operation Button</li>
      * </ul>
-     * 
+     *
      * @param elementName String the name of the element to hover
      */
-    @When("^I hover (?:the|a|an|on) (.*?)$")
+    @When("^I hover (?:on |over )?(?:the|a|an)[ ](.*?)$")
     public static void hover(String elementName) {
         getElement(elementName).hover();
     }
-    
+
     /**
      * Drags the first element onto the second element.
      * <p>
@@ -87,26 +85,10 @@ public class BaseSteps {
      */
     
     @When("I drag (?:the |an? )?(.*?) (?:on|in)?to (?:the |an? )?(.*?)$")
-    public void dragAndDropToObject(String source, String target) throws IOException {
+    public static void dragAndDropToObject(String source, String target) throws IOException {
     	getElement(source).dragAndDrop(getElement(target));	
     }
 
-    /**
-     * Moves the mouse to the middle of the given element
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I hover on the comparison dropdown</li>
-     * <li>I hover over the complete button</li>
-     * <li>I hover an icon</li>
-     * </ul>
-     * @param elementName String the name of the element to hover on
-     */
-    @When("I hover (?:on|over) (?:the |an? )?(.*?)$")
-    public void hoverOverElement(String elementName) {
-    	getElement(elementName).hover();
-    }
-    
     /**
      * Waits for the sum of the given number of seconds and fractions of sections.
      * This step is used to add in an implicit wait time using a Cucumber step.
