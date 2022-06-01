@@ -100,7 +100,7 @@ public class FileManager {
 	public static String getClassPath(String className) {
 		try {
 			String filePath = findFilePath(className + ".java").getPath();
-			String returnValue = convertPathSeparators(StringUtils.removeEnd(filePath, ".java"));
+			String returnValue = StringUtils.removeEnd(filePath, ".java").replace(File.separator, ".");
 			return StringUtils.substringAfter(returnValue, "java.");
 		} catch (FileException fe) {
 			return null;
