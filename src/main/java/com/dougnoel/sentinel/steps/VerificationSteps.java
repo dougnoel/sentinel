@@ -272,11 +272,8 @@ public class VerificationSteps {
         else if(relativeLocation.contains("right")){
             assertTrue(expectedResult, element1point.x > element2point.x);
         }
-        else if(relativeLocation.contains("left")){
-            assertTrue(expectedResult, element1point.x < element2point.x);
-        }
         else{
-            throw new InvalidArgumentException("Unknown relative location. Cannot compare location of the two elements.");
+            assertTrue(expectedResult, element1point.x < element2point.x);
         }
 
     }
