@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
-import org.openqa.selenium.InvalidArgumentException;
 import org.openqa.selenium.Point;
 
 /**
