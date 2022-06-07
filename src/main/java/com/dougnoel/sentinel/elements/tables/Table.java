@@ -810,4 +810,16 @@ public class Table extends Element {
 		return cellValues;
 	}
 
+	/**
+	 * Verifies that the first column header is displayed before (to the left of) the second column header.
+	 * @param column1 String the name of the first column
+	 * @param column2 String the name of the second column
+	 * @return boolean true if the first column header's X coordinate is less than the second column header's X coordinate
+	 */
+	public boolean verifyColumnDisplayOrder(String column1, String column2){
+		WebElement column1HeaderElement = getColumnHeaderElement(column1);
+		WebElement column2HeaderElement = getColumnHeaderElement(column2);
+		return column1HeaderElement.getLocation().x < column2HeaderElement.getLocation().x;
+	}
+
 }

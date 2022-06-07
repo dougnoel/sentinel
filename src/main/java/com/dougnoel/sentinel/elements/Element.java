@@ -879,4 +879,12 @@ public class Element {
 		return element().getAttribute(attribute);
 	}
 
+	/**
+	 * Returns a Point object that represents the top-left corner of the element.
+	 * @return Point the coordinates of the top-left corner of the element
+	 */
+	public Point getLocation(){
+		return element().getLocation();
+	}
+
 }
