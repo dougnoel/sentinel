@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
+import org.openqa.selenium.Point;
 
 /**
  * Methods used to defined basic validations
@@ -252,6 +253,28 @@ public class VerificationSteps {
     	var actualText = PageManager.getPage().getJsAlertText();
     	boolean result = actualText.contains(expectedText);
     	assertTrue(expectedResult, result != negate);
+    }
+
+    @Then("^I verify the (.*) is (to the right of|to the left of|below|above) the (.*)$")
+    public static void verifyElementDisplayOrderOnPage(String element1, String relativeLocation, String element2){
+        Point element1point = getElement(element1).getLocation();
+        Point element2point = getElement(element2).getLocation();
+
+        String expectedResult = SentinelStringUtils.format("Expected the {} to be {} the {}.", element1, relativeLocation, element2);
+
+        if(relativeLocation.contains("above")){
+            assertTrue(expectedResult, element1point.y < element2point.y);
+        }
+        else if(relativeLocation.contains("below")){
+            assertTrue(expectedResult, element1point.y > element2point.y);
+        }
+        else if(relativeLocation.contains("right")){
+            assertTrue(expectedResult, element1point.x > element2point.x);
+        }
+        else{
+            assertTrue(expectedResult, element1point.x < element2point.x);
+        }
+
     }
 
 }

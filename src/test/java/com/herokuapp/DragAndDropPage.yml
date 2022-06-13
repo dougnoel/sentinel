@@ -7,5 +7,7 @@ elements:
     id: column-b
   column_b_div:
     xpath: "//div[@id='column-b']/header"
+  page_title:
+    css: div.example>h3
     
  

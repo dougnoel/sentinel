@@ -54,7 +54,7 @@ public class DownloadVerificationSteps {
 						+ "Perhaps the download did not complete in time. Check your timeout.",
 				expectedFilename);
 
-		assertTrue(expectedResult, downloadedFilename.equals(expectedFilename));
+		assertTrue(expectedResult, StringUtils.equals(downloadedFilename, expectedFilename));
 	}
 
 	/**

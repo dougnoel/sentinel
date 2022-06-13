@@ -51,3 +51,11 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
       And I click the click for js alert button
     Then I verify a JS alert is present
       And I close the JS alert
+
+  @371 @371A
+  Scenario: Compare Element Relative Location
+    Given I am on the Drag And Drop Page
+    Then I verify the box a is to the left of the box b
+      And I verify the box b is to the right of the box a
+      And I verify the page title is above the box a
+      And I verify the box b is below the page title

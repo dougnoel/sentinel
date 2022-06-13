@@ -275,4 +275,14 @@ public class TableVerificationSteps {
         }
     }
 
+    @Then("^I verify the (.*?) column in the (.*?) is displayed to the left of the (.*?) column$")
+    public static void verifyColumnDisplayOrder(String column1Name, String tableName, String column2Name){
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the {} column of the {} to be displayed to the left of the {} column.",
+                column1Name, tableName, column2Name);
+        log.trace(expectedResult);
+
+        assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnDisplayOrder(column1Name, column2Name));
+    }
+
 }
