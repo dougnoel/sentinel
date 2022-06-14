@@ -99,7 +99,24 @@ public class TextVerificationSteps {
             }
         }
     }
-    
+
+    @Then("^I wait until the (.*?)( does not)? contains? the text (?:entered|used) (?:for|in) the (.*?)$")
+    public static void waitUntilElementTextContainsStored(String elementName, String assertion, String key) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        var textToMatch = Configuration.toString(key);
+
+        boolean found = getElement(elementName).waitForText(textToMatch, (!negate));
+        String elementText = getElement(elementName).getText();
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the {} element to {}contain the text \"{}\" stored in the configuration key {}. The element contained the text: \"{}\"",
+                elementName, negateText, textToMatch, key, elementText);
+
+        assertTrue(expectedResult, found);
+    }
+
+
     /**
      * Waits until we can verify that an element contains certain text. It uses the text
      * contained in double quotes for matching. If the condition is not true, it will wait 
@@ -128,7 +145,6 @@ public class TextVerificationSteps {
             
         log.trace(expectedResult);
         assertTrue(expectedResult, found);
-
     }
     
     /**
