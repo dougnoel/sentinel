@@ -25,15 +25,19 @@ Feature: Text Verifcation Tests
 
 	@text
 	Scenario: I randomly append/prepend/enter text, and verify the entry
-		Given I am on the Textbox Page
-		When I randomly enter test in the Last Name Field
-		Then I wait until the Last Name Field contains the text entered for the Last Name Field
-		When I clear the Last Name Field
-		  And I uniquely enter test in the Last Name Field
-		Then I wait until the Last Name Field contains the text used for the Last Name Field
-		When I clear the Last Name Field
-			And I randomly prepend @gmail.com in the Last Name Field
-		Then I wait until the Last Name Field contains the text entered in the Last Name Field
-		When I clear the Last Name Field
-			And I randomly append to @gmail.com in the Last Name Field
-		Then I wait until the Last Name Field contains the text used in the Last Name Field
+		Given I am on the Guinea Pig Page
+		When I randomly enter test in the Comments Text Area
+			And I click the Send Button
+		Then I wait until the Your Comments Span contains the text entered for the Comments Text Area
+		When I clear the Comments Text Area
+		  And I uniquely enter test in the Comments Text Area
+			And I click the Send Button
+		Then I wait until the Your Comments Span contains the text entered for the Comments Text Area
+		When I clear the Comments Text Area
+			And I randomly prepend @gmail.com in the Email Text Area
+		Then I wait until the Email Text Area contains the text entered in the Email Text Area
+		When I clear the Comments Text Area
+			And I randomly append to @gmail.com in the Comments Text Area
+			And I click the Send Button
+			And I wait until the Comments Text Area contains the text used in the Comments Text Area
+		Then I wait until the Comments Text Area does not contain the text used in the Email Text Area
