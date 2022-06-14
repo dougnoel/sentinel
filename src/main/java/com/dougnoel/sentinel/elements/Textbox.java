@@ -35,31 +35,4 @@ public class Textbox extends Element {
 	public String getText() {
 		return element().getAttribute("value");
 	}
-
-	/**
-	 * Waits until the text contains a certain value, and returns if it was found
-	 *
-	 * @return Boolean If the text value was found in the element.
-	 */
-	@Override
-	public Boolean waitForText(String text, boolean present) {
-		ExpectedCondition<Boolean> condition = ExpectedConditions.textToBePresentInElementValue(element(), text);
-		if (!present)
-			condition = ExpectedConditions.not(ExpectedConditions.textToBePresentInElementValue(element(), text));
-
-		long searchTime = Time.out().getSeconds() * 1000;
-		long startTime = System.currentTimeMillis(); // fetch starting time
-
-		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			try {
-				return new WebDriverWait(Driver.getWebDriver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
-						.ignoring(StaleElementReferenceException.class)
-						.ignoring(TimeoutException.class)
-						.until(condition);
-			} catch (TimeoutException e) {
-				// suppressing this due to falsely thrown timeout exception
-			}
-		}
-		return false;
-	}
 }
