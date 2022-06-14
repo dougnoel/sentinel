@@ -100,6 +100,22 @@ public class TextVerificationSteps {
         }
     }
 
+    /**
+     * <p>
+     * Waits until we can verify that an element contains text stored previously.
+     * Such as by steps that randomly append/prepend to text.
+     * </p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait until the <u>Last Name Field</u> contains the text entered for the <u>Last Name Field</u></li>
+     * <li>I wait until the <u>Username Display</u> contains the text used in the <u>User Name Input Field</u></li>
+     * <li>I wait until the <u>Last Name Field</u> <u>does not</u> contain the text entered for the <u>First Name Field</u></li>
+     * </ul>
+     *
+     * @param elementName String The name of the element to be evaluated as defined in the page object.
+     * @param assertion String whether or not we expect a match or mismatch
+     * @param key String the storage key for the previously stored text to check for
+     */
     @Then("^I wait until the (.*?)( does not)? contains? the text (?:entered|used) (?:for|in) the (.*?)$")
     public static void waitUntilElementTextContainsStored(String elementName, String assertion, String key) {
         boolean negate = !StringUtils.isEmpty(assertion);
