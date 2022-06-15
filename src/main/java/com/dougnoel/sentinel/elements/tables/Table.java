@@ -142,9 +142,8 @@ public class Table extends Element {
 	 */
 	public boolean tableHeadersExist()  {
 		if(hasProperHeaderElements == null)
-			return hasProperHeaderElements = !getHeaderElements().isEmpty();
-		else
-			return hasProperHeaderElements;
+			hasProperHeaderElements = !getHeaderElements().isEmpty();
+		return hasProperHeaderElements;
 	}
 	
 	/**
