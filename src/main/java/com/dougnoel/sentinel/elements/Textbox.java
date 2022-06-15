@@ -1,13 +1,5 @@
 package com.dougnoel.sentinel.elements;
 
-import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.webdrivers.Driver;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.util.Map;
 
 /**
