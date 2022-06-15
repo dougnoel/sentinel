@@ -128,8 +128,7 @@ public class Table extends Element {
 	 * @return List&lt;WebElement&gt; the headers; or null if the header tags are not found
 	 */
 	protected List<WebElement> getHeaderElements() {
-		headerElements = this.element().findElements(By.tagName(tableHeaderTag));
-		return headerElements;
+		return element().findElements(By.tagName(tableHeaderTag));
 	}
 	
 	/**
@@ -139,8 +138,8 @@ public class Table extends Element {
 	 * @see com.dougnoel.sentinel.elements.tables.Table#getOrCreateHeaderElements()
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
 	 */
-	protected boolean tableHeadersExist()  {
-		return getHeaderElements() != null;
+	public boolean tableHeadersExist()  {
+		return !getHeaderElements().isEmpty();
 	}
 	
 	/**
@@ -473,7 +472,7 @@ public class Table extends Element {
 	public void clickElementInRowThatContains(int ordinalRow, By elementToClick) {
 		getElementInRowThatContains(ordinalRow, elementToClick).click();
 	}
-	
+
 	
 	/**
 	 * Returns a list of all the cell values in the given column.
@@ -496,7 +495,19 @@ public class Table extends Element {
 				.forEach(cell -> cellData.add(cell.getText()));
 		return cellData;
 	}
-	
+
+	/**
+	 * Gets data for specific cell in the table.
+	 * @param columnName String the column to search for the cell data
+	 * @param rowIndex String the index of the row that contains the desired cell. Starting at 1.
+	 * @return
+	 */
+	public String getCellData(String columnName, int rowIndex){
+		// If the table has real headers, decrement the index.
+		// Otherwise, the first row is actually the header row, and leaving the index as it is corrects for that fact.
+		return getAllCellDataForColumn(columnName).get(tableHeadersExist() ? rowIndex - 1 : rowIndex);
+	}
+
 	/**
 	 * Returns true if all cells in the given column match the text value given.
 	 * 
@@ -607,33 +618,32 @@ public class Table extends Element {
 		log.debug("No values in the {} column are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, textToMatch);
 		return false;
 	}
-	
+
 	/**
 	 * Returns true if the cell in the given column and row match the text value given.
-	 * 
+	 *
 	 * @param columnHeader String the name of the column
 	 * @param rowIndex int the index of the row
 	 * @param textToMatch String the text that should be in the specified cell
-	 * @return boolean true if the cell given by the passed column, row contains the given text, false otherwise
+	 * @param partialMatch boolean if true, this method returns true if the actual cell text contains the given textToMatch.
+	 *                     if false, this method returns true when the actual cell text exactly matches the given textToMatch.
+	 * @return boolean true if the cell given by the passed column + row contains or exactly matches (depending on partialMatch parameter) the given text, false otherwise.
 	 */
-	public boolean verifySpecificCellContains(String columnHeader, int rowIndex, String textToMatch) {
-		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
-		var cell = column.get(rowIndex - 1); //subtract 1 from passed rowIndex, which will be 1-indexed, to match List.get which is 0-indexed.
+	public String verifySpecificCellContains(String columnHeader, int rowIndex, String textToMatch, boolean partialMatch) {
+		var cell = getCellData(columnHeader, rowIndex);
 		try {
-			if (cell.contains(textToMatch)) {
-				return true;
+			if(partialMatch){
+				return cell.contains(textToMatch) ? null : cell;
 			}
-			else {
-				log.trace("Looking for row {}, column {} to contain {}. Found: {}", rowIndex, columnHeader, textToMatch, cell);
+			else{
+				return StringUtils.equals(cell, textToMatch) ? null : cell;
 			}
+
 		} catch (NullPointerException e) {
 			String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in the {} column, row {}. Value found: {}", textToMatch, columnHeader, rowIndex, cell);
 			log.error(errorMessage);
 			throw new NoSuchElementException(errorMessage, e);
 		}
-
-		log.debug("Value in the {} column and {} row are equal to {}. False result returned. Turn on trace logging level to see all values found.", columnHeader, rowIndex, textToMatch);
-		return false;
 	}
 	
 	/**

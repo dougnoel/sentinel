@@ -216,7 +216,7 @@ public class ElementTests {
     @Test(expected = NoSuchElementException.class)
     public void tableColumnDoesNotExist() {
         BaseSteps.navigateToPage("TablePage");
-        TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "contains", "Bob");
+        TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "","contains", "Bob");
     }
 
 	@Test(expected = NoSuchElementException.class)

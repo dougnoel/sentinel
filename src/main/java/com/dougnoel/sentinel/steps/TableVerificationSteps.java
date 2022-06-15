@@ -162,6 +162,7 @@ public class TableVerificationSteps {
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
      * @param textToMatch String the text to look for in the column
      */
     @Then("^I verify the (.*?) column in the (.*?)( does not)? (has|have|contains?) the text (.*?)$")
@@ -219,30 +220,35 @@ public class TableVerificationSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I verify the cell in the last row and the Employee First Name column of the Employee table does not contain the text Alice</li>
-     * <li>I verify the cell in the 2nd row and the Employee First Name column of the Employee table contains the text Bob</li>
+     * <li>I verify the cell in the 2nd row and the Employee First Name column of the Employee table has the text Bob</li>
      * </ul>
      * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
      * @param columnName String the name of the column to verify
      * @param tableName String the name of the table containing the column
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
      * @param textToMatch String the text to look for in the column
      */
-    @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
-    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String textToMatch) {
+    @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? (has|have|contains?) the text (.*?)$")
+    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch) {
     	boolean negate = !StringUtils.isEmpty(assertion);
     	
     	var table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
-    	String actualText = table.getAllCellDataForColumn(columnName).get(rowIndex - 1);
+        boolean partialMatch = matchType.contains("contain");
+
+    	String resultText = table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch);
     	
     	var expectedResult = SentinelStringUtils.format(
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}. The element contained the text: {}",
-                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch, actualText);
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch, resultText);
     	log.trace(expectedResult);
+
+        boolean actualResult = resultText == null;
     	if (negate) {
-            assertFalse(expectedResult, table.verifySpecificCellContains(columnName, rowIndex, textToMatch));
+            assertFalse(expectedResult, actualResult);
         } else {
-            assertTrue(expectedResult, table.verifySpecificCellContains(columnName, rowIndex, textToMatch));
+            assertTrue(expectedResult, actualResult);
         }
     }
 
