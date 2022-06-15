@@ -28,6 +28,8 @@ public class Table extends Element {
 	private static final Logger log = LogManager.getLogger(Table.class.getName()); // Create a logger.
 
 	protected List<WebElement> headerElements = null; // Table Columns headers using <th> tags
+	protected Boolean hasProperHeaderElements = null;
+
 	protected List<String> headers = new ArrayList<>(); // Column headers as text
 	protected List<WebElement> rowElements = null; // Table Rows using <tr> tags
 	protected List<ArrayList<String>> rows = new ArrayList<>(); // All text values of every row
@@ -139,7 +141,10 @@ public class Table extends Element {
 	 * @return boolean true if the table has &lt;th&gt; elements, otherwise false
 	 */
 	public boolean tableHeadersExist()  {
-		return !getHeaderElements().isEmpty();
+		if(hasProperHeaderElements == null)
+			return hasProperHeaderElements = !getHeaderElements().isEmpty();
+		else
+			return hasProperHeaderElements;
 	}
 	
 	/**
