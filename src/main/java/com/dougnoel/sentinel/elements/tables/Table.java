@@ -624,14 +624,16 @@ public class Table extends Element {
 	}
 
 	/**
-	 * Returns true if the cell in the given column and row match the text value given.
+	 * Returns null if the cell in the given column and row match the text value given.
+	 * Otherwise, returns the actual text of the given cell.
 	 *
 	 * @param columnHeader String the name of the column
 	 * @param rowIndex int the index of the row
 	 * @param textToMatch String the text that should be in the specified cell
-	 * @param partialMatch boolean if true, this method returns true if the actual cell text contains the given textToMatch.
-	 *                     if false, this method returns true when the actual cell text exactly matches the given textToMatch.
-	 * @return boolean true if the cell given by the passed column + row contains or exactly matches (depending on partialMatch parameter) the given text, false otherwise.
+	 * @param partialMatch boolean if true, this method returns null if the actual cell text contains the given textToMatch.
+	 *                     if false, this method returns null when the actual cell text exactly matches the given textToMatch.
+	 * @return String null if the text of the cell given by the passed column + row contains or exactly matches (depending on partialMatch parameter) the given text.
+	 * 		   Otherwise, returns the actual text of the given cell.
 	 */
 	public String verifySpecificCellContains(String columnHeader, int rowIndex, String textToMatch, boolean partialMatch) {
 		var cell = getCellData(columnHeader, rowIndex);
