@@ -255,6 +255,10 @@ public class FileManager {
 			case "mac":
 				specialFolders = MAC_SPECIAL_FOLDERS;
 				break;
+			default:
+				String unsupportedMessage = SentinelStringUtils.format("Operating system wasn't among the supported operating systems for special folder replacement.");
+				log.warn(unsupportedMessage);
+				break;
 		}
 
 		for(Map.Entry<String, String> entry : specialFolders.entrySet()){
