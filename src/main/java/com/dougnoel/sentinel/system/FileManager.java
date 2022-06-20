@@ -255,7 +255,7 @@ public class FileManager {
 		}
 
 		for(Map.Entry<String, String> entry : specialFolders.entrySet()){
-			pathToProcess = pathToProcess.replace(entry.getKey(), entry.getValue());
+			pathToProcess = StringUtils.replaceIgnoreCase(pathToProcess, entry.getKey(), entry.getValue());
 			if(!pathToProcess.equals(originalPath)){
 				break;
 			}
