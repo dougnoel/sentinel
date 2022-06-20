@@ -16,34 +16,48 @@ import io.cucumber.java.en.When;
 public class TextSteps {
 
 	/**
-     * Appends random text to the given text and enters this new text into a text box that matches the given elementName
-     * as defined on the Page object. The given element name is made lower  case and whitespaces are replaced with underscores,
+     * Appends or prepends random alphanumeric text or unique system time in milliseconds
+     * to the given text and enters this new text into a text box that matches the given elementName
+     * as defined on the Page object. The given element name is made lower-case and whitespaces are replaced with underscores,
      * then it is sent a sendKeys event to an element defined on a page object with that name. The
      * page object and driver object are defined by the WebDriverFactory and PageFactory objects.
      * The derived Page Object (extends Page) should define a method named [element name]_[element type]
      * returning a Element object (e.g. password_field).
-     * <p>
+     * <br><br>
      * Since this random value might need to be referenced again, we store it using
      * the ConfigurationManager, using the passed elementname as the key to retrieve
      * it.
-     * <p>
+     * <br><br>
+     * <b>Note:</b> You can optionally specify <b>uniquely</b> rather than <b>randomly</b> to append/prepend
+     * the current system time in milliseconds to the given text.
+     * <br><br>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I enter random User Name Bob in the username textbox</li>
-     * <li>I enter random text in the Street Address field</li>
+     * <li>I <u>randomly</u> <u>enter</u> <u>random User Name Bob</u> in the <u>username textbox</u></li>
+     * <li>I <u>randomly</u> <u>append</u> to <u>random User Name Bob</u> in the <u>username textbox</u></li>
+     * <li>I <u>randomly</u> <u>prepend</u> to <u>@gmail.com</u> in the <u>Email Field</u></li>
+     * <li>I <u>uniquely</u> <u>prepend</u> <u>@gmail.com</u> in the <u>Email Field</u></li>
      * </ul>
-     * 
+     *
+     * @param operation String whether to enter/append or prepend randomly to the given text
      * @param text String the text to enter into the element
-     * @param elementName String the name of the element into which to enter text
-     * @param storageName String an additional modifier for storing data
+     * @param elementName String the name of the element into which to enter text, and the name to store the text under
      */
-    @When("^I randomly enter (.*) in the (.*)(?: for the (.*))$")
-    public static void enterRandomText(String text, String elementName, String storageName) {
-        text = text + RandomStringUtils.randomAlphanumeric(16);
+    @When("^I (randomly|uniquely) (enter|append|prepend)(?: to)? (.*) in the (.*)$")
+    public static void enterRandomText(String alphanumericOrNumeric, String operation, String text, String elementName) {
+        String randomCharacters;
+
+        if(alphanumericOrNumeric.equals("randomly"))
+            randomCharacters = RandomStringUtils.randomAlphanumeric(16);
+        else
+            randomCharacters = Long.toString(System.currentTimeMillis());
+
+        if(operation.contains("prepend"))
+            text = randomCharacters + text;
+        else
+            text = text + randomCharacters;
+
         enterText(text, elementName);
-        if (storageName != null) {
-            elementName = storageName + " " + elementName;
-        }
         Configuration.update(elementName, text);
     }
 

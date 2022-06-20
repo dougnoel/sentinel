@@ -625,9 +625,13 @@ public class Element {
 	 * @return Boolean If the text value was found in the element.
 	 */
 	public Boolean waitForText(String text, boolean present) {
-		ExpectedCondition<Boolean> condition = ExpectedConditions.textToBePresentInElement(element(), text);
+		ExpectedCondition<Boolean> condition  = ExpectedConditions.or(
+				ExpectedConditions.textToBePresentInElement(element(), text),
+				ExpectedConditions.textToBePresentInElementValue(element(), text)
+		);
+
 		if (!present)
-			condition = ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(element(), text));
+			condition = ExpectedConditions.not(condition);
 
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
