@@ -233,8 +233,10 @@ public class FileManager {
 	 * Replaces special path shortcuts with their system environment equivalent within a given path
 	 * <br><br>
 	 * <b>Supported Path Shortcuts:</b>
+	 * <ul>
 	 * <li><i>%localappdata%</i></li>
 	 * <li><i>%appdata%</i></li>
+	 * </ul>
 	 * @param pathToProcess String path to replace shortcuts
 	 * @return String the path string with shortcuts replaced with their environment equivalent path
 	 */
