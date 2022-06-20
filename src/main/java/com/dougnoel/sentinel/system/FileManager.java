@@ -36,6 +36,7 @@ public class FileManager {
 	);
 	private static final Map<String, String> LINUX_SPECIAL_FOLDERS = Map.ofEntries();
 	private static final Map<String, String> MAC_SPECIAL_FOLDERS = Map.ofEntries();
+	private static final String DETECTED_OS = operatingSystem();
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -239,10 +240,10 @@ public class FileManager {
 	 */
 	public static String convertPathShortcuts(String pathToProcess){
 		String originalPath = pathToProcess;
-		String detectedOs = operatingSystem();
+
 		Map<String, String> specialFolders = new HashMap<>();
 
-		switch(detectedOs){
+		switch(DETECTED_OS){
 			case "windows":
 				specialFolders = WINDOWS_SPECIAL_FOLDERS;
 				break;
