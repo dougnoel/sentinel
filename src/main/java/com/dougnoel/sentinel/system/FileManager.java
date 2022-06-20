@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -22,9 +24,18 @@ import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.github.romankh3.image.comparison.ImageComparisonUtil;
 
+import static com.dougnoel.sentinel.configurations.Configuration.operatingSystem;
+import static java.util.Map.entry;
+
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
+	private static final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
+		entry("%appdata%", System.getenv("APPDATA")),
+		entry("%localappdata%", System.getenv("LOCALAPPDATA"))
+	);
+	private static final Map<String, String> LINUX_SPECIAL_FOLDERS = Map.ofEntries();
+	private static final Map<String, String> MAC_SPECIAL_FOLDERS = Map.ofEntries();
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -39,6 +50,7 @@ public class FileManager {
 	 */
 	
 	public static String loadJavascript(String path) throws IOException {
+		path = convertPathShortcuts(path);
 		path = convertPathSeparators(path);
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 	    return new String(encoded, StandardCharsets.UTF_8);
@@ -71,6 +83,7 @@ public class FileManager {
 	 * @return File the file that is found, null if nothing is found
 	 */
 	protected static File searchDirectory(File directory, String fileName) {
+		directory = new File(convertPathShortcuts(directory.getAbsolutePath()));
 		log.trace("Searching directory {}", directory.getAbsoluteFile());
 		File searchResult = null;
 		if (directory.canRead()) {
@@ -175,7 +188,7 @@ public class FileManager {
 	 * @return BufferedImage the image file read from disk
 	 */
 	public static BufferedImage readImage(File filePath) {
-		return ImageComparisonUtil.readImageFromResources(filePath.getAbsolutePath());
+		return ImageComparisonUtil.readImageFromResources(convertPathShortcuts(filePath.getAbsolutePath()));
 	}
 	
 	/**
@@ -194,14 +207,60 @@ public class FileManager {
 			outputSubDir = subDirectory;
 		}
 
-		return convertPathSeparators(Configuration.toString("imageDirectory", IMAGE_DIRECTORY) + File.separator + outputSubDir + File.separator + fileName);
+		return convertPathShortcuts(convertPathSeparators(Configuration.toString("imageDirectory", IMAGE_DIRECTORY) + File.separator + outputSubDir + File.separator + fileName));
 	}
 
+	/**
+	 * Converts a path so all / characters are replaced with a system-independent separator
+	 * @param path String the path to convert the separators of
+	 * @return String a string path with system-independent separators
+	 */
 	public static String convertPathSeparators(String path) {
 		return path.replace("/", File.separator);
 	}
 
+	/**
+	 * Sanitizes paths so any special characters excluding periods and dashes are replaced with underscores
+	 * @param toSanitize String the path to sanitize
+	 * @return String a path with unallowed special characters replaced with "_"
+	 */
 	public static String sanitizeString(String toSanitize) {
 		return toSanitize.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+	}
+
+	/**
+	 * Replaces special path shortcuts with their system environment equivalent within a given path
+	 * <br><br>
+	 * <b>Supported Path Shortcuts:</b>
+	 * <li><i>%localappdata%</i></li>
+	 * <li><i>%appdata%</i></li>
+	 * @param pathToProcess String path to replace shortcuts
+	 * @return String the path string with shortcuts replaced with their environment equivalent path
+	 */
+	public static String convertPathShortcuts(String pathToProcess){
+		String originalPath = pathToProcess;
+		String detectedOs = operatingSystem();
+		Map<String, String> specialFolders = new HashMap<>();
+
+		switch(detectedOs){
+			case "windows":
+				specialFolders = WINDOWS_SPECIAL_FOLDERS;
+				break;
+			case "linux":
+				specialFolders = LINUX_SPECIAL_FOLDERS;
+				break;
+			case "mac":
+				specialFolders = MAC_SPECIAL_FOLDERS;
+				break;
+		}
+
+		for(Map.Entry<String, String> entry : specialFolders.entrySet()){
+			pathToProcess = pathToProcess.replace(entry.getKey(), entry.getValue());
+			if(!pathToProcess.equals(originalPath)){
+				break;
+			}
+		}
+
+		return convertPathSeparators(pathToProcess);
 	}
 }
