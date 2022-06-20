@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.dougnoel.sentinel.system.FileManager;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -181,7 +182,7 @@ public class PageData {
      * @return String the path to the executable
      */
     public String getExecutable(String env) {
-    	return executables.get(env);
+    	return FileManager.convertPathShortcuts(executables.get(env));
     }
 
     /**
