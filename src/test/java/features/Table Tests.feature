@@ -33,8 +33,10 @@ Feature: Table Tests
       And I verify the cell in the 1st row and the First Name column of the Example table contains the text Bob
       And I verify the cell in the 1st row and the First Name column of the Example table does not contain the text Charlotte
       And I verify the cell in the 2nd row and the First Name column of the Example table contains the text Charlotte
-      And I verify the cell in the 3rd row and the Zip Code column of the Example table contains the text 02111
+      And I verify the cell in the 3rd row and the Zip Code column of the Example table has the text 02111
+      And I verify the cell in the 3rd row and the Zip Code column of the Example table does not have the text 0211
       And I verify the cell in the last row and the City column of the Example table contains the text Boston
+      And I verify the cell in the last row and the City column of the Example table does not contain the text boston
       And I verify all cells in the City column in the Example table are not empty
       And I verify the First Name column in the Example table is displayed to the left of the Last Name column
     	
