@@ -34,7 +34,6 @@ public class FileManager {
 			entry("%localappdata%", System.getenv("LOCALAPPDATA")),
 			entry("%USERPROFILE%", System.getenv("USERPROFILE"))
 	);
-	private static final String DETECTED_OS = operatingSystem();
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -229,6 +228,7 @@ public class FileManager {
 	 */
 	public static String winSpecialFolderConverter(String pathToProcess){
 		String originalPath = pathToProcess;
+		final String DETECTED_OS = operatingSystem();
 
 		if(DETECTED_OS.equals("windows")) {
 			for(Map.Entry<String, String> entry : WINDOWS_SPECIAL_FOLDERS.entrySet()){
