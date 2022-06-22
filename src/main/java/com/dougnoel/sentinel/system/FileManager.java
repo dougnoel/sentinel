@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -22,9 +23,17 @@ import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.github.romankh3.image.comparison.ImageComparisonUtil;
 
+import static com.dougnoel.sentinel.configurations.Configuration.operatingSystem;
+import static java.util.Map.entry;
+
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
+	private static final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
+			entry("%appdata%", System.getenv("APPDATA")),
+			entry("%localappdata%", System.getenv("LOCALAPPDATA")),
+			entry("%USERPROFILE%", System.getenv("USERPROFILE"))
+	);
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -203,5 +212,37 @@ public class FileManager {
 
 	public static String sanitizeString(String toSanitize) {
 		return toSanitize.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+	}
+
+	/**
+	 * Replaces Microsoft Windows special path shortcuts with their system environment equivalent within a given path
+	 * <br><br>
+	 * <b>Supported Path Shortcuts:</b>
+	 * <ul>
+	 * <li>%localappdata% <i>- Ex: C:\Users\USERNAME\AppData\Local</i></li>
+	 * <li>%appdata% <i>- Ex: C:\Users\USERNAME\AppData\Roaming</i></li>
+	 * <li>%USERPROFILE% <i>- Ex: C:\Users\USERNAME</i></li>
+	 * </ul>
+	 * @param pathToProcess String path to replace windows special folder shortcuts
+	 * @return String the path string with windows special folder shortcuts replaced with their environment equivalent path
+	 */
+	public static String winSpecialFolderConverter(String pathToProcess){
+		String originalPath = pathToProcess;
+		final String DETECTED_OS = operatingSystem();
+
+		if(DETECTED_OS.equals("windows")) {
+			for(Map.Entry<String, String> entry : WINDOWS_SPECIAL_FOLDERS.entrySet()){
+				pathToProcess = StringUtils.replaceIgnoreCase(pathToProcess, entry.getKey(), entry.getValue());
+				if(!pathToProcess.equals(originalPath)){
+					break;
+				}
+			}
+		}
+		else {
+			String unsupportedMessage = SentinelStringUtils.format("Currently only windows operating systems are supported for special folders. Your detected operating system: {}", DETECTED_OS);
+			throw new FileException(unsupportedMessage, new File(pathToProcess));
+		}
+
+		return convertPathSeparators(pathToProcess);
 	}
 }
