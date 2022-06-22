@@ -56,19 +56,23 @@ public class TableSteps {
      * @param matchLocatorType String the type of locator the next value will be: text or xpath
      * @param elementToMatch String the text or xpath of the value that will ensure you are in the correct row
      */
-    @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
+    @When("^I find the (.*?) and click the (text|xpath|value for) (.*?) in the row containing the (text|xpath|value for) (.*?)$")
     public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {   	
     	if (StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, XPATH)) {
 			getElementAsTable(tableName).clickElementInRowThatContains(By.xpath(elementToMatch), By.xpath(elementToClick));
-		} else if(StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, TEXT)) {
-			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, By.xpath(elementToClick)); 
+		} else if(StringUtils.equals(clickLocatorType, XPATH)) {
+			String elementTextToMatch = StringUtils.equals(matchLocatorType, TEXT) ? elementToMatch : Configuration.toString(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(elementTextToMatch, By.xpath(elementToClick));
 		}
-    	else if (StringUtils.equals(clickLocatorType, TEXT) && StringUtils.equals(matchLocatorType, TEXT)) {
-			getElementAsTable(tableName).clickElementInRowThatContains(elementToMatch, elementToClick);
+    	else if (StringUtils.equals(matchLocatorType, XPATH)) {
+			String elementTextToClick = StringUtils.equals(clickLocatorType, TEXT) ? elementToClick : Configuration.toString(elementToClick);
+			By matchLocator = By.xpath(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, elementTextToClick);
 		}
 		else {
-			By matchLocator = By.xpath(elementToMatch);
-			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, elementToClick);
+			String elementTextToMatch = StringUtils.equals(matchLocatorType, TEXT) ? elementToMatch : Configuration.toString(elementToMatch);
+			String elementTextToClick = StringUtils.equals(clickLocatorType, TEXT) ? elementToClick : Configuration.toString(elementToClick);
+			getElementAsTable(tableName).clickElementInRowThatContains(elementTextToMatch, elementTextToClick);
 		}
     }
     
