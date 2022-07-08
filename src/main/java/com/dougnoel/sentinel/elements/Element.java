@@ -593,7 +593,7 @@ public class Element {
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			driver().switchTo().defaultContent();
-			WebElement element = findElementInCurrentFrameForDuration(Time.loopInterval());
+			WebElement element = findElementInCurrentFrameForDuration(Time.interval());
 			if(element == null){
 				element = findElementInIFrame();
 			}
