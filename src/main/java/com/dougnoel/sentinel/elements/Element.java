@@ -592,19 +592,19 @@ public class Element {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-				log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-				WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()),
-						Time.interval());
-				try {
-					if (element == null || !(element.isDisplayed())) {
-						log.trace("doesNotExist() return result: true");
-						return true;
-					}
-				} catch (StaleElementReferenceException e) {
-					log.trace("doesNotExist() StaleElementException return result: true");
+			driver().switchTo().defaultContent();
+			WebElement element = findElementInCurrentFrameForDuration(Time.interval());
+			if(element == null){
+				element = findElementInIFrame();
+			}
+			try {
+				if (element == null || !(element.isDisplayed())) {
+					log.trace("doesNotExist() return result: true");
 					return true;
 				}
+			} catch (StaleElementReferenceException e) {
+				log.trace("doesNotExist() StaleElementException return result: true");
+				return true;
 			}
 		}
 		log.trace("doesNotExist() return result: false");
