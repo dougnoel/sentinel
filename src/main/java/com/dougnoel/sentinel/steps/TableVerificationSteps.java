@@ -117,7 +117,8 @@ public class TableVerificationSteps {
     @Then("^I verify the (.*?) column in the (.*?) contains the same text (?:entered|selected|used) for the (.*)$")
     public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
     	var textToMatch = Configuration.toString(key);
-        assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+        String errorMessage = SentinelStringUtils.format("Expected the {} column of the {} to contain any cells with the text {}", columnName, tableName, textToMatch);
+        assertTrue(errorMessage, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
     }
     
     /**
@@ -138,7 +139,7 @@ public class TableVerificationSteps {
         boolean negate = !StringUtils.isEmpty(assertion);
         
         var expectedResult = SentinelStringUtils.format(
-                "Expected the {} column of the {} to {}only contain cells with the text {}. The element contained the text: {}",
+                "Expected the {} column of the {} to {}only contain cells with the text {}.",
                 columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
 
