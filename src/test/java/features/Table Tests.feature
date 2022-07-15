@@ -68,6 +68,3 @@ Feature: Table Tests
     Then I verify the Example Table contains the Name column
       And I verify the Example Table does not contains the Missing column
       And I verify the Example Table contains the Nam column
-
-
-
