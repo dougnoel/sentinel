@@ -61,3 +61,13 @@ Feature: Table Tests
     Then I verify the JS alert contains the text This is Charlotte
       And I accept the JS alert
     Then I verify all cells in the Empty Column column in the Example Table are empty
+
+  @#381 @ngx-datatable
+  Scenario: Verifies the given table contains or does not contain the given column
+    Given I am on the NGX Data Table Page
+    Then I verify the Example Table contains the Name column
+      And I verify the Example Table does not contains the Missing column
+      And I verify the Example Table contains the Nam column
+
+
+

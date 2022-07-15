@@ -85,20 +85,29 @@ public class TableVerificationSteps {
 	}
 
     /**
-     * Verifies the given table contains the given column
+     * Verifies the given table contains or does not contain the given column
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I verify the Contact Us table contains the Phone Number column </li>
      * <li>I verify the Vision benefits table contains a Deductible column</li>
      * <li>I verify the Discography table contains the Album Name column </li>
+     * <li>I verify the Discography table does not contain the Album Name column </li>
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
      */
-    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String columnName) {
-        assertTrue(getElementAsTable(tableName).verifyColumnExists(columnName));
+    @Then("^I verify the (.*?)( does not)? contains? (?:a|the) (.*?) column$")
+    public static void verifyColumnExists(String tableName, String assertion, String columnName) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} {} contain the column.",
+                columnName, tableName, (negate ? " does not" : ""));
+
+          if (negate) {
+                assertFalse(expectedResult, getElementAsTable(tableName).verifyColumnExists(columnName));
+            } else {
+                assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnExists(columnName));
+            }
     }
     
     /**
