@@ -30,7 +30,6 @@ public abstract class ActionFunctions {
      * @param actionName String the name of the requested action
      * @param uid String the unique identifier to find the correct API for multi-threading
      * @return Action the requested action
-     * @throws NoSuchActionException if action is not found or defined.
      */
     public static Action getAction(String actionName, String uid) throws NoSuchActionException {
     	API api = APIManager.getAPI(uid);

@@ -685,6 +685,7 @@ public class Table extends Element {
 	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
+		@SuppressWarnings("unchecked")
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
 		
 		// We needs to sort the strings taking into account there might be numbers in the strings.

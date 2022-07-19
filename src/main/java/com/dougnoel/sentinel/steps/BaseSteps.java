@@ -16,7 +16,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.Point;
 
 /**
  * Methods used to define basic operations.
