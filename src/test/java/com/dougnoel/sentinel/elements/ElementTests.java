@@ -258,22 +258,22 @@ public class ElementTests {
     }
 
     @Test
-    public void validFilePathSending(){
+    public void validSingleUpload(){
         BaseSteps.navigateToPage("UploadPage");
         FileSteps.sendPathsToElement("eclipse_run_icon_image", "choose file button");
-        BaseSteps.click("upload button");
-        Element fileList = getElement("uploaded files list");
-        Assert.assertTrue(fileList.getText().contains("eclipse_tool_bar_icon_run.png"));
+        Element fileUploadCount = getElement("file counter");
+        Element fileResult1 = getElement("upload result 1");
+        Assert.assertTrue(fileUploadCount.getAttribute("data-filecount").equals("1") && fileResult1.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run.png"));
     }
 
     @Test
-    public void validMultiUploadDragNDrop(){
+    public void validMultiUpload(){
         BaseSteps.navigateToPage("UploadPage");
         FileSteps.sendPathsToElement("eclipse_run_icon_image, eclipse_run_icon_image_2", "choose file button");
         Element fileUploadCount = getElement("file counter");
         Element fileResult1 = getElement("upload result 1");
         Element fileResult2 = getElement("upload result 2");
-        Assert.assertTrue(fileUploadCount.getAttribute("count").equals(2) && fileResult1.getAttribute("filename").equals("eclipse_tool_bar_icon_run.png") && fileResult2.getAttribute("filename").equals("eclipse_tool_bar_icon_run_2.png"));
+        Assert.assertTrue(fileUploadCount.getAttribute("data-filecount").equals("2") && fileResult1.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run.png") && fileResult2.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run_2.png"));
     }
 
     @Test(expected = IOException.class)
