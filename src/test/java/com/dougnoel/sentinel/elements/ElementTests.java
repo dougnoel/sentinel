@@ -9,6 +9,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 
+import com.dougnoel.sentinel.exceptions.IOException;
+import com.dougnoel.sentinel.steps.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -22,9 +24,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.steps.BaseSteps;
-import com.dougnoel.sentinel.steps.TableVerificationSteps;
-import com.dougnoel.sentinel.steps.TextVerificationSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 
@@ -258,4 +257,46 @@ public class ElementTests {
         assertTrue("All cells in Last Name column not empty.", table.verifyAllColumnCellsNotEmpty("Last Name"));
     }
 
+    @Test
+    public void validFilePathSending(){
+        BaseSteps.navigateToPage("UploadPage");
+        FileSteps.sendPathsToElement("eclipse_run_icon_image", "choose file button");
+        BaseSteps.click("upload button");
+        Element fileList = getElement("uploaded files list");
+        Assert.assertTrue(fileList.getText().contains("eclipse_tool_bar_icon_run.png"));
+    }
+
+    @Test
+    public void validMultiUploadDragNDrop(){
+        BaseSteps.navigateToPage("UploadPage");
+        FileSteps.sendPathsToElement("eclipse_run_icon_image, eclipse_run_icon_image_2", "choose file button");
+        Element fileUploadCount = getElement("file counter");
+        Element fileResult1 = getElement("upload result 1");
+        Element fileResult2 = getElement("upload result 2");
+        Assert.assertTrue(fileUploadCount.getAttribute("count").equals(2) && fileResult1.getAttribute("filename").equals("eclipse_tool_bar_icon_run.png") && fileResult2.getAttribute("filename").equals("eclipse_tool_bar_icon_run_2.png"));
+    }
+
+    @Test(expected = IOException.class)
+    public void invalidFilePathSending(){
+        BaseSteps.navigateToPage("UploadPage");
+        try{
+            FileSteps.sendPathsToElement("file_doesnot_exist", "choose file button");
+        }
+        catch(IOException fileException){
+            Assert.assertTrue("Error message should indicate a file was not found", fileException.getMessage().toLowerCase().contains("file could not be found"));
+            throw fileException;
+        }
+    }
+
+    @Test(expected = IOException.class)
+    public void validDirectoryPathSendFailure(){
+        BaseSteps.navigateToPage("UploadPage");
+        try{
+            FileSteps.sendPathsToElement("eclipse_run_icon_image_folder", "choose file button");
+        }
+        catch(IOException fileException){
+            Assert.assertTrue("Error message should indicate the given file was a directory", fileException.getMessage().toLowerCase().contains("was a directory"));
+            throw fileException;
+        }
+    }
 }

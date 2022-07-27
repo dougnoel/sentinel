@@ -1,12 +1,16 @@
 urls:
-  default: https://the-internet.herokuapp.com/upload
+  default: https://dougnoel.github.io/sentinel/test/multiUploadTest.html
 elements:
   choose_file_button:
-    id: "file-upload"
-  upload_button:
-    id: "file-submit"
-  uploaded_files_list:
-    id: "uploaded-files"
+    id: "filePicker"
+  file_counter:
+    id: "fileUploadCount"
+  upload_result_1:
+    id: "chosenFile_1"
+  upload_result_2:
+    id: "chosenFile_2"
+  no_files_indicator:
+    id: "noFilesIndicator"
 testdata:
   default:
     eclipse_run_icon_image:
