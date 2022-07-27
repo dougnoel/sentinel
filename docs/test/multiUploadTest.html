@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Multiple File Path Test</title>
+    </head>
+
+    <body>
+        <form id="uploadForm" method="post" enctype="multipart/form-data">
+            Files To Upload: <div><input type="file" id="filePicker" name="filePicker" multiple></div>
+            <br>
+            File Count: <div id="fileUploadCount" style='font-size:24px;' data-fileCount=0>0</div>
+            <ul id="filesPicked" style='font-size:24px;'><li id="noFilesIndicator">No Files</li></ul>
+        </form>
+
+        <script>
+            var selDiv = "";
+            var uploadCountDiv = "";
+
+            document.addEventListener("DOMContentLoaded", init, false);
+
+            function init() {
+                document.querySelector('#filePicker').addEventListener('change', handleFileSelect, false);
+                selDiv = document.querySelector("#filesPicked");
+                uploadCountDiv = document.querySelector("#fileUploadCount");
+            }
+
+            function handleFileSelect(e) {
+                if(!e.target.files) return;
+                selDiv.innerHTML = "";
+                uploadCountDiv.innerHTML = "";
+                var files = e.target.files;
+                for(var i=0; i<files.length; i++) {
+                    var f = files[i];
+                    var escapedName = htmlSanitizer(f.name);
+                    selDiv.innerHTML += "<li id=chosenFile_" + (i+1) + " data-fileName=" + escapedName + ">" + escapedName + "</li>";
+                    uploadCountDiv.innerHTML = (i+1);
+                    uploadCountDiv.setAttribute("count", (i+1));
+                }
+            }
+
+            function htmlSanitizer (str) {
+                return str.replace(/javascript:/gi, '').replace(/[^\w-_. ]/gi, function (c) {
+                    return `&#${c.charCodeAt(0)};`;
+                });
+            }
+        </script>
+    </body>
+</html>
