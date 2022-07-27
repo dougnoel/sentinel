@@ -260,7 +260,7 @@ public class ElementTests {
     @Test
     public void validSingleUpload(){
         BaseSteps.navigateToPage("UploadPage");
-        UploadSteps.sendPathsToElement("eclipse_run_icon_image", "choose file button");
+        UploadSteps.sendPathsToInputElement("eclipse_run_icon_image", "choose file button");
         Element fileUploadCount = getElement("file counter");
         Element fileResult1 = getElement("upload result 1");
         Assert.assertTrue(fileUploadCount.getAttribute("data-filecount").equals("1") && fileResult1.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run.png"));
@@ -269,7 +269,7 @@ public class ElementTests {
     @Test
     public void validMultiUpload(){
         BaseSteps.navigateToPage("UploadPage");
-        UploadSteps.sendPathsToElement("eclipse_run_icon_image, eclipse_run_icon_image_2", "choose file button");
+        UploadSteps.sendPathsToInputElement("eclipse_run_icon_image, eclipse_run_icon_image_2", "choose file button");
         Element fileUploadCount = getElement("file counter");
         Element fileResult1 = getElement("upload result 1");
         Element fileResult2 = getElement("upload result 2");
@@ -280,7 +280,7 @@ public class ElementTests {
     public void invalidFilePathSending(){
         BaseSteps.navigateToPage("UploadPage");
         try{
-            UploadSteps.sendPathsToElement("file_doesnot_exist", "choose file button");
+            UploadSteps.sendPathsToInputElement("file_doesnot_exist", "choose file button");
         }
         catch(IOException fileException){
             Assert.assertTrue("Error message should indicate a file was not found", fileException.getMessage().toLowerCase().contains("file could not be found"));
@@ -292,7 +292,7 @@ public class ElementTests {
     public void validDirectoryPathSendFailure(){
         BaseSteps.navigateToPage("UploadPage");
         try{
-            UploadSteps.sendPathsToElement("eclipse_run_icon_image_folder", "choose file button");
+            UploadSteps.sendPathsToInputElement("eclipse_run_icon_image_folder", "choose file button");
         }
         catch(IOException fileException){
             Assert.assertTrue("Error message should indicate the given file was a directory", fileException.getMessage().toLowerCase().contains("was a directory"));
