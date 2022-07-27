@@ -278,7 +278,25 @@ public class Element {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Sends the constructed collection of absolute paths of a given file list to an element for use with file upload elements.
+	 * This method will throw an IOException if the files at the given paths cannot be found.
+	 *
+	 * @param filesToUpload File the files whose path should be sent to the element
+	 * @return Element (for chaining)
+	 */
+	public Element sendFilePaths(List<File> filesToUpload){
+		String filePaths = "";
+		for (File fileToUpload : filesToUpload){
+			filePaths += fileToUpload.getAbsolutePath() + " \n ";
+		}
+		filePaths = filePaths.trim();
+		element().sendKeys(filePaths);
+
+		return this;
+	}
+
 	/**
 	 * Enter text into a Element. Typically used for text boxes.
 	 * This method will throw an ElementDisabledException() if the text box is disabled.
