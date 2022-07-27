@@ -1,18 +1,18 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Multiple File Path Test</title>
-    </head>
+<head>
+    <title>Multiple File Path Test</title>
+</head>
 
-    <body>
-        <form id="uploadForm" method="post" enctype="multipart/form-data">
-            Files To Upload: <div><input type="file" id="filePicker" name="filePicker" multiple></div>
-            <br>
-            File Count: <div id="fileUploadCount" style='font-size:24px;' data-fileCount=0>0</div>
-            <ul id="filesPicked" style='font-size:24px;'><li id="noFilesIndicator">No Files</li></ul>
-        </form>
+<body>
+<form id="uploadForm" method="post" enctype="multipart/form-data">
+    Files To Upload: <div><input type="file" id="filePicker" name="filePicker" multiple></div>
+    <br>
+    File Count: <div id="fileUploadCount" style='font-size:24px;' data-fileCount=0>0</div>
+    <ul id="filesPicked" style='font-size:24px;'><li id="noFilesIndicator">No Files</li></ul>
+</form>
 
-        <script>
+<script>
             var selDiv = "";
             var uploadCountDiv = "";
 
@@ -34,7 +34,7 @@
                     var escapedName = htmlSanitizer(f.name);
                     selDiv.innerHTML += "<li id=chosenFile_" + (i+1) + " data-fileName=" + escapedName + ">" + escapedName + "</li>";
                     uploadCountDiv.innerHTML = (i+1);
-                    uploadCountDiv.setAttribute("count", (i+1));
+                    uploadCountDiv.setAttribute("data-fileCount", (i+1));
                 }
             }
 
@@ -44,5 +44,5 @@
                 });
             }
         </script>
-    </body>
+</body>
 </html>
