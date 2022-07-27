@@ -7,12 +7,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import com.dougnoel.sentinel.exceptions.FileException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -280,19 +282,44 @@ public class Element {
 	}
 
 	/**
-	 * Sends the constructed collection of absolute paths of a given file list to an element for use with file upload elements.
-	 * This method will throw an IOException if the files at the given paths cannot be found.
+	 * Sends a constructed collection of absolute paths of a given file locator string list to an element for use with file upload elements.
+	 * Supports both single and multiple file sending for input elements.
+	 * This method will throw an IOException if the files at the given paths cannot be found or the provided file is a directory.
 	 *
-	 * @param filesToUpload File the files whose path should be sent to the element
+	 * @param fileLocators String the file locators or paths to upload
 	 * @return Element (for chaining)
 	 */
-	public Element sendFilePaths(List<File> filesToUpload){
+	public Element sendFilePaths(List<String> fileLocators){
+		List<File> filesToUpload = new ArrayList<>();
+
+		for (String file : fileLocators) {
+			File fileToProcess;
+
+			try {
+				fileToProcess = FileManager.findFilePath(file);
+				filesToUpload.add(fileToProcess);
+			} catch (FileException fileNotFound) {
+				fileToProcess = new File(file);
+				String errorMessage;
+				if (fileToProcess.exists() && !fileToProcess.isDirectory()) {
+					filesToUpload.add(fileToProcess);
+				} else {
+					if(fileToProcess.isDirectory())
+						errorMessage = SentinelStringUtils.format("The given {} file was a directory", file);
+					else
+						errorMessage = SentinelStringUtils.format("The {} file could not be found to send to the element {}", file, this.name);
+
+					log.error(errorMessage);
+					throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage);
+				}
+			}
+		}
+
 		String filePaths = "";
 		for (File fileToUpload : filesToUpload){
 			filePaths += fileToUpload.getAbsolutePath() + " \n ";
 		}
-		filePaths = filePaths.trim();
-		element().sendKeys(filePaths);
+		element().sendKeys(filePaths.trim());
 
 		return this;
 	}
