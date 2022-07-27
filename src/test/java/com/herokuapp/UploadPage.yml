@@ -1,0 +1,19 @@
+urls:
+  default: https://the-internet.herokuapp.com/upload
+elements:
+  choose_file_button:
+    id: "file-upload"
+  upload_button:
+    id: "file-submit"
+  uploaded_files_list:
+    id: "uploaded-files"
+testdata:
+  default:
+    eclipse_run_icon_image:
+      fileLocation: "eclipse_tool_bar_icon_run.png"
+    eclipse_run_icon_image_2:
+      fileLocation: "eclipse_tool_bar_icon_run_2.png"
+    eclipse_run_icon_image_folder:
+      fileLocation: "images/"
+    file_doesnot_exist:
+      fileLocation: "DoesNotExist.doesnot"
