@@ -290,19 +290,19 @@ public class Element {
 	 * @return Element (for chaining)
 	 */
 	public Element sendFilePaths(List<String> fileLocators){
-		List<File> filesToUpload = new ArrayList<>();
+		String filePaths = "";
 
 		for (String file : fileLocators) {
 			File fileToProcess;
 
 			try {
 				fileToProcess = FileManager.findFilePath(file);
-				filesToUpload.add(fileToProcess);
+				filePaths += fileToProcess.getAbsolutePath() + " \n ";
 			} catch (FileException fileNotFound) {
 				fileToProcess = new File(file);
 				String errorMessage;
 				if (fileToProcess.exists() && !fileToProcess.isDirectory()) {
-					filesToUpload.add(fileToProcess);
+					filePaths += fileToProcess.getAbsolutePath() + " \n ";
 				} else {
 					if(fileToProcess.isDirectory())
 						errorMessage = SentinelStringUtils.format("The given {} file was a directory", file);
@@ -315,10 +315,6 @@ public class Element {
 			}
 		}
 
-		String filePaths = "";
-		for (File fileToUpload : filesToUpload){
-			filePaths += fileToUpload.getAbsolutePath() + " \n ";
-		}
 		element().sendKeys(filePaths.trim());
 
 		return this;
