@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
-public class FileSteps {
+public class UploadSteps {
     protected static final Logger log = LogManager.getLogger(ImageSteps.class.getName()); // Create a logger.
 
     /**
