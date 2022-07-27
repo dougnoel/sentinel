@@ -14,7 +14,7 @@ public class UploadSteps {
     protected static final Logger log = LogManager.getLogger(ImageSteps.class.getName()); // Create a logger.
 
     /**
-     * <p>Uploads files whose paths are stored in the testdata section of the page object to a given element.</p>
+     * <p>Uploads files whose paths are stored in the testdata section of the page object to a given input element.</p>
      * <p>Multiple testdata file references should be separated by ", "</p>
      * <p>Supports both testdata fileLocation values of just their name for files within src, or a full path if the file has no match within src</p>
      * <p>For use with input elements utilized for uploading files.</p>
@@ -33,7 +33,7 @@ public class UploadSteps {
      * @param elementName String name of the element to screenshot
      */
     @When("^I upload the (.*?) files? to the (.*?)$")
-    public static void sendPathsToElement(String testDataFilePaths, String elementName) {
+    public static void sendPathsToInputElement(String testDataFilePaths, String elementName) {
         String[] filePathLocators = testDataFilePaths.split(", ");
         List<String> filesToUpload = new ArrayList<>();
 
