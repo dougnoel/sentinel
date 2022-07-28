@@ -276,27 +276,34 @@ public class ElementTests {
         Assert.assertTrue(fileUploadCount.getAttribute("data-filecount").equals("2") && fileResult1.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run.png") && fileResult2.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run_2.png"));
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void invalidFilePathSending(){
+        boolean assertionThrown = false;
         BaseSteps.navigateToPage("UploadPage");
+
         try{
             UploadSteps.sendPathsToInputElement("file_doesnot_exist", "choose file button");
         }
         catch(IOException fileException){
+            assertionThrown = true;
             Assert.assertTrue("Error message should indicate a file was not found", fileException.getMessage().toLowerCase().contains("file could not be found"));
-            throw fileException;
         }
+        Assert.assertTrue("A fileException was expected to be thrown, but no exceptions occurred", assertionThrown);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void validDirectoryPathSendFailure(){
+        boolean assertionThrown = false;
         BaseSteps.navigateToPage("UploadPage");
+
         try{
             UploadSteps.sendPathsToInputElement("eclipse_run_icon_image_folder", "choose file button");
         }
         catch(IOException fileException){
+            assertionThrown = true;
             Assert.assertTrue("Error message should indicate the given file was a directory", fileException.getMessage().toLowerCase().contains("was a directory"));
-            throw fileException;
         }
+
+        Assert.assertTrue("A fileException was expected to be thrown, but no exceptions occurred", assertionThrown);
     }
 }
