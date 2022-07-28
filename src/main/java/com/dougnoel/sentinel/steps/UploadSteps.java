@@ -11,7 +11,7 @@ import java.util.List;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
 public class UploadSteps {
-    protected static final Logger log = LogManager.getLogger(ImageSteps.class.getName()); // Create a logger.
+    protected static final Logger log = LogManager.getLogger(UploadSteps.class.getName()); // Create a logger.
 
     /**
      * <p>Uploads files whose paths are stored in the testdata section of the page object to a given input element.</p>
