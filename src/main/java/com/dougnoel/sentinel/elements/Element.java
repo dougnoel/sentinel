@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -290,19 +289,19 @@ public class Element {
 	 * @return Element (for chaining)
 	 */
 	public Element sendFilePaths(List<String> fileLocators){
-		String processedValueToSend = "";
+		StringBuilder processedValueToSend = new StringBuilder();
 
 		for (String file : fileLocators) {
 			File fileToProcess;
 
 			try {
 				fileToProcess = FileManager.findFilePath(file);
-				processedValueToSend += fileToProcess.getAbsolutePath() + "\n";
+				processedValueToSend.append(fileToProcess.getAbsolutePath()).append("\n");
 			} catch (FileException fileNotFound) {
 				fileToProcess = new File(file);
 				String errorMessage;
 				if (fileToProcess.exists() && !fileToProcess.isDirectory()) {
-					processedValueToSend += fileToProcess.getAbsolutePath() + "\n";
+					processedValueToSend.append(fileToProcess.getAbsolutePath()).append("\n");
 				} else {
 					if(fileToProcess.isDirectory())
 						errorMessage = SentinelStringUtils.format("The given {} file was a directory", file);
@@ -315,7 +314,7 @@ public class Element {
 			}
 		}
 
-		element().sendKeys(processedValueToSend.trim());
+		element().sendKeys(processedValueToSend.toString().trim());
 
 		return this;
 	}
