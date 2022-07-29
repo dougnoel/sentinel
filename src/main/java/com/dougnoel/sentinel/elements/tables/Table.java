@@ -87,7 +87,7 @@ public class Table extends Element {
 		if (headers.isEmpty()) {
 			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
-				String headerText = header.getText().replaceAll("[\\t\\n\\r]+"," ");
+				String headerText = header.getText().replaceAll("[\\t\\n\\r]+"," ").strip();
 				headers.add(headerText);
 			}
 		}
