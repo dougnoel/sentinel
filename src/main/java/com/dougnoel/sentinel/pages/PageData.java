@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.pages;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -126,7 +127,7 @@ public class PageData {
      */
     public String[] getPageParts() {
     	if (StringUtils.isNotBlank(include)) {
-    		return include.trim().split(",");
+			return Arrays.stream(include.split(",")).map(String::trim).toArray(String[]::new);
     	}
     	return new String[0];
     }

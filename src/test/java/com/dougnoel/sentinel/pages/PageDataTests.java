@@ -2,6 +2,8 @@ package com.dougnoel.sentinel.pages;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import java.io.IOException;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,7 +50,14 @@ public class PageDataTests {
 		PageManager.setPage("PageWithBlankInclude");
 		Assert.assertNotNull("Expected text to be male when the include list is empty.", Configuration.getElement(ELEMENT_NAME, "PageWithBlankInclude"));
 	}
-	
+
+	@Test
+	public void validateMultipleIncludes() {
+		String[] actual = Configuration.getPageParts("PageWithMultipleIncludes");
+		String[] expected = new String[] {"RadioButtonPage", "TablePage"};
+		Assert.assertArrayEquals("Expected page parts to be 'RadioButtonPage' and 'TablePage'", expected, actual);
+	}
+
 	@Test
 	public void validateTestdataExistsInYaml() {
 		PageManager.setPage("PageWithTestdata");
