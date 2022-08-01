@@ -1,0 +1,7 @@
+include: RadioButtonPage, TablePage
+urls:
+  default: https://dougnoel.github.io/sentinel/test/radiobutton.html
+elements:
+  multiple:
+    elementType: Radiobutton
+    id: "male"
