@@ -31,17 +31,10 @@
                 var files = e.target.files;
                 for(var i=0; i<files.length; i++) {
                     var f = files[i];
-                    var escapedName = htmlSanitizer(f.name);
-                    selDiv.innerHTML += "<li id=chosenFile_" + (i+1) + " data-fileName=" + escapedName + ">" + escapedName + "</li>";
+                    selDiv.innerHTML += "<li id=chosenFile_" + (i+1) + " data-fileName=" + f.name + ">" + f.name + "</li>";
                     uploadCountDiv.innerHTML = (i+1);
                     uploadCountDiv.setAttribute("data-fileCount", (i+1));
                 }
-            }
-
-            function htmlSanitizer(str){
-                var tempElement = document.createElement("p");
-                tempElement.appendChild(document.createTextNode(str));
-                return tempElement.innerText;
             }
         </script>
 </body>
