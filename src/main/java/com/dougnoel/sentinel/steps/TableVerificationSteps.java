@@ -254,6 +254,46 @@ public class TableVerificationSteps {
     }
 
     /**
+     * Verifies that a specific cell, given by the row and column, in the table contains the given previously stored text.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the cell in the last row and the Employee First Name column of the Employee table does not contain the same text used for the employee last name field</li>
+     * <li>I verify the cell in the 2nd row and the Employee First Name column of the Employee table has the same text used for the employee first name field</li>
+     * </ul>
+     * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
+     * @param columnName String the name of the column to verify
+     * @param tableName String the name of the table containing the column
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
+     * @param key String the key of the stored text to look for in the column
+     */
+    @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? (has|have|contains?) the same text (?:entered|selected|used) for the (.*)$")
+    public static void verifyCellInSpecifiedRowAgainstStored(String rowNum, String columnName, String tableName, String assertion, String matchType, String key) {
+        var textToMatch = Configuration.toString(key);
+
+        boolean negate = !StringUtils.isEmpty(assertion);
+
+        var table = getElementAsTable(tableName);
+        int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
+        boolean partialMatch = matchType.contains("contain");
+
+        String resultText = table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch);
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}. The element contained the text: {}",
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch, resultText);
+        log.trace(expectedResult);
+
+        boolean actualResult = resultText == null;
+        if (negate) {
+            assertFalse(expectedResult, actualResult);
+        } else {
+            assertTrue(expectedResult, actualResult);
+        }
+    }
+
+    /**
      * Verifies all cells in the table column are or are not empty.
      * <p>
      * <b>Gherkin Examples:</b>
