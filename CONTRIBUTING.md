@@ -9,7 +9,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 1. Update the README.md with details of changes to the interface, this includes new command line options
 2. Every method should have a Javadoc comment describing what it does, its parameters, what it returns (if not void), and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](https://github.com/liferay/liferay-portal/blob/master/readme/ADVANCED_JAVADOC_GUIDELINES.markdown) for writing Javadoc contents.
 3. Increase the version numbers in the [README.md](README.md) to the new version that this Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. Code coverage for any new code must be 100%. Code coverage for the project overall must go up. Current code coverage can be found on the main page of the repository at the top of the [README.md](README.md).
+4. Code coverage for any new code must be 100%. Code coverage for the project overall must go up. Current code coverage can be found on the main page of the repository at the top of the [README.md](README.md). (NOTE: Sonarcloud only supports code coverage run from branches. [It will not run on forks used to make pull requests yet.](https://portal.productboard.com/sonarsource/1-sonarcloud/c/50-sonarcloud-analyzes-external-pull-request?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImRvdWdub2VsQGdtYWlsLmNvbSIsImlhdCI6MTY1OTQ0ODQ3OSwiZXhwIjoxNjU5NDkxNjc5fQ.6uwWLVncsOKmKaD7L7fXkSDn9BsoakDXlJSC6KxWngY))
 5. All unit tests on your pull request must pass.
 5. You may merge the Pull Request in once you have the sign-off of a project owner, or if you do not have permission to do that, you may request a reviewer to merge it for you.
 
