@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <title>Multiple File Path Test</title>
 </head>
@@ -38,10 +38,10 @@
                 }
             }
 
-            function htmlSanitizer (str) {
-                return str.replace(/javascript:/gi, '').replace(/[^\w-_. ]/gi, function (c) {
-                    return `&#${c.charCodeAt(0)};`;
-                });
+            function htmlSanitizer(str){
+                var tempElement = document.createElement("p");
+                tempElement.appendChild(document.createTextNode(str));
+                return tempElement.innerText;
             }
         </script>
 </body>
