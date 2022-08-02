@@ -758,6 +758,21 @@ public class Table extends Element {
 	}
 
 	/**
+	 * Returns true if column is equal, false if column is not equal
+	 *
+	 * @param columnName String name of column to find
+	 * @return boolean true if column equals, false if column is not equal.
+	 */
+	public boolean verifyColumnEquals(String columnName) {
+		for (String header : getOrCreateHeaders()) {
+			if (header.equals(columnName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Returns true if the row cell's values are unique for the given column name
 	 * 
 	 * @param columnName String comma delimited columns list

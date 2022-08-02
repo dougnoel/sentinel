@@ -66,5 +66,16 @@ Feature: Table Tests
   Scenario: Verifies the given table contains or does not contain the given column
     Given I am on the NGX Data Table Page
     Then I verify the Example Table contains the Name column
+      And I verify the Example Table contains a Name column
       And I verify the Example Table does not contains the Missing column
+      And I verify the Example Table does not contains a Missing column
       And I verify the Example Table contains the Nam column
+      And I verify the Example Table contains a Nam column
+      And I verify the Example Table has a Name column
+      And I verify the Example Table has the Name column
+      And I verify the Example Table have a Name column
+      And I verify the Example Table have the Name column
+      And I verify the Example Table does not has a Missing column
+      And I verify the Example Table does not has the Missing column
+      And I verify the Example Table does not have a Missing column
+      And I verify the Example Table does not have the Missing column
