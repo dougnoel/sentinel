@@ -41,9 +41,15 @@
                 var newFirstName = document.getElementById("editFirstName").value;
                 var newLastName = document.getElementById("editLastName").value;
 
-                document.getElementsByClassName("updatable id")[0].innerText = newId;
-                document.getElementsByClassName("updatable firstName")[0].innerText = newFirstName;
-                document.getElementsByClassName("updatable lastName")[0].innerText = newLastName;
+                document.getElementsByClassName("updatable id")[0].innerText = escapeHtml(newId);
+                document.getElementsByClassName("updatable firstName")[0].innerText = escapeHtml(newFirstName);
+                document.getElementsByClassName("updatable lastName")[0].innerText = escapeHtml(newLastName);
+            }
+
+            function escapeHtml(str){
+                var tempElement = document.createElement("p");
+                tempElement.appendChild(document.createTextNode(str));
+                return tempElement.innerText;
             }
         </script>
     </body>
