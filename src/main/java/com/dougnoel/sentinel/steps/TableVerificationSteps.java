@@ -1,9 +1,10 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static com.dougnoel.sentinel.system.TableAssert.assertFalse;
+import static com.dougnoel.sentinel.system.TableAssert.assertTrue;
 
+import com.dougnoel.sentinel.elements.tables.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +16,7 @@ import io.cucumber.java.en.Then;
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
-	
+
 	/**
      * Verifies we have the expected, given number of rows in the given string representing the Table object.
  	 * The string is made lower case and whitespaces are replaced with underscores, then it is sent a 
@@ -115,10 +116,11 @@ public class TableVerificationSteps {
      * @param key String the key to retrieve the text to match from the configuration manager
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the same text (?:entered|selected|used) for the (.*)$")
-    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
+    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) throws Exception {
     	var textToMatch = Configuration.toString(key);
         String errorMessage = SentinelStringUtils.format("Expected the {} column of the {} to contain any cells with the text {}", columnName, tableName, textToMatch);
-        assertTrue(errorMessage, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+        Table table = getElementAsTable(tableName);
+        assertTrue(errorMessage, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
     }
     
     /**

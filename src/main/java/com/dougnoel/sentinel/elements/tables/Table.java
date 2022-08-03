@@ -59,7 +59,7 @@ public class Table extends Element {
 	/**
 	 * Resets table data when comparing multiple pages of the same table.
 	 */
-	protected void reset() {
+	public void reset() {
 		if (headerElements != null) {
 			headerElements.clear();
 		}
