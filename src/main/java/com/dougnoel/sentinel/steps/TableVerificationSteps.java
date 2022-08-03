@@ -105,6 +105,8 @@ public class TableVerificationSteps {
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
      */
 
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
