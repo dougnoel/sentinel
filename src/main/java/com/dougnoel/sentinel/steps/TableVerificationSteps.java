@@ -35,15 +35,16 @@ public class TableVerificationSteps {
      * </ul>
      * 
      * @param expectedNumberOfRows int The number of rows your are expecting.
-     * @param elementName String (Table name) This should be the name of the table element to count.
+     * @param tableName String (Table name) This should be the name of the table element to count.
      */
     @Then("^I see (\\d+) rows? in the (.*)$")
-    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String elementName) {
-        int numberOfRows = getElementAsTable(elementName).getNumberOfRows();
+    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String tableName) {
+        Table table = getElementAsTable(tableName);
+        int numberOfRows = getElementAsTable(tableName).getNumberOfRows();
         var expectedResult = SentinelStringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
-        assertTrue(expectedResult, numberOfRows == expectedNumberOfRows);
+        assertTrue(expectedResult, table, () -> table, numberOfRows == expectedNumberOfRows);
     }
-    
+
     /**
      * Compares the current page we are on with the page stored in
      * memory given the page number and Table element object page for the current page.
@@ -59,8 +60,9 @@ public class TableVerificationSteps {
      * @param tableName String the name of the table element on the page object
      */
     @Then("^I should be shown the (\\d+)(?:st|nd|rd|th) page of results from the (.*)$")
-    public static void compareTables(int pageNumber, String tableName) {
-    	assertTrue(getElementAsTable(tableName).compareWithStoredTable(pageNumber));
+    public static void compareTables(int pageNumber, String tableName) throws Exception {
+        Table table = getElementAsTable(tableName);
+    	assertTrue(table, () -> table.compareWithStoredTable(pageNumber));
     }
     
     /**
@@ -77,11 +79,12 @@ public class TableVerificationSteps {
      * @param tableName String name of the table to search
      */
     @Then("^I verify the (.*?) column(s)? in the (.*?) contains? unique values$")
-	public static void verifyUniqueColumnText(String columnName, String isMultiCells, String tableName) {
-		if (isMultiCells != null) {		
-			assertTrue(getElementAsTable(tableName).verifyRowCellsAreUnique(columnName));
+	public static void verifyUniqueColumnText(String columnName, String isMultiCells, String tableName) throws Exception {
+        Table table = getElementAsTable(tableName);
+		if (isMultiCells != null) {
+			assertTrue(table, () -> table.verifyRowCellsAreUnique(columnName));
 		} else {
-			assertTrue(getElementAsTable(tableName).verifyColumnCellsAreUnique(columnName));
+			assertTrue(table, () -> table.verifyColumnCellsAreUnique(columnName));
 		}
 	}
 
@@ -98,8 +101,9 @@ public class TableVerificationSteps {
      * @param columnName String name of the column to verify
      */
     @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String columnName) {
-        assertTrue(getElementAsTable(tableName).verifyColumnExists(columnName));
+    public static void verifyColumnExists(String tableName, String columnName) throws Exception {
+        Table table = getElementAsTable(tableName);
+        assertTrue(table, () -> table.verifyColumnExists(columnName));
     }
     
     /**
@@ -137,18 +141,18 @@ public class TableVerificationSteps {
      * @param textToMatch String the text to look for in the column
      */
     @Then("^I verify all the cells in the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
-    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String textToMatch) {
+    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-        
+        Table table = getElementAsTable(tableName);
         var expectedResult = SentinelStringUtils.format(
                 "Expected the {} column of the {} to {}only contain cells with the text {}.",
                 columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
 
         if (negate) {
-            assertFalse(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+            assertFalse(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, textToMatch));
         } else {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, textToMatch));
         }
     }
 
@@ -169,23 +173,24 @@ public class TableVerificationSteps {
      * @param textToMatch String the text to look for in the column
      */
     @Then("^I verify the (.*?) column in the (.*?)( does not)? (has|have|contains?) the text (.*?)$")
-    public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) {
+    public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
+        Table table = getElementAsTable(tableName);
         String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} {}{} the text {}.",
                 columnName, tableName, (negate ? " does not" : ""), matchType, textToMatch);
 
         if (partialMatch) {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+                assertFalse(expectedResult, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+                assertTrue(expectedResult, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
             }
         } else {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellHas(columnName, textToMatch));
+                assertFalse(expectedResult, table, () -> table.verifyAnyColumnCellHas(columnName, textToMatch));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellHas(columnName, textToMatch));
+                assertTrue(expectedResult, table, () -> table.verifyAnyColumnCellHas(columnName, textToMatch));
             }
         }
     }
@@ -205,15 +210,15 @@ public class TableVerificationSteps {
      * @param sortOrder String ascending or descending
      */
     @Then("^I verify the cells in the (.*?) column in the (.*?) are sorted in (ascending|descending) order$")
-    public static void verifyColumnSort(String columnName, String tableName, String sortOrder) {
+    public static void verifyColumnSort(String columnName, String tableName, String sortOrder) throws Exception {
         boolean sortAscending = StringUtils.equals(sortOrder, "ascending");
-        
+        Table table = getElementAsTable(tableName);
         var expectedResult = SentinelStringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));
         log.trace(expectedResult);
         if (sortAscending) {
-        	assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedAscending(columnName));
+        	assertTrue(expectedResult, table, () -> table.verifyColumnCellsAreSortedAscending(columnName));
         } else {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedDescending(columnName));
+            assertTrue(expectedResult, table, () -> table.verifyColumnCellsAreSortedDescending(columnName));
         }
     }
     
@@ -235,8 +240,8 @@ public class TableVerificationSteps {
     @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? (has|have|contains?) the text (.*?)$")
     public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch) {
     	boolean negate = !StringUtils.isEmpty(assertion);
-    	
-    	var table = getElementAsTable(tableName);
+        Table table = getElementAsTable(tableName);
+//    	var table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
         boolean partialMatch = matchType.contains("contain");
 
@@ -249,9 +254,9 @@ public class TableVerificationSteps {
 
         boolean actualResult = resultText == null;
     	if (negate) {
-            assertFalse(expectedResult, actualResult);
+            assertFalse(expectedResult, table, () -> table, actualResult);
         } else {
-            assertTrue(expectedResult, actualResult);
+            assertTrue(expectedResult, table, () -> table, actualResult);
         }
     }
 
@@ -269,29 +274,29 @@ public class TableVerificationSteps {
      * @param assertion  String if null, checks that all cells are empty. Otherwise, checks that all cells are not empty.
      */
     @Then("^I verify all cells in the (.*?) column in the (.*?) are( not)? empty$")
-    public static void verifyColumnIsEmpty(String columnName, String tableName, String assertion) {
+    public static void verifyColumnIsEmpty(String columnName, String tableName, String assertion) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-
+        Table table = getElementAsTable(tableName);
         var expectedResult = SentinelStringUtils.format(
                 "Expected all cells in the {} column of the {} to {}be empty.",
                 columnName, tableName, (negate ? "not " : ""));
         log.trace(expectedResult);
 
         if (negate) {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsNotEmpty(columnName));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsNotEmpty(columnName));
         } else {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsEmpty(columnName));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsEmpty(columnName));
         }
     }
 
     @Then("^I verify the (.*?) column in the (.*?) is displayed to the left of the (.*?) column$")
-    public static void verifyColumnDisplayOrder(String column1Name, String tableName, String column2Name){
+    public static void verifyColumnDisplayOrder(String column1Name, String tableName, String column2Name) throws Exception {
         var expectedResult = SentinelStringUtils.format(
                 "Expected the {} column of the {} to be displayed to the left of the {} column.",
                 column1Name, tableName, column2Name);
         log.trace(expectedResult);
-
-        assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnDisplayOrder(column1Name, column2Name));
+        Table table = getElementAsTable(tableName);
+        assertTrue(expectedResult, table, () -> table.verifyColumnDisplayOrder(column1Name, column2Name));
     }
 
 }
