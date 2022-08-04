@@ -74,4 +74,4 @@ Feature: Table Tests
     Given I am on the Updatable Table Page
     When I randomly enter test in the update last name input
       And I click the update table button
-    Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update first name input
+    Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update last name input
