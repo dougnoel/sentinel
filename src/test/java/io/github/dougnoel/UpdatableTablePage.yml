@@ -1,5 +1,5 @@
 urls:
-  default: https://dougnoel.github.io/sentinel/test/updateableTable.html
+  default: https://dougnoel.github.io/sentinel/test/updatableTable.html
 elements:
   updatable_table:
     elementType: Table

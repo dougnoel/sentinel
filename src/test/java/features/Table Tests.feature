@@ -61,3 +61,17 @@ Feature: Table Tests
     Then I verify the JS alert contains the text This is Charlotte
       And I accept the JS alert
     Then I verify all cells in the Empty Column column in the Example Table are empty
+
+  @updatable-html-table
+  Scenario: I verify a specific column contains a value used and stored earlier in the test
+    Given I am on the Updatable Table Page
+    When I randomly enter test in the update first name input
+      And I click the update table button
+    Then I verify the First Name column in the updatable table contains the same text used for the update first name input
+
+  @updatable-html-table
+  Scenario: I verify a specific column in a specific row contains a value used and stored earlier in the test
+    Given I am on the Updatable Table Page
+    When I randomly enter test in the update last name input
+      And I click the update table button
+    Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update last name input
