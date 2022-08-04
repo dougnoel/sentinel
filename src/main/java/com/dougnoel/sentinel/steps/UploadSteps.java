@@ -34,11 +34,11 @@ public class UploadSteps {
      */
     @When("^I upload the (.*?) files? to the (.*?)$")
     public static void sendPathsToInputElement(String testDataFilePaths, String elementName) {
-        String[] filePathLocators = testDataFilePaths.split(", ");
+        String[] filePathLocators = testDataFilePaths.split(",");
         List<String> filesToUpload = new ArrayList<>();
 
         for (String pathLocator : filePathLocators) {
-            filesToUpload.add(Configuration.getTestdataValue(pathLocator, "fileLocation"));
+            filesToUpload.add(Configuration.getTestdataValue(pathLocator.trim(), "fileLocation"));
         }
 
         getElement(elementName).sendFilePaths(filesToUpload);
