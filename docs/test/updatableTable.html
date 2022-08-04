@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Updatable Table Test Page</title>
+    </head>
+    <body>
+        <table id="updatableTable">
+            <caption><em>Updatable Table</em></caption>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+            </tr>
+            <tr>
+                <td class="id">1</td>
+                <td class="firstName">Bob</td>
+                <td class="lastName">Smith</td>
+            </tr>
+            <tr>
+                <td class="updatable id">2</td>
+                <td class="updatable firstName">Smith</td>
+                <td class="updatable lastName">Bob</td>
+            </tr>
+            <tr>
+                <td class="id">3</td>
+                <td class="firstName">Robert</td>
+                <td class="lastName">Bob</td>
+            </tr>
+        </table>
+        <br>
+        <div><strong>Update Second Row:</strong></div>
+        <div><input id="editId" value="2">
+            <br><input id="editFirstName" value="Smith">
+            <br><input id="editLastName" value="Bob">
+            <br><button id="updateTableBtn" onclick="updateTable()">Apply Changes</button>
+        </div>
+
+        <script>
+            function updateTable(){
+                var newId = document.getElementById("editId").value;
+                var newFirstName = document.getElementById("editFirstName").value;
+                var newLastName = document.getElementById("editLastName").value;
+
+                document.getElementsByClassName("updatable id")[0].innerText = newId;
+                document.getElementsByClassName("updatable firstName")[0].innerText = newFirstName;
+                document.getElementsByClassName("updatable lastName")[0].innerText = newLastName;
+            }
+        </script>
+    </body>
+</html>
