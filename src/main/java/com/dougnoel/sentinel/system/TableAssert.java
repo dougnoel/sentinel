@@ -69,9 +69,9 @@ public class TableAssert {
             Assert.assertEquals(expected, objectCallable.call());
         }
         catch(AssertionError ae){
-                table.reset();
-                var actualResult = objectCallable.call();
-                Assert.assertEquals(SentinelStringUtils.format("{} Found {}", message, actualResult), expected, actualResult);
+            table.reset();
+            var actualResult = objectCallable.call();
+            Assert.assertEquals(SentinelStringUtils.format("{} Found {}", message, actualResult), expected, actualResult);
         }
     }
 
