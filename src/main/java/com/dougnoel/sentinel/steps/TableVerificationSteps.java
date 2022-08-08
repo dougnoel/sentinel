@@ -1,8 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
-import static com.dougnoel.sentinel.system.TableAssert.assertFalse;
-import static com.dougnoel.sentinel.system.TableAssert.assertTrue;
+import static com.dougnoel.sentinel.system.TableAssert.*;
 
 import com.dougnoel.sentinel.elements.tables.Table;
 import org.apache.commons.lang3.StringUtils;
@@ -38,11 +37,10 @@ public class TableVerificationSteps {
      * @param tableName String (Table name) This should be the name of the table element to count.
      */
     @Then("^I see (\\d+) rows? in the (.*)$")
-    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String tableName) {
+    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String tableName) throws Exception {
         Table table = getElementAsTable(tableName);
-        int numberOfRows = getElementAsTable(tableName).getNumberOfRows();
-        var expectedResult = SentinelStringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
-        assertTrue(expectedResult, table, () -> table, numberOfRows == expectedNumberOfRows);
+        String expectedResult = SentinelStringUtils.format("Expected to find {} rows in the table.", expectedNumberOfRows);
+        assertEquals(expectedResult, table, expectedNumberOfRows, () -> table.getNumberOfRows());
     }
 
     /**
@@ -238,25 +236,21 @@ public class TableVerificationSteps {
      * @param textToMatch String the text to look for in the column
      */
     @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? (has|have|contains?) the text (.*?)$")
-    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch) {
+    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
     	boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
-//    	var table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
         boolean partialMatch = matchType.contains("contain");
-
-    	String resultText = table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch);
     	
     	var expectedResult = SentinelStringUtils.format(
-                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}. The element contained the text: {}",
-                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch, resultText);
+                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch);
     	log.trace(expectedResult);
 
-        boolean actualResult = resultText == null;
     	if (negate) {
-            assertFalse(expectedResult, table, () -> table, actualResult);
+            assertNotEquals(expectedResult, table, null, () -> table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch));
         } else {
-            assertTrue(expectedResult, table, () -> table, actualResult);
+            assertEquals(expectedResult, table, null, () -> table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch));
         }
     }
 
