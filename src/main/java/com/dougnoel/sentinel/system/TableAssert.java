@@ -7,6 +7,12 @@ import org.junit.Assert;
 import java.util.concurrent.Callable;
 
 public class TableAssert {
+    /**
+     * protected constructor since this is a static class
+     */
+    protected TableAssert(){
+
+    }
 
     /**
      * Assert a table method returns true.
@@ -26,7 +32,7 @@ public class TableAssert {
      * @throws Exception if the assertion fails or the table method throws an exception.
      */
     public static void assertTrue(String message, Table table, Callable<Boolean> booleanCallable) throws Exception {
-        if(booleanCallable.call())
+        if(Boolean.TRUE.equals(booleanCallable.call()))
             return; //continue test
         table.reset();
         Assert.assertTrue(message, booleanCallable.call());
@@ -50,7 +56,7 @@ public class TableAssert {
      * @throws Exception if the assertion fails or the table method throws an exception.
      */
     public static void assertFalse(String message, Table table, Callable<Boolean> booleanCallable) throws Exception {
-        if(!booleanCallable.call())
+        if(Boolean.FALSE.equals(booleanCallable.call()))
             return; //continue test
         table.reset();
         Assert.assertFalse(message, booleanCallable.call());

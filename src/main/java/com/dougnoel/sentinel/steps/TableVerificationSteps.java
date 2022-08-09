@@ -41,7 +41,7 @@ public class TableVerificationSteps {
     public static void verifyNumberOfTableRows(int expectedNumberOfRows, String tableName) throws Exception {
         Table table = getElementAsTable(tableName);
         String expectedResult = SentinelStringUtils.format("Expected to find {} rows in the table.", expectedNumberOfRows);
-        assertEquals(expectedResult, table, expectedNumberOfRows, () -> table.getNumberOfRows());
+        assertEquals(expectedResult, table, expectedNumberOfRows, table::getNumberOfRows);
     }
 
     /**
