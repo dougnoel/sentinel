@@ -1,7 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
-import static com.dougnoel.sentinel.system.TableAssert.*;
+import static com.dougnoel.sentinel.assertions.TableAssert.*;
 import org.junit.Assert;
 
 import com.dougnoel.sentinel.elements.tables.Table;

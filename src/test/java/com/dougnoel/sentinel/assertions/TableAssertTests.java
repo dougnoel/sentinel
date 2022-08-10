@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.system;
+package com.dougnoel.sentinel.assertions;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
@@ -8,7 +8,6 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 

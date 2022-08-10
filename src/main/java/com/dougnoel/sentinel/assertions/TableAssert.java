@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.system;
+package com.dougnoel.sentinel.assertions;
 
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
