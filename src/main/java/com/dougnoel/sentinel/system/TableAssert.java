@@ -119,6 +119,6 @@ public class TableAssert {
      * @throws Exception if the assertion fails or the table method throws an exception.
      */
     public static void assertNotEquals(Table table, Object notExpected, Callable<Object> objectCallable) throws Exception{
-        assertEquals(SentinelStringUtils.format("Expected to not find {}.", notExpected.toString()), table, notExpected, objectCallable);
+        assertNotEquals(SentinelStringUtils.format("Expected to not find {}.", notExpected.toString()), table, notExpected, objectCallable);
     }
 }
