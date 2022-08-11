@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -23,9 +24,12 @@ public class SelectVerificationSteps {
      * @param assertion String "has" for a positive check, anything else for negative
      * @param textOfOption String text to match against
      */
-    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the option (.*?)$")
-	public static void verifyDropdownHasOption(String elementName, String assertion, String textOfOption) {
-		var dropdown = (SelectElement)getElement(elementName);
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the (option|stored value) (.*?)$")
+	public static void verifyDropdownHasOption(String elementName, String assertion, String value,  String textOfOption) {
+		if  (value.contentEquals("stored value")){
+            textOfOption = Configuration.toString(textOfOption);
+        }
+        var dropdown = (SelectElement)getElement(elementName);
 		
 		String expectedResult = SentinelStringUtils.format("Expected the element {} {} the option \"{}\".",
                 elementName, assertion, textOfOption);
@@ -35,12 +39,6 @@ public class SelectVerificationSteps {
             assertTrue(expectedResult, dropdown.doesNotHaveOption(textOfOption));
         }
 	}
-    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the (?:entered|selected|used) for the (.*?)")
-    public static void verifyDropdownHasStoredOption(String elementName, String assertion, String textOfOption) {
-        var dropdown = (SelectElement)getElement(elementName);
-        var storedValue = Configuration.toString(textOfOption);
-        verifyDropdownHasOption(elementName, assertion, storedValue);
-    }
     /**
      * Verifies a select element's currently selected option has the given text.
      * <p>

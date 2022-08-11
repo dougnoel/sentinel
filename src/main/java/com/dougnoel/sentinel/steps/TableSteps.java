@@ -2,7 +2,9 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -158,7 +160,7 @@ public class TableSteps {
 	 * @param key String the key used to retrieve the value
 	 * @param xpath String xpath value to element to click
 	 */
-	@Then("^I find the (.*?) column in the (.*?) in row with value (?:entered|selected|used) for the (.*?) and click the xpath (.*?)$")
+	@When("^I find the (.*?) column in the (.*?) in row with value (?:entered|selected|used) for the (.*?) and click the xpath (.*?)$")
 	public static void clickStoredTextRowContainsXpath(String columnName, String tableName, String key, String xpath) {
 		var textToMatch = Configuration.toString(key);
 		String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);

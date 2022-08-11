@@ -13,6 +13,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
+import org.openqa.selenium.By;
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
@@ -338,8 +339,8 @@ public class TableVerificationSteps {
         String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
         Assert.assertNotNull(errorMessage, textToMatch);
         var table = getElementAsTable(tableName);
-        var t = table.getAllCellDataForColumn(columnName).indexOf(textToMatch);
-        var n = table.getElementInRowThatContains(t, By.xpath(xpath));
+        var t = getElementAsTable(tableName).getAllCellDataForColumn(columnName).indexOf(textToMatch);
+        table.getElementInRowThatContains(t, By.xpath(xpath));
     }
 
 }
