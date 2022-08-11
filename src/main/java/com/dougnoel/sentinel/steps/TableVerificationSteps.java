@@ -320,4 +320,26 @@ public class TableVerificationSteps {
         assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnDisplayOrder(column1Name, column2Name));
     }
 
+    /**
+     * Verify the element exists in row which have stored value in column name
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify Name column in the Project Files Table in row with value selected for the Search Input contains the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
+     * </ul>
+     * @param columnName String the name of the column to click the header of
+     * @param tableName String the name of the table element
+     * @param key String the key used to retrieve the value
+     * @param xpath String xpath value to element to click
+     */
+    @Then("^I verify (.*?) column in the (.*?) in row with value (?:entered|selected|used) for the (.*?) contains the xpath (.*?)$")
+    public static void verifyStoredTextRowContainsXpath(String columnName, String tableName, String key, String xpath) {
+        var textToMatch = Configuration.toString(key);
+        String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
+        Assert.assertNotNull(errorMessage, textToMatch);
+        var table = getElementAsTable(tableName);
+        var t = table.getAllCellDataForColumn(columnName).indexOf(textToMatch);
+        var n = table.getElementInRowThatContains(t, By.xpath(xpath));
+    }
+
 }

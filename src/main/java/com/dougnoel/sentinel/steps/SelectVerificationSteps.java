@@ -35,7 +35,12 @@ public class SelectVerificationSteps {
             assertTrue(expectedResult, dropdown.doesNotHaveOption(textOfOption));
         }
 	}
-	
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the (?:entered|selected|used) for the (.*?)")
+    public static void verifyDropdownHasStoredOption(String elementName, String assertion, String textOfOption) {
+        var dropdown = (SelectElement)getElement(elementName);
+        var storedValue = Configuration.toString(textOfOption);
+        verifyDropdownHasOption(elementName, assertion, storedValue);
+    }
     /**
      * Verifies a select element's currently selected option has the given text.
      * <p>
