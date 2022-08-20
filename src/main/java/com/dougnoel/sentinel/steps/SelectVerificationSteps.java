@@ -78,9 +78,10 @@ public class SelectVerificationSteps {
     public static void verifyDropdownHasNumberOfOptions(String elementName, String assertion, int numberOfOptions) {
     	var dropdown = (SelectElement)getElement(elementName);
     	var negate = !assertion.contains("has");
-    	String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have {} option{}.",
-                elementName, (negate ? "not " : ""), numberOfOptions, (numberOfOptions > 1 ? "s" : ""));
-		var actualResult = dropdown.getNumberOfOptions() == numberOfOptions;
+        var actualOptionCount = dropdown.getNumberOfOptions();
+    	String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have {} option{}, but had {} option{}",
+                elementName, (negate ? "not " : ""), numberOfOptions, (numberOfOptions > 1 ? "s" : ""), actualOptionCount, (actualOptionCount > 1 ? "s" : ""));
+		var actualResult = actualOptionCount == numberOfOptions;
     	
     	if (negate) {
             assertFalse(expectedResult, actualResult);

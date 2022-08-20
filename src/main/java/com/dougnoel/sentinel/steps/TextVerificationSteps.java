@@ -99,7 +99,40 @@ public class TextVerificationSteps {
             }
         }
     }
-    
+
+    /**
+     * <p>
+     * Waits until we can verify that an element contains text stored previously.
+     * Such as by steps that randomly append/prepend to text.
+     * </p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait until the <u>Last Name Field</u> contains the text entered for the <u>Last Name Field</u></li>
+     * <li>I wait until the <u>Username Display</u> contains the text used in the <u>User Name Input Field</u></li>
+     * <li>I wait until the <u>Last Name Field</u> <u>does not</u> contain the text entered for the <u>First Name Field</u></li>
+     * </ul>
+     *
+     * @param elementName String The name of the element to be evaluated as defined in the page object.
+     * @param assertion String whether or not we expect a match or mismatch
+     * @param key String the storage key for the previously stored text to check for
+     */
+    @Then("^I wait until the (.*?)( does not)? contains? the text (?:entered|used) (?:for|in) the (.*?)$")
+    public static void waitUntilElementTextContainsStored(String elementName, String assertion, String key) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        var textToMatch = Configuration.toString(key);
+
+        boolean found = getElement(elementName).waitForText(textToMatch, (!negate));
+        String elementText = getElement(elementName).getText();
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the {} element to {}contain the text \"{}\" stored in the configuration key {}. The element contained the text: \"{}\"",
+                elementName, negateText, textToMatch, key, elementText);
+
+        assertTrue(expectedResult, found);
+    }
+
+
     /**
      * Waits until we can verify that an element contains certain text. It uses the text
      * contained in double quotes for matching. If the condition is not true, it will wait 
@@ -128,7 +161,6 @@ public class TextVerificationSteps {
             
         log.trace(expectedResult);
         assertTrue(expectedResult, found);
-
     }
     
     /**

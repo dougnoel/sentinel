@@ -19,7 +19,12 @@ elements:
   your_comments_span:
     elementType: Span
     id: "your_comments"
+  email_text_area:
+    elementType: TextBox
+    id: "fbemail"
+    name: "fbemail"
   comments_text_area:
+    elementType: TextBox
     id: "comments"
     name: "comments"
   send_button:

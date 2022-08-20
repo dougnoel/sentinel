@@ -33,9 +33,12 @@ Feature: Table Tests
       And I verify the cell in the 1st row and the First Name column of the Example table contains the text Bob
       And I verify the cell in the 1st row and the First Name column of the Example table does not contain the text Charlotte
       And I verify the cell in the 2nd row and the First Name column of the Example table contains the text Charlotte
-      And I verify the cell in the 3rd row and the Zip Code column of the Example table contains the text 02111
+      And I verify the cell in the 3rd row and the Zip Code column of the Example table has the text 02111
+      And I verify the cell in the 3rd row and the Zip Code column of the Example table does not have the text 0211
       And I verify the cell in the last row and the City column of the Example table contains the text Boston
+      And I verify the cell in the last row and the City column of the Example table does not contain the text boston
       And I verify all cells in the City column in the Example table are not empty
+      And I verify the First Name column in the Example table is displayed to the left of the Last Name column
     	
   @#44 @link-tests
   Scenario: Testing links inside tables using chaining locators
@@ -58,3 +61,17 @@ Feature: Table Tests
     Then I verify the JS alert contains the text This is Charlotte
       And I accept the JS alert
     Then I verify all cells in the Empty Column column in the Example Table are empty
+
+  @updatable-html-table
+  Scenario: I verify a specific column contains a value used and stored earlier in the test
+    Given I am on the Updatable Table Page
+    When I randomly enter test in the update first name input
+      And I click the update table button
+    Then I verify the First Name column in the updatable table contains the same text used for the update first name input
+
+  @updatable-html-table
+  Scenario: I verify a specific column in a specific row contains a value used and stored earlier in the test
+    Given I am on the Updatable Table Page
+    When I randomly enter test in the update last name input
+      And I click the update table button
+    Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update last name input
