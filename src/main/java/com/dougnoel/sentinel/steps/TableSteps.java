@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 
+import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -153,19 +154,17 @@ public class TableSteps {
 	 * <p>
 	 * <b>Gherkin Examples:</b>
 	 * <ul>
-	 * <li>I find the Name column in the Project Files Table in row with value entered for the Search Input and click the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
+	 * <li>I find row in the Project Files Table with value entered for the Search Input and click the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
 	 * </ul>
-	 * @param columnName String the name of the column to click the header of
 	 * @param tableName String the name of the table element
 	 * @param key String the key used to retrieve the value
 	 * @param xpath String xpath value to element to click
 	 */
-	@When("^I find the (.*?) column in the (.*?) in row with value (?:entered|selected|used) for the (.*?) and click the xpath (.*?)$")
-	public static void clickStoredTextRowContainsXpath(String columnName, String tableName, String key, String xpath) {
+	@When("^I find row in the (.*?) with value (?:entered|selected|used) for the (.*?) and click the xpath (.*?)$")
+	public static void clickStoredTextRowContainsXpath(String tableName, String key, String xpath) {
+		By locator = By.xpath(xpath);
+		Table table = getElementAsTable(tableName);
 		var textToMatch = Configuration.toString(key);
-		String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
-		Assert.assertNotNull(errorMessage, textToMatch);
-		var rowIndex = getElementAsTable(tableName).getAllCellDataForColumn(columnName).indexOf(textToMatch);
-		getElementAsTable(tableName).getElementInRowThatContains(rowIndex, By.xpath(xpath)).click();
+		table.clickElementInRowThatContains(textToMatch, locator);
 	}
 }

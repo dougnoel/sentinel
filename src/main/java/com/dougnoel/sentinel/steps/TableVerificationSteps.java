@@ -4,6 +4,7 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.dougnoel.sentinel.elements.tables.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -326,21 +327,18 @@ public class TableVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify Name column in the Project Files Table in row with value selected for the Search Input contains the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
+     * <li>I verify row in the Project Files Table with value selected for the Search Input contains the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
      * </ul>
-     * @param columnName String the name of the column to click the header of
      * @param tableName String the name of the table element
      * @param key String the key used to retrieve the value
      * @param xpath String xpath value to element to click
      */
-    @Then("^I verify (.*?) column in the (.*?) in row with value (?:entered|selected|used) for the (.*?) contains the xpath (.*?)$")
-    public static void verifyStoredTextRowContainsXpath(String columnName, String tableName, String key, String xpath) {
+    @Then("^I verify row in the (.*?) with value (?:entered|selected|used) for the (.*?) contains the xpath (.*?)$")
+    public static void verifyStoredTextRowContainsXpath(String tableName, String key, String xpath) {
+        By locator = By.xpath(xpath);
+        Table table = getElementAsTable(tableName);
         var textToMatch = Configuration.toString(key);
-        String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
-        Assert.assertNotNull(errorMessage, textToMatch);
-        var table = getElementAsTable(tableName);
-        var t = getElementAsTable(tableName).getAllCellDataForColumn(columnName).indexOf(textToMatch);
-        table.getElementInRowThatContains(t, By.xpath(xpath));
+        table.getElementInRowThatContains(textToMatch, locator);
     }
 
 }
