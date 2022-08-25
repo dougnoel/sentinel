@@ -730,7 +730,7 @@ public class Element {
 							ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
 		}
 		catch(TimeoutException timeout){
-			return true;
+			return false;
 		}
 
 	}
