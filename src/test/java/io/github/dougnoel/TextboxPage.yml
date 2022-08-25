@@ -7,6 +7,9 @@ elements:
    first_name_field:
       elementType: Textbox
       id: fname
+   middle_name_field:
+      elementType: Textbox
+      id: mname
    last_name_field:
       elementType: Textbox
       id: lname
