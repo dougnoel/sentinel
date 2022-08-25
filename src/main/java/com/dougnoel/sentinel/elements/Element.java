@@ -701,9 +701,14 @@ public class Element {
 	 * @return true if the attribute exists for the element; otherwise false
 	 */
 	public boolean hasAttribute(String attribute) {
-		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
-				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
+		try{
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+					.ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
+		}
+		catch(TimeoutException timeout){
+			return false;
+		}
 	}
 
 	/**
@@ -718,10 +723,16 @@ public class Element {
 	 * @return true if the attribute does not exist for the element; otherwise false
 	 */
 	public boolean doesNotHaveAttribute(String attribute) {
-		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
-				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.not(
-						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
+		try{
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+					.ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.not(
+							ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
+		}
+		catch(TimeoutException timeout){
+			return true;
+		}
+
 	}
 
 	/**
