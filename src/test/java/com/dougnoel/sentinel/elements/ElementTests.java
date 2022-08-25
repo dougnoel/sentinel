@@ -64,13 +64,13 @@ public class ElementTests {
     @Test
     public void checkHasAttributeOnNotHasAttribute() {
         BaseSteps.navigateToPage("TextboxPage");
-        assertFalse("Expecting element to have attribute.", getElement("Middle Name Field").hasAttribute("disabled"));
+        assertFalse("Expecting element to not have attribute.", getElement("Middle Name Field").hasAttribute("disabled"));
     }
 
     @Test
     public void checkNotHaveAttributeOnHasAttribute() {
         BaseSteps.navigateToPage("TextboxPage");
-        assertFalse("Expecting element to not have attribute.", getElement("Middle Name Field").doesNotHaveAttribute("readonly"));
+        assertFalse("Expecting element to have attribute.", getElement("Middle Name Field").doesNotHaveAttribute("readonly"));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ElementTests {
     @Test
     public void isDisabledOnReadonlyElement() {
         BaseSteps.navigateToPage("TextboxPage");
-        assertFalse("Expecting element to be enabled.", getElement("Last Name Field").isDisabled());
+        assertTrue("Expecting element to be disabled.", getElement("Middle Name Field").isDisabled());
     }
 
     @Test
