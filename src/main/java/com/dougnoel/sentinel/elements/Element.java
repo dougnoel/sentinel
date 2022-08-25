@@ -540,7 +540,7 @@ public class Element {
 	}
 	
 	/**
-	 * Returns true if the element is enabled; false if it is disabled.
+	 * Returns true if the element is enabled and doesn't have the attribute readonly; false otherwise.
 	 * Expects the element to be enabled, and if it is not, this method
 	 * will check every 10 milliseconds until it is up to the configured
 	 * timeout time (10 second default).
@@ -554,7 +554,7 @@ public class Element {
 		try {
 			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(d -> element().isEnabled());
+				.until(d -> (element().isEnabled() && (element().getAttribute("readonly") == null)));
 		}
 		catch (TimeoutException e) {
 			return false;
@@ -562,7 +562,7 @@ public class Element {
 	}
 
 	/**
-	 * Returns true if the element is disabled; false if it is enabled.
+	 * Returns true if the element is disabled or readonly; false otherwise
 	 * Expects the element to be disabled, and if it is not, this method
 	 * will check every 10 milliseconds until it is up to the configured
 	 * timeout time (10 second default).
@@ -576,7 +576,7 @@ public class Element {
 		try {
 			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
+				.until(ExpectedConditions.or(ExpectedConditions.attributeContains(element(), "disabled", ""), ExpectedConditions.attributeContains(element(), "readonly", "")));
 		}
 		catch (TimeoutException e) {
 			return false;
