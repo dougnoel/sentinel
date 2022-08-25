@@ -50,6 +50,30 @@ public class ElementTests {
     }
 
     @Test
+    public void checkHasAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertTrue("Expecting element to have attribute.", getElement("Middle Name Field").hasAttribute("readonly"));
+    }
+
+    @Test
+    public void checkNotHaveAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertTrue("Expecting element to not have attribute.", getElement("Middle Name Field").doesNotHaveAttribute("disabled"));
+    }
+
+    @Test
+    public void checkHasAttributeOnNotHasAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertFalse("Expecting element to not have attribute.", getElement("Middle Name Field").hasAttribute("disabled"));
+    }
+
+    @Test
+    public void checkNotHaveAttributeOnHasAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertFalse("Expecting element to have attribute.", getElement("Middle Name Field").doesNotHaveAttribute("readonly"));
+    }
+
+    @Test
     public void isDisabledOnDisabledElement() {
         BaseSteps.navigateToPage("TextboxPage");
         assertTrue("Expecting element to be disabled.", getElement("First Name Field").isDisabled());
@@ -62,9 +86,21 @@ public class ElementTests {
     }
 
     @Test
+    public void isDisabledOnReadonlyElement() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertTrue("Expecting element to be disabled.", getElement("Middle Name Field").isDisabled());
+    }
+
+    @Test
     public void isEnabledOnDisabledElement() {
         BaseSteps.navigateToPage("TextboxPage");
         assertFalse("Expecting element to be disabled.", getElement("First Name Field").isEnabled());
+    }
+
+    @Test
+    public void isEnabledOnReadonlyElement() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertFalse("Expecting element to be disabled.", getElement("Middle Name Field").isEnabled());
     }
 
     @Test
