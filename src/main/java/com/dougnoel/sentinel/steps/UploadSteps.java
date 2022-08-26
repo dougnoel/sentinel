@@ -1,11 +1,13 @@
 package com.dougnoel.sentinel.steps;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.system.DownloadManager;
 import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
@@ -42,5 +44,10 @@ public class UploadSteps {
         }
 
         getElement(elementName).sendFilePaths(filesToUpload);
+    }
+
+    @When("^I re-upload the most recently downloaded file to the (.*?)$")
+    public static void sendMostRecentDownloadToInputElement(String elementName){
+        getElement(elementName).sendFilePaths(Collections.singletonList(DownloadManager.getMostRecentDownloadPath().toString()));
     }
 }
