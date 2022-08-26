@@ -42,3 +42,10 @@ Feature: Text Verifcation Tests
       And I click the Send Button
       And I wait until the Comments Text Area contains the text used in the Comments Text Area
     Then I wait until the Comments Text Area does not contain the text used in the Email Text Area
+
+  @text
+  Scenario: I check for disabled and enabled elements of multiple disabling types
+    Given I am on the Textbox Page
+    Then I verify the middle name field is disabled
+      And I verify the first name field is disabled
+      And I verify the last name field is enabled
