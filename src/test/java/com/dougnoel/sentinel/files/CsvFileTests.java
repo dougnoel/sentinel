@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
+import static org.junit.Assert.assertNotNull;
+
 public class CsvFileTests {
 
     @Test(expected = FileNotFoundException.class)
@@ -16,8 +18,9 @@ public class CsvFileTests {
     @Test
     public void createCsvFiles() throws FileNotFoundException {
         var filePath = Path.of("src/test/resources/csvs/test_1header.csv");
-        new CsvFile(filePath, CSVFormat.EXCEL);
-        new CsvFile(filePath, CSVFormat.EXCEL, 0);
+        assertNotNull("Expected new CsvFile to be created.", new CsvFile(filePath));
+        assertNotNull("Expected new CsvFile to be created.", new CsvFile(filePath, CSVFormat.EXCEL));
+        assertNotNull("Expected new CsvFile to be created.", new CsvFile(filePath, CSVFormat.EXCEL, 0));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)

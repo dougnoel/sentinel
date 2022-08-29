@@ -109,7 +109,7 @@ public class DownloadManager {
             long currentTime = (System.currentTimeMillis() - startTime) / 1000;
             if (currentTime > timeOut || watchKey == null) {
                 log.error("Download operation timed out. Expected file was not downloaded.");
-                mostRecentDownloadPath = null;
+                setMostRecentDownloadPath(null);
                 return downloadedFileName;
             }
 
@@ -131,7 +131,7 @@ public class DownloadManager {
             currentTime = (System.currentTimeMillis() - startTime) / 1000;
             if (currentTime > timeOut) {
                 log.error("Failed to download expected file.");
-                mostRecentDownloadPath = null;
+                setMostRecentDownloadPath(null);
                 return downloadedFileName;
             }
             valid = watchKey.reset();
@@ -395,7 +395,10 @@ public class DownloadManager {
      * @param filename String name of the file downloaded.
      */
     private static void setMostRecentDownloadPath(String filename){
-        mostRecentDownloadPath = Path.of(getDownloadDirectory(), filename);
+        if(StringUtils.isBlank(filename))
+            mostRecentDownloadPath = null;
+        else
+            mostRecentDownloadPath = Path.of(getDownloadDirectory(), filename);
     }
 
     /**

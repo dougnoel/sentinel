@@ -73,8 +73,8 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 		StringBuilder builder = new StringBuilder();
 		stringStartingWithInteger.codePoints()
 				.mapToObj(i -> (char)i)
-				.takeWhile(character -> CharUtils.isAsciiNumeric(character))
-				.forEach(c -> builder.append(c));
+				.takeWhile(CharUtils::isAsciiNumeric)
+				.forEach(builder::append);
 
 		return Integer.parseInt(builder.toString());
 	}

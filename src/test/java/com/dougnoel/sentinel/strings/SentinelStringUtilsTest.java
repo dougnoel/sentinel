@@ -48,6 +48,6 @@ public class SentinelStringUtilsTest {
 
 	@Test(expected = NumberFormatException.class)
 	public void failToParseLeadingInt(){
-		assertEquals("Integer not parsed correctly at start of string.", 123, SentinelStringUtils.parseLeadingInt("rd123"));
+		SentinelStringUtils.parseLeadingInt("rd123");
 	}
 }

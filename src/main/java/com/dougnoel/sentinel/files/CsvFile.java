@@ -1,13 +1,16 @@
 package com.dougnoel.sentinel.files;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -88,6 +91,14 @@ public class CsvFile extends TestFile{
         numHeaderRows = numberOfHeaderRows;
     }
 
+    /**
+     * Gets a File representation of the filePath.
+     * @return File a File object created from this object's path.
+     */
+    protected File toFile(){
+        return filePath.toFile();
+    }
+
     private CSVParser getParser() throws IOException {
         return CSVParser.parse(filePath, Charset.defaultCharset(), csvFormat);
     }
@@ -119,7 +130,7 @@ public class CsvFile extends TestFile{
         }
         catch(IOException ioe){
             log.trace(SentinelStringUtils.format("IOException caught while parsing row {}. Taking into consideration {} header row(s)", actualRowIndex, numHeaderRows));
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -152,13 +163,13 @@ public class CsvFile extends TestFile{
         List<List<String>> allFileContents = new ArrayList<>();
         try(var parser = getParser()) {
             parser.getRecords().stream().forEachOrdered(
-                    record -> allFileContents.add(record.toList())
+                    row -> allFileContents.add(row.toList())
             );
             return  allFileContents;
         }
         catch (IOException ioe){
             log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", filePath));
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -176,7 +187,7 @@ public class CsvFile extends TestFile{
         }
         catch(IOException ioe){
             log.trace("IOException caught while parsing column headers.");
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -186,17 +197,17 @@ public class CsvFile extends TestFile{
      */
     public void setFileContents(List<List<String>> newFileContents){
         try(var printer = new CSVPrinter(new FileWriter(filePath.toFile()), csvFormat)){
-            newFileContents.stream().forEachOrdered(record -> {
+            newFileContents.stream().forEachOrdered(row -> {
                 try {
-                    printer.printRecord(record);
+                    printer.printRecord(row);
                 } catch (IOException e) {
                     log.trace(SentinelStringUtils.format("Failed inserting record into CSV file. Record: {}",
-                            String.join(", ", record)));
+                            String.join(", ", row)));
                 }
             });
             printer.close(true);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileException(toFile());
         }
     }
 

@@ -9,16 +9,16 @@ import org.apache.logging.log4j.Logger;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
-abstract public class TestFile {
+public abstract class TestFile {
     protected Path filePath;
 
-    protected static final Logger log = LogManager.getLogger(Element.class.getName()); // Create a logger.
+    protected static final Logger log = LogManager.getLogger(TestFile.class.getName()); // Create a logger.
 
-    public TestFile() throws FileNotFoundException {
+    protected TestFile() throws FileNotFoundException {
         this(DownloadManager.getMostRecentDownloadPath());
     }
 
-    public TestFile(Path pathToFile) throws FileNotFoundException {
+    protected TestFile(Path pathToFile) throws FileNotFoundException {
         filePath = pathToFile;
         if(!exists()){
             throw new FileNotFoundException(SentinelStringUtils.format("File at {} not found. Cannot continue tests using this filepath.", filePath));
