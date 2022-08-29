@@ -13,12 +13,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.NoSuchElementException;
 
 public class CsvFile extends TestFile{
 
-    private CSVFormat csvFormat;
-    private int numHeaderRows;
+    private final CSVFormat csvFormat;
+    private final int numHeaderRows;
 
     /**
      * Create default CSV file from most recently-downloaded path.
@@ -148,12 +147,10 @@ public class CsvFile extends TestFile{
     /**
      * Creates a list of lists, each list being a set of values for each row in the file.
      * @return List&lt;List&lt;String&gt;&gt; All contents of the file.
-     * @throws IOException in the case a generic IOException occurs while reading the file.
      */
     public List<List<String>> getAllFileContents() {
-        List allFileContents = new ArrayList();
+        List<List<String>> allFileContents = new ArrayList<>();
         try(var parser = getParser()) {
-            parser.getHeaderNames();
             parser.getRecords().stream().forEachOrdered(
                     record -> allFileContents.add(record.toList())
             );
@@ -175,7 +172,6 @@ public class CsvFile extends TestFile{
             throw new IndexOutOfBoundsException("This method is undefined for CSV files without header rows.");
         }
         try(var parser = getParser()){
-            parser.getHeaderNames();
             return parser.getRecords().get(numHeaderRows - 1).toList(); //last header row is treated as the one that the data rows conform to.
         }
         catch(IOException ioe){

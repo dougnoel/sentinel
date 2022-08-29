@@ -20,12 +20,22 @@ import static org.junit.Assert.*;
 public class CsvSteps {
     private static final Logger log = LogManager.getLogger(CsvSteps.class.getName()); // Create a logger.
 
-
+    /**
+     * Sets the most recently-downloaded file to be the current file-under-test with the given number of header rows.
+     * @param numberOfHeaderRows int the number of header rows in the CSV file to test.
+     * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
+     */
     @When("^I open the (?:CSV|csv) file with (\\d+) header rows?$")
     public static void openMostRecentlyDownloadedFileAsCsv(int numberOfHeaderRows) throws FileNotFoundException {
         FileManager.setCurrentTestFile(new CsvFile(numberOfHeaderRows));
     }
 
+    /**
+     * Sets the given file to be the current file-under-test with the given number of header rows.
+     * @param fileLocation String either the location of the file, given by a path, or the name of a testdata object in the current page object.
+     * @param numberOfHeaderRows int the number of header rows in the CSV file to test.
+     * @throws FileNotFoundException In the case that the file is not found in the location specified.
+     */
     @When("^I open (?:the )?(.*) as a (?:CSV|csv) file with (\\d+) header rows?$")
     public static void openSpecificFileAsCsv(String fileLocation, int numberOfHeaderRows) throws FileNotFoundException {
         String filePath;
@@ -39,6 +49,11 @@ public class CsvSteps {
         FileManager.setCurrentTestFile(new CsvFile(Path.of(filePath), numberOfHeaderRows));
     }
 
+    /**
+     * Edits the current CSV file, setting every cell in the given column to the given value.
+     * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
+     * @param desiredValue String the value to set each cell to.
+     */
     @When("^I set all values in the (.*) column to (.*) in the (?:CSV|csv) file$")
     public static void setAllColumnValuesInCsvFile(String column, String desiredValue){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
@@ -52,6 +67,14 @@ public class CsvSteps {
         }
     }
 
+    /**
+     * Verifies the current CSV file has or does not have the given text in the given column and given row.
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match.
+     * @param textToMatch String the text to look for in the cell.
+     * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
+     * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
+     */
     @Then("^I verify the (?:CSV|csv) file( do(?:es)? not)? (has|have|contains?) the value (.*) in the (.*) column and the (la|\\d+)(?:st|nd|rd|th) row$")
     public static void verifyCsvCellHasValue(String assertion, String matchType, String textToMatch, String column, String rowNum) {
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
@@ -81,6 +104,13 @@ public class CsvSteps {
         }
     }
 
+    /**
+     * Verifies all cells in the given column of the current CSV file have or do not have the given text value.
+     * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match.
+     * @param textToMatch String the text to look for in the cell.
+     */
     @Then("^I verify all cells in the the (.*) column (?:of|in) the (?:CSV|csv) file( do(?:es)? not)? (has|have|contains?) the value (.*)$")
     public static void verifyCsvAllColumnCellsHaveValue(String column, String assertion, String matchType, String textToMatch){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
