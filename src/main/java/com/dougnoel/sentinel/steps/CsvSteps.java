@@ -25,7 +25,7 @@ public class CsvSteps {
      * @param numberOfHeaderRows int the number of header rows in the CSV file to test.
      * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
      */
-    @When("^I open the (?:CSV|csv) file with (\\d+) header rows?$")
+    @When("^I open a (?:CSV|csv) file with (\\d+) header rows?$")
     public static void openMostRecentlyDownloadedFileAsCsv(int numberOfHeaderRows) throws FileNotFoundException {
         FileManager.setCurrentTestFile(new CsvFile(numberOfHeaderRows));
     }
@@ -36,7 +36,7 @@ public class CsvSteps {
      * @param numberOfHeaderRows int the number of header rows in the CSV file to test.
      * @throws FileNotFoundException In the case that the file is not found in the location specified.
      */
-    @When("^I open (?:the )?(.*) as a (?:CSV|csv) file with (\\d+) header rows?$")
+    @When("^I open (.*) as a (?:CSV|csv) file with (\\d+) header rows?$")
     public static void openSpecificFileAsCsv(String fileLocation, int numberOfHeaderRows) throws FileNotFoundException {
         String filePath;
         try{

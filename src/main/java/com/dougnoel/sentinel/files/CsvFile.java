@@ -90,6 +90,25 @@ public class CsvFile extends TestFile{
         numHeaderRows = numberOfHeaderRows;
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if (obj == this) {
+            return true;
+        }
+        if (this.getClass() != obj.getClass()){
+            return false;
+        }
+        CsvFile castObj = (CsvFile) obj;
+        if(csvFormat != castObj.csvFormat){
+            return false;
+        }
+        if(numHeaderRows != castObj.numHeaderRows){
+            return false;
+        }
+        return super.equals(obj);
+    }
+
+
     private CSVParser getParser() throws IOException {
         return CSVParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
     }
