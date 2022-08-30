@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.files;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -91,16 +90,8 @@ public class CsvFile extends TestFile{
         numHeaderRows = numberOfHeaderRows;
     }
 
-    /**
-     * Gets a File representation of the filePath.
-     * @return File a File object created from this object's path.
-     */
-    protected File toFile(){
-        return filePath.toFile();
-    }
-
     private CSVParser getParser() throws IOException {
-        return CSVParser.parse(filePath, Charset.defaultCharset(), csvFormat);
+        return CSVParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
     }
 
     /**
@@ -112,7 +103,7 @@ public class CsvFile extends TestFile{
             return parser.getRecords().size();
         }
         catch(IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", filePath));
+            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
             return -1;
         }
     }
@@ -168,7 +159,7 @@ public class CsvFile extends TestFile{
             return  allFileContents;
         }
         catch (IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", filePath));
+            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
             return Collections.emptyList();
         }
     }
@@ -196,7 +187,7 @@ public class CsvFile extends TestFile{
      * @param newFileContents List&lt;List&lt;String&gt;&gt; All contents of the file to write.
      */
     public void setFileContents(List<List<String>> newFileContents){
-        try(var printer = new CSVPrinter(new FileWriter(filePath.toFile()), csvFormat)){
+        try(var printer = new CSVPrinter(new FileWriter(this), csvFormat)){
             newFileContents.stream().forEachOrdered(row -> {
                 try {
                     printer.printRecord(row);
@@ -207,7 +198,7 @@ public class CsvFile extends TestFile{
             });
             printer.close(true);
         } catch (IOException e) {
-            throw new FileException(toFile());
+            throw new FileException(e, this);
         }
     }
 
