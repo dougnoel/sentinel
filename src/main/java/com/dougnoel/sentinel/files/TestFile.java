@@ -32,15 +32,4 @@ public abstract class TestFile extends File{
             throw new FileNotFoundException(SentinelStringUtils.format("File at {} not found. Cannot continue tests using this filepath.", toPath()));
         }
     }
-
-    @Override
-    public boolean equals(Object obj){
-        if (obj == this) {
-            return true;
-        }
-        if (this.getClass() != obj.getClass()){
-            return false;
-        }
-        return super.equals(obj);
-    }
 }

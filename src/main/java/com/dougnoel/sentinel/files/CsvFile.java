@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -15,6 +16,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.constraints.NotNull;
 
 public class CsvFile extends TestFile{
 
@@ -91,23 +94,18 @@ public class CsvFile extends TestFile{
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (obj == this) {
-            return true;
-        }
-        if (this.getClass() != obj.getClass()){
-            return false;
-        }
-        CsvFile castObj = (CsvFile) obj;
-        if(csvFormat != castObj.csvFormat){
-            return false;
-        }
-        if(numHeaderRows != castObj.numHeaderRows){
-            return false;
-        }
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CsvFile csvFile = (CsvFile) o;
+        return numHeaderRows == csvFile.numHeaderRows && Objects.equals(csvFormat, csvFile.csvFormat);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), csvFormat, numHeaderRows);
+    }
 
     private CSVParser getParser() throws IOException {
         return CSVParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
