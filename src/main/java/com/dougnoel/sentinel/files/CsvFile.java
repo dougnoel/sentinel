@@ -17,8 +17,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotNull;
-
 public class CsvFile extends TestFile{
 
     private final CSVFormat csvFormat;

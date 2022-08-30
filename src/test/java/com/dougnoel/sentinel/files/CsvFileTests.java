@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.files;
 
-import com.dougnoel.sentinel.system.DownloadManager;
 import org.apache.commons.csv.CSVFormat;
 import org.junit.Test;
 
