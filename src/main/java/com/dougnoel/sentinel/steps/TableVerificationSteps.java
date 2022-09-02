@@ -334,12 +334,20 @@ public class TableVerificationSteps {
      * @param key String the key used to retrieve the value
      * @param xpath String xpath value to element to click
      */
-    @Then("^I verify row in the (.*?) with value (?:entered|selected|used) for the (.*?) contains the xpath (.*?)$")
-    public static void verifyStoredTextRowContainsXpath(String tableName, String key, String xpath) {
+    @Then("^I verify the row in the (.*?) with the value (?:entered|selected|used) for the (.*?)( do(?:es)? not)? contains the xpath (.*?)$")
+    public static void verifyStoredTextRowContainsXpath(String tableName, String key, String assertion, String xpath) throws Exception {
         By locator = By.xpath(xpath);
+        boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
         var textToMatch = Configuration.toString(key);
-        table.getElementInRowThatContains(textToMatch, locator);
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the row of the {} to contain xpath {}", tableName, xpath);
+
+        if (negate) {
+            assertFalse(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
+        } else {
+            assertTrue(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
+        }
     }
 
 }

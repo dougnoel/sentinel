@@ -2,10 +2,7 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 
-import com.dougnoel.sentinel.elements.tables.Table;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -147,24 +144,5 @@ public class TableSteps {
     @When("^I find and click the header for the (.*) column in the (.*)$")
     public static void clickColumnHeaderToSort(String columnName, String tableName) {
     	getElementAsTable(tableName).clickColumnHeader(columnName);
-    }
-
-	/**
-	 * Clicks the xpath of element in row which have stored value in column name
-	 * <p>
-	 * <b>Gherkin Examples:</b>
-	 * <ul>
-	 * <li>I find row in the Project Files Table with value entered for the Search Input and click the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
-	 * </ul>
-	 * @param tableName String the name of the table element
-	 * @param key String the key used to retrieve the value
-	 * @param xpath String xpath value to element to click
-	 */
-	@When("^I find row in the (.*?) with value (?:entered|selected|used) for the (.*?) and click the xpath (.*?)$")
-	public static void clickStoredTextRowContainsXpath(String tableName, String key, String xpath) {
-		By locator = By.xpath(xpath);
-		Table table = getElementAsTable(tableName);
-		var textToMatch = Configuration.toString(key);
-		table.clickElementInRowThatContains(textToMatch, locator);
 	}
 }

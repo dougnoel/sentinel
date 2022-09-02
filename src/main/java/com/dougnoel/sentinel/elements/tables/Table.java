@@ -838,5 +838,22 @@ public class Table extends Element {
 		WebElement column2HeaderElement = getColumnHeaderElement(column2);
 		return column1HeaderElement.getLocation().x < column2HeaderElement.getLocation().x;
 	}
+	/**
+	 * Verifies that the row with random text contains xpath
+	 * @param rowLocatorText String the name of cell with random text
+	 * @param locator By xpath locator of the element
+	 * @return boolean true if the row contains xpath
+	 */
+	public boolean verifyRowContains(String rowLocatorText, By locator){
+		try {
+			WebElement element = getElementInRowThatContains(rowLocatorText, locator);
+			return true;
+		}
+		catch (org.openqa.selenium.NoSuchElementException e) {
+			String errorMsg = SentinelStringUtils.format("{} not found in the row with {} Error: {}", locator, rowLocatorText, e.getMessage());
+			log.error(errorMsg);
+			return false;
 
+		}
+	}
 }
