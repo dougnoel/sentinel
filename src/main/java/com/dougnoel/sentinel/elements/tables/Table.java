@@ -846,7 +846,7 @@ public class Table extends Element {
 	 */
 	public boolean verifyRowContains(String rowLocatorText, By locator){
 		try {
-			WebElement element = getElementInRowThatContains(rowLocatorText, locator);
+			getElementInRowThatContains(rowLocatorText, locator);
 			return true;
 		}
 		catch (org.openqa.selenium.NoSuchElementException e) {
