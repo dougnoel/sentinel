@@ -111,15 +111,9 @@ public class TableVerificationSteps {
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param matchType String whether we are doing an exact match or a partial match
      */
-//    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-//    public static void verifyColumnExists(String tableName, String columnName) throws Exception {
-//        Table table = getElementAsTable(tableName);
-//        assertTrue(table, () -> table.verifyColumnExists(columnName));
-
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
     public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) throws Exception {
         Table table = getElementAsTable(tableName);
-        assertTrue(table, () -> table.verifyColumnExists(columnName));
         boolean negate = !StringUtils.isEmpty(assertion);
         String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");

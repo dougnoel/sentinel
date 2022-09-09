@@ -79,6 +79,7 @@ Feature: Table Tests
       And I verify the Example Table does not has the Missing column
       And I verify the Example Table does not have a Missing column
       And I verify the Example Table does not have the Missing column
+
   @updatable-html-table
   Scenario: I verify a specific column contains a value used and stored earlier in the test
     Given I am on the Updatable Table Page
