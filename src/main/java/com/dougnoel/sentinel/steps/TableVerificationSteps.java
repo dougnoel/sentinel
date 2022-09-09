@@ -111,13 +111,15 @@ public class TableVerificationSteps {
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param matchType String whether we are doing an exact match or a partial match
      */
-    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String columnName) throws Exception {
-        Table table = getElementAsTable(tableName);
-        assertTrue(table, () -> table.verifyColumnExists(columnName));
+//    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
+//    public static void verifyColumnExists(String tableName, String columnName) throws Exception {
+//        Table table = getElementAsTable(tableName);
+//        assertTrue(table, () -> table.verifyColumnExists(columnName));
 
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) {
+    public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) throws Exception {
+        Table table = getElementAsTable(tableName);
+        assertTrue(table, () -> table.verifyColumnExists(columnName));
         boolean negate = !StringUtils.isEmpty(assertion);
         String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
@@ -127,15 +129,15 @@ public class TableVerificationSteps {
                 columnName, negateText, partialMatchText, tableName);
         if (partialMatch) {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyColumnExists(columnName));
+                assertFalse(expectedResult,table, () -> table.verifyColumnExists(columnName));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnExists(columnName));
+                assertTrue(expectedResult, table, () -> table.verifyColumnExists(columnName));
             }
         } else {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyColumnEquals(columnName));
+                assertFalse(expectedResult, table, () -> table.verifyColumnEquals(columnName));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnEquals(columnName));
+                assertTrue(expectedResult, table, () -> table.verifyColumnEquals(columnName));
             }
         }
     }
