@@ -29,11 +29,6 @@ import static java.util.Map.entry;
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
-	private static final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
-			entry("%appdata%", System.getenv("APPDATA")),
-			entry("%localappdata%", System.getenv("LOCALAPPDATA")),
-			entry("%USERPROFILE%", System.getenv("USERPROFILE"))
-	);
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -230,6 +225,11 @@ public class FileManager {
 		String originalPath = pathToProcess;
 		final String DETECTED_OS = operatingSystem();
 
+		final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
+				entry("%appdata%", System.getenv("APPDATA")),
+				entry("%localappdata%", System.getenv("LOCALAPPDATA")),
+				entry("%USERPROFILE%", System.getenv("USERPROFILE"))
+		);
 		if(DETECTED_OS.equals("windows")) {
 			for(Map.Entry<String, String> entry : WINDOWS_SPECIAL_FOLDERS.entrySet()){
 				pathToProcess = StringUtils.replaceIgnoreCase(pathToProcess, entry.getKey(), entry.getValue());

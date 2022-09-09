@@ -1,0 +1,23 @@
+urls:
+  default: https://dougnoel.github.io/sentinel/test/multiUploadTest.html
+elements:
+  choose_file_button:
+    id: "filePicker"
+  file_counter:
+    id: "fileUploadCount"
+  upload_result_1:
+    id: "chosenFile_1"
+  upload_result_2:
+    id: "chosenFile_2"
+  no_files_indicator:
+    id: "noFilesIndicator"
+testdata:
+  default:
+    eclipse_run_icon_image:
+      fileLocation: "eclipse_tool_bar_icon_run.png"
+    eclipse_run_icon_image_2:
+      fileLocation: "eclipse_tool_bar_icon_run_2.png"
+    eclipse_run_icon_image_folder:
+      fileLocation: "images/"
+    file_doesnot_exist:
+      fileLocation: "DoesNotExist.doesnot"

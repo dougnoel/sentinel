@@ -59,7 +59,7 @@ public class Table extends Element {
 	/**
 	 * Resets table data when comparing multiple pages of the same table.
 	 */
-	protected void reset() {
+	public void reset() {
 		if (headerElements != null) {
 			headerElements.clear();
 		}
@@ -87,7 +87,7 @@ public class Table extends Element {
 		if (headers.isEmpty()) {
 			getOrCreateHeaderElements();
 			for (WebElement header : headerElements) {
-				String headerText = header.getText().replaceAll("[\\t\\n\\r]+"," ");
+				String headerText = header.getText().replaceAll("[\\t\\n\\r]+"," ").strip();
 				headers.add(headerText);
 			}
 		}
@@ -685,6 +685,7 @@ public class Table extends Element {
 	public boolean verifyColumnCellsAreSorted(String columnName, boolean sortOrderAscending) {
 		getOrCreateHeaders();
 		ArrayList<String> column = getOrCreateColumns().get(columnName);
+		@SuppressWarnings("unchecked")
 		ArrayList<String> sortedColumn = (ArrayList<String>) column.clone();
 		
 		// We needs to sort the strings taking into account there might be numbers in the strings.

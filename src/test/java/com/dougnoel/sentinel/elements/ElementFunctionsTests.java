@@ -98,6 +98,7 @@ public class ElementFunctionsTests {
 
 	@Test(expected = ClassCastException.class)
 	public void failToCreateCustom() {
+		@SuppressWarnings("unused")
 		Table element = ElementFunctions.getElementAsCustom("foobar");
 	}
 
