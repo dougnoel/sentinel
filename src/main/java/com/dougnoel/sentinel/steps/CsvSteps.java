@@ -22,8 +22,9 @@ public class CsvSteps {
 
     /**
      * Sets the most recently-downloaded file to be the current file-under-test with the given number of header rows.
-     *
-     * <ul>Gherkin Examples:
+     * <br>
+     * <b>Gherkin Examples:</b>
+     * <ul>
      *     <li>I open a CSV file with 3 header rows</li>
      *     <li>I open a csv file with 1 header row</li>
      * </ul>
@@ -38,9 +39,9 @@ public class CsvSteps {
 
     /**
      * Sets the given file to be the current file-under-test with the given number of header rows.
-     *
-     *
-     * <ul>Gherkin Examples:
+     * <br>
+     * <b>Gherkin Examples:</b>
+     * <ul>
      *     <li>I open test file with 1 header as a CSV file with 1 header row</li>
      *     <li>I open src/test/resources/csvs/test_0header.csv as a CSV file with 0 header rows</li>
      * </ul>
@@ -64,8 +65,9 @@ public class CsvSteps {
 
     /**
      * Edits the current CSV file, setting every cell in the given column to the given value.
-     *
-     * <ul>Gherkin Example:
+     * <br>
+     * <b>Gherkin Example:</b>
+     * <ul>
      *     <li>I set all values in the Name column to Sunny in the CSV file</li>
      * </ul>
      *
@@ -88,7 +90,9 @@ public class CsvSteps {
     /**
      * Verifies the current CSV file has or does not have the given text in the given column and given row.
      *
-     * <ul>Gherkin Examples:
+     * <br>
+     * <b>Gherkin Examples:</b>
+     * <ul>
      *     <li>I verify the csv file has the value Sonny in the Name column and the 3rd row</li>
      *     <li>I verify the CSV file does not contain the value Liston in the Surname column and the last row</li>
      * </ul>
@@ -130,8 +134,9 @@ public class CsvSteps {
 
     /**
      * Verifies all / not all cells in the given column of the current CSV file have / contain the given text value.
-     *
-     * <ul>Gherkin Examples:
+     * <br>
+     * <b>Gherkin Examples:</b>
+     * <ul>
      *     <li>I verify all cells in the Name column in the csv file have the value Sonny</li>
      *     <li>I verify not all cells in the Surname column in the csv file contain the value List</li>
      * </ul>
