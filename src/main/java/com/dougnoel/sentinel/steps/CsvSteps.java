@@ -22,7 +22,13 @@ public class CsvSteps {
 
     /**
      * Sets the most recently-downloaded file to be the current file-under-test with the given number of header rows.
-     * @param numberOfHeaderRows int the number of header rows in the CSV file to test.
+     *
+     * <ul>Gherkin Examples:
+     *     <li>I open a CSV file with 3 header rows</li>
+     *     <li>I open a csv file with 1 header row</li>
+     * </ul>
+     *
+     * @param numberOfHeaderRows int the number of header rows in the CSV file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
      */
     @When("^I open a (?:CSV|csv) file with (\\d+) header rows?$")
@@ -32,8 +38,15 @@ public class CsvSteps {
 
     /**
      * Sets the given file to be the current file-under-test with the given number of header rows.
+     *
+     *
+     * <ul>Gherkin Examples:
+     *     <li>I open test file with 1 header as a CSV file with 1 header row</li>
+     *     <li>I open src/test/resources/csvs/test_0header.csv as a CSV file with 0 header rows</li>
+     * </ul>
+     *
      * @param fileLocation String either the location of the file, given by a path, or the name of a testdata object in the current page object.
-     * @param numberOfHeaderRows int the number of header rows in the CSV file to test.
+     * @param numberOfHeaderRows int the number of header rows in the CSV file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location specified.
      */
     @When("^I open (.*) as a (?:CSV|csv) file with (\\d+) header rows?$")
@@ -51,6 +64,11 @@ public class CsvSteps {
 
     /**
      * Edits the current CSV file, setting every cell in the given column to the given value.
+     *
+     * <ul>Gherkin Example:
+     *     <li>I set all values in the Name column to Sunny in the CSV file</li>
+     * </ul>
+     *
      * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
      * @param desiredValue String the value to set each cell to.
      */
@@ -69,6 +87,12 @@ public class CsvSteps {
 
     /**
      * Verifies the current CSV file has or does not have the given text in the given column and given row.
+     *
+     * <ul>Gherkin Examples:
+     *     <li>I verify the csv file has the value Sonny in the Name column and the 3rd row</li>
+     *     <li>I verify the CSV file does not contain the value Liston in the Surname column and the last row</li>
+     * </ul>
+     *
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param matchType String whether we are doing an exact match or a partial match.
      * @param textToMatch String the text to look for in the cell.
@@ -105,14 +129,20 @@ public class CsvSteps {
     }
 
     /**
-     * Verifies all cells in the given column of the current CSV file have or do not have the given text value.
+     * Verifies all / not all cells in the given column of the current CSV file have / contain the given text value.
+     *
+     * <ul>Gherkin Examples:
+     *     <li>I verify all cells in the Name column in the csv file have the value Sonny</li>
+     *     <li>I verify not all cells in the Surname column in the csv file contain the value List</li>
+     * </ul>
+     *
      * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
-     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param assertion String if null is passed, looks for all cells to have/contain the value. If " not", looks for at least one cell to NOT have/contain the value.
      * @param matchType String whether we are doing an exact match or a partial match.
      * @param textToMatch String the text to look for in the cell.
      */
-    @Then("^I verify all cells in the the (.*) column (?:of|in) the (?:CSV|csv) file( do(?:es)? not)? (has|have|contains?) the value (.*)$")
-    public static void verifyCsvAllColumnCellsHaveValue(String column, String assertion, String matchType, String textToMatch){
+    @Then("^I verify( not)? all cells in the the (.*) column (?:of|in) the (?:CSV|csv) file (has|have|contains?) the value (.*)$")
+    public static void verifyCsvAllColumnCellsHaveValue(String assertion, String column, String matchType, String textToMatch){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
