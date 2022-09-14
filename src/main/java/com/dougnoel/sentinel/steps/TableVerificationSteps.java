@@ -334,7 +334,7 @@ public class TableVerificationSteps {
      * @param key String the key used to retrieve the value
      * @param xpath String xpath value to element to click
      */
-    @Then("^I verify the row in the (.*?) with the value (?:entered|selected|used) for the (.*?)( do(?:es)? not)? contains the xpath (.*?)$")
+    @Then("^I verify the row in the (.*?) with the value (?:entered|selected|used) for the (.*?)( do(?:es)? not)? contains? the xpath (.*?)$")
     public static void verifyStoredTextRowContainsXpath(String tableName, String key, String assertion, String xpath) throws Exception {
         By locator = By.xpath(xpath);
         boolean negate = !StringUtils.isEmpty(assertion);
