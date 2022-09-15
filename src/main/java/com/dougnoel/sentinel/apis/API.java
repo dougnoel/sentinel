@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,8 +14,9 @@ import org.openqa.selenium.JavascriptExecutor;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-public abstract class API {
+public class API {
 	private static final Logger log = LogManager.getLogger(API.class.getName()); // Create a logger.
+	private String apiName;
 	
 	protected static final AuthenticationType JWT = AuthenticationType.JWT;
 	protected static final AuthenticationType AUTH_KEY = AuthenticationType.AUTH_KEY;
@@ -22,10 +25,17 @@ public abstract class API {
 	protected AuthenticationType authenticationType = NONE;
 	Object authToken = null;
 	
+	protected Map<String,Action> actions;
+	
 	protected URL url = null;
 	
-	protected API() {
+	public API() {
 	}
+	
+    public API(String apiName) {
+    	this.apiName = apiName;
+        actions = new HashMap<>();
+    }
 
     public String getName() {
         return this.getClass().getSimpleName();

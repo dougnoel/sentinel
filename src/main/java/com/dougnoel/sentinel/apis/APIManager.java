@@ -1,28 +1,33 @@
 package com.dougnoel.sentinel.apis;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.openqa.selenium.NotFoundException;
 
 public class APIManager {
-	private static Map<String, API> apis = new HashMap<>();
+	private static API api = null;
 	
 	private APIManager() {
 		// Exists only to defeat instantiation.
 	}
 	
 	/**
-	 * Stores an API using the passed API name to instantiate it, and the passed uid as a key.
-	 * @param uid String the unique identifier to use when storing the passed API
+	 * Stores an API using the passed API name to instantiate it.
 	 * @param apiName String the name of the sentinel API object to create and store
-	 * @return API returns the API object for object chaining
 	 */
-	public static API setAPI(String uid, String apiName) {
-		API api = APIFactory.buildAPI(apiName);
-		apis.put(uid, api);
-		return api;
+	public static void setAPI(String apiName) {
+		try {
+			APIManager.api = APIFactory.buildAPI(apiName);
+		} catch (NullPointerException npe) {
+			api = null;
+		}
 	}
 	
-	public static API getAPI(String uid) {
-		return apis.get(uid);
+	/**
+	 * Returns the currently active API
+	 * @return API Currently selected API by the tester.
+	 */
+	public static API getAPI() {
+		if (api == null)
+			throw new NotFoundException("API not set yet. It must be created to before it can be used.");
+		return APIManager.api;
 	}
 }

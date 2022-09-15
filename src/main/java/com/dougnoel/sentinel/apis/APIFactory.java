@@ -1,28 +1,38 @@
 package com.dougnoel.sentinel.apis;
 
+import java.util.HashMap;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.exceptions.IOException;
+import com.dougnoel.sentinel.pages.Page;
 
 /**
  * An implementation of the factory design pattern based on the PageFactory. This factory object 
  * is different in that it does not track the APIs created -instead delegating that work to the
  * APIManager. This should make parallelization easier to implement later on.
- * 
- * TODO: Create a configuration option for searching for APIs or get rid of this and search the whole
- * 		 source tree. Need to do a speed comparison.
- * TODO: Create a parent Factory method to handle the searching and instantiation.
  *
  * @author Doug Noël
  *
  */
 public class APIFactory {
-
-	private static final Logger log = LogManager.getLogger(APIFactory.class); // Create a logger.
+	private static HashMap<String, API> apis = new HashMap<>();	
 	
 	private APIFactory() {
 		// Exists only to defeat instantiation
+	}
+	
+	public static API buildOrRetrievePAPI(String apiName) {
+		apiName = apiName.replaceAll("\\s", "");
+		API api = apis.get(apiName);
+		if (api != null) {
+			return api;
+		} else {
+			api = new API(apiName);
+		}
+		apis.put(apiName, api);
+		return api;
 	}
 	
 	/**
