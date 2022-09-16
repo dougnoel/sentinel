@@ -4,16 +4,21 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 
+import com.dougnoel.sentinel.apis.actions.Action;
+import com.dougnoel.sentinel.apis.actions.ActionFactory;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
-public abstract class API {
+public class API {
 	private static final Logger log = LogManager.getLogger(API.class.getName()); // Create a logger.
+	private String apiName;
 	
 	protected static final AuthenticationType JWT = AuthenticationType.JWT;
 	protected static final AuthenticationType AUTH_KEY = AuthenticationType.AUTH_KEY;
@@ -22,13 +27,31 @@ public abstract class API {
 	protected AuthenticationType authenticationType = NONE;
 	Object authToken = null;
 	
+	protected Map<String,Action> actions;
+	
 	protected URL url = null;
 	
-	protected API() {
-	}
+    /**
+     * Constructor
+     * @param apiName String the exact case-sensitive name of the yaml file containing the API information.
+     */
+    public API(String apiName) {
+    	this.apiName = apiName;
+        actions = new HashMap<>();
+    }
 
+    /**
+     * Returns the name of this API as a string.
+     * 
+     * @return String apiName
+     */
     public String getName() {
-        return this.getClass().getSimpleName();
+        return apiName;
+    }
+    
+	public Action getAction(String actionName) {
+        String normalizedName = actionName.replaceAll("\\s+", "_").toLowerCase();
+        return actions.computeIfAbsent(normalizedName, name -> ((Action)(ActionFactory.createAction(name, this))));
     }
     
 	public void setURL(String url) throws MalformedURLException {
@@ -39,10 +62,11 @@ public abstract class API {
 		this.url = url;
 	}
 	
-	public URL getURL() {
-		return url;
-	}
-	
+	/**
+	 * Returns a java.net.URI constructed from the URL listed in the API yaml file.
+	 * 
+	 * @return java.net.URI the constructed URI
+	 */
 	public URI getURI() {
 		URI uri = null;
 		try {

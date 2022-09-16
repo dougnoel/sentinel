@@ -1,6 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
-import static com.dougnoel.sentinel.apis.ActionFunctions.getAction;
+import static com.dougnoel.sentinel.apis.actions.ActionFunctions.getAction;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -27,52 +27,57 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class APISteps {
-	protected Scenario scenario = null;
-	protected String uid = null;
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
 	private static final String RESPONSE_DEBUG = "Response: {}";
-	
-    @Before
-    public void before(Scenario scenario) {
-        this.scenario = scenario;
-        uid = scenario.getId();
-    }
     
 	private static String cleanAPIName(String apiName) {
 		return apiName.replaceAll("\\s", "") + "API";
 	}
 	
+	/**
+	 * Gets a JWT Token and sets it for the curently active API
+	 */
 	@When("^I grab the JWT$")
 	public void i_grab_the_jwt() {
 		AuthenticationType authType = AuthenticationType.JWT;
-		APIManager.getAPI(uid).setAuthType(authType);
-		APIManager.getAPI(uid).setAuthToken();
+		APIManager.getAPI().setAuthType(authType);
+		APIManager.getAPI().setAuthToken();
 	}
 	
     /**
-     * Creates or retrieves an API with the given name for a determined UID.
+     * Creates or retrieves an API with the given name.
      * 
-     * By using UIDs, we can ensure that parallel tests use the correct API object.
-     * 
-     * TODO: Think about how to cleanup all these APIs
      * @param apiName name of the API object to create
      * @throws SentinelException if the API cannot be set
      */
-	@Given("^I use the (.*?) API$")
+	
+	/**
+	 * Loads an API based on the environment you are currently testing.
+     * Refer to the documentation in the sentinel.example project for more information. 
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I use the API named Agify API</li>
+     * <li>I use the API named My API</li>
+     * </ul>
+     * <p>
+     * 
+	 * @param apiName name of the API object we want to use
+	 */
+	@Given("^I use the API named (.*?)$")
 	public void setAPI(String apiName) {
 		apiName = cleanAPIName(apiName);
-        log.debug("API Name: {} UID: {}", apiName, uid);
-        APIManager.setAPI(uid, apiName);
+        APIManager.setAPI(apiName);
 	}
 	
-	@When("^I send a request to the (.*?) endpoint$")
-	public void sendRequest(String endpoint) throws IOException, URISyntaxException {
+	@When("^I send a (.*) request$")
+	public void sendRequest(String actionName) throws IOException, URISyntaxException {
 		// Get an API from the API Manager
-		API api = APIManager.getAPI(uid); //3
+		API api = APIManager.getAPI(); //3
 		// Get an Request from the Request Manager
-		Request request = RequestManager.getRequest(uid); //3
+		Request request = RequestManager.setRequest(actionName); //3
 		// Get the action, send the request and set it in the response manager
-		ResponseManager.setResponse(uid, getAction(endpoint, uid).sendRequest(request, api)); //3
+		ResponseManager.setResponse(uid, getAction(actionName).sendRequest(request, api)); //3
 	}
 	
 	@Then("^I verify a (success) response code was received$")

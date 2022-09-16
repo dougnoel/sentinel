@@ -1,6 +1,10 @@
-package com.dougnoel.sentinel.apis;
+package com.dougnoel.sentinel.apis.actions;
 
 import java.io.IOException;
+
+import com.dougnoel.sentinel.apis.API;
+import com.dougnoel.sentinel.apis.Request;
+import com.dougnoel.sentinel.apis.Response;
 
 public class PUT extends Action {
 
