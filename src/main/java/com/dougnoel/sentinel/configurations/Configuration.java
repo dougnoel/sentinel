@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.apis.APIData;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageData;
@@ -32,6 +33,7 @@ public class Configuration {
 	private static final Logger log = LogManager.getLogger(Configuration.class);
 
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
+	private static final Map<String,APIData> API_DATA = new ConcurrentHashMap<>();
 	
 	private static final String ENV_REPLACE_STRING = "{env}";
 	private static String env = null;
@@ -308,6 +310,31 @@ public class Configuration {
 	}
 	
 	/**
+	 * Returns API data from yaml file.
+	 * 
+	 * @param apiName String the name of the API object for data retrieval
+	 * @return APIData the class for the data on the desired page
+	 */
+	private static APIData loadAPIData(String apiName) {
+		APIData apiData = null;
+		try {
+			apiData = APIData.loadYaml(findPageObjectFilePath(apiName));
+		} catch (Exception e) {
+			if (e instanceof FileException)
+				throw (FileException)e;
+			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", apiName);
+			throw new FileException(errorMessage, e, new File(apiName + ".yml"));
+		}
+
+		if (apiData == null) {
+			var errorMessage = "The file appears to contain no data. Please ensure the file is properly formatted.";
+			throw new FileException(errorMessage, new File(apiName + ".yml"));
+		}
+		
+		return apiData;
+	}
+	
+	/**
 	 * Returns the type of page object. Most will be WEBPAGE, but if an "executables:"
 	 * section is defined instead of a "urls:" section, this will return EXECUTABLE as the type.
 	 * If we do not know what the current type is, we infer it by using the current type set in
@@ -427,6 +454,10 @@ public class Configuration {
 	
 	public static Map <String,String> getElement(String elementName, String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
+	}
+	
+	public static Map <String,String> getAction(String actionName, String apiName) {
+		return API_DATA.computeIfAbsent(apiName, Configuration::loadAPIData).getAction(actionName);
 	}
 	
 	/**

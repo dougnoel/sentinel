@@ -11,6 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 
+import com.dougnoel.sentinel.elements.Element;
+import com.dougnoel.sentinel.elements.ElementFactory;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
@@ -38,7 +40,12 @@ public class API {
     }
 
     public String getName() {
-        return this.getClass().getSimpleName();
+        return apiName;
+    }
+    
+	public Element getAction(String actionName) {
+        String normalizedName = actionName.replaceAll("\\s+", "_").toLowerCase();
+        return actions.computeIfAbsent(normalizedName, name -> ((Element)(ElementFactory.createElement(name, this))));
     }
     
 	public void setURL(String url) throws MalformedURLException {

@@ -23,7 +23,7 @@ public class APIFactory {
 		// Exists only to defeat instantiation
 	}
 	
-	public static API buildOrRetrievePAPI(String apiName) {
+	public static API buildOrRetrieveAPI(String apiName) {
 		apiName = apiName.replaceAll("\\s", "");
 		API api = apis.get(apiName);
 		if (api != null) {
