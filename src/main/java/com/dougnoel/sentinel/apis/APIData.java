@@ -97,15 +97,15 @@ public class APIData {
     }
     
     /**
-     * Returns an element if it exists in a page object.
+     * Returns an action if it exists in a page object.
      * 
-     * @param elementName the name of the element in the page object under the 'elements' section
+     * @param actionName String the name of the element in the page object under the 'elements' section
      * @return Map&lt;String, String&gt; the locators for an element
      */
-    public Map<String,String> getAction(String elementName) {
+    public Map<String,String> getAction(String actionName) {
     	if(actions!=null) {
-    		if (actions.containsKey(elementName)) {
-        		return actions.get(elementName);
+    		if (actions.containsKey(actionName)) {
+        		return actions.get(actionName);
         	}
     	} else {
     		String errorMessage = SentinelStringUtils.format("There is no actions section defined in the page object {}. Please make sure that actions defined are under an \"actions:\" section. Refer to the Readme for more information.", APIManager.getAPI().getName());

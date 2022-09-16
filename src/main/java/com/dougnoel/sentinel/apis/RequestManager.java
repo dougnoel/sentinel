@@ -11,14 +11,16 @@ public class RequestManager {
 	}
 	
 	/**
-	 * Builds and stores a new Request object using the JSON passed to it, using the uid as the key.
+	 * Builds and stores a new Request object using the JSON passed to it, 
+	 * using the action name as the key.
 	 * <p>
-	 * NOTE: This will overwrite any existing Request object for the uid that already exists.
+	 * NOTE: This will overwrite any existing Request object for the action that already exists.
+	 * 
 	 * @param uid String the unique identifier to use when storing the Request object created
 	 * @param jsonRequest String the full JSON request to be set in the Request object
 	 * @return Request the Request object for object chaining
 	 */
-	public static Request setRequest(String uid, String jsonRequest) {
+	public static Request setRequest(String jsonRequest) {
 		Request request = new Request(jsonRequest);
 		requests.put(uid, request);
 		return request;

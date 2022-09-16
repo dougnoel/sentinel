@@ -2,7 +2,13 @@ package com.dougnoel.sentinel.apis;
 
 import org.openqa.selenium.NotFoundException;
 
+/**
+ * Tracks which API is currently being used and requests the APIFactory create it if it does not exist.
+ * @author dougnoel@gmail.com
+ *
+ */
 public class APIManager {
+	//Only one API should be in use at a time. We are conciously not multi-threading.
 	private static API api = null;
 	
 	private APIManager() {
@@ -15,7 +21,7 @@ public class APIManager {
 	 */
 	public static void setAPI(String apiName) {
 		try {
-			APIManager.api = APIFactory.buildAPI(apiName);
+			APIManager.api = APIFactory.buildOrRetrieveAPI(apiName);
 		} catch (NullPointerException npe) {
 			api = null;
 		}

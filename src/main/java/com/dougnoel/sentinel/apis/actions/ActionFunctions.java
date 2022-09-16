@@ -1,4 +1,4 @@
-package com.dougnoel.sentinel.apis;
+package com.dougnoel.sentinel.apis.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.apis.API;
+import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.exceptions.NoSuchActionException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
