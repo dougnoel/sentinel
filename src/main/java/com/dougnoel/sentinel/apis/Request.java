@@ -49,7 +49,7 @@ public class Request {
 		return jsonRequest;
 	}
 	
-	public HttpGet constructGetRequest(URI uri) {
+	public String constructGetRequest(URI uri) {
 		HttpGet httpGet = new HttpGet(uri);
 		if (jsonRequest == null) {
 			return buildRequest();

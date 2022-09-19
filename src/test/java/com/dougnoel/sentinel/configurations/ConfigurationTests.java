@@ -92,22 +92,22 @@ public class ConfigurationTests {
 	
 	@Test
 	public void loadStageUrlUsingDefault() {
-		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.url("DefaultUrls"));
+		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.getPageURL("DefaultUrls"));
 	}
 	
 	@Test
 	public void loadStageUrlUsingBase() {
-		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.url("BaseUrl"));
+		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.getPageURL("BaseUrl"));
 	}
 	
 	@Test(expected = FileException.class)
 	public void failToLoadDefaultUrl() {
-		Configuration.url("NoDefaultUrl");
+		Configuration.getPageURL("NoDefaultUrl");
 	}
 	
 	@Test(expected = FileException.class)
 	public void failToLoadPageWhenFindingUrl() {
-		Configuration.url("FakePageObject");
+		Configuration.getPageURL("FakePageObject");
 	}
 
 	@Test

@@ -22,7 +22,7 @@ public class RequestManager {
 	 */
 	public static Request setRequest(String jsonRequest) {
 		Request request = new Request(jsonRequest);
-		requests.put(uid, request);
+		requests.put(request);
 		return request;
 	}
 	

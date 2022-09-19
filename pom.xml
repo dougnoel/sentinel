@@ -89,7 +89,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <io.cucumber.version>5.6.0</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
-    <jackson2.version>2.9.9</jackson2.version>
+    <jackson2.version>2.12.7</jackson2.version>
     <junit.version>5.5.1</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
     <lombok.version>1.18.8</lombok.version>
@@ -97,7 +97,7 @@
     <pdfbox.version>2.0.24</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
     <selenium-java.version>3.141.59</selenium-java.version>
-    <swagger-parser.version>2.0.14</swagger-parser.version>
+    <swagger-parser.version>2.1.2</swagger-parser.version>
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
@@ -726,7 +726,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- junit should usually be test scope unless this is a dedicated test library -->
+      <!-- junit should usually be test scope but this is a dedicated test library -->
     </dependency>
 
     <dependency>

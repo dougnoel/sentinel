@@ -361,16 +361,16 @@ public class Configuration {
 	 * @return String the desired URL
 	 */
 	public static String url() {
-		return url(PageManager.getPage().getName());
+		return getPageURL(PageManager.getPage().getName());
 	}
 	
 	/**
 	 * Returns a URL for the given page name based on the environment value set.
-	 
+	 *
 	 * @param pageName String the name of the page from which the url is retrieved
 	 * @return String the url for the given page and current environment
 	 */
-	protected static String url(String pageName) {
+	protected static String getPageURL(String pageName) {
 		String baseURL = null;
 		var pageData = loadPageData(pageName);
 		String env = Configuration.environment();
@@ -387,6 +387,27 @@ public class Configuration {
 		if (StringUtils.isEmpty(baseURL)) {
 			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, pageName);
 			throw new FileException(errorMessage, new File(pageName + ".yml"));
+		}
+		return baseURL;
+	}
+	
+	public static String getAPIURL(String apiName) {
+		String baseURL = null;
+		var apiData = loadAPIData(apiName);
+		String env = Configuration.environment();
+
+		if (apiData.containsUrl(env)) {
+			baseURL = apiData.getUrl(env);
+		} else if (apiData.containsUrl(DEFAULT)){
+			baseURL = apiData.getUrl(DEFAULT);
+			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
+		} else if (apiData.containsUrl("base")){
+			baseURL = apiData.getUrl("base");
+			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
+		}
+		if (StringUtils.isEmpty(baseURL)) {
+			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the API object. See the project README for details.", env, apiName);
+			throw new FileException(errorMessage, new File(apiName + ".yml"));
 		}
 		return baseURL;
 	}
@@ -454,10 +475,6 @@ public class Configuration {
 	
 	public static Map <String,String> getElement(String elementName, String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
-	}
-	
-	public static Map <String,String> getAction(String actionName, String apiName) {
-		return API_DATA.computeIfAbsent(apiName, Configuration::loadAPIData).getAction(actionName);
 	}
 	
 	/**
