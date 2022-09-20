@@ -1,5 +1,0 @@
-urls:
-  default: https://api.agify.io/
-actions:
-  ping:
-    GET: "?name=test"

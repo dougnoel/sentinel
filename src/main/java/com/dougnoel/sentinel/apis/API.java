@@ -27,8 +27,6 @@ public class API {
 	protected AuthenticationType authenticationType = NONE;
 	Object authToken = null;
 	
-	protected Map<String,Action> actions;
-	
 	protected URL url = null;
 	
     /**
@@ -37,7 +35,6 @@ public class API {
      */
     public API(String apiName) {
     	this.apiName = apiName;
-        actions = new HashMap<>();
     }
 
     /**
@@ -48,19 +45,6 @@ public class API {
     public String getName() {
         return apiName;
     }
-    
-	public Action getAction(String actionName) {
-        String normalizedName = actionName.replaceAll("\\s+", "_").toLowerCase();
-        return actions.computeIfAbsent(normalizedName, name -> ((Action)(ActionFactory.createAction(name, this))));
-    }
-    
-	public void setURL(String url) throws MalformedURLException {
-		this.url = new URL(url);
-	}
-	
-	public void setURL(URL url) {
-		this.url = url;
-	}
 	
 	/**
 	 * Returns a java.net.URI constructed from the URL listed in the API yaml file.

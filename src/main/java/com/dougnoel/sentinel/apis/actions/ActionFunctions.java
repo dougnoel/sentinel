@@ -13,6 +13,14 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 public abstract class ActionFunctions {
 
+	/*
+	 * A swagger file is stored as `swagger.json` by convention
+	 * Swagger files should be stored in a host named folder (ex. com.google.mystuff)
+	 * - Environment-specific swagger files should be stored in subfolders that match the test environment.
+	 * - Since the url will change for each environment this is the easiest way to store that difference.
+	 * - An alternate option would be a hosts file to match env names to urls (since swagger hosts do not support path templating)
+	 * Each action is stored as a Path Item Object under a Path Object
+	 */
 	private static final Logger log = LogManager.getLogger(ActionFunctions.class);
 	
 	private ActionFunctions() {

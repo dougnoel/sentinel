@@ -6,32 +6,28 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.NoSuchElementException;
-
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 /**
- * The PageData class is a singleton class that encapsulates page configuration data into a usable  
- * java class. It contains getter methods for page urls, and account data based on the given environment or account data 
- * based on the given environment and the account map within that environment.
+ * The APIData class is a singleton class that encapsulates page configuration data into a usable  
+ * java class. It contains getter methods for api urls, and account data based on the given environment 
+ * or account data based on the given environment and the account map within that environment.
  */
 public class APIData {
 	public Map<String,String> urls;
 	public Map<String,Map<String,Map<String,String>>> accounts;
-	public Map<String,Map<String,String>> actions;
 	public Map<String,Map<String,Map<String,String>>> testdata;
 	public String include;
 
 	/**
-	 * Returns PageData for the given fileName as a string.
+	 * Returns APIData for the given fileName as a string.
 	 * 
 	 * @see APIData#loadYaml(File)
 	 * @param fileName String the name of the page configuration file
-	 * @return PageData the configured PageData 
+	 * @return APIData the configured APIData 
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
 	public static APIData loadYaml(String fileName) throws IOException{
@@ -39,10 +35,10 @@ public class APIData {
 	}
 	
 	/**
-	 * Returns the usable PageData object from the given File object.
+	 * Returns the usable APIData object from the given File object.
 	 * 
 	 * @param fileName File the File object to which the configurations will be mapped.
-	 * @return PageData the configured PageData
+	 * @return APIData the configured APIData  
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
 	public static APIData loadYaml(File fileName) throws IOException{
@@ -97,25 +93,7 @@ public class APIData {
     }
     
     /**
-     * Returns an action if it exists in a page object.
-     * 
-     * @param actionName String the name of the element in the page object under the 'elements' section
-     * @return Map&lt;String, String&gt; the locators for an element
-     */
-    public Map<String,String> getAction(String actionName) {
-    	if(actions!=null) {
-    		if (actions.containsKey(actionName)) {
-        		return actions.get(actionName);
-        	}
-    	} else {
-    		String errorMessage = SentinelStringUtils.format("There is no actions section defined in the page object {}. Please make sure that actions defined are under an \"actions:\" section. Refer to the Readme for more information.", APIManager.getAPI().getName());
-			throw new NoSuchElementException(errorMessage);
-    	}
-    	return null;
-    }
-    
-    /**
-     * Returns any page parts to search for elements
+     * Returns any other places we might be including test data from.
      * 
      * @return String[] list of page parts
      */
@@ -128,7 +106,7 @@ public class APIData {
     
     /**
      * Returns whether or not a URL exists for the given environment
-     * in the page object.
+     * in the API object.
      * 
      * @param env String the environment to check
      * @return boolean true if found, otherwise false
@@ -145,15 +123,6 @@ public class APIData {
      */
     public String getUrl(String env) {
     	return urls.get(env);
-    }
-    
-    /**
-     * Returns whether or not the page object contains a urls section.
-     * 
-     * @return true if there is a urls section in the page object, false otherwise
-     */
-    public boolean hasUrls() {
-    	return urls != null;
     }
 
 }
