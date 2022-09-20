@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
@@ -23,9 +24,12 @@ public class SelectVerificationSteps {
      * @param assertion String "has" for a positive check, anything else for negative
      * @param textOfOption String text to match against
      */
-    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the option (.*?)$")
-	public static void verifyDropdownHasOption(String elementName, String assertion, String textOfOption) {
-		var dropdown = (SelectElement)getElement(elementName);
+    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the (option|stored value) (.*?)$")
+	public static void verifyDropdownHasOption(String elementName, String assertion, String value,  String textOfOption) {
+		if  (value.contentEquals("stored value")){
+            textOfOption = Configuration.toString(textOfOption);
+        }
+        var dropdown = (SelectElement)getElement(elementName);
 		
 		String expectedResult = SentinelStringUtils.format("Expected the element {} {} the option \"{}\".",
                 elementName, assertion, textOfOption);
@@ -35,7 +39,6 @@ public class SelectVerificationSteps {
             assertTrue(expectedResult, dropdown.doesNotHaveOption(textOfOption));
         }
 	}
-	
     /**
      * Verifies a select element's currently selected option has the given text.
      * <p>
@@ -78,9 +81,10 @@ public class SelectVerificationSteps {
     public static void verifyDropdownHasNumberOfOptions(String elementName, String assertion, int numberOfOptions) {
     	var dropdown = (SelectElement)getElement(elementName);
     	var negate = !assertion.contains("has");
-    	String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have {} option{}.",
-                elementName, (negate ? "not " : ""), numberOfOptions, (numberOfOptions > 1 ? "s" : ""));
-		var actualResult = dropdown.getNumberOfOptions() == numberOfOptions;
+        var actualOptionCount = dropdown.getNumberOfOptions();
+    	String expectedResult = SentinelStringUtils.format("Expected the element {} to {}have {} option{}, but had {} option{}",
+                elementName, (negate ? "not " : ""), numberOfOptions, (numberOfOptions > 1 ? "s" : ""), actualOptionCount, (actualOptionCount > 1 ? "s" : ""));
+		var actualResult = actualOptionCount == numberOfOptions;
     	
     	if (negate) {
             assertFalse(expectedResult, actualResult);

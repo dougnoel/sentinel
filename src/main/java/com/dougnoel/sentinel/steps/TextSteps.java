@@ -110,7 +110,7 @@ public class TextSteps {
     }
 
     /**
-     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, or TAB.
+     * Sends a key press event for a special key: BACKSPACE, ESCAPE, ENTER, RETURN, or TAB.
      * @param keyName
      * <p>
      * <b>Gherkin Examples:</b>
@@ -120,16 +120,19 @@ public class TextSteps {
      * <li>I press the tab key</li>
      * </ul>
      */
-    @When("^I press the (escape|enter|return|tab) key$")
+    @When("^I press the (backspace|escape|enter|return|tab) key$")
     public static void keyPress(String keyName) {
-    	keyName = keyName.toUpperCase();
+        if(keyName.equals("backspace"))
+            keyName = "BACK_SPACE";
+        else
+            keyName = keyName.toUpperCase();
     	var driver = Driver.getWebDriver();
         WebElement element = driver.findElement(By.tagName("Body"));
         element.sendKeys(Keys.valueOf(keyName));
     }
 
     /**
-     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, or TAB to a given element.
+     * Sends a key press event for a special key: BACKSPACE, ESCAPE, ENTER, RETURN, or TAB to a given element.
      * @param keyName
      * <p>
      * <b>Gherkin Examples:</b>
@@ -138,9 +141,12 @@ public class TextSteps {
      * <li>I press the enter key in the search box</li>
      * </ul>
      */
-    @When("^I press the (escape|enter|return|tab) key (?:to|on|in) the (.*)$")
+    @When("^I press the (backspace|escape|enter|return|tab) key (?:to|on|in) the (.*)$")
     public static void keyPressElement(String keyName, String element) {
-        keyName = keyName.toUpperCase();
+        if(keyName.equals("backspace"))
+            keyName = "BACK_SPACE";
+        else
+            keyName = keyName.toUpperCase();
         Element targetElement = getElement(element);
         targetElement.sendSpecialKey(Keys.valueOf(keyName));
     }

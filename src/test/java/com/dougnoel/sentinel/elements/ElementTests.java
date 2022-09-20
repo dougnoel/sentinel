@@ -9,6 +9,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
 
+import com.dougnoel.sentinel.exceptions.IOException;
+import com.dougnoel.sentinel.steps.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -22,9 +24,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.steps.BaseSteps;
-import com.dougnoel.sentinel.steps.TableVerificationSteps;
-import com.dougnoel.sentinel.steps.TextVerificationSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 
@@ -51,6 +50,30 @@ public class ElementTests {
     }
 
     @Test
+    public void checkHasAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertTrue("Expecting element to have attribute.", getElement("Middle Name Field").hasAttribute("readonly"));
+    }
+
+    @Test
+    public void checkNotHaveAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertTrue("Expecting element to not have attribute.", getElement("Middle Name Field").doesNotHaveAttribute("disabled"));
+    }
+
+    @Test
+    public void checkHasAttributeOnNotHasAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertFalse("Expecting element to not have attribute.", getElement("Middle Name Field").hasAttribute("disabled"));
+    }
+
+    @Test
+    public void checkNotHaveAttributeOnHasAttribute() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertFalse("Expecting element to have attribute.", getElement("Middle Name Field").doesNotHaveAttribute("readonly"));
+    }
+
+    @Test
     public void isDisabledOnDisabledElement() {
         BaseSteps.navigateToPage("TextboxPage");
         assertTrue("Expecting element to be disabled.", getElement("First Name Field").isDisabled());
@@ -63,9 +86,21 @@ public class ElementTests {
     }
 
     @Test
+    public void isDisabledOnReadonlyElement() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertTrue("Expecting element to be disabled.", getElement("Middle Name Field").isDisabled());
+    }
+
+    @Test
     public void isEnabledOnDisabledElement() {
         BaseSteps.navigateToPage("TextboxPage");
         assertFalse("Expecting element to be disabled.", getElement("First Name Field").isEnabled());
+    }
+
+    @Test
+    public void isEnabledOnReadonlyElement() {
+        BaseSteps.navigateToPage("TextboxPage");
+        assertFalse("Expecting element to be disabled.", getElement("Middle Name Field").isEnabled());
     }
 
     @Test
@@ -214,7 +249,7 @@ public class ElementTests {
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void tableColumnDoesNotExist() {
+    public void tableColumnDoesNotExist() throws Exception {
         BaseSteps.navigateToPage("TablePage");
         TableVerificationSteps.verifyCellInSpecifiedRow("1", "Not a real column", "example table", "","contains", "Bob");
     }
@@ -258,4 +293,53 @@ public class ElementTests {
         assertTrue("All cells in Last Name column not empty.", table.verifyAllColumnCellsNotEmpty("Last Name"));
     }
 
+    @Test
+    public void validSingleUpload(){
+        BaseSteps.navigateToPage("UploadPage");
+        UploadSteps.sendPathsToInputElement("eclipse_run_icon_image", "choose file button");
+        Element fileUploadCount = getElement("file counter");
+        Element fileResult1 = getElement("upload result 1");
+        Assert.assertTrue(fileUploadCount.getAttribute("data-filecount").equals("1") && fileResult1.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run.png"));
+    }
+
+    @Test
+    public void validMultiUpload(){
+        BaseSteps.navigateToPage("UploadPage");
+        UploadSteps.sendPathsToInputElement("eclipse_run_icon_image, eclipse_run_icon_image_2", "choose file button");
+        Element fileUploadCount = getElement("file counter");
+        Element fileResult1 = getElement("upload result 1");
+        Element fileResult2 = getElement("upload result 2");
+        Assert.assertTrue(fileUploadCount.getAttribute("data-filecount").equals("2") && fileResult1.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run.png") && fileResult2.getAttribute("data-filename").equals("eclipse_tool_bar_icon_run_2.png"));
+    }
+
+    @Test
+    public void invalidFilePathSending(){
+        boolean assertionThrown = false;
+        BaseSteps.navigateToPage("UploadPage");
+
+        try{
+            UploadSteps.sendPathsToInputElement("file_doesnot_exist", "choose file button");
+        }
+        catch(IOException fileException){
+            assertionThrown = true;
+            Assert.assertTrue("Error message should indicate a file was not found", fileException.getMessage().toLowerCase().contains("file could not be found"));
+        }
+        Assert.assertTrue("A fileException was expected to be thrown, but no exceptions occurred", assertionThrown);
+    }
+
+    @Test
+    public void validDirectoryPathSendFailure(){
+        boolean assertionThrown = false;
+        BaseSteps.navigateToPage("UploadPage");
+
+        try{
+            UploadSteps.sendPathsToInputElement("eclipse_run_icon_image_folder", "choose file button");
+        }
+        catch(IOException fileException){
+            assertionThrown = true;
+            Assert.assertTrue("Error message should indicate the given file was a directory", fileException.getMessage().toLowerCase().contains("was a directory"));
+        }
+
+        Assert.assertTrue("A fileException was expected to be thrown, but no exceptions occurred", assertionThrown);
+    }
 }
