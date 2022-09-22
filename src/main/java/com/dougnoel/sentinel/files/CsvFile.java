@@ -16,8 +16,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CsvFile extends TestFile{
+    private static final Logger log = LogManager.getLogger(CsvFile.class.getName()); // Create a logger.
 
     private final CSVFormat csvFormat;
     private final int numHeaderRows;
@@ -27,9 +30,7 @@ public class CsvFile extends TestFile{
      * @throws FileNotFoundException in the case that a file does not exist at that path.
      */
     public CsvFile() throws FileNotFoundException {
-        super();
-        csvFormat = CSVFormat.DEFAULT;
-        numHeaderRows = 1;
+        this(1);
     }
 
     /**
@@ -129,7 +130,7 @@ public class CsvFile extends TestFile{
      * @param rowIndex int index of the first row with real data, starting at 1, taking into consideration row headers.
      * @return List&lt;String&gt; consisting of each value in a given row.
      */
-    public List<String> getRowData(int rowIndex){
+    public List<String> readRowData(int rowIndex){
         int actualRowIndex = rowIndex - 1 + numHeaderRows;
         try(var parser = getParser()){
             return parser.getRecords().get(actualRowIndex).toList();
@@ -146,9 +147,9 @@ public class CsvFile extends TestFile{
      * @param rowIndex int index of the first row with real data, starting at 1, taking into consideration row headers.
      * @return String the data in the specified cell.
      */
-    public String getCellData(int columnIndex, int rowIndex) {
+    public String readCellData(int columnIndex, int rowIndex) {
         int adjustedColumnIndex = columnIndex - 1;
-        return getRowData(rowIndex).get(adjustedColumnIndex);
+        return readRowData(rowIndex).get(adjustedColumnIndex);
     }
 
     /**
@@ -157,15 +158,15 @@ public class CsvFile extends TestFile{
      * @param rowIndex int index of the first row with real data, starting at 1, taking into consideration row headers.
      * @return String the data in the specified cell.
      */
-    public String getCellData(String columnHeader, int rowIndex){
-        return getCellData(getColumnIndex(columnHeader), rowIndex);
+    public String readCellData(String columnHeader, int rowIndex){
+        return readCellData(getColumnIndex(columnHeader), rowIndex);
     }
 
     /**
      * Creates a list of lists, each list being a set of values for each row in the file.
      * @return List&lt;List&lt;String&gt;&gt; All contents of the file.
      */
-    public List<List<String>> getAllFileContents() {
+    public List<List<String>> readAllFileContents() {
         List<List<String>> allFileContents = new ArrayList<>();
         try(var parser = getParser()) {
             parser.getRecords().stream().forEachOrdered(
@@ -184,7 +185,7 @@ public class CsvFile extends TestFile{
      * If numHeaderRows &lt; 1, this method throws. If numHeaderRows &gt; 1, this method returns the last header row above the actual data.
      * @return List&lt;String&gt; consisting of the header values
      */
-    public List<String> getHeaders(){
+    public List<String> readHeaders(){
         if(numHeaderRows < 1){
             throw new IndexOutOfBoundsException("This method is undefined for CSV files without header rows.");
         }
@@ -201,7 +202,7 @@ public class CsvFile extends TestFile{
      * Sets the whole file's contents to the passed newFileContents values, where each list of lists is a row.
      * @param newFileContents List&lt;List&lt;String&gt;&gt; All contents of the file to write.
      */
-    public void setFileContents(List<List<String>> newFileContents){
+    public void writeFileContents(List<List<String>> newFileContents){
         try(var printer = new CSVPrinter(new FileWriter(this), csvFormat)){
             newFileContents.stream().forEachOrdered(row -> {
                 try {
@@ -211,7 +212,6 @@ public class CsvFile extends TestFile{
                             String.join(", ", row)));
                 }
             });
-            printer.close(true);
         } catch (IOException e) {
             throw new FileException(e, this);
         }
@@ -223,7 +223,7 @@ public class CsvFile extends TestFile{
      * @return int the index of the given column name, starting at 1.
      */
     public int getColumnIndex(String columnHeader){
-        return getHeaders().indexOf(columnHeader) + 1;
+        return readHeaders().indexOf(columnHeader) + 1;
     }
 
     /**
@@ -231,9 +231,9 @@ public class CsvFile extends TestFile{
      * @param columnHeader String name of the column.
      * @param newValue String value to set each cell to.
      */
-    public void setAllCellsInColumn(String columnHeader, String newValue) {
+    public void writeAllCellsInColumn(String columnHeader, String newValue) {
         int columnIndex = getColumnIndex(columnHeader);
-        setAllCellsInColumn(columnIndex, newValue);
+        writeAllCellsInColumn(columnIndex, newValue);
     }
 
     /**
@@ -241,11 +241,11 @@ public class CsvFile extends TestFile{
      * @param columnIndex int index of the column, starting at 1.
      * @param newValue String value to set each cell to.
      */
-    public void setAllCellsInColumn(int columnIndex, String newValue){
+    public void writeAllCellsInColumn(int columnIndex, String newValue){
         int adjustedColumnIndex = columnIndex - 1;
-        var fileContents = getAllFileContents();
+        var fileContents = readAllFileContents();
         fileContents.stream().skip(numHeaderRows).forEach(row -> row.set(adjustedColumnIndex, newValue));
-        setFileContents(fileContents);
+        writeFileContents(fileContents);
     }
 
     /**
@@ -269,7 +269,7 @@ public class CsvFile extends TestFile{
      * @return boolean true if the cell contains/has the given text.
      */
     public String verifyCellDataContains(int rowIndex, int columnIndex, String textToMatch, boolean partialMatch){
-        var cell = getCellData(columnIndex, rowIndex);
+        var cell = readCellData(columnIndex, rowIndex);
 
         if(partialMatch){
             return cell.contains(textToMatch) ? null : cell;
@@ -284,8 +284,8 @@ public class CsvFile extends TestFile{
      * @param columnHeader String name of the column.
      * @return ;List&lt;String&gt; consisting of a column's data.
      */
-    public List<String> getAllCellDataForColumn(String columnHeader) {
-        return getAllCellDataForColumn(getColumnIndex(columnHeader));
+    public List<String> readAllCellDataForColumn(String columnHeader) {
+        return readAllCellDataForColumn(getColumnIndex(columnHeader));
     }
 
     /**
@@ -293,11 +293,11 @@ public class CsvFile extends TestFile{
      * @param columnIndex int index of the column, starting at 1.
      * @return ;List&lt;String&gt; consisting of a column's data.
      */
-    public List<String> getAllCellDataForColumn(int columnIndex){
+    public List<String> readAllCellDataForColumn(int columnIndex){
         int adjustedColumnIndex = columnIndex - 1;
         List<String> allCellDataForColumn = new ArrayList<>();
         //skip header row(s), then add the column data from each row
-        getAllFileContents().stream().skip(numHeaderRows).forEach(row -> allCellDataForColumn.add(row.get(adjustedColumnIndex)));
+        readAllFileContents().stream().skip(numHeaderRows).forEach(row -> allCellDataForColumn.add(row.get(adjustedColumnIndex)));
         return allCellDataForColumn;
     }
 
@@ -322,7 +322,7 @@ public class CsvFile extends TestFile{
      * @return boolean true if the column contains the given text in every cell, false if not
      */
     public boolean verifyAllColumnCellsContain(int columnIndex, String textToMatch, boolean partialMatch){
-        var allColumnData = getAllCellDataForColumn(columnIndex);
+        var allColumnData = readAllCellDataForColumn(columnIndex);
 
         if(partialMatch){
             return allColumnData.stream().allMatch(cell -> StringUtils.contains(cell, textToMatch));

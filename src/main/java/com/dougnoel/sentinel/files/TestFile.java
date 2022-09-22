@@ -10,10 +10,9 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 public abstract class TestFile extends File{
-    protected static final Logger log = LogManager.getLogger(TestFile.class.getName()); // Create a logger.
-
     /**
      * Creates a TestFile from the DownloadManager's latest download and immediately checks that it exists. If it doesn't, an exception is thrown.
+     * <br/>
      * @throws FileNotFoundException in the case that a file is not found at the path given by the DownloadManager,
      * or if a file has not been downloaded in this test session.
      */
@@ -23,6 +22,7 @@ public abstract class TestFile extends File{
 
     /**
      * Creates a TestFile and immediately checks that it exists. If it doesn't, an exception is thrown.
+     *
      * @param pathToFile Path the path to the file to test.
      * @throws FileNotFoundException in the case that a file is not found at the given path.
      */

@@ -10,8 +10,8 @@ import static org.junit.Assert.*;
 
 public class CsvFileTests {
 
-    private static final String filePathOneHeader = "src/test/resources/csvs/test_1header.csv";
-    private static final String filePathZeroHeaders = "src/test/resources/csvs/test_0header.csv";
+    private static final String filePathOneHeader = "src/test/resources/csv/test_1header.csv";
+    private static final String filePathZeroHeaders = "src/test/resources/csv/test_0header.csv";
 
 
     @Test(expected = FileNotFoundException.class)
@@ -20,21 +20,44 @@ public class CsvFileTests {
     }
 
     @Test
-    public void createCsvFiles() throws FileNotFoundException {
+    public void createCsvFile_0() throws FileNotFoundException {
         var filePath = Path.of(filePathOneHeader);
-        CsvFile file1 = new CsvFile(filePath);
-        assertNotNull("Expected new CsvFile to be created.", file1);
+        CsvFile file = new CsvFile(filePath);
+        assertNotNull("Expected new CsvFile to be created.", file);
+    }
+
+    @Test
+    public void createCsvFile_1() throws FileNotFoundException {
+        var filePath = Path.of(filePathOneHeader);
         CsvFile file2 = new CsvFile(filePath, CSVFormat.DEFAULT);
         assertNotNull("Expected new CsvFile to be created.", file2);
+    }
+
+    @Test
+    public void createCsvFile_2() throws FileNotFoundException {
+        var filePath = Path.of(filePathOneHeader);
         CsvFile file3 = new CsvFile(filePath, CSVFormat.EXCEL, 0);
         assertNotNull("Expected new CsvFile to be created.", file3);
+    }
+
+    @Test
+    public void compareCsvFiles_Equal() throws FileNotFoundException {
+        var filePath = Path.of(filePathOneHeader);
+        CsvFile file1 = new CsvFile(filePath);
+        CsvFile file2 = new CsvFile(filePath, CSVFormat.DEFAULT);
         assertEquals("File 1 should equal file 2.", file1, file2);
-        assertNotEquals("File 2 should not equal file 3.", file2, file3);
+    }
+    @Test
+    public void compareCsvFiles_Unequal() throws FileNotFoundException {
+        var filePath = Path.of(filePathOneHeader);
+        CsvFile file1 = new CsvFile(filePath, CSVFormat.DEFAULT);
+        CsvFile file2 = new CsvFile(filePath, CSVFormat.EXCEL, 0);
+        assertNotEquals("File 1 should not equal file 2.", file1, file2);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void failToGetHeadersFromHeaderlessFile() throws FileNotFoundException {
-        (new CsvFile(Path.of(filePathZeroHeaders), 0)).getHeaders();
+        (new CsvFile(Path.of(filePathZeroHeaders), 0)).readHeaders();
     }
 
     @Test
@@ -55,6 +78,6 @@ public class CsvFileTests {
     public void getCellData() throws FileNotFoundException{
         var filePath = Path.of(filePathOneHeader);
         CsvFile file = new CsvFile(filePath, 1);
-        assertEquals("Expected CSV cell in column Age, row 2, to be 3", "3", file.getCellData("age", 2));
+        assertEquals("Expected CSV cell in column Age, row 2, to be 3", "3", file.readCellData("age", 2));
     }
 }

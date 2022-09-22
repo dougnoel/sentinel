@@ -62,14 +62,14 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 	 * Converts the leading integer portion of a string to an int.
 	 * <b>Examples:</b>
 	 * <ul>
-	 *<li>parseLeadingInt("12th") = 12</li>
-	 *<li>parseLeadingInt("1t2h3") = 1</li>
-	 *<li>parseLeadingInt("ten") throws Exception</li>
+	 *<li>parseOrdinal("12th") = 12</li>
+	 *<li>parseOrdinal("1t2h3") = 1</li>
+	 *<li>parseOrdinal("ten") throws Exception</li>
 	 *</ul>
 	 * @param stringStartingWithInteger String a string with leading integers.
 	 * @return int the integers in the passed string up until the point of the first non-numeric character.
 	 */
-	public static int parseLeadingInt(String stringStartingWithInteger){
+	public static int parseOrdinal(String stringStartingWithInteger){
 		StringBuilder builder = new StringBuilder();
 		stringStartingWithInteger.codePoints()
 				.mapToObj(i -> (char)i)

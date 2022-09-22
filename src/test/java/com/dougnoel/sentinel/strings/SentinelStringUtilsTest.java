@@ -38,16 +38,16 @@ public class SentinelStringUtilsTest {
 
 	@Test
 	public void parseLeadingInt(){
-		assertEquals("Integer not parsed correctly at start of string.", 1, SentinelStringUtils.parseLeadingInt("1st"));
+		assertEquals("Integer not parsed correctly at start of string.", 1, SentinelStringUtils.parseOrdinal("1st"));
 	}
 
 	@Test
 	public void parseLeadingIntMulti(){
-		assertEquals("Integer not parsed correctly at start of string.", 123, SentinelStringUtils.parseLeadingInt("123r4d5"));
+		assertEquals("Integer not parsed correctly at start of string.", 123, SentinelStringUtils.parseOrdinal("123r4d5"));
 	}
 
 	@Test(expected = NumberFormatException.class)
 	public void failToParseLeadingInt(){
-		SentinelStringUtils.parseLeadingInt("rd123");
+		SentinelStringUtils.parseOrdinal("rd123");
 	}
 }

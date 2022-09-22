@@ -25,14 +25,14 @@ public class CsvSteps {
      * <br>
      * <b>Gherkin Examples:</b>
      * <ul>
-     *     <li>I open a CSV file with 3 header rows</li>
-     *     <li>I open a csv file with 1 header row</li>
+     *     <li>I open the last downloaded CSV file with 3 header rows</li>
+     *     <li>I open the last downloaded csv file with 1 header row</li>
      * </ul>
      *
      * @param numberOfHeaderRows int the number of header rows in the CSV file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
      */
-    @When("^I open a (?:CSV|csv) file with (\\d+) header rows?$")
+    @When("^I open the last downloaded (?:CSV|csv) file with (\\d+) header rows?$")
     public static void openMostRecentlyDownloadedFileAsCsv(int numberOfHeaderRows) throws FileNotFoundException {
         FileManager.setCurrentTestFile(new CsvFile(numberOfHeaderRows));
     }
@@ -43,7 +43,7 @@ public class CsvSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      *     <li>I open test file with 1 header as a CSV file with 1 header row</li>
-     *     <li>I open src/test/resources/csvs/test_0header.csv as a CSV file with 0 header rows</li>
+     *     <li>I open src/test/resources/csv/test_0header.csv as a CSV file with 0 header rows</li>
      * </ul>
      *
      * @param fileLocation String either the location of the file, given by a path, or the name of a testdata object in the current page object.
@@ -80,10 +80,10 @@ public class CsvSteps {
 
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
-            file.setAllCellsInColumn(SentinelStringUtils.parseLeadingInt(column), desiredValue);
+            file.writeAllCellsInColumn(SentinelStringUtils.parseOrdinal(column), desiredValue);
         }
         else{
-            file.setAllCellsInColumn(column, desiredValue);
+            file.writeAllCellsInColumn(column, desiredValue);
         }
     }
 
@@ -118,9 +118,9 @@ public class CsvSteps {
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseLeadingInt(column), textToMatch, partialMatch));
+                assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             } else {
-                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseLeadingInt(column), textToMatch, partialMatch));
+                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
@@ -160,9 +160,9 @@ public class CsvSteps {
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertFalse(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseLeadingInt(column), textToMatch, partialMatch));
+                assertFalse(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             } else {
-                assertTrue(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseLeadingInt(column), textToMatch, partialMatch));
+                assertTrue(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
