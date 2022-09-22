@@ -75,5 +75,5 @@ Feature: Table Tests
     When I randomly enter test in the update last name input
       And I click the update table button
     Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update last name input
-      And I verify the row in the updatable table with the value entered for the update last name input contains the xpath .//td[contains(text(),'2')]
-      And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[contains(text(),'1')]
+      And I verify the row in the updatable table with the value entered for the update last name input contains the xpath .//td[.='2']
+      And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']

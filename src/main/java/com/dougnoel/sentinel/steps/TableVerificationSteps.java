@@ -341,7 +341,7 @@ public class TableVerificationSteps {
         Table table = getElementAsTable(tableName);
         var textToMatch = Configuration.toString(key);
         var expectedResult = SentinelStringUtils.format(
-                "Expected the row of the {} to contain xpath {}", tableName, xpath);
+                "Expected the row of the {} to {}contain xpath {}", tableName, (negate ? "not " : ""), xpath);
 
         if (negate) {
             assertFalse(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
