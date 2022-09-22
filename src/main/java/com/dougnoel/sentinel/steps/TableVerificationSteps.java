@@ -13,6 +13,8 @@ import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
+import org.openqa.selenium.By;
+
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
@@ -319,6 +321,33 @@ public class TableVerificationSteps {
         log.trace(expectedResult);
         Table table = getElementAsTable(tableName);
         assertTrue(expectedResult, table, () -> table.verifyColumnDisplayOrder(column1Name, column2Name));
+    }
+
+    /**
+     * Verify the element exists in row which have stored value in column name
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify row in the Project Files Table with value selected for the Search Input contains the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
+     * </ul>
+     * @param tableName String the name of the table element
+     * @param key String the key used to retrieve the value
+     * @param xpath String xpath value to element to click
+     */
+    @Then("^I verify the row in the (.*?) with the value (?:entered|selected|used) for the (.*?)( do(?:es)? not)? contains? the xpath (.*?)$")
+    public static void verifyStoredTextRowContainsXpath(String tableName, String key, String assertion, String xpath) throws Exception {
+        By locator = By.xpath(xpath);
+        boolean negate = !StringUtils.isEmpty(assertion);
+        Table table = getElementAsTable(tableName);
+        var textToMatch = Configuration.toString(key);
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the row of the {} to contain xpath {}", tableName, xpath);
+
+        if (negate) {
+            assertFalse(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
+        } else {
+            assertTrue(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
+        }
     }
 
 }
