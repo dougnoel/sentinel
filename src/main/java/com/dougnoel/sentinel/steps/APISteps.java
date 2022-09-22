@@ -1,32 +1,35 @@
 package com.dougnoel.sentinel.steps;
 
-import static com.dougnoel.sentinel.apis.actions.ActionFunctions.getAction;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.apis.API;
 import com.dougnoel.sentinel.apis.APIManager;
-import com.dougnoel.sentinel.apis.Request;
-import com.dougnoel.sentinel.apis.RequestManager;
 import com.dougnoel.sentinel.apis.Response;
-import com.dougnoel.sentinel.apis.ResponseManager;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 public class APISteps {
@@ -34,7 +37,8 @@ public class APISteps {
 	private static final String RESPONSE_DEBUG = "Response: {}";
 	
 	/**
-	 * Gets a JWT Token and sets it for the curently active API
+	 * Gets a JWT Token from a currently open browser that you have logged into
+	 * and sets it for the curently active API
 	 */
 	@When("^I grab the JWT$")
 	public void i_grab_the_jwt() {
@@ -42,13 +46,6 @@ public class APISteps {
 		APIManager.getAPI().setAuthType(authType);
 		APIManager.getAPI().setAuthToken();
 	}
-	
-    /**
-     * Creates or retrieves an API with the given name.
-     * 
-     * @param apiName name of the API object to create
-     * @throws SentinelException if the API cannot be set
-     */
 	
 	/**
 	 * Loads an API based on the environment you are currently testing.
@@ -68,13 +65,38 @@ public class APISteps {
         APIManager.setAPI(apiName);
 	}
 	
-	@Given("^I load the swagger file$")
-	public void loadSwagger() {
-		String swaggerUrl = Configuration.getAPIURL(APIManager.getAPI().getName());
-		log.info("Swagger URL: {}", swaggerUrl);
-		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
-		log.info(result.getMessages());
+	@When("^I send (.*) to the (.*) endpoint$")
+	public void apiGet(String value, String endpointName) throws URISyntaxException, IOException {
+		
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		
+		//Build the request
+		HttpGet httpGet = new HttpGet(APIManager.getAPI().getURIBuilder("/" +endpointName + "/" + value).build());
+
+		
+		//Get the response
+		Response response = new Response(httpClient.execute(httpGet));
+		log.trace("Response Code: {} Response: {}", response.getResponseCode(), response.getResponse());
+		APIManager.setResponse(response);
+		Integer expectedValue = 200;
+		assertEquals("Response 200 was expected.", expectedValue, response.getResponseCode());
+		
 	}
+	
+	@When("^I verify the response code equals (\\d{3})$")
+	public void verifyResponseCodeEquals(int statusCode) {
+		Integer responseCode = APIManager.getResponse().getResponseCode();
+		log.trace("I verify response code value: {}", responseCode);
+		assertTrue(statusCode == responseCode);
+	}
+	
+//	@When("^I verify the response contains (.*)$")
+//	public void apiGet(String expectedText) throws URISyntaxException, ClientProtocolException, IOException {
+//		Response response = APIManager.getResponse();
+//		log.trace("Response Code: {} Response: {}", response.getResponseCode(), response.getResponse());
+//		assertTrue(expectedText + " text was expected.", response.getResponse().contains(expectedText));
+//		
+//	}
 	
 //	
 //	@When("^I send a (.*) request$")
@@ -130,38 +152,33 @@ public class APISteps {
 //		RequestManager.addHeader(uid, headerKey, headerValue);
 //	}
 //	
-//	@When("^I verify the response code equals (\\d{3})$")
-//	public void verifyResponseCodeEquals(int statusCode) {
-//		Integer responseCode = ResponseManager.getResponse(uid).getResponseCode();
-//		log.trace("I verify response code value: {}", responseCode);
-//		assertTrue(statusCode == responseCode);
-//	}
+
 //	
-//	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-//    public void verifyResponseContains(String assertion, String matchType, String text) {
-//        boolean negate = !StringUtils.isEmpty(assertion);
-//        boolean partialMatch = matchType.contains("contain");
-//
-//        Integer responseCode = ResponseManager.getResponse(uid).getResponseCode();
-//        String responseText = ResponseManager.getResponse(uid).getResponse();
-//        String expectedResult = SentinelStringUtils.format(
-//                "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
-//                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
-//                        .replace("\n", " "));
-//        log.trace(expectedResult);
-//        if (partialMatch) {
-//            if (negate) {
-//                assertFalse(expectedResult, responseText.contains(text));
-//            } else {
-//                assertTrue(expectedResult, responseText.contains(text));
-//            }
-//        } else {
-//            if (negate) {
-//                assertFalse(expectedResult, StringUtils.equals(responseText, text));
-//            } else {
-//                assertTrue(expectedResult, StringUtils.equals(responseText, text));
-//            }
-//        }
-//    }
+	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
+    public void verifyResponseContains(String assertion, String matchType, String text) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        boolean partialMatch = matchType.contains("contain");
+
+        Integer responseCode = APIManager.getResponse().getResponseCode();
+        String responseText = APIManager.getResponse().getResponse();
+        String expectedResult = SentinelStringUtils.format(
+                "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
+                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
+                        .replace("\n", " "));
+        log.trace(expectedResult);
+        if (partialMatch) {
+            if (negate) {
+                assertFalse(expectedResult, responseText.contains(text));
+            } else {
+                assertTrue(expectedResult, responseText.contains(text));
+            }
+        } else {
+            if (negate) {
+                assertFalse(expectedResult, StringUtils.equals(responseText, text));
+            } else {
+                assertTrue(expectedResult, StringUtils.equals(responseText, text));
+            }
+        }
+    }
 	
 }

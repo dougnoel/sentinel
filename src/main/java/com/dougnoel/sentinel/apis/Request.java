@@ -4,12 +4,14 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 
 public class Request {
 
 	protected String jsonRequest = null;
 	protected Map<String,String> headers = null;
 	protected Map<String,String> requestParameters = null;
+	protected URIBuilder uriBuilder = null;
 
 	/**
 	 * Construct a blank request object that will need to be created

@@ -1,20 +1,23 @@
 package com.dougnoel.sentinel.apis;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 
-import com.dougnoel.sentinel.apis.actions.Action;
-import com.dougnoel.sentinel.apis.actions.ActionFactory;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+
+import io.swagger.parser.OpenAPIParser;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 public class API {
 	private static final Logger log = LogManager.getLogger(API.class.getName()); // Create a logger.
@@ -51,14 +54,19 @@ public class API {
 	 * 
 	 * @return java.net.URI the constructed URI
 	 */
-	public URI getURI() {
-		URI uri = null;
+	public URIBuilder getURIBuilder(String passedText) {		
+		String swaggerUrl = Configuration.getAPIURL(APIManager.getAPI().getName());
+		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
+		OpenAPI openAPI = result.getOpenAPI();
+		List<Server> servers = openAPI.getServers();
+		
 		try {
-			uri = url.toURI();
+			return new URIBuilder(servers.get(0).getUrl() + passedText);
 		} catch (URISyntaxException e) {
-			log.error(e.getReason());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return uri;
+		return null;
 	}
 	
 	public void setAuthType(AuthenticationType authType) {
