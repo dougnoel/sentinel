@@ -350,4 +350,33 @@ public class TableVerificationSteps {
         }
     }
 
+    /**
+     * Refreshes the page, waiting the configured time for the table to contain the given value in the given row and column.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait 15 seconds for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
+     * <li>I wait 5 seconds for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
+     * </ul>
+     * @param numberOfSecondsToWait String number of seconds to wait. Must be an integer. Recommended minimum value: 2 seconds.
+     * @param rowNum String row of the cell to check.
+     * @param columnName String column of the cell to check.
+     * @param tableName String name of the table.
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match.
+     * @param textToMatch String the text to look for in the column.
+     */
+    @Then("^I wait (.*?) seconds for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
+    public static void waitForSpecificCellToHaveText(String numberOfSecondsToWait, String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
+        boolean negate = !StringUtils.isEmpty(assertion);
+        Table table = getElementAsTable(tableName);
+        int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
+        boolean partialMatch = matchType.contains("contain");
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch);
+        log.trace(expectedResult);
+        Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain(Integer.parseInt(numberOfSecondsToWait), columnName, rowIndex, textToMatch, partialMatch, negate));
+    }
 }

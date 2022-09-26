@@ -7,17 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Implements a Table WebElement. contains functionality for counting values, finding values inside a table, and other
@@ -855,5 +858,41 @@ public class Table extends Element {
 			return false;
 
 		}
+	}
+
+
+	/**
+	 * Waits the given amount of seconds until the given cell does or does not have the given text in it.
+	 * @param numberOfSecondsToWait int number of seconds to wait for the desired condition.
+	 * @param columnHeader String name of the column.
+	 * @param rowIndex int index of the row, starting at 1.
+	 * @param textToMatch String text to look for in the cell.
+	 * @param partialMatch boolean if the match should be "contains" or "equals". true -> contains.
+	 * @param negate boolean true if this method should return once the text is NOT found in the cell.
+	 * @return
+	 */
+	public boolean waitForSpecificCellToContain(int numberOfSecondsToWait, String columnHeader, int rowIndex, String textToMatch, boolean partialMatch, boolean negate){
+		if(negate != (verifySpecificCellContains(columnHeader, rowIndex, textToMatch, partialMatch) == null))
+			return true; //check condition initially before starting page refresh cycle
+
+		WebDriverWait webDriverWait = new WebDriverWait(WebDriverFactory.getWebDriver(), numberOfSecondsToWait);
+		webDriverWait.ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+
+		try{
+			webDriverWait.until(x -> {
+				BaseSteps.pressBrowserButton("refresh");
+				reset();
+				return negate != (verifySpecificCellContains(columnHeader, rowIndex, textToMatch, partialMatch) == null);
+			});
+			return true;
+		}
+		catch (TimeoutException toe){
+			String errorMsg = SentinelStringUtils.format("Timed out waiting {} seconds for the cell in row {} and column {} to {}{} the text{}",
+					numberOfSecondsToWait, rowIndex, columnHeader, (negate ? "not ": ""), (partialMatch ? "contain" : "have"),  textToMatch);
+			log.error(errorMsg);
+			return false;
+		}
+
+
 	}
 }
