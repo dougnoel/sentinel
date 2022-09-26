@@ -42,7 +42,7 @@
     <sentinel-release-browser>chrome</sentinel-release-browser>
     <sentinel-release-pageobjectpackages>pages</sentinel-release-pageobjectpackages>
     
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-compiler-plugin.release>11</maven-compiler-plugin.release>
     <maven-compiler-plugin.verbose>true</maven-compiler-plugin.verbose>
     <maven-compiler-plugin.debug>true</maven-compiler-plugin.debug>
