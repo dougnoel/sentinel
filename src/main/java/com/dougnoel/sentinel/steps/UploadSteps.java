@@ -1,11 +1,13 @@
 package com.dougnoel.sentinel.steps;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.system.DownloadManager;
 import io.cucumber.java.en.When;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
@@ -30,7 +32,7 @@ public class UploadSteps {
      * <br>--test2:
      * <br>---fileLocation: C:/testNotInSrc.jpg
      * </p>
-     * @param elementName String name of the element to screenshot
+     * @param elementName String name of the element to upload the file(s) to
      */
     @When("^I upload the (.*?) files? to the (.*?)$")
     public static void sendPathsToInputElement(String testDataFilePaths, String elementName) {
@@ -42,5 +44,19 @@ public class UploadSteps {
         }
 
         getElement(elementName).sendFilePaths(filesToUpload);
+    }
+
+    /**
+     * Uploads the file that was most recently downloaded to a given input element.
+     * This method will not work if a file has not been downloaded with the DownloadVerificationSteps / DownloadManager in the current test run.
+     * For use with input elements utilized for uploading files.
+     * <ul>
+     *     <li>I re-upload the most recently downloaded file to the upload button</li>
+     * </ul>
+     * @param elementName String name of the element to upload the file to
+     */
+    @When("^I re-upload the most recently downloaded file to the (.*?)$")
+    public static void sendMostRecentDownloadToInputElement(String elementName){
+        getElement(elementName).sendFilePaths(Collections.singletonList(DownloadManager.getMostRecentDownloadPath().toString()));
     }
 }
