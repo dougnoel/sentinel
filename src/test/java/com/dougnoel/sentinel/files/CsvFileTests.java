@@ -1,9 +1,14 @@
 package com.dougnoel.sentinel.files;
 
+import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.system.DownloadManager;
+import com.dougnoel.sentinel.webdrivers.Driver;
 import org.apache.commons.csv.CSVFormat;
+import org.junit.After;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.junit.Assert.*;
@@ -13,6 +18,11 @@ public class CsvFileTests {
     private static final String filePathOneHeader = "src/test/resources/csv/test_1header.csv";
     private static final String filePathZeroHeaders = "src/test/resources/csv/test_0header.csv";
 
+
+    @After
+    public void tearDown(){
+        Driver.quitAllDrivers();
+    }
 
     @Test(expected = FileNotFoundException.class)
     public void failToCreateCsvFile_BadPath() throws FileNotFoundException {
@@ -29,15 +39,24 @@ public class CsvFileTests {
     @Test
     public void createCsvFile_1() throws FileNotFoundException {
         var filePath = Path.of(filePathOneHeader);
-        CsvFile file2 = new CsvFile(filePath, CSVFormat.DEFAULT);
-        assertNotNull("Expected new CsvFile to be created.", file2);
+        CsvFile file = new CsvFile(filePath, CSVFormat.DEFAULT);
+        assertNotNull("Expected new CsvFile to be created.", file);
     }
 
     @Test
     public void createCsvFile_2() throws FileNotFoundException {
         var filePath = Path.of(filePathOneHeader);
-        CsvFile file3 = new CsvFile(filePath, CSVFormat.EXCEL, 0);
-        assertNotNull("Expected new CsvFile to be created.", file3);
+        CsvFile file = new CsvFile(filePath, CSVFormat.EXCEL, 0);
+        assertNotNull("Expected new CsvFile to be created.", file);
+    }
+
+    @Test
+    public void createCsvFileFromDownload() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("RadioButtonPage");
+        BaseSteps.click("sample_download_link");
+        String filename = DownloadManager.monitorDownload();
+        CsvFile file = new CsvFile();
+        assertEquals("Expected filename of created CSV object to match downloaded filename.", filename, file.getName());
     }
 
     @Test
