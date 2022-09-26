@@ -1,9 +1,7 @@
 package com.dougnoel.sentinel.apis;
 
-import java.net.URI;
 import java.util.Map;
 
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 
 public class Request {
@@ -44,19 +42,6 @@ public class Request {
 	
 	public String getRequestParameters() {
 		return requestParameters.toString();
-	}
-	
-	public String buildRequest() {
-		jsonRequest = getHeaders() + getRequestParameters();
-		return jsonRequest;
-	}
-	
-	public String constructGetRequest(URI uri) {
-		HttpGet httpGet = new HttpGet(uri);
-		if (jsonRequest == null) {
-			return buildRequest();
-		}
-		return httpGet;
 	}
 
 }
