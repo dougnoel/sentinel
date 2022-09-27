@@ -7,10 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -867,7 +865,7 @@ public class Table extends Element {
 	 * @param columnHeader String name of the column.
 	 * @param rowIndex int index of the row, starting at 1.
 	 * @param textToMatch String text to look for in the cell.
-	 * @param partialMatch boolean if the match should be "contains" or "equals". true -> contains.
+	 * @param partialMatch boolean if the match should be "contains" or "equals". if true, contains. if false, equals.
 	 * @param negate boolean true if this method should return once the text is NOT found in the cell.
 	 * @return boolean true if the text to search for is found within the given timeout, false otherwise.
 	 */
