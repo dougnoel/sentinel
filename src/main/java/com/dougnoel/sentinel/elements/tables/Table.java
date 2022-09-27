@@ -869,7 +869,7 @@ public class Table extends Element {
 	 * @param textToMatch String text to look for in the cell.
 	 * @param partialMatch boolean if the match should be "contains" or "equals". true -> contains.
 	 * @param negate boolean true if this method should return once the text is NOT found in the cell.
-	 * @return
+	 * @return boolean true if the text to search for is found within the given timeout, false otherwise.
 	 */
 	public boolean waitForSpecificCellToContain(int numberOfSecondsToWait, String columnHeader, int rowIndex, String textToMatch, boolean partialMatch, boolean negate){
 		if(negate != (verifySpecificCellContains(columnHeader, rowIndex, textToMatch, partialMatch) == null))
@@ -887,12 +887,10 @@ public class Table extends Element {
 			return true;
 		}
 		catch (TimeoutException toe){
-			String errorMsg = SentinelStringUtils.format("Timed out waiting {} seconds for the cell in row {} and column {} to {}{} the text{}",
+			String errorMsg = SentinelStringUtils.format("Timed out waiting {} seconds for the cell in row {} and column {} to {}{} the text {}",
 					numberOfSecondsToWait, rowIndex, columnHeader, (negate ? "not ": ""), (partialMatch ? "contain" : "have"),  textToMatch);
 			log.error(errorMsg);
 			return false;
 		}
-
-
 	}
 }

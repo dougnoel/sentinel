@@ -342,4 +342,20 @@ public class ElementTests {
 
         Assert.assertTrue("A fileException was expected to be thrown, but no exceptions occurred", assertionThrown);
     }
+
+    @Test(expected = AssertionError.class)
+    public void waitForTableCellToHaveFailure(){
+        BaseSteps.navigateToPage("InternetTablesPage");
+        var table = ElementFunctions.getElementAsTable("table 1");
+        Assert.assertTrue("Timed out waiting for cell in the 1st row and Last Name column to have the text Jones",
+                table.waitForSpecificCellToContain(1, "Last Name", 1, "Jones", false, false));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void waitForTableCellToHaveExpectFalseFailure(){
+        BaseSteps.navigateToPage("InternetTablesPage");
+        var table = ElementFunctions.getElementAsTable("table 1");
+        Assert.assertTrue("Timed out waiting for cell in the 1st row and Last Name column to not have the text Smith",
+                table.waitForSpecificCellToContain(1, "Last Name", 1, "Smith", true, true));
+    }
 }

@@ -355,8 +355,8 @@ public class TableVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I wait 15 seconds for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
-     * <li>I wait 5 seconds for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
+     * <li>I wait up to 15 seconds for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
+     * <li>I wait up to 5 seconds for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
      * </ul>
      * @param numberOfSecondsToWait String number of seconds to wait. Must be an integer. Recommended minimum value: 2 seconds.
      * @param rowNum String row of the cell to check.
@@ -366,8 +366,8 @@ public class TableVerificationSteps {
      * @param matchType String whether we are doing an exact match or a partial match.
      * @param textToMatch String the text to look for in the column.
      */
-    @Then("^I wait (.*?) seconds for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
-    public static void waitForSpecificCellToHaveText(String numberOfSecondsToWait, String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
+    @Then("^I wait up to (\\d{1,3}) seconds for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
+    public static void waitForSpecificCellToHaveText(int numberOfSecondsToWait, String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
         boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
         int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
@@ -377,6 +377,6 @@ public class TableVerificationSteps {
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
                 SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
-        Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain(Integer.parseInt(numberOfSecondsToWait), columnName, rowIndex, textToMatch, partialMatch, negate));
+        Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain(numberOfSecondsToWait, columnName, rowIndex, textToMatch, partialMatch, negate));
     }
 }
