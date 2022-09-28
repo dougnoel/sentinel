@@ -1,0 +1,14 @@
+urls:
+  default: https://dougnoel.github.io/sentinel/test/updatableTable.html
+elements:
+  updatable_table:
+    elementType: Table
+    id: "updatableTable"
+  update_id_input:
+    id: "editId"
+  update_first_name_input:
+    id: "editFirstName"
+  update_last_name_input:
+    id: "editLastName"
+  update_table_button:
+    id: "updateTableBtn"
