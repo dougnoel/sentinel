@@ -18,6 +18,8 @@ import org.openqa.selenium.By;
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
+
+    private static final String CONTAIN = "contain";
 	
 	/**
      * Verifies we have the expected, given number of rows in the given string representing the Table object.
@@ -179,7 +181,7 @@ public class TableVerificationSteps {
     @Then("^I verify the (.*?) column in the (.*?)( does not)? (has|have|contains?) the text (.*?)$")
     public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
         Table table = getElementAsTable(tableName);
         String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} {}{} the text {}.",
                 columnName, tableName, (negate ? " does not" : ""), matchType, textToMatch);
@@ -270,7 +272,7 @@ public class TableVerificationSteps {
     	boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
     	
     	var expectedResult = SentinelStringUtils.format(
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
@@ -371,7 +373,7 @@ public class TableVerificationSteps {
         boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
         int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
 
         var expectedResult = SentinelStringUtils.format(
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
