@@ -361,8 +361,8 @@ public class TableVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I wait up to 15 seconds for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
-     * <li>I wait up to 5 seconds for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
+     * <li>I wait for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
+     * <li>I wait for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
      * </ul>
      * @param rowNum String row of the cell to check.
      * @param columnName String column of the cell to check.
