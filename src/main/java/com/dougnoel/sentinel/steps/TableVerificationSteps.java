@@ -372,7 +372,7 @@ public class TableVerificationSteps {
      * @param textToMatch String the text to look for in the column.
      */
     @Then("^I wait for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
-    public static void waitForSpecificCellToHaveText( String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
+    public static void waitForSpecificCellToHaveText(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
         boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
         int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
