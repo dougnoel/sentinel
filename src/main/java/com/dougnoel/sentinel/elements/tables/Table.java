@@ -520,14 +520,23 @@ public class Table extends Element {
 	 * @param textToMatch String the text that should be in every cell
 	 * @return boolean true if the column contains the given text in every cell, false if not
 	 */
-	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
+	public boolean verifyAllColumnCellsContain(String columnHeader, boolean partialMatch, String textToMatch) {
 		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		for (String cell : column) {
 			try {
-				if (!cell.contains(textToMatch)) {
-					log.debug("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
-					return false;
+				if(partialMatch){
+					if (!cell.contains(textToMatch)) {
+						log.debug("Not all values in the {} column contain {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
+						return false;
+					}
 				}
+				else{
+					if (!cell.equals(textToMatch)) {
+						log.debug("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
+						return false;
+					}
+				}
+
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in every cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);

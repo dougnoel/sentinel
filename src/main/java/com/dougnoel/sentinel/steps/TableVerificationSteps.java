@@ -2,6 +2,8 @@ package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 import static com.dougnoel.sentinel.assertions.TableAssert.*;
+
+import com.dougnoel.sentinel.configurations.Time;
 import org.junit.Assert;
 
 import com.dougnoel.sentinel.elements.tables.Table;
@@ -146,19 +148,20 @@ public class TableVerificationSteps {
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param textToMatch String the text to look for in the column
      */
-    @Then("^I verify all the cells in the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
-    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String textToMatch) throws Exception {
+    @Then("^I verify all the cells in the (.*?) column in the (.*?)( do(?:es)? not)? (have|has|contains?) the text (.*?)$")
+    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
+        boolean partialMatch = matchType.contains(CONTAIN);
         var expectedResult = SentinelStringUtils.format(
                 "Expected the {} column of the {} to {}only contain cells with the text {}.",
                 columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
 
         if (negate) {
-            assertFalse(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, textToMatch));
+            assertFalse(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, partialMatch, textToMatch));
         } else {
-            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, textToMatch));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, partialMatch, textToMatch));
         }
     }
 
@@ -353,14 +356,14 @@ public class TableVerificationSteps {
     }
 
     /**
-     * Refreshes the page, waiting the configured time for the table to contain the given value in the given row and column.
+     * Refreshes the page, waiting the configured time (given by the longProcessTimeout "-DlongProcessTimeout") for the table to contain the given value in the given row and column.
+     * By default, the longProcessTimeout is 60 seconds.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I wait up to 15 seconds for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
      * <li>I wait up to 5 seconds for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
      * </ul>
-     * @param numberOfSecondsToWait String number of seconds to wait. Must be an integer. Recommended minimum value: 2 seconds.
      * @param rowNum String row of the cell to check.
      * @param columnName String column of the cell to check.
      * @param tableName String name of the table.
@@ -368,8 +371,8 @@ public class TableVerificationSteps {
      * @param matchType String whether we are doing an exact match or a partial match.
      * @param textToMatch String the text to look for in the column.
      */
-    @Then("^I wait up to (\\d{1,3}) seconds for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
-    public static void waitForSpecificCellToHaveText(int numberOfSecondsToWait, String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
+    @Then("^I wait for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
+    public static void waitForSpecificCellToHaveText( String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
         boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
         int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
@@ -379,6 +382,6 @@ public class TableVerificationSteps {
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
                 SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
-        Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain(numberOfSecondsToWait, columnName, rowIndex, textToMatch, partialMatch, negate));
+        Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain((int)Time.longProcessTimeout().toSeconds(), columnName, rowIndex, textToMatch, partialMatch, negate));
     }
 }

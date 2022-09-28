@@ -25,7 +25,7 @@ Feature: Table Tests
       And I verify the First Name column in the Example Table does not have the text B
       And I verify the First Name column in the Example Table has the text Bob
       And I verify all the cells in the Last Name column in the Example Table contain the text Smith
-      And I verify all the cells in the Last Name column in the Example Table do not contain the text Brown
+      And I verify all the cells in the Last Name column in the Example Table do not have the text Brown
    	  And I verify the cells in the First Name column in the Example Table are sorted in ascending order
       And I verify the cells in the Distance column in the Example Table are sorted in ascending order
       And I verify the cells in the ID Number column in the Example Table are sorted in descending order
@@ -77,6 +77,6 @@ Feature: Table Tests
     Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update last name input
       And I verify the row in the updatable table with the value entered for the update last name input contains the xpath .//td[.='2']
       And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']
-      And I wait up to 10 seconds for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
-      And I wait up to 10 seconds for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
+      And I wait for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
+      And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
 
