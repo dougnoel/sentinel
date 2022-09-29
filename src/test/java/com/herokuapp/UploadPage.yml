@@ -21,3 +21,5 @@ testdata:
       fileLocation: "images/"
     file_doesnot_exist:
       fileLocation: "DoesNotExist.doesnot"
+    csv_file_with_1_header_row:
+      fileLocation: "src/test/resources/csv/test_1header.csv"

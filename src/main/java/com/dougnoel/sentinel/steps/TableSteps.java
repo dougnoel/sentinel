@@ -144,5 +144,5 @@ public class TableSteps {
     @When("^I find and click the header for the (.*) column in the (.*)$")
     public static void clickColumnHeaderToSort(String columnName, String tableName) {
     	getElementAsTable(tableName).clickColumnHeader(columnName);
-    }
+	}
 }

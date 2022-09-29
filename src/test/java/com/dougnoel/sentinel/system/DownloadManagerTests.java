@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.junit.After;
 import org.junit.Test;
 
 import com.dougnoel.sentinel.steps.BaseSteps;
@@ -14,6 +15,11 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 import de.redsix.pdfcompare.RenderingException;
 
 public class DownloadManagerTests {
+
+	@After
+	public void tearDown(){
+		Driver.quitAllDrivers();
+	}
 
 	@Test
 	public void testVerifyTextInDownloadedPDFPageOne() {
@@ -56,7 +62,6 @@ public class DownloadManagerTests {
 		assertTrue("Expecting TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(filename));
 		String savedImage = DownloadManager.saveImageInPDF(0, filename);
 		assertTrue("Expecting "+savedImage+" from TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(savedImage));
-		Driver.quitAllDrivers();
 	}
 
 	@Test
