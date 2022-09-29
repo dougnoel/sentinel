@@ -747,8 +747,8 @@ public class Table extends Element {
 	 * Returns true if the table has a column header that's equal to the given text. false if the table does not have a column header that's equal to the given text.
 	 *
 	 * @param columnName String name of column to find
-	 * @param partialMatch boolean if true, this method returns null if the actual header contains the given columnHeader.
-	 * 	 *                     if false, this method returns null when the actual header exactly matches the given columnHeader.
+	 * @param partialMatch boolean if true, this method returns true if the actual header contains the given columnHeader.
+	 * 	 *                     if false, this method returns true when the actual header exactly matches the given columnHeader.
 	 * @return boolean true if column equals, false if column is not equal.
 	 */
 	public boolean verifyColumnHeaderEquals(String columnName, boolean partialMatch) {
