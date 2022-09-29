@@ -752,12 +752,12 @@ public class Table extends Element {
 	 * @return boolean true if column equals, false if column is not equal.
 	 */
 	public boolean verifyColumnHeaderEquals(String columnName, boolean partialMatch) {
-		List<String> headers = getOrCreateHeaders();
+		List<String> columnHeader = getOrCreateHeaders();
 		if(partialMatch){
-			return headers.stream().anyMatch(header -> header.contains(columnName));
+			return columnHeader.stream().anyMatch(header -> header.contains(columnName));
 		}
 		else{
-			return headers.stream().anyMatch(header -> header.equals(columnName));
+			return columnHeader.stream().anyMatch(header -> header.equals(columnName));
 		}
 	}
 
