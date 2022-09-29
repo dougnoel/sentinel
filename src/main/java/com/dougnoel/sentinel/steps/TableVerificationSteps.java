@@ -106,7 +106,6 @@ public class TableVerificationSteps {
      * <li>I verify the Expense Report table have a Transport column </li>
      * <li>I verify the Lottery table does not have a Date column</li>
      * <li>I verify the Discography table does not have the Album Name column </li>
-
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
@@ -123,18 +122,10 @@ public class TableVerificationSteps {
 
         String expectedResult = SentinelStringUtils.format("Expected the {} column to {}{} the column header in the {}.",
                 columnName, negateText, partialMatchText, tableName);
-        if (partialMatch) {
-            if (negate) {
-                assertFalse(expectedResult,table, () -> table.verifyColumnExists(columnName));
-            } else {
-                assertTrue(expectedResult, table, () -> table.verifyColumnExists(columnName));
-            }
+        if (negate) {
+            assertFalse(expectedResult,table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
         } else {
-            if (negate) {
-                assertFalse(expectedResult, table, () -> table.verifyColumnEquals(columnName));
-            } else {
-                assertTrue(expectedResult, table, () -> table.verifyColumnEquals(columnName));
-            }
+            assertTrue(expectedResult, table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
         }
     }
     

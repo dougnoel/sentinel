@@ -711,7 +711,7 @@ public class Table extends Element {
 	 * @return boolean true if column cells are unique, false if duplicates are found, throws error otherwise
 	 */
 	public boolean verifyColumnCellsAreUnique(String columnHeader) {
-		if (!verifyColumnExists(columnHeader)) {
+		if (!verifyColumnHeaderEquals(columnHeader, false)) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
 		}
@@ -744,33 +744,19 @@ public class Table extends Element {
 	}
 
 	/**
-	 * Returns true if column exists, false if column does not exist
-	 * 
-	 * @param columnName String name of column to find
-	 * @return boolean true if column exists, false if column does not exists.
-	 */
-	public boolean verifyColumnExists(String columnName) {
-		for (String header : getOrCreateHeaders()) {
-			if (header.contains(columnName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Returns true if column is equal, false if column is not equal
 	 *
 	 * @param columnName String name of column to find
 	 * @return boolean true if column equals, false if column is not equal.
 	 */
-	public boolean verifyColumnEquals(String columnName) {
-		for (String header : getOrCreateHeaders()) {
-			if (header.equals(columnName)) {
-				return true;
-			}
+	public boolean verifyColumnHeaderEquals(String columnName, boolean partialMatch) {
+		List<String> headers = getOrCreateHeaders();
+		if(partialMatch){
+			return headers.stream().anyMatch(header -> header.contains(columnName));
 		}
-		return false;
+		else{
+			return headers.stream().anyMatch(header -> header.equals(columnName));
+		}
 	}
 
 	/**
@@ -796,7 +782,7 @@ public class Table extends Element {
 		getOrCreateRows();
 		List<Integer> indexes = new ArrayList<>();
 		for (String columnHeader : columnHeaders) {
-			if (!verifyColumnExists(columnHeader)) {
+			if (!verifyColumnHeaderEquals(columnHeader, false)) {
 				String errorMessage = SentinelStringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage);
