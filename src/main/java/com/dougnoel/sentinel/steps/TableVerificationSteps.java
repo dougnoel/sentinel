@@ -18,6 +18,8 @@ import org.openqa.selenium.By;
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
+
+    private static final String CONTAIN = "contain";
 	
 	/**
      * Verifies we have the expected, given number of rows in the given string representing the Table object.
@@ -90,21 +92,43 @@ public class TableVerificationSteps {
 	}
 
     /**
-     * Verifies the given table contains the given column
+     * Verifies the given table contains or exactly matches or does not contain or does not exactly match the given column
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Contact Us table contains the Phone Number column </li>
+     * <li>I verify the Contact Us table contains the Phone Number column</li>
      * <li>I verify the Vision benefits table contains a Deductible column</li>
-     * <li>I verify the Discography table contains the Album Name column </li>
+     * <li>I verify the Contact Us table does not contains the Phone Number column</li>
+     * <li>I verify the Vision benefits table does not contains a Deductible column</li>
+     * <li>I verify the Discography table has the Album Name column</li>
+     * <li>I verify the Awards table has a Movie Name column</li>
+     * <li>I verify the Discography table does not has the Album Name column</li>
+     * <li>I verify the Awards table does not has a Movie Name column</li>
+     * <li>I verify the College table have the Course Name column </li>
+     * <li>I verify the Expense Report table have a Transport column </li>
+     * <li>I verify the Lottery table does not have a Date column</li>
+     * <li>I verify the Discography table does not have the Album Name column </li>
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
      */
-    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String columnName) throws Exception {
+    @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
+    public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) throws Exception {
         Table table = getElementAsTable(tableName);
-        assertTrue(table, () -> table.verifyColumnExists(columnName));
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        boolean partialMatch = matchType.contains(CONTAIN);
+        String partialMatchText = partialMatch ? CONTAIN : "exactly match";
+
+        String expectedResult = SentinelStringUtils.format("Expected the {} column to {}{} the column header in the {}.",
+                columnName, negateText, partialMatchText, tableName);
+        if (negate) {
+            assertFalse(expectedResult,table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
+        } else {
+            assertTrue(expectedResult, table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
+        }
     }
     
     /**
@@ -179,7 +203,7 @@ public class TableVerificationSteps {
     @Then("^I verify the (.*?) column in the (.*?)( does not)? (has|have|contains?) the text (.*?)$")
     public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
         Table table = getElementAsTable(tableName);
         String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} {}{} the text {}.",
                 columnName, tableName, (negate ? " does not" : ""), matchType, textToMatch);
@@ -270,7 +294,7 @@ public class TableVerificationSteps {
     	boolean negate = !StringUtils.isEmpty(assertion);
         Table table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
     	
     	var expectedResult = SentinelStringUtils.format(
                 "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
