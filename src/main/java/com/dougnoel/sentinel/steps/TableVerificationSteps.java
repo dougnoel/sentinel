@@ -94,21 +94,43 @@ public class TableVerificationSteps {
 	}
 
     /**
-     * Verifies the given table contains the given column
+     * Verifies the given table contains or exactly matches or does not contain or does not exactly match the given column
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Contact Us table contains the Phone Number column </li>
+     * <li>I verify the Contact Us table contains the Phone Number column</li>
      * <li>I verify the Vision benefits table contains a Deductible column</li>
-     * <li>I verify the Discography table contains the Album Name column </li>
+     * <li>I verify the Contact Us table does not contains the Phone Number column</li>
+     * <li>I verify the Vision benefits table does not contains a Deductible column</li>
+     * <li>I verify the Discography table has the Album Name column</li>
+     * <li>I verify the Awards table has a Movie Name column</li>
+     * <li>I verify the Discography table does not has the Album Name column</li>
+     * <li>I verify the Awards table does not has a Movie Name column</li>
+     * <li>I verify the College table have the Course Name column </li>
+     * <li>I verify the Expense Report table have a Transport column </li>
+     * <li>I verify the Lottery table does not have a Date column</li>
+     * <li>I verify the Discography table does not have the Album Name column </li>
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
      */
-    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String columnName) throws Exception {
+    @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
+    public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) throws Exception {
         Table table = getElementAsTable(tableName);
-        assertTrue(table, () -> table.verifyColumnExists(columnName));
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        boolean partialMatch = matchType.contains(CONTAIN);
+        String partialMatchText = partialMatch ? CONTAIN : "exactly match";
+
+        String expectedResult = SentinelStringUtils.format("Expected the {} column to {}{} the column header in the {}.",
+                columnName, negateText, partialMatchText, tableName);
+        if (negate) {
+            assertFalse(expectedResult,table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
+        } else {
+            assertTrue(expectedResult, table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
+        }
     }
     
     /**

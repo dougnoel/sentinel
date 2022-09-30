@@ -62,6 +62,24 @@ Feature: Table Tests
       And I accept the JS alert
     Then I verify all cells in the Empty Column column in the Example Table are empty
 
+  @#381 @ngx-datatable
+  Scenario: Verifies the given table contains or does not contain the given column
+    Given I am on the NGX Data Table Page
+    Then I verify the Example Table contains the Name column
+      And I verify the Example Table contains a Name column
+      And I verify the Example Table does not contains the Missing column
+      And I verify the Example Table does not contains a Missing column
+      And I verify the Example Table contains the Nam column
+      And I verify the Example Table contains a Nam column
+      And I verify the Example Table has a Name column
+      And I verify the Example Table has the Name column
+      And I verify the Example Table have a Name column
+      And I verify the Example Table have the Name column
+      And I verify the Example Table does not has a Missing column
+      And I verify the Example Table does not has the Missing column
+      And I verify the Example Table does not have a Missing column
+      And I verify the Example Table does not have the Missing column
+
   @updatable-html-table
   Scenario: I verify a specific column contains a value used and stored earlier in the test
     Given I am on the Updatable Table Page

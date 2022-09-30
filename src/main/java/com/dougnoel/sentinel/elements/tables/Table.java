@@ -721,7 +721,7 @@ public class Table extends Element {
 	 * @return boolean true if column cells are unique, false if duplicates are found, throws error otherwise
 	 */
 	public boolean verifyColumnCellsAreUnique(String columnHeader) {
-		if (!verifyColumnExists(columnHeader)) {
+		if (!verifyColumnHeaderEquals(columnHeader, false)) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
 		}
@@ -754,18 +754,21 @@ public class Table extends Element {
 	}
 
 	/**
-	 * Returns true if column exists, false if column does not exist
-	 * 
+	 * Returns true if the table has a column header that's equal to the given text. false if the table does not have a column header that's equal to the given text.
+	 *
 	 * @param columnName String name of column to find
-	 * @return boolean true if column exists, false if column does not exists.
+	 * @param partialMatch boolean if true, this method returns true if the actual header contains the given columnHeader.
+	 * 	 *                     if false, this method returns true when the actual header exactly matches the given columnHeader.
+	 * @return boolean true if column equals, false if column is not equal.
 	 */
-	public boolean verifyColumnExists(String columnName) {
-		for (String header : getOrCreateHeaders()) {
-			if (header.contains(columnName)) {
-				return true;
-			}
+	public boolean verifyColumnHeaderEquals(String columnName, boolean partialMatch) {
+		List<String> columnHeader = getOrCreateHeaders();
+		if(partialMatch){
+			return columnHeader.stream().anyMatch(header -> header.contains(columnName));
 		}
-		return false;
+		else{
+			return columnHeader.stream().anyMatch(header -> header.equals(columnName));
+		}
 	}
 
 	/**
@@ -791,7 +794,7 @@ public class Table extends Element {
 		getOrCreateRows();
 		List<Integer> indexes = new ArrayList<>();
 		for (String columnHeader : columnHeaders) {
-			if (!verifyColumnExists(columnHeader)) {
+			if (!verifyColumnHeaderEquals(columnHeader, false)) {
 				String errorMessage = SentinelStringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage);
