@@ -106,29 +106,35 @@ public class TableVerificationSteps {
     }
     
     /**
-     * Verifies a table column has text for the stored value.
+     * Verifies a table column does or does not contain text for the stored value.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I verify the Name column in the user info table contains the same text entered text for the username</li>
      * <li>I verify the Contact column in the provider info table contains the same text used for the phone number field</li>
      * <li>I verify the Airport Code column in the Airports table contains the same text selected for the airport's code RDU</li>
+     * <li>I verify the Airport Code column in the Airports table does not contain the same text selected for the airport's code RDU</li>
      * </ul>
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
      * @param key String the key to retrieve the text to match from the configuration manager
      */
-    @Then("^I verify the (.*?) column in the (.*?) contains the same text (?:entered|selected|used) for the (.*)$")
-    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) throws Exception {
+    @Then("^I verify the (.*?) column in the (.*?)( do(?:es)? not)? contains? the same text (?:entered|selected|used) for the (.*)$")
+    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String assertion, String key) throws Exception {
     	var textToMatch = Configuration.toString(key);
+        boolean negate = !StringUtils.isEmpty(assertion);
         String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
         Assert.assertNotNull(errorMessage, textToMatch);
 
         errorMessage = SentinelStringUtils.format("Expected the {} column of the {} to contain any cells with the text {}", columnName, tableName, textToMatch);
         Table table = getElementAsTable(tableName);
-        assertTrue(errorMessage, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
+        if (negate) {
+            assertFalse(errorMessage, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
+        } else {
+            assertTrue(errorMessage, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
+        }
     }
-    
+
     /**
      * Verifies all the cells in a table column does or does not contain the indicated text.
      * <p>
