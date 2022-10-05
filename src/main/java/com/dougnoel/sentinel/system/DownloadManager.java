@@ -45,6 +45,8 @@ public class DownloadManager {
 
     private static String downloadDirectory = createDownloadDirectory();
 
+    private static Path mostRecentDownloadPath = null;
+
     private DownloadManager(){}
 
     /**
@@ -107,6 +109,7 @@ public class DownloadManager {
             long currentTime = (System.currentTimeMillis() - startTime) / 1000;
             if (currentTime > timeOut || watchKey == null) {
                 log.error("Download operation timed out. Expected file was not downloaded.");
+                setMostRecentDownloadPath(null);
                 return downloadedFileName;
             }
 
@@ -119,6 +122,7 @@ public class DownloadManager {
                         downloadedFileName = fileName;
                         log.debug("Downloaded file found: {}.{}", fileName, fileExtension);
                         Thread.sleep(loopTime);
+                        setMostRecentDownloadPath(downloadedFileName);
                         return downloadedFileName;
                     }
                 }
@@ -127,12 +131,13 @@ public class DownloadManager {
             currentTime = (System.currentTimeMillis() - startTime) / 1000;
             if (currentTime > timeOut) {
                 log.error("Failed to download expected file.");
+                setMostRecentDownloadPath(null);
                 return downloadedFileName;
             }
             valid = watchKey.reset();
             
         } while (valid);
-        
+        setMostRecentDownloadPath(downloadedFileName);
         return downloadedFileName;
     }
 
@@ -383,5 +388,24 @@ public class DownloadManager {
      */
     public static void clearDownloadDirectory() throws IOException {
         FileUtils.cleanDirectory(new File(downloadDirectory));
+    }
+
+    /**
+     * Sets the path of the most recently-downloaded file to the current download directory + the given filename.
+     * @param filename String name of the file downloaded.
+     */
+    private static void setMostRecentDownloadPath(String filename){
+        if(StringUtils.isBlank(filename))
+            mostRecentDownloadPath = null;
+        else
+            mostRecentDownloadPath = Path.of(getDownloadDirectory(), filename);
+    }
+
+    /**
+     * Gets path of the most recently-downloaded file.
+     * @return Path the path to the most recently-downloaded file.
+     */
+    public static Path getMostRecentDownloadPath(){
+        return mostRecentDownloadPath;
     }
 }

@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.system;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import com.dougnoel.sentinel.files.TestFile;
 import org.apache.commons.io.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +30,8 @@ import static java.util.Map.entry;
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
+
+	private static TestFile currentTestFile = null;
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -244,5 +247,21 @@ public class FileManager {
 		}
 
 		return convertPathSeparators(pathToProcess);
+	}
+
+	/**
+	 * Sets the current file under test.
+	 * @param file TestFile the file to test
+	 */
+	public static void setCurrentTestFile(TestFile file){
+		currentTestFile = file;
+	}
+
+	/**
+	 * Get the current file under test.
+	 * @return TestFile the file under test.
+	 */
+	public static TestFile getCurrentTestFile(){
+		return currentTestFile;
 	}
 }
