@@ -60,7 +60,7 @@ public class Time {
 			longProcessTimeout = Duration.ofSeconds(Configuration.toLong("longProcessTimeout"));
 			if (longProcessTimeout.isZero()) {
 				longProcessTimeout = Duration.ofSeconds(60);
-				log.debug("No longProcessTimeout property set, using the default timeout value of {} seconds. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", longProcessTimeout);
+				log.debug("No longProcessTimeout property set, using the default timeout value of {} seconds. This can be set in the sentinel.yml config file with a 'longProcessTimeout=' property or on the command line with the switch '-longProcessTimeout='.", longProcessTimeout);
 			}
 		}
 		return longProcessTimeout;
