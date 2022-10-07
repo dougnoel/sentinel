@@ -11,6 +11,8 @@ public class Time {
 	private static final Duration interval = Duration.ofMillis(10);
 	private static final Duration loopInterval = Duration.ofMillis(100);
 
+	private static Duration longProcessTimeout = Duration.ZERO;
+
 	private Time() {
 		
 	}
@@ -46,6 +48,23 @@ public class Time {
 		}
 		return timeout;
 	}
+
+	/**
+	 * Returns the value set in the longProcessTimeout property in seconds, or a default of 60 seconds
+	 * if nothing was configured.
+	 * @return Duration the timeout as a Java Duration object that can be used to get different values
+	 *
+	 */
+	public static Duration longProcessTimeout(){
+		if (longProcessTimeout.isZero()) {
+			longProcessTimeout = Duration.ofSeconds(Configuration.toLong("longProcessTimeout"));
+			if (longProcessTimeout.isZero()) {
+				longProcessTimeout = Duration.ofSeconds(60);
+				log.debug("No longProcessTimeout property set, using the default timeout value of {} seconds. This can be set in the sentinel.yml config file with a 'longProcessTimeout=' property or on the command line with the switch '-longProcessTimeout='.", longProcessTimeout);
+			}
+		}
+		return longProcessTimeout;
+	}
 	
 	/**
 	 * Returns 10 milliseconds in a Duration object for the interval between element searches.
@@ -68,7 +87,9 @@ public class Time {
 	 */
 	public static void reset() {
 		timeout = Duration.ZERO;
+		longProcessTimeout = Duration.ZERO;
 		Configuration.clear("timeout");
+		Configuration.clear("longProcessTimeout");
 	}
 
 }
