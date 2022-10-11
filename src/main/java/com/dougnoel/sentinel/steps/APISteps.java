@@ -6,35 +6,24 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.apis.API;
 import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.apis.Response;
-import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.swagger.parser.OpenAPIParser;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.servers.Server;
-import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 public class APISteps {
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
-	private static final String RESPONSE_DEBUG = "Response: {}";
 	
 	/**
 	 * Gets a JWT Token from a currently open browser that you have logged into

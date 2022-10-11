@@ -90,6 +90,7 @@ public class API {
 		switch (authenticationType) {
 		case JWT:
 			String jsExpression = "return JSON.parse(window.sessionStorage[Object.keys(window.sessionStorage).filter(key => /^oidc.*$/.test(key)).shift()]).id_token";
+			//return window.localStorage.getItem('id_token')").ToString()
 			authToken = ((JavascriptExecutor) WebDriverFactory.getWebDriver()).executeScript(jsExpression);
 			break;
 		case AUTH_KEY:
