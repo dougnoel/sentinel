@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.CharUtils;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.openqa.selenium.InvalidArgumentException;
 
@@ -79,5 +80,26 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
     	// StandardCharsets.UTF_8.name() > JDK 7
     	return result.toString("UTF-8");
     }
+
+	/**
+	 * Converts the leading integer portion of a string to an int.
+	 * <b>Examples:</b>
+	 * <ul>
+	 *<li>parseOrdinal("12th") = 12</li>
+	 *<li>parseOrdinal("1t2h3") = 1</li>
+	 *<li>parseOrdinal("ten") throws Exception</li>
+	 *</ul>
+	 * @param stringStartingWithInteger String a string with leading integers.
+	 * @return int the integers in the passed string up until the point of the first non-numeric character.
+	 */
+	public static int parseOrdinal(String stringStartingWithInteger){
+		StringBuilder builder = new StringBuilder();
+		stringStartingWithInteger.codePoints()
+				.mapToObj(i -> (char)i)
+				.takeWhile(CharUtils::isAsciiNumeric)
+				.forEach(builder::append);
+
+		return Integer.parseInt(builder.toString());
+	}
 
 }

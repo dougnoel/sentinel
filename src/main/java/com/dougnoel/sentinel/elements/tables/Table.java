@@ -7,17 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.strings.AlphanumComparator;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Implements a Table WebElement. contains functionality for counting values, finding values inside a table, and other
@@ -519,14 +520,23 @@ public class Table extends Element {
 	 * @param textToMatch String the text that should be in every cell
 	 * @return boolean true if the column contains the given text in every cell, false if not
 	 */
-	public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch) {
+	public boolean verifyAllColumnCellsContain(String columnHeader, boolean partialMatch, String textToMatch) {
 		ArrayList<String> column = (ArrayList<String>) getAllCellDataForColumn(columnHeader);
 		for (String cell : column) {
 			try {
-				if (!cell.contains(textToMatch)) {
-					log.debug("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
-					return false;
+				if(partialMatch){
+					if (!cell.contains(textToMatch)) {
+						log.debug("Not all values in the {} column contain {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
+						return false;
+					}
 				}
+				else{
+					if (!cell.equals(textToMatch)) {
+						log.debug("Not all values in the {} column are equal to {}. Cell contained the data: {}. False result returned.", columnHeader, textToMatch, cell);
+						return false;
+					}
+				}
+
 			} catch (NullPointerException e) {
 				String errorMessage = SentinelStringUtils.format("NullPointerException triggered when searching for the value {} in every cell in the {} column. Value found: {}", textToMatch, columnHeader, cell);
 				log.error(errorMessage);
@@ -711,7 +721,7 @@ public class Table extends Element {
 	 * @return boolean true if column cells are unique, false if duplicates are found, throws error otherwise
 	 */
 	public boolean verifyColumnCellsAreUnique(String columnHeader) {
-		if (!verifyColumnExists(columnHeader)) {
+		if (!verifyColumnHeaderEquals(columnHeader, false)) {
 			log.error("IllegalArgumentException: Column header \"{}\" does not exist.", columnHeader);
 			throw new IllegalArgumentException("Column header \"" + columnHeader + "\" does not exist.");
 		}
@@ -744,18 +754,21 @@ public class Table extends Element {
 	}
 
 	/**
-	 * Returns true if column exists, false if column does not exist
-	 * 
+	 * Returns true if the table has a column header that's equal to the given text. false if the table does not have a column header that's equal to the given text.
+	 *
 	 * @param columnName String name of column to find
-	 * @return boolean true if column exists, false if column does not exists.
+	 * @param partialMatch boolean if true, this method returns true if the actual header contains the given columnHeader.
+	 * 	 *                     if false, this method returns true when the actual header exactly matches the given columnHeader.
+	 * @return boolean true if column equals, false if column is not equal.
 	 */
-	public boolean verifyColumnExists(String columnName) {
-		for (String header : getOrCreateHeaders()) {
-			if (header.contains(columnName)) {
-				return true;
-			}
+	public boolean verifyColumnHeaderEquals(String columnName, boolean partialMatch) {
+		List<String> columnHeader = getOrCreateHeaders();
+		if(partialMatch){
+			return columnHeader.stream().anyMatch(header -> header.contains(columnName));
 		}
-		return false;
+		else{
+			return columnHeader.stream().anyMatch(header -> header.equals(columnName));
+		}
 	}
 
 	/**
@@ -781,7 +794,7 @@ public class Table extends Element {
 		getOrCreateRows();
 		List<Integer> indexes = new ArrayList<>();
 		for (String columnHeader : columnHeaders) {
-			if (!verifyColumnExists(columnHeader)) {
+			if (!verifyColumnHeaderEquals(columnHeader, false)) {
 				String errorMessage = SentinelStringUtils.format("Column header \"{}\" does not exist.", columnHeader);
 				log.error(errorMessage);
 				throw new NoSuchElementException(errorMessage);
@@ -854,6 +867,40 @@ public class Table extends Element {
 			log.error(errorMsg);
 			return false;
 
+		}
+	}
+
+
+	/**
+	 * Waits the given amount of seconds until the given cell does or does not have the given text in it.
+	 * @param numberOfSecondsToWait int number of seconds to wait for the desired condition.
+	 * @param columnHeader String name of the column.
+	 * @param rowIndex int index of the row, starting at 1.
+	 * @param textToMatch String text to look for in the cell.
+	 * @param partialMatch boolean if the match should be "contains" or "equals". if true, contains. if false, equals.
+	 * @param negate boolean true if this method should return once the text is NOT found in the cell.
+	 * @return boolean true if the text to search for is found within the given timeout, false otherwise.
+	 */
+	public boolean waitForSpecificCellToContain(int numberOfSecondsToWait, String columnHeader, int rowIndex, String textToMatch, boolean partialMatch, boolean negate){
+		if(negate != (verifySpecificCellContains(columnHeader, rowIndex, textToMatch, partialMatch) == null))
+			return true; //check condition initially before starting page refresh cycle
+
+		WebDriverWait webDriverWait = new WebDriverWait(WebDriverFactory.getWebDriver(), numberOfSecondsToWait);
+		webDriverWait.ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+
+		try{
+			webDriverWait.until(x -> {
+				BaseSteps.pressBrowserButton("refresh");
+				reset();
+				return negate != (verifySpecificCellContains(columnHeader, rowIndex, textToMatch, partialMatch) == null);
+			});
+			return true;
+		}
+		catch (TimeoutException toe){
+			String errorMsg = SentinelStringUtils.format("Timed out waiting {} seconds for the cell in row {} and column {} to {}{} the text {}",
+					numberOfSecondsToWait, rowIndex, columnHeader, (negate ? "not ": ""), (partialMatch ? "contain" : "have"),  textToMatch);
+			log.error(errorMsg);
+			return false;
 		}
 	}
 }

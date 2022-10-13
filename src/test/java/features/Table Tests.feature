@@ -25,7 +25,7 @@ Feature: Table Tests
       And I verify the First Name column in the Example Table does not have the text B
       And I verify the First Name column in the Example Table has the text Bob
       And I verify all the cells in the Last Name column in the Example Table contain the text Smith
-      And I verify all the cells in the Last Name column in the Example Table do not contain the text Brown
+      And I verify all the cells in the Last Name column in the Example Table do not have the text Brown
    	  And I verify the cells in the First Name column in the Example Table are sorted in ascending order
       And I verify the cells in the Distance column in the Example Table are sorted in ascending order
       And I verify the cells in the ID Number column in the Example Table are sorted in descending order
@@ -62,6 +62,24 @@ Feature: Table Tests
       And I accept the JS alert
     Then I verify all cells in the Empty Column column in the Example Table are empty
 
+  @#381 @ngx-datatable
+  Scenario: Verifies the given table contains or does not contain the given column
+    Given I am on the NGX Data Table Page
+    Then I verify the Example Table contains the Name column
+      And I verify the Example Table contains a Name column
+      And I verify the Example Table does not contains the Missing column
+      And I verify the Example Table does not contains a Missing column
+      And I verify the Example Table contains the Nam column
+      And I verify the Example Table contains a Nam column
+      And I verify the Example Table has a Name column
+      And I verify the Example Table has the Name column
+      And I verify the Example Table have a Name column
+      And I verify the Example Table have the Name column
+      And I verify the Example Table does not has a Missing column
+      And I verify the Example Table does not has the Missing column
+      And I verify the Example Table does not have a Missing column
+      And I verify the Example Table does not have the Missing column
+
   @updatable-html-table
   Scenario: I verify a specific column contains a value used and stored earlier in the test
     Given I am on the Updatable Table Page
@@ -75,5 +93,8 @@ Feature: Table Tests
     When I randomly enter test in the update last name input
       And I click the update table button
     Then I verify the cell in the 2nd row and the Last Name column of the updatable table contains the same text used for the update last name input
-      And I verify the row in the updatable table with the value entered for the update last name input contains the xpath .//td[contains(text(),'2')]
-      And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[contains(text(),'1')]
+      And I verify the row in the updatable table with the value entered for the update last name input contains the xpath .//td[.='2']
+      And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']
+      And I wait for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
+      And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
+
