@@ -45,12 +45,29 @@ public class BaseSteps {
      * <li>I click the Login button</li>
      * <li>I click an Operation Button</li>
      * </ul>
-     * 
+     *
      * @param elementName String the name of the element to click
      */
     @When("^I click (?:the|a|an|on) (.*?)$")
     public static void click(String elementName) {
         getElement(elementName).click();
+    }
+
+    /**
+     * Context clicks (right clicks) on an element.
+     * <p></p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I context click a login button</li>
+     * <li>I context click the Login button</li>
+     * <li>I context click an Operation Button</li>
+     * </ul>
+     *
+     * @param elementName String the name of the element to context click
+     */
+    @When("^I context click (?:the|a|an|on) (.*?)$")
+    public static void contextClick(String elementName) {
+        getElement(elementName).contextClick();
     }
 
     /**

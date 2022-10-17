@@ -45,6 +45,13 @@ public class Driver {
     	return getSentinelDriver().getWebDriver();
     }
 
+	/**
+	 *  Sets the session's webdriver to the new webdriver passed.
+	 */
+	public static void setWebDriver(WebDriver newDriver){
+		getSentinelDriver().setWebDriver(newDriver);
+	}
+
     /**
      * Quits all drivers and removes them from the list of active drivers.
      */
@@ -78,8 +85,24 @@ public class Driver {
 	public static void goToNewWindow() {
 		getSentinelDriver().goToNewWindow();
 	}
-    
-    /**
+
+	/**
+	 * Sets the window that the driver will be using by handle/title
+	 */
+	public static void goToTitledWindow(String title) {
+		getSentinelDriver().goToTitledWindow(title);
+	}
+
+	/**
+	 * Checks if a window is found within the session
+	 * @param title String the title of the window to check for
+	 * @return true if the window is found, false if not
+	 */
+	public static boolean doesWindowExist(String title) {
+		return getSentinelDriver().doesWindowExist(title);
+	}
+
+	/**
      * Asks the current driver to move backwards to the previous window in the list. Use of
      * this method assumes that the user knows the expected state of the software they are 
      * testing and will test to make sure they are in the correct window.

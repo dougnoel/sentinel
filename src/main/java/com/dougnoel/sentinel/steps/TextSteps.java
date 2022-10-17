@@ -5,9 +5,8 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 
@@ -110,41 +109,41 @@ public class TextSteps {
     }
 
     /**
-     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, or TAB.
+     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN.
      * @param keyName
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I press the escape key</li>
      * <li>I press the enter key</li>
-     * <li>I press the tab key</li>
+     * <li>I press the page up key</li>
      * </ul>
      */
-    @When("^I press the (escape|enter|return|tab) key$")
+    @When("^I press the (escape|enter|return|tab|page up|page down) key$")
     public static void keyPress(String keyName) {
-    	keyName = keyName.toUpperCase();
+    	keyName = keyName.toUpperCase().replace(" ", "_");
     	var driver = Driver.getWebDriver();
-        WebElement element = driver.findElement(By.tagName("Body"));
-        element.sendKeys(Keys.valueOf(keyName));
+        new Actions(driver).sendKeys(keyName).build().perform();
     }
 
     /**
-     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, or TAB to a given element.
+     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN to a given element.
      * @param keyName
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I press the escape key on the search box</li>
      * <li>I press the enter key in the search box</li>
+     * <li>I press the page down key on the dropdown</li>
      * </ul>
      */
-    @When("^I press the (escape|enter|return|tab) key (?:to|on|in) the (.*)$")
+    @When("^I press the (escape|enter|return|tab|page up|page down) key (?:to|on|in) the (.*)$")
     public static void keyPressElement(String keyName, String element) {
-        keyName = keyName.toUpperCase();
+        keyName = keyName.toUpperCase().replace(" ", "_");
         Element targetElement = getElement(element);
         targetElement.sendSpecialKey(Keys.valueOf(keyName));
     }
-    
+
     /**
      * Clears the text in a text box that matches the given elementName as defined on the 
      * current Page object, and clears any value stored in the
