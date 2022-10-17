@@ -145,6 +145,7 @@ public class TableVerificationSteps {
      * </ul>
      * @param columnName String Name of the column to verify
      * @param tableName String Name of the table containing the column
+     * @param assertion String Assertion dictating if we are checking if the column does contain or does not contain
      * @param key String the key to retrieve the text to match from the configuration manager
      */
     @Then("^I verify the (.*?) column in the (.*?)( do(?:es)? not)? contains? the same text (?:entered|selected|used) for the (.*)$")
