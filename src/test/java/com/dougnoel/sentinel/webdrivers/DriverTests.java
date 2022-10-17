@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
 
 import com.dougnoel.sentinel.pages.PageManager;
+import org.openqa.selenium.WebDriver;
 
 public class DriverTests {
 
@@ -18,4 +19,9 @@ public class DriverTests {
 		Driver.quitAllDrivers();
 	}
 
+	@Test
+	public void NewDriverTest() {
+		WebDriver newDriver = Driver.getWebDriver();
+		Driver.setWebDriver((newDriver));
+	}
 }

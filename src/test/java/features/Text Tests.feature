@@ -11,7 +11,7 @@ Feature: Text Verification Tests
     Then I wait until the Form Authentication link contains the text "Form Authentication"
       And I wait until the Form Authentication link does not contain the text "Zoboomafoo"
     When I click the Form Authentication link
-      And I am redirected to the Internet Login Page
+    Then I switch to the Internet Login Page with the title "The Internet"
       And I wait until the tab contains the title text "Internet"
     Then I verify the username field is empty
     When I fill the account information into the username field and the password field
