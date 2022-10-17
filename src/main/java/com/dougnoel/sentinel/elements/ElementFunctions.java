@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.elements;
 
-import com.dougnoel.sentinel.configurations.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,6 +81,7 @@ public class ElementFunctions {
 	 * @param <T> Class the type of element to return
 	 * @return Class an instance of the class you typed the element as
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T getElementAsCustom(String elementName) {
 		return (T) getElement(elementName);
 	}

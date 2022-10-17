@@ -110,6 +110,7 @@ public class TextSteps {
 
     /**
      * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN.
+
      * @param keyName
      * <p>
      * <b>Gherkin Examples:</b>
@@ -119,15 +120,21 @@ public class TextSteps {
      * <li>I press the page up key</li>
      * </ul>
      */
-    @When("^I press the (escape|enter|return|tab|page up|page down) key$")
+
+    @When("^I press the (backspace|escape|enter|return|tab|page up|page down) key$")
     public static void keyPress(String keyName) {
-    	keyName = keyName.toUpperCase().replace(" ", "_");
+        if(keyName.equals("backspace"))
+            keyName = "BACK_SPACE";
+        else if (keyName.contains(" "))   
+            keyName = keyName.toUpperCase().replace(" ", "_");
+        else
+            keyName = keyName.toUpperCase();
     	var driver = Driver.getWebDriver();
         new Actions(driver).sendKeys(keyName).build().perform();
     }
 
     /**
-     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN to a given element.
+     * Sends a key press event for a special key: BACKSPACE, ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN to a given element.
      * @param keyName
      * <p>
      * <b>Gherkin Examples:</b>
@@ -137,9 +144,14 @@ public class TextSteps {
      * <li>I press the page down key on the dropdown</li>
      * </ul>
      */
-    @When("^I press the (escape|enter|return|tab|page up|page down) key (?:to|on|in) the (.*)$")
+    @When("^I press the (backspace|escape|enter|return|tab|page up|page down) key (?:to|on|in) the (.*)$")
     public static void keyPressElement(String keyName, String element) {
-        keyName = keyName.toUpperCase().replace(" ", "_");
+        if(keyName.equals("backspace"))
+            keyName = "BACK_SPACE";
+        else if (keyName.contains(" "))
+            keyName = keyName.toUpperCase().replace(" ", "_");    
+        else
+            keyName = keyName.toUpperCase();
         Element targetElement = getElement(element);
         targetElement.sendSpecialKey(Keys.valueOf(keyName));
     }

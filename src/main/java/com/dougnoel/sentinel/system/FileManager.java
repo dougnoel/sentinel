@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.system;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import com.dougnoel.sentinel.files.TestFile;
 import org.apache.commons.io.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,11 +30,8 @@ import static java.util.Map.entry;
 public class FileManager {
 	private static final Logger log = LogManager.getLogger(FileManager.class);
 	private static final String IMAGE_DIRECTORY = "logs" + File.separator + "images";
-	private static final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
-			entry("%appdata%", System.getenv("APPDATA")),
-			entry("%localappdata%", System.getenv("LOCALAPPDATA")),
-			entry("%USERPROFILE%", System.getenv("USERPROFILE"))
-	);
+
+	private static TestFile currentTestFile = null;
 
 	private FileManager() {} //Exists to defeat instantiation.
 	
@@ -230,6 +228,11 @@ public class FileManager {
 		String originalPath = pathToProcess;
 		final String DETECTED_OS = operatingSystem();
 
+		final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
+				entry("%appdata%", System.getenv("APPDATA")),
+				entry("%localappdata%", System.getenv("LOCALAPPDATA")),
+				entry("%USERPROFILE%", System.getenv("USERPROFILE"))
+		);
 		if(DETECTED_OS.equals("windows")) {
 			for(Map.Entry<String, String> entry : WINDOWS_SPECIAL_FOLDERS.entrySet()){
 				pathToProcess = StringUtils.replaceIgnoreCase(pathToProcess, entry.getKey(), entry.getValue());
@@ -244,5 +247,21 @@ public class FileManager {
 		}
 
 		return convertPathSeparators(pathToProcess);
+	}
+
+	/**
+	 * Sets the current file under test.
+	 * @param file TestFile the file to test
+	 */
+	public static void setCurrentTestFile(TestFile file){
+		currentTestFile = file;
+	}
+
+	/**
+	 * Get the current file under test.
+	 * @return TestFile the file under test.
+	 */
+	public static TestFile getCurrentTestFile(){
+		return currentTestFile;
 	}
 }

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Multiple File Path Test</title>
+</head>
+
+<body>
+<form id="uploadForm" method="post" enctype="multipart/form-data">
+    Files To Upload: <div><input type="file" id="filePicker" name="filePicker" multiple></div>
+    <br>
+    File Count: <div id="fileUploadCount" style='font-size:24px;' data-fileCount=0>0</div>
+    <ul id="filesPicked" style='font-size:24px;'><li id="noFilesIndicator">No Files</li></ul>
+</form>
+
+<script>
+            var selDiv = "";
+            var uploadCountDiv = "";
+
+            document.addEventListener("DOMContentLoaded", init, false);
+
+            function init() {
+                document.querySelector('#filePicker').addEventListener('change', handleFileSelect, false);
+                selDiv = document.querySelector("#filesPicked");
+                uploadCountDiv = document.querySelector("#fileUploadCount");
+            }
+
+            function handleFileSelect(e) {
+                if(!e.target.files) return;
+                selDiv.innerHTML = "";
+                uploadCountDiv.innerHTML = "";
+                var files = e.target.files;
+                for(var i=0; i<files.length; i++) {
+                    var f = files[i];
+                    var listElement = document.createElement("li");
+                    listElement.setAttribute("id", "chosenFile_" + (i+1));
+                    listElement.setAttribute("data-fileName", f.name);
+                    listElement.innerText = f.name;
+                    selDiv.appendChild(listElement);
+                    uploadCountDiv.innerText = (i+1);
+                    uploadCountDiv.setAttribute("data-fileCount", (i+1));
+                }
+            }
+        </script>
+</body>
+</html>

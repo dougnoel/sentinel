@@ -1,9 +1,12 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static com.dougnoel.sentinel.assertions.TableAssert.*;
 
+import com.dougnoel.sentinel.configurations.Time;
+import org.junit.Assert;
+
+import com.dougnoel.sentinel.elements.tables.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,9 +15,13 @@ import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
+import org.openqa.selenium.By;
+
 
 public class TableVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TableVerificationSteps.class.getName()); // Create a logger.
+
+    private static final String CONTAIN = "contain";
 	
 	/**
      * Verifies we have the expected, given number of rows in the given string representing the Table object.
@@ -34,15 +41,15 @@ public class TableVerificationSteps {
      * </ul>
      * 
      * @param expectedNumberOfRows int The number of rows your are expecting.
-     * @param elementName String (Table name) This should be the name of the table element to count.
+     * @param tableName String (Table name) This should be the name of the table element to count.
      */
     @Then("^I see (\\d+) rows? in the (.*)$")
-    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String elementName) {
-        int numberOfRows = getElementAsTable(elementName).getNumberOfRows();
-        var expectedResult = SentinelStringUtils.format("Expected {} rows, found {} rows.", expectedNumberOfRows, numberOfRows);
-        assertTrue(expectedResult, numberOfRows == expectedNumberOfRows);
+    public static void verifyNumberOfTableRows(int expectedNumberOfRows, String tableName) throws Exception {
+        Table table = getElementAsTable(tableName);
+        String expectedResult = SentinelStringUtils.format("Expected to find {} rows in the table.", expectedNumberOfRows);
+        assertEquals(expectedResult, table, expectedNumberOfRows, table::getNumberOfRows);
     }
-    
+
     /**
      * Compares the current page we are on with the page stored in
      * memory given the page number and Table element object page for the current page.
@@ -58,8 +65,9 @@ public class TableVerificationSteps {
      * @param tableName String the name of the table element on the page object
      */
     @Then("^I should be shown the (\\d+)(?:st|nd|rd|th) page of results from the (.*)$")
-    public static void compareTables(int pageNumber, String tableName) {
-    	assertTrue(getElementAsTable(tableName).compareWithStoredTable(pageNumber));
+    public static void compareTables(int pageNumber, String tableName) throws Exception {
+        Table table = getElementAsTable(tableName);
+    	assertTrue(table, () -> table.compareWithStoredTable(pageNumber));
     }
     
     /**
@@ -76,29 +84,53 @@ public class TableVerificationSteps {
      * @param tableName String name of the table to search
      */
     @Then("^I verify the (.*?) column(s)? in the (.*?) contains? unique values$")
-	public static void verifyUniqueColumnText(String columnName, String isMultiCells, String tableName) {
-		if (isMultiCells != null) {		
-			assertTrue(getElementAsTable(tableName).verifyRowCellsAreUnique(columnName));
+	public static void verifyUniqueColumnText(String columnName, String isMultiCells, String tableName) throws Exception {
+        Table table = getElementAsTable(tableName);
+		if (isMultiCells != null) {
+			assertTrue(table, () -> table.verifyRowCellsAreUnique(columnName));
 		} else {
-			assertTrue(getElementAsTable(tableName).verifyColumnCellsAreUnique(columnName));
+			assertTrue(table, () -> table.verifyColumnCellsAreUnique(columnName));
 		}
 	}
 
     /**
-     * Verifies the given table contains the given column
+     * Verifies the given table contains or exactly matches or does not contain or does not exactly match the given column
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Contact Us table contains the Phone Number column </li>
+     * <li>I verify the Contact Us table contains the Phone Number column</li>
      * <li>I verify the Vision benefits table contains a Deductible column</li>
-     * <li>I verify the Discography table contains the Album Name column </li>
+     * <li>I verify the Contact Us table does not contains the Phone Number column</li>
+     * <li>I verify the Vision benefits table does not contains a Deductible column</li>
+     * <li>I verify the Discography table has the Album Name column</li>
+     * <li>I verify the Awards table has a Movie Name column</li>
+     * <li>I verify the Discography table does not has the Album Name column</li>
+     * <li>I verify the Awards table does not has a Movie Name column</li>
+     * <li>I verify the College table have the Course Name column </li>
+     * <li>I verify the Expense Report table have a Transport column </li>
+     * <li>I verify the Lottery table does not have a Date column</li>
+     * <li>I verify the Discography table does not have the Album Name column </li>
      * </ul>
      * @param tableName String name of the table containing the column
      * @param columnName String name of the column to verify
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
      */
-    @Then("^I verify the (.*?) contains (?:a|the) (.*?) column$")
-    public static void verifyColumnExists(String tableName, String columnName) {
-        assertTrue(getElementAsTable(tableName).verifyColumnExists(columnName));
+    @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
+    public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) throws Exception {
+        Table table = getElementAsTable(tableName);
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        boolean partialMatch = matchType.contains(CONTAIN);
+        String partialMatchText = partialMatch ? CONTAIN : "exactly match";
+
+        String expectedResult = SentinelStringUtils.format("Expected the {} column to {}{} the column header in the {}.",
+                columnName, negateText, partialMatchText, tableName);
+        if (negate) {
+            assertFalse(expectedResult,table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
+        } else {
+            assertTrue(expectedResult, table, () -> table.verifyColumnHeaderEquals(columnName, partialMatch));
+        }
     }
     
     /**
@@ -115,9 +147,14 @@ public class TableVerificationSteps {
      * @param key String the key to retrieve the text to match from the configuration manager
      */
     @Then("^I verify the (.*?) column in the (.*?) contains the same text (?:entered|selected|used) for the (.*)$")
-    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) {
+    public static void verifyStoredTextAppearsInColumn(String columnName, String tableName, String key) throws Exception {
     	var textToMatch = Configuration.toString(key);
-        assertTrue(getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+        String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
+        Assert.assertNotNull(errorMessage, textToMatch);
+
+        errorMessage = SentinelStringUtils.format("Expected the {} column of the {} to contain any cells with the text {}", columnName, tableName, textToMatch);
+        Table table = getElementAsTable(tableName);
+        assertTrue(errorMessage, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
     }
     
     /**
@@ -133,19 +170,20 @@ public class TableVerificationSteps {
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param textToMatch String the text to look for in the column
      */
-    @Then("^I verify all the cells in the (.*?) column in the (.*?)( do(?:es)? not)? contains? the text (.*?)$")
-    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String textToMatch) {
+    @Then("^I verify all the cells in the (.*?) column in the (.*?)( do(?:es)? not)? (have|has|contains?) the text (.*?)$")
+    public static void verifyTextAppearsInColumn(String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-        
+        Table table = getElementAsTable(tableName);
+        boolean partialMatch = matchType.contains(CONTAIN);
         var expectedResult = SentinelStringUtils.format(
-                "Expected the {} column of the {} to {}only contain cells with the text {}. The element contained the text: {}",
+                "Expected the {} column of the {} to {}only contain cells with the text {}.",
                 columnName, tableName, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
 
         if (negate) {
-            assertFalse(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+            assertFalse(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, partialMatch, textToMatch));
         } else {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsContain(columnName, textToMatch));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsContain(columnName, partialMatch, textToMatch));
         }
     }
 
@@ -166,23 +204,24 @@ public class TableVerificationSteps {
      * @param textToMatch String the text to look for in the column
      */
     @Then("^I verify the (.*?) column in the (.*?)( does not)? (has|have|contains?) the text (.*?)$")
-    public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) {
+    public static void verifyCellInColumnHasText(String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
+        Table table = getElementAsTable(tableName);
         String expectedResult = SentinelStringUtils.format("Expected the {} column of the {} {}{} the text {}.",
                 columnName, tableName, (negate ? " does not" : ""), matchType, textToMatch);
 
         if (partialMatch) {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+                assertFalse(expectedResult, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellContains(columnName, textToMatch));
+                assertTrue(expectedResult, table, () -> table.verifyAnyColumnCellContains(columnName, textToMatch));
             }
         } else {
             if (negate) {
-                assertFalse(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellHas(columnName, textToMatch));
+                assertFalse(expectedResult, table, () -> table.verifyAnyColumnCellHas(columnName, textToMatch));
             } else {
-                assertTrue(expectedResult, getElementAsTable(tableName).verifyAnyColumnCellHas(columnName, textToMatch));
+                assertTrue(expectedResult, table, () -> table.verifyAnyColumnCellHas(columnName, textToMatch));
             }
         }
     }
@@ -202,18 +241,42 @@ public class TableVerificationSteps {
      * @param sortOrder String ascending or descending
      */
     @Then("^I verify the cells in the (.*?) column in the (.*?) are sorted in (ascending|descending) order$")
-    public static void verifyColumnSort(String columnName, String tableName, String sortOrder) {
+    public static void verifyColumnSort(String columnName, String tableName, String sortOrder) throws Exception {
         boolean sortAscending = StringUtils.equals(sortOrder, "ascending");
-        
+        Table table = getElementAsTable(tableName);
         var expectedResult = SentinelStringUtils.format("Expected the {} column of the {} to be sorted in {} order.", columnName, tableName, (sortAscending ? "ascending" : "descending"));
         log.trace(expectedResult);
         if (sortAscending) {
-        	assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedAscending(columnName));
+        	assertTrue(expectedResult, table, () -> table.verifyColumnCellsAreSortedAscending(columnName));
         } else {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnCellsAreSortedDescending(columnName));
+            assertTrue(expectedResult, table, () -> table.verifyColumnCellsAreSortedDescending(columnName));
         }
     }
-    
+
+    /**
+     * Verifies that a specific cell, given by the row and column, in the table contains the given previously stored text.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the cell in the last row and the Employee First Name column of the Employee table does not contain the same text used for the employee last name field</li>
+     * <li>I verify the cell in the 2nd row and the Employee First Name column of the Employee table has the same text used for the employee first name field</li>
+     * </ul>
+     * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
+     * @param columnName String the name of the column to verify
+     * @param tableName String the name of the table containing the column
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match
+     * @param key String the key of the stored text to look for in the column
+     */
+    @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? (has|have|contains?) the same text (?:entered|selected|used) for the (.*)$")
+    public static void verifyCellInSpecifiedRowAgainstStored(String rowNum, String columnName, String tableName, String assertion, String matchType, String key) throws Exception{
+        String textToMatch = Configuration.toString(key);
+        String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
+        Assert.assertNotNull(errorMessage, textToMatch);
+
+        verifyCellInSpecifiedRow(rowNum, columnName, tableName, assertion, matchType, textToMatch);
+    }
+
     /**
      * Verifies that a specific cell, given by the row and column, in the table contains the given text.
      * <p>
@@ -230,25 +293,21 @@ public class TableVerificationSteps {
      * @param textToMatch String the text to look for in the column
      */
     @Then("^I verify the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?)( do(?:es)? not)? (has|have|contains?) the text (.*?)$")
-    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch) {
+    public static void verifyCellInSpecifiedRow(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch) throws Exception {
     	boolean negate = !StringUtils.isEmpty(assertion);
-    	
-    	var table = getElementAsTable(tableName);
+        Table table = getElementAsTable(tableName);
     	int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
-        boolean partialMatch = matchType.contains("contain");
-
-    	String resultText = table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch);
+        boolean partialMatch = matchType.contains(CONTAIN);
     	
     	var expectedResult = SentinelStringUtils.format(
-                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}. The element contained the text: {}",
-                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch, resultText);
+                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch);
     	log.trace(expectedResult);
 
-        boolean actualResult = resultText == null;
     	if (negate) {
-            assertFalse(expectedResult, actualResult);
+            assertNotEquals(expectedResult, table, null, () -> table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch));
         } else {
-            assertTrue(expectedResult, actualResult);
+            assertEquals(expectedResult, table, null, () -> table.verifySpecificCellContains(columnName, rowIndex, textToMatch, partialMatch));
         }
     }
 
@@ -266,29 +325,85 @@ public class TableVerificationSteps {
      * @param assertion  String if null, checks that all cells are empty. Otherwise, checks that all cells are not empty.
      */
     @Then("^I verify all cells in the (.*?) column in the (.*?) are( not)? empty$")
-    public static void verifyColumnIsEmpty(String columnName, String tableName, String assertion) {
+    public static void verifyColumnIsEmpty(String columnName, String tableName, String assertion) throws Exception {
         boolean negate = !StringUtils.isEmpty(assertion);
-
+        Table table = getElementAsTable(tableName);
         var expectedResult = SentinelStringUtils.format(
                 "Expected all cells in the {} column of the {} to {}be empty.",
                 columnName, tableName, (negate ? "not " : ""));
         log.trace(expectedResult);
 
         if (negate) {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsNotEmpty(columnName));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsNotEmpty(columnName));
         } else {
-            assertTrue(expectedResult, getElementAsTable(tableName).verifyAllColumnCellsEmpty(columnName));
+            assertTrue(expectedResult, table, () -> table.verifyAllColumnCellsEmpty(columnName));
         }
     }
 
     @Then("^I verify the (.*?) column in the (.*?) is displayed to the left of the (.*?) column$")
-    public static void verifyColumnDisplayOrder(String column1Name, String tableName, String column2Name){
+    public static void verifyColumnDisplayOrder(String column1Name, String tableName, String column2Name) throws Exception {
         var expectedResult = SentinelStringUtils.format(
                 "Expected the {} column of the {} to be displayed to the left of the {} column.",
                 column1Name, tableName, column2Name);
         log.trace(expectedResult);
-
-        assertTrue(expectedResult, getElementAsTable(tableName).verifyColumnDisplayOrder(column1Name, column2Name));
+        Table table = getElementAsTable(tableName);
+        assertTrue(expectedResult, table, () -> table.verifyColumnDisplayOrder(column1Name, column2Name));
     }
 
+    /**
+     * Verify the element exists in row which have stored value in column name
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify row in the Project Files Table with value selected for the Search Input contains the xpath //i[contains(concat(' ', @class, ' '), ' fa-toggle-on ')]</li>
+     * </ul>
+     * @param tableName String the name of the table element
+     * @param key String the key used to retrieve the value
+     * @param xpath String xpath value to element to click
+     */
+    @Then("^I verify the row in the (.*?) with the value (?:entered|selected|used) for the (.*?)( do(?:es)? not)? contains? the xpath (.*?)$")
+    public static void verifyStoredTextRowContainsXpath(String tableName, String key, String assertion, String xpath) throws Exception {
+        By locator = By.xpath(xpath);
+        boolean negate = !StringUtils.isEmpty(assertion);
+        Table table = getElementAsTable(tableName);
+        var textToMatch = Configuration.toString(key);
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the row of the {} to {}contain xpath {}", tableName, (negate ? "not " : ""), xpath);
+
+        if (negate) {
+            assertFalse(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
+        } else {
+            assertTrue(expectedResult, table, () -> table.verifyRowContains(textToMatch, locator));
+        }
+    }
+
+    /**
+     * Refreshes the page, waiting the configured time (given by the longProcessTimeout "-DlongProcessTimeout") for the table to contain the given value in the given row and column.
+     * By default, the longProcessTimeout is 60 seconds.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait for the cell in the 1st row and the Status column of the User table to have the text Disabled</li>
+     * <li>I wait for the cell in the last row and the Status column of the ID table to not contain the text 123</li>
+     * </ul>
+     * @param rowNum String row of the cell to check.
+     * @param columnName String column of the cell to check.
+     * @param tableName String name of the table.
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match.
+     * @param textToMatch String the text to look for in the column.
+     */
+    @Then("^I wait for the cell in the (la|\\d+)(?:st|nd|rd|th) row and the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
+    public static void waitForSpecificCellToHaveText(String rowNum, String columnName, String tableName, String assertion, String matchType, String textToMatch){
+        boolean negate = !StringUtils.isEmpty(assertion);
+        Table table = getElementAsTable(tableName);
+        int rowIndex = rowNum.equals("la") ? table.getNumberOfRows() : Integer.parseInt(rowNum);
+        boolean partialMatch = matchType.contains(CONTAIN);
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the cell in the {} row and the {} column of the {} to {}contain the text {}.",
+                SentinelStringUtils.ordinal(rowIndex), columnName, tableName, (negate ? "not " : ""), textToMatch);
+        log.trace(expectedResult);
+        Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain((int)Time.longProcessTimeout().toSeconds(), columnName, rowIndex, textToMatch, partialMatch, negate));
+    }
 }

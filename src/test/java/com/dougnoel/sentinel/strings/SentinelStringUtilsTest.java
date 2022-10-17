@@ -35,4 +35,19 @@ public class SentinelStringUtilsTest {
 		var result = SentinelStringUtils.stripSurroundingQuotes(text);
 		assertEquals("Null should be returned without error.", null, result);
 	}
+
+	@Test
+	public void parseLeadingInt(){
+		assertEquals("Integer not parsed correctly at start of string.", 1, SentinelStringUtils.parseOrdinal("1st"));
+	}
+
+	@Test
+	public void parseLeadingIntMulti(){
+		assertEquals("Integer not parsed correctly at start of string.", 123, SentinelStringUtils.parseOrdinal("123r4d5"));
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void failToParseLeadingInt(){
+		SentinelStringUtils.parseOrdinal("rd123");
+	}
 }

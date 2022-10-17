@@ -42,7 +42,7 @@
     <sentinel-release-browser>chrome</sentinel-release-browser>
     <sentinel-release-pageobjectpackages>pages</sentinel-release-pageobjectpackages>
     
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-compiler-plugin.release>11</maven-compiler-plugin.release>
     <maven-compiler-plugin.verbose>true</maven-compiler-plugin.verbose>
     <maven-compiler-plugin.debug>true</maven-compiler-plugin.debug>
@@ -56,7 +56,7 @@
     
     <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 
-    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+    <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
     <extra-enforcer-rules.version>1.2</extra-enforcer-rules.version>
     <maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>true</maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>
     <maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>true</maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>
@@ -92,15 +92,16 @@
     <jackson2.version>2.9.9</jackson2.version>
     <junit.version>5.5.1</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
-    <lombok.version>1.18.8</lombok.version>
+    <lombok.version>1.18.24</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.24</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
     <selenium-java.version>3.141.59</selenium-java.version>
-    <swagger-parser.version>2.0.14</swagger-parser.version>
+    <swagger-parser.version>2.1.1</swagger-parser.version>
     <webdrivermanager.version>4.4.1</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
+    <commons-csv.version>1.9.0</commons-csv.version>
     
     <screen-recorder.version>0.7.7.0</screen-recorder.version>
     
@@ -257,7 +258,7 @@
 		<plugin>
 			<groupId>org.sonatype.plugins</groupId>
 			<artifactId>nexus-staging-maven-plugin</artifactId>
-			<version>1.6.7</version>
+			<version>1.6.13</version>
 			<extensions>true</extensions>
 			<configuration>
 				<serverId>ossrh</serverId>
@@ -353,7 +354,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -383,6 +384,12 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-csv</artifactId>
+        <version>${commons-csv.version}</version>
       </dependency>
 
       <dependency>
@@ -585,6 +592,11 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
     </dependency>
 
     <dependency>

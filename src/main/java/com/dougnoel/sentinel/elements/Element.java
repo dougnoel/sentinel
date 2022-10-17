@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import com.dougnoel.sentinel.exceptions.FileException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -278,7 +279,46 @@ public class Element {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Sends a constructed collection of absolute paths of a given file locator string list to an element for use with file upload elements.
+	 * Supports both single and multiple file sending for input elements.
+	 * This method will throw an IOException if the files at the given paths cannot be found or the provided file is a directory.
+	 *
+	 * @param fileLocators String the file locators or paths to upload
+	 * @return Element (for chaining)
+	 */
+	public Element sendFilePaths(List<String> fileLocators){
+		StringBuilder processedValueToSend = new StringBuilder();
+
+		for (String file : fileLocators) {
+			File fileToProcess;
+
+			try {
+				fileToProcess = FileManager.findFilePath(file);
+				processedValueToSend.append(fileToProcess.getAbsolutePath()).append("\n");
+			} catch (FileException fileNotFound) {
+				fileToProcess = new File(file);
+				String errorMessage;
+				if (fileToProcess.exists() && !fileToProcess.isDirectory()) {
+					processedValueToSend.append(fileToProcess.getAbsolutePath()).append("\n");
+				} else {
+					if(fileToProcess.isDirectory())
+						errorMessage = SentinelStringUtils.format("The given {} file was a directory", file);
+					else
+						errorMessage = SentinelStringUtils.format("The {} file could not be found to send to the element {}", file, this.name);
+
+					log.error(errorMessage);
+					throw new com.dougnoel.sentinel.exceptions.IOException(errorMessage);
+				}
+			}
+		}
+
+		element().sendKeys(processedValueToSend.toString().trim());
+
+		return this;
+	}
+
 	/**
 	 * Enter text into a Element. Typically used for text boxes.
 	 * This method will throw an ElementDisabledException() if the text box is disabled.
@@ -510,7 +550,7 @@ public class Element {
 	}
 	
 	/**
-	 * Returns true if the element is enabled; false if it is disabled.
+	 * Returns true if the element is enabled and doesn't have the attribute readonly; false otherwise.
 	 * Expects the element to be enabled, and if it is not, this method
 	 * will check every 10 milliseconds until it is up to the configured
 	 * timeout time (10 second default).
@@ -524,7 +564,7 @@ public class Element {
 		try {
 			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(d -> element().isEnabled());
+				.until(d -> (element().isEnabled() && (element().getAttribute("readonly") == null)));
 		}
 		catch (TimeoutException e) {
 			return false;
@@ -532,7 +572,7 @@ public class Element {
 	}
 
 	/**
-	 * Returns true if the element is disabled; false if it is enabled.
+	 * Returns true if the element is disabled or readonly; false otherwise
 	 * Expects the element to be disabled, and if it is not, this method
 	 * will check every 10 milliseconds until it is up to the configured
 	 * timeout time (10 second default).
@@ -546,7 +586,7 @@ public class Element {
 		try {
 			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.attributeContains(element(), "disabled", ""));
+				.until(ExpectedConditions.or(ExpectedConditions.attributeContains(element(), "disabled", ""), ExpectedConditions.attributeContains(element(), "readonly", "")));
 		}
 		catch (TimeoutException e) {
 			return false;
@@ -602,19 +642,19 @@ public class Element {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
-				log.trace("Expecting to not find with {} {}", selector.getKey(), selector.getValue());
-				WebElement element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()),
-						Time.interval());
-				try {
-					if (element == null || !(element.isDisplayed())) {
-						log.trace("doesNotExist() return result: true");
-						return true;
-					}
-				} catch (StaleElementReferenceException e) {
-					log.trace("doesNotExist() StaleElementException return result: true");
+			driver().switchTo().defaultContent();
+			WebElement element = findElementInCurrentFrameForDuration(Time.interval());
+			if(element == null){
+				element = findElementInIFrame();
+			}
+			try {
+				if (element == null || !(element.isDisplayed())) {
+					log.trace("doesNotExist() return result: true");
 					return true;
 				}
+			} catch (StaleElementReferenceException e) {
+				log.trace("doesNotExist() StaleElementException return result: true");
+				return true;
 			}
 		}
 		log.trace("doesNotExist() return result: false");
@@ -671,9 +711,14 @@ public class Element {
 	 * @return true if the attribute exists for the element; otherwise false
 	 */
 	public boolean hasAttribute(String attribute) {
-		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
-				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
+		try{
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+					.ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
+		}
+		catch(TimeoutException timeout){
+			return false;
+		}
 	}
 
 	/**
@@ -688,10 +733,16 @@ public class Element {
 	 * @return true if the attribute does not exist for the element; otherwise false
 	 */
 	public boolean doesNotHaveAttribute(String attribute) {
-		return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
-				.ignoring(StaleElementReferenceException.class)
-				.until(ExpectedConditions.not(
-						ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
+		try{
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+					.ignoring(StaleElementReferenceException.class)
+					.until(ExpectedConditions.not(
+							ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));
+		}
+		catch(TimeoutException timeout){
+			return false;
+		}
+
 	}
 
 	/**

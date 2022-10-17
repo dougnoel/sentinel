@@ -449,24 +449,26 @@ public class Configuration {
 	 * @return String the value of the given key in the given object
 	 */
 	public static String getTestdataValue(String testdataObjectName, String testdataObjectKey){
+		String normalizedTestdataObjectName = testdataObjectName.replaceAll("\\s+", "_");
+		String normalizedTestdataObjectKey = testdataObjectKey.replaceAll("\\s+", "_");
 		String pageName = PageManager.getPage().getName();
 		String env = environment();
 		var pageData = loadPageData(pageName);
-		Map <String,String> testdata = pageData.getTestdata(env, testdataObjectName);
-		if (testdata.isEmpty()) {
+		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+		if (testdata == null || testdata.isEmpty()) {
 			env = DEFAULT;
-			testdata = pageData.getTestdata(env, testdataObjectName);
+			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
 		}
-		if (testdata.isEmpty()) {
-			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", testdataObjectName, env, pageName);
+		if (testdata == null || testdata.isEmpty()) {
+			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
 			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
-		String data = testdata.get(testdataObjectKey);
+		String data = testdata.get(normalizedTestdataObjectKey);
 		if (data == null) {
-			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testdataObjectKey, testdataObjectName, env, pageName);
+			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testdataObjectKey, normalizedTestdataObjectName, env, pageName);
 			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
-		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", testdataObjectKey, testdataObjectKey, env, pageName, data);
+		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
 		return data;
 	}
 	
