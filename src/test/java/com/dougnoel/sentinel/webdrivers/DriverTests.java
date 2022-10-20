@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.webdrivers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
@@ -21,7 +23,9 @@ public class DriverTests {
 
 	@Test
 	public void NewDriverTest() {
+		PageManager.setPage("CorrectPageObject");
 		WebDriver newDriver = Driver.getWebDriver();
 		Driver.setWebDriver((newDriver));
+		assertEquals("Verify the drivers are the same.", Driver.getWebDriver(), newDriver);
 	}
 }
