@@ -16,13 +16,13 @@ public class WindowListTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         Time.reset();
-        Configuration.update("timeout", 1);
+        Configuration.update("timeout", 3);
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         Time.reset();
-        Configuration.update("timeout", 3);
+        Configuration.update("timeout", 10);
         Driver.quitAllDrivers();
     }
 
