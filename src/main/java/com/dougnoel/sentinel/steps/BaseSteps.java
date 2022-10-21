@@ -64,7 +64,7 @@ public class BaseSteps {
      *
      * @param elementName String the name of the element to context click
      */
-    @When("^I context click (?:the|a|an|on) (.*?)$")
+    @When("^I (right|context) click (?:the|a|an|on) (.*?)$")
     public static void contextClick(String elementName) {
         getElement(elementName).contextClick();
     }
