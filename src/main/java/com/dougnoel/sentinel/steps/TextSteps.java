@@ -121,7 +121,7 @@ public class TextSteps {
      * </ul>
      */
 
-    @When("^I press the (backspace|escape|enter|return|tab|page up|page down) key$")
+    @When("^I press the (.*?) key$")
     public static void keyPress(String keyName) {
         if(keyName.equals("backspace"))
             keyName = "BACK_SPACE";
