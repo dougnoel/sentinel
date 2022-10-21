@@ -101,7 +101,7 @@ public class WindowAndTabSteps {
      * @param titleText String the title to check for
      * @return Boolean if the title was found
      */
-    @Then("I wait until the (?:tab|window) (has|contains) the title text \"([^\"]*)\"$")
+    @Then("I verify the (?:tab|window)( does not)? (has|have|contains?) the title text \"([^\"]*)\"$")
     public static boolean waitUntilTitle(String comparisonType, String titleText) {
         ExpectedCondition<Boolean> condition;
 
