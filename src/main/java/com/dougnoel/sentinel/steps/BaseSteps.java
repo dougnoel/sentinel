@@ -58,7 +58,7 @@ public class BaseSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I context click a login button</li>
-     * <li>I context click the Login button</li>
+     * <li>I right click the Login button</li>
      * <li>I context click an Operation Button</li>
      * </ul>
      *
