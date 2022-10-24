@@ -1,16 +1,10 @@
 package com.dougnoel.sentinel.steps;
 
-import com.dougnoel.sentinel.configurations.Time;
 import org.apache.commons.lang3.StringUtils;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WindowAndTabSteps {
 
@@ -93,36 +87,5 @@ public class WindowAndTabSteps {
             Driver.goToTitledWindow(title);
 
     	PageManager.waitForPageLoad();
-    }
-
-    /**
-     * Waits until the title text is/contains the passed value
-     * @param comparisonType String (has|contains) the type of comparison to use
-     * @param titleText String the title to check for
-     * @return Boolean if the title was found
-     */
-    @Then("I wait until the (?:tab|window) (has|contains) the title text \"([^\"]*)\"$")
-    public static boolean waitUntilTitle(String comparisonType, String titleText) {
-        ExpectedCondition<Boolean> condition;
-
-        if (comparisonType.equals("has"))
-            condition  = ExpectedConditions.titleIs(titleText);
-        else
-            condition  = ExpectedConditions.titleContains(titleText);
-
-        long searchTime = Time.out().getSeconds() * 1000;
-        long startTime = System.currentTimeMillis(); // fetch starting time
-
-        while ((System.currentTimeMillis() - startTime) < searchTime) {
-            try {
-                return new WebDriverWait(Driver.getWebDriver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
-                        .ignoring(StaleElementReferenceException.class)
-                        .ignoring(TimeoutException.class)
-                        .until(condition);
-            } catch (TimeoutException e) {
-                // suppressing this due to falsely thrown timeout exception
-            }
-        }
-        return false;
     }
 }

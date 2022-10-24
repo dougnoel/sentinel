@@ -5,6 +5,7 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import com.dougnoel.sentinel.elements.Element;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.interactions.Actions;
 
@@ -109,51 +110,35 @@ public class TextSteps {
     }
 
     /**
-     * Sends a key press event for a special key: ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN.
-
-     * @param keyName
+     * Sends a key press event for any special key. You can optionally pass an element name to send the key press to.
+     * Although you can send any key, the officially supported keypresses are: BACKSPACE, ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I press the escape key</li>
-     * <li>I press the enter key</li>
-     * <li>I press the page up key</li>
-     * </ul>
-     */
-
-    @When("^I press the (.*?) key$")
-    public static void keyPress(String keyName) {
-        if(keyName.equals("backspace"))
-            keyName = "BACK_SPACE";
-        else if (keyName.contains(" "))   
-            keyName = keyName.toUpperCase().replace(" ", "_");
-        else
-            keyName = keyName.toUpperCase();
-    	var driver = Driver.getWebDriver();
-        new Actions(driver).sendKeys(keyName).build().perform();
-    }
-
-    /**
-     * Sends a key press event for a special key: BACKSPACE, ESCAPE, ENTER, RETURN, TAB, PAGE UP, or PAGE DOWN to a given element.
-     * @param keyName
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I press the escape key on the search box</li>
-     * <li>I press the enter key in the search box</li>
+     * <li>I press the tab key</li>
+     * <li>I press the backspace key in the search box</li>
      * <li>I press the page down key on the dropdown</li>
      * </ul>
+     * @param keyName The name of the key to press
+     * @param elementName String the name of the element to send the keypress to
      */
-    @When("^I press the (backspace|escape|enter|return|tab|page up|page down) key (?:to|on|in) the (.*)$")
-    public static void keyPressElement(String keyName, String element) {
+    @When("^I press the (.*?) key ?(?:(?:to|on|in) the (.*))?$")
+    public static void keyPressElement(String keyName, String elementName) {
         if(keyName.equals("backspace"))
             keyName = "BACK_SPACE";
         else if (keyName.contains(" "))
             keyName = keyName.toUpperCase().replace(" ", "_");    
         else
             keyName = keyName.toUpperCase();
-        Element targetElement = getElement(element);
-        targetElement.sendSpecialKey(Keys.valueOf(keyName));
+
+        if(StringUtils.isEmpty(elementName)) {
+            var driver = Driver.getWebDriver();
+            new Actions(driver).sendKeys(keyName).build().perform();
+        }
+        else {
+            Element targetElement = getElement(elementName);
+            targetElement.sendSpecialKey(Keys.valueOf(keyName));
+        }
     }
 
     /**

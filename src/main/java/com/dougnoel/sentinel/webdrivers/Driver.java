@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.webdrivers;
 import java.util.EnumMap;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
-
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -44,13 +43,6 @@ public class Driver {
     public static WebDriver getWebDriver() {
     	return getSentinelDriver().getWebDriver();
     }
-
-	/**
-	 *  Sets the session's webdriver to the new webdriver passed.
-	 */
-	public static void setWebDriver(WebDriver newDriver){
-		getSentinelDriver().setWebDriver(newDriver);
-	}
 
     /**
      * Quits all drivers and removes them from the list of active drivers.
@@ -146,4 +138,12 @@ public class Driver {
     public static String getCurrentUrl() {
     	return getSentinelDriver().getWebDriver().getCurrentUrl();
     }
+
+	/**
+	 * Returns the title of the current tab
+	 * @return String the title of the currently active tab/window
+	 */
+	public static String getTitle() {
+		return getSentinelDriver().getWebDriver().getTitle();
+	}
 }

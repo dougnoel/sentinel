@@ -35,14 +35,6 @@ public class SentinelDriver {
 	}
 
 	/**
-	 * Sets the webdriver
-	 * @param newDriver WebDrvier the new webdriver to set as the main one for the session
-	 */
-	protected void setWebDriver(WebDriver newDriver) {
-		this.driver = newDriver;
-	}
-
-	/**
 	 * Go to next window.
 	 */
     protected void goToNextWindow() {

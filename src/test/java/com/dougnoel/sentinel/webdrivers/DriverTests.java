@@ -1,13 +1,9 @@
 package com.dougnoel.sentinel.webdrivers;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
-
 import com.dougnoel.sentinel.pages.PageManager;
-import org.openqa.selenium.WebDriver;
 
 public class DriverTests {
 
@@ -18,13 +14,5 @@ public class DriverTests {
 		Driver.maximizeWindow();
 		assertSame("Expecting window to be maximized.", "false", js.executeScript("return document.hidden").toString());
 		Driver.quitAllDrivers();
-	}
-
-	@Test
-	public void NewDriverTest() {
-		PageManager.setPage("CorrectPageObject");
-		WebDriver newDriver = Driver.getWebDriver();
-		Driver.setWebDriver((newDriver));
-		assertEquals("Verify the drivers are the same.", Driver.getWebDriver(), newDriver);
 	}
 }
