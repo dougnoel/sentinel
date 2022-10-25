@@ -15,7 +15,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class WindowAndTabVerificationSteps {
-    private static final Logger log = LogManager.getLogger(TextVerificationSteps.class.getName()); // Create a logger.
+    private static final Logger log = LogManager.getLogger(WindowAndTabVerificationSteps.class.getName()); // Create a logger.
 
     /**
      * Checks if the current tab or window either does or does not equal or contain the passed text
@@ -24,7 +24,7 @@ public class WindowAndTabVerificationSteps {
      * @param titleText String the title text to verify
      */
     @Then("I verify the (?:tab|window)( does not)? (has|have|contains?) the title text \"([^\"]*)\"$")
-    public static void VerifyTitle(String assertion, String matchType, String titleText) {
+    public static void verifyTitle(String assertion, String matchType, String titleText) {
         ExpectedCondition<Boolean> condition;
 
         boolean negate = !StringUtils.isEmpty(assertion);
