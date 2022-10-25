@@ -461,7 +461,17 @@ public class Element {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Context clicks (right click) on an element.
+	 * @return Element (for chaining)
+	 */
+	public Element contextClick(){
+		Actions action = new Actions(driver()).contextClick(element());
+		action.build().perform();
+		return this;
+	}
+
 	/**
 	 * Creates a FluentWait Webdriver object for searching for elements.
 	 * @param timeout Duration how long to search
