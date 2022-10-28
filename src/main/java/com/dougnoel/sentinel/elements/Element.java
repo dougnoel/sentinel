@@ -952,4 +952,25 @@ public class Element {
 		return element().getLocation();
 	}
 
+	/**
+	 * Returns the stored XPath for this element.
+	 * Returns null if no XPath exists in the page object.
+	 *
+	 * @return the xPath for the element listed in the page object
+	 */
+	public By xPathToBy() {
+		return By.xpath(selectors.get(SelectorType.XPATH));
+	}
+
+	/**
+	 * Returns the stored XPath for this element modified to pull the nth instance of the element
+	 * by using the passing ordinal value (passed as an int).
+	 *
+	 * @param ordinal int the instance of the element we want to retrieve
+	 * @return the xPath for the element listed in the page object for the nth instance (ordinal)
+	 */
+	public By xPathToBy(int ordinal) {
+		return By.xpath(SentinelStringUtils.format("({})[{}]", selectors.get(SelectorType.XPATH), ordinal));
+	}
+
 }
