@@ -478,6 +478,16 @@ public class Table extends Element {
 		getElementInRowThatContains(ordinalRow, elementToClick).click();
 	}
 
+	/**
+	 * Clicks the cell found at the given x,y coords in the table.
+	 * @param column int the x coord of the cell in the table
+	 * @param row int the y coord of the cell in the table
+	 */
+	public void clickElementAtCoord(int column, int row) {
+		WebElement tableRow = getOrCreateRowElements().get(row);
+		WebElement cell = tableRow.findElement(By.xpath(".//" + tableCellDataTag + "[" + column + "]"));
+		cell.click();
+	}
 	
 	/**
 	 * Returns a list of all the cell values in the given column.
