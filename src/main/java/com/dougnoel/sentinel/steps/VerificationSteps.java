@@ -1,14 +1,16 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.exceptions.NumberFormatException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
+import org.junit.Assert;
 import org.openqa.selenium.Point;
 
 /**
@@ -16,12 +18,76 @@ import org.openqa.selenium.Point;
  *
  */
 public class VerificationSteps {
-    
+
     /**
-     * Verifies the given element exists. The given element string is made lower case 
+     * Used to compare the numerical text, or input element value, of an element to a stored value to verify how much it has changed.
+     * Can verify whether a value is greater than or less than the stored by a given amount.
+     * <p>
+     * Only numerical values will correctly work with this verification step.
+     * <p>
+     * Supports decimals.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the numerical <b>value</b> of the <b>added number result input</b> element is <b>3</b> <b>less</b> than the previously stored <b>first number input</b></li>
+     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3</b> <b>greater</b> than the previously stored <b>first number input</b></li>
+     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3.5</b> <b>greater</b> than the previously stored <b>first decimal input</b></li>
+     * </ul>
+     * <b>Scenario Outline Example:</b>
+     * <p>
+     * I verify the numerical &lt;checking input or text value&gt of the &lt;element&gt element is &lt;numerical difference&gt &lt;less or more&gt than the previously &lt;stored or used&gt &lt;variable key&gt value
+     * <p>
+     * @param isInput String determine if we're fetching an input's value, or an element's numerical text to compare
+     * @param elementName String the name of the element whose value/text we are fetching
+     * @param difference Double how much more/less the new value is from the stored value
+     * @param operator String whether we're checking if the new value is more or less than the stored value
+     * @param storedValueKey String the key of the stored value
+     */
+    @Then("^I verify the numerical (value|text) of the (.*?) element is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value")
+    public static void verifyNumericalDifference(String isInput, String elementName, double difference, String operator, String storedValueKey) {
+        String unparsedStoredValue = null;
+        String unparsedElementValue = null;
+
+        try{
+            unparsedStoredValue = Configuration.toString(storedValueKey);
+
+            if(unparsedStoredValue == null) {
+                String storedValueMissingError = SentinelStringUtils.format("No stored value was found with the key {}",
+                        storedValueKey);
+
+                throw new NumberFormatException(storedValueMissingError);
+            }
+
+            if (isInput.contentEquals("value"))
+                unparsedElementValue = getElement(elementName).getAttribute("value");
+            else
+                unparsedElementValue = getElement(elementName).getText();
+
+            double actualValue = Double.parseDouble(unparsedElementValue);
+            double storedValue = Double.parseDouble(unparsedStoredValue);
+            double expectedValue;
+            if (operator.contentEquals("greater"))
+                expectedValue = storedValue + difference;
+            else
+                expectedValue = storedValue - difference;
+
+            String expectedResult = SentinelStringUtils.format("Expected the numerical {} of the \"{}\" element to be \"{}\". {} {} than the stored value {}. The found value was instead \"{}\".",
+                    isInput, elementName, expectedValue, difference, operator, storedValue, actualValue);
+
+            Assert.assertEquals(expectedResult, actualValue, expectedValue, 0);
+        } catch (java.lang.NumberFormatException parseFailure) {
+            String numberError = SentinelStringUtils.format("Expected numerical values, but the stored value was \"{}\", and the element contained \"{}\"",
+                    unparsedStoredValue, unparsedElementValue);
+
+            throw new NumberFormatException(numberError, parseFailure);
+        }
+    }
+
+    /**
+     * Verifies the given element exists. The given element string is made lower case
      * and whitespaces are replaced with underscores, then it is sent the isDisplayed
      * event and returns true or false. It also has an assertion variable which is set
-     * if the words "does not" are used, and it looks for a negative assertion. The word 
+     * if the words "does not" are used, and it looks for a negative assertion. The word
      * "does" can be used optionally, and was added to support the use of a Scenario Outline which
      * switches between "does" and "does not" in its tests.
      * <p>
@@ -39,7 +105,7 @@ public class VerificationSteps {
      *   | element         | Assertion |<br>
      *   | first dropdown  | does      |<br>
      *   | second dropdown | does not  |
-     * 
+     *
      * @param elementName String Element to check
      * @param assertion String "does" or does not" for true or false
      */
@@ -54,7 +120,7 @@ public class VerificationSteps {
             assertTrue(expectedResult, getElement(elementName).isDisplayed());
         }
     }
-    
+
     /**
      * Verifies the whether the given element is selected or not. Intended to be used with check boxes and radio buttons.
      * Using the optional word not will check to make sure the item is not checked/selected.
@@ -79,7 +145,7 @@ public class VerificationSteps {
             assertTrue(expectedResult, getElement(elementName).isSelected());
         }
     }
-    
+
     /**
      * Verifies an element has an attribute.
      * <p>
@@ -144,30 +210,41 @@ public class VerificationSteps {
     public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String matchType, String value) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
-        String expectedResult = SentinelStringUtils.format("Expected the element {} with the attribute \"{}\"{} {} the value {}.",
-                elementName, attribute, (negate ? " does not" : ""), matchType, value);
+        String actualValue;
+        String expectedResult;
 
         if (attribute.equals("class") && partialMatch) {
+            actualValue = getElement(elementName).getAttribute("class");
+            expectedResult = SentinelStringUtils.format("Expected the element \"{}\" to{} {} the class \"{}\". Had the actual class(es) \"{}\".",
+                    elementName, (negate ? " not" : ""), matchType.replace("has", "have").replace("contains", "contain"), value, actualValue);
+
             if (negate) {
                 assertFalse(expectedResult, getElement(elementName).classContains(value));
             } else {
                 assertTrue(expectedResult, getElement(elementName).classContains(value));
             }
-        } else if (partialMatch) {
-            if (negate) {
-                assertFalse(expectedResult, getElement(elementName).attributeContains(attribute, value));
+        }
+        else{
+            actualValue = getElement(elementName).getAttribute(attribute);
+            expectedResult = SentinelStringUtils.format("The element \"{}\" with the attribute \"{}\" was expected to{} {} the value {}. The attribute had the value \"{}\".",
+                    elementName, attribute, (negate ? " not" : ""), matchType.replace("has", "have").replace("contains", "contain"), value, actualValue);
+
+            if (partialMatch) {
+                if (negate) {
+                    assertFalse(expectedResult, getElement(elementName).attributeContains(attribute, value));
+                } else {
+                    assertTrue(expectedResult, getElement(elementName).attributeContains(attribute, value));
+                }
             } else {
-                assertTrue(expectedResult, getElement(elementName).attributeContains(attribute, value));
-            }
-        } else {
-            if (negate) {
-                assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
-            } else {
-                assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+                if (negate) {
+                    assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+                } else {
+                    assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
+                }
             }
         }
     }
-    
+
     /**
      * Verifies an element is enabled by asserting the element found for the given element name is enabled
      * <p>
@@ -190,7 +267,7 @@ public class VerificationSteps {
         	assertTrue(expectedResult, getElement(elementName).isDisabled());
         }
     }
-    
+
     /**
      * Verifies an element is enabled by asserting the element for the given element name is hidden
      * <p>
@@ -212,7 +289,7 @@ public class VerificationSteps {
         	assertTrue(expectedResult, getElement(elementName).isHidden());
         }
     }
-    
+
     /**
      * Verifies the existence of a Javascript alert.
      * <p>
@@ -234,7 +311,7 @@ public class VerificationSteps {
         	assertTrue(expectedResult, actualResult);
         }
     }
-    
+
     /**
      * Verifies the existence of a Javascript alert.
      * <p>
