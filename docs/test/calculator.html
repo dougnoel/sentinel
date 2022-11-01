@@ -174,102 +174,144 @@ Modifications By Tyler Bouchard -
     }
   </style>
 <script>
-    const input = document.getElementById("input");
-    const valueOutputRoundedElement = document.getElementById("valueOutputRounded");
-    const textOutputRoundedElement = document.getElementById("textOutputRounded");
-    const valueOutputTruncatedElement = document.getElementById("valueOutputTruncated");
-    const textOutputTruncatedElement = document.getElementById("textOutputTruncated");
-    const valueOutputRawElement = document.getElementById("valueOutputRaw");
-    const textOutputRawElement = document.getElementById("textOutputRaw");
-    const fixedOutputModifier = document.getElementById("fixedOutputModifier");
-    const tmp = document.getElementById("tmp");
+	/****************************************************************************
+	* @function    : toFixed(number, [digits])
+	* @purpose     : Emulate toFixed() for large numbers and
+					 large fractional numbers with correct rounding
+					 by using the BigInt() built-in Object.
+	* @version     : 1.01
+	* @author      : Mohsen Alyafei
+	* @date        : 03 February 2021
+	* @param       : {number} [numeric or string] pass large numbers as a string
+	* @param       : {number} [optional digits]
+	*              : The number of digits to appear after the decimal point;
+	*              : this may be a value from 0 and above unlimited.
+	*              : If this argument is omitted or is negative, it is treated as 0.
+	*              : Handles large 'e' notation number using the eToNumber() function.digits
+	*              : See https://stackoverflow.com/a/66072001/11606728
+	* @returns     : A string representing the given number using fixed-point notation.
+	****************************************************************************/
+	function toFixed(num, digits) {
+		if (!num && num !== 0) return "Cannot read property of null or undefined"; // Can change it to throw Error
+		digits < 0 && (digits = 0);
+		digits = digits || 0;
+		let wh = (num += "").split((.1).toLocaleString().substr(1, 1)),
+			f = wh[1];
+		wh = wh[0];
+		let fr = (f = f || "0").substr(0, digits),
+			fn = BigInt(fr),
+			w = BigInt(wh),
+			fl = ("" + fn).length,
+			lZeros = fr.length - fl,
+			minus = wh[0] == "-",
+			inc = (wh < 0 || minus) ? BigInt(-1) : BigInt(1);
+		f[digits] >= 5 && (fn += BigInt(1));
+		(fn += "").length > fl && (lZeros -= 1);
+		lZeros >= 0 ? lZeros = "0".repeat(lZeros) : (fn = fn.substring(1), lZeros = "",
+			(fn ? w += inc : ((f[digits] >= 5) && (w += inc))));
+		fn = lZeros + fn;
+		L = digits - fn.length;
+		L && (fn += "0".repeat(L));
+		w == 0 && minus && (w = "-" + w);
+		return w + (fn ? "." : "") + fn;
+	}
 
-    function truncate(number, precision) {
-      var factorOfTen = Math.pow(10, precision);
-      return (Math.sign(number) * (Math.floor(Math.abs(number) * factorOfTen) / factorOfTen)).toFixed(precision);
-    }
+	const input = document.getElementById("input");
+	const valueOutputRoundedElement = document.getElementById("valueOutputRounded");
+	const textOutputRoundedElement = document.getElementById("textOutputRounded");
+	const valueOutputTruncatedElement = document.getElementById("valueOutputTruncated");
+	const textOutputTruncatedElement = document.getElementById("textOutputTruncated");
+	const valueOutputRawElement = document.getElementById("valueOutputRaw");
+	const textOutputRawElement = document.getElementById("textOutputRaw");
+	const fixedOutputModifier = document.getElementById("fixedOutputModifier");
+	const tmp = document.getElementById("tmp");
 
-    function writeTestOutput(outputValue) {
-      var roundedResult;
-      var truncatedResult;
-      if (fixedOutputModifier.value > 32) fixedOutputModifier.value = 32;
-      if (fixedOutputModifier != '') {
-        roundedResult = outputValue.toFixed(fixedOutputModifier.value);
-        truncatedResult = truncate(outputValue, fixedOutputModifier.value);
-      } else {
-        roundedResult = outputValue;
-        truncatedResult = outputValue;
-      }
-      valueOutputRoundedElement.value = roundedResult;
-      textOutputRoundedElement.innerText = roundedResult;
-      valueOutputTruncatedElement.value = truncatedResult;
-      textOutputTruncatedElement.innerText = truncatedResult;
-      valueOutputRawElement.value = outputValue;
-      textOutputRawElement.innerText = outputValue;
-    }
-    const empty = (element) => {
-      element.innerText = "";
-    };
-    const clearTestOutput = () => {
-      var zeroOutput = 0;
-      var roundedOutput = zeroOutput.toFixed(fixedOutputModifier.value);
-      var precisionOutput = truncate(zeroOutput, fixedOutputModifier.value);
-      valueOutputRoundedElement.value = roundedOutput;
-      textOutputRoundedElement.innerText = roundedOutput;
-      valueOutputTruncatedElement.value = precisionOutput;
-      textOutputTruncatedElement.innerText = precisionOutput;
-      valueOutputRawElement.value = zeroOutput;
-      textOutputRawElement.innerText = zeroOutput;
-    }
-    document.getElementById("all-clear").addEventListener("click", () => {
-      empty(input);
-      empty(tmp);
-      clearTestOutput();
-    });
-    document.getElementById("clear").addEventListener("click", () => {
-      empty(input);
-    });
-    document.querySelectorAll(".number").forEach((element) => {
-      element.addEventListener("click", () => {
-        if (input.innerText.length > 19) return alert("최대 입력 범위를 초과했습니다!");
-        input.innerText += element.innerText;
-      });
-    });
-    document.getElementById("dot").addEventListener("click", () => {
-      if (input.innerText.includes(".")) return;
-      input.innerText += ".";
-    });
-    document.getElementById("sign").addEventListener("click", () => {
-      if (input.innerText.startsWith("-")) {
-        input.innerText = input.innerText.slice(1);
-      } else {
-        input.innerText = `-${input.innerText}`;
-      }
-    });
-    document.querySelectorAll(".amt").forEach((element) => {
-      element.addEventListener("click", () => {
-        if (input.innerText) {
-          if (tmp.innerText) {
-            tmp.innerText = `${tmp.innerText} ${input.innerText} ${element.innerText}`;
-          } else {
-            tmp.innerText = `${input.innerText} ${element.innerText}`;
-          }
-        } else if (tmp.innerText.slice(-1).match(/-|\+|\*|\//)) {
-          let string = tmp.innerText.slice(0, -1);
-          string += element.innerText;
-          tmp.innerText = string;
-        }
-        empty(input);
-      });
-    });
-    document.getElementById("result").addEventListener("click", () => {
-      var finalOutput = 0;
-      if (input.innerText) {
-        var finalOutput = eval(tmp.innerText + input.innerText);
-        input.innerText = finalOutput;
-        empty(tmp);
-      }
-      writeTestOutput(finalOutput);
-    });
+	function truncate(number, precision) {
+		var factorOfTen = Math.pow(10, precision);
+		return (Math.sign(number) * (Math.floor(Math.abs(number) * factorOfTen) / factorOfTen)).toFixed(precision);
+	}
+
+	function writeTestOutput(outputValue) {
+		var roundedResult;
+		var truncatedResult;
+		if (fixedOutputModifier.value > 32) fixedOutputModifier.value = 32;
+		if (fixedOutputModifier != '') {
+			roundedResult = toFixed(outputValue, fixedOutputModifier.value);
+			truncatedResult = truncate(outputValue, fixedOutputModifier.value);
+		} else {
+			roundedResult = outputValue;
+			truncatedResult = outputValue;
+		}
+		valueOutputRoundedElement.value = roundedResult;
+		textOutputRoundedElement.innerText = roundedResult;
+		valueOutputTruncatedElement.value = truncatedResult;
+		textOutputTruncatedElement.innerText = truncatedResult;
+		valueOutputRawElement.value = outputValue;
+		textOutputRawElement.innerText = outputValue;
+	}
+	const empty = (element) => {
+		element.innerText = "";
+	};
+	const clearTestOutput = () => {
+		var zeroOutput = 0;
+		var roundedOutput = toFixed(zeroOutput, fixedOutputModifier.value);
+		var precisionOutput = truncate(zeroOutput, fixedOutputModifier.value);
+		valueOutputRoundedElement.value = roundedOutput;
+		textOutputRoundedElement.innerText = roundedOutput;
+		valueOutputTruncatedElement.value = precisionOutput;
+		textOutputTruncatedElement.innerText = precisionOutput;
+		valueOutputRawElement.value = zeroOutput;
+		textOutputRawElement.innerText = zeroOutput;
+	}
+	document.getElementById("all-clear").addEventListener("click", () => {
+		empty(input);
+		empty(tmp);
+		clearTestOutput();
+	});
+	document.getElementById("clear").addEventListener("click", () => {
+		empty(input);
+	});
+	document.querySelectorAll(".number").forEach((element) => {
+		element.addEventListener("click", () => {
+			if (input.innerText.length > 19) return alert("최대 입력 범위를 초과했습니다!");
+			input.innerText += element.innerText;
+		});
+	});
+	document.getElementById("dot").addEventListener("click", () => {
+		if (input.innerText.includes(".")) return;
+		input.innerText += ".";
+	});
+	document.getElementById("sign").addEventListener("click", () => {
+		if (input.innerText.startsWith("-")) {
+			input.innerText = input.innerText.slice(1);
+		} else {
+			input.innerText = `-${input.innerText}`;
+		}
+	});
+	document.querySelectorAll(".amt").forEach((element) => {
+		element.addEventListener("click", () => {
+			if (input.innerText) {
+				if (tmp.innerText) {
+					tmp.innerText = `${tmp.innerText} ${input.innerText} ${element.innerText}`;
+				} else {
+					tmp.innerText = `${input.innerText} ${element.innerText}`;
+				}
+			} else if (tmp.innerText.slice(-1).match(/-|\+|\*|\//)) {
+				let string = tmp.innerText.slice(0, -1);
+				string += element.innerText;
+				tmp.innerText = string;
+			}
+			empty(input);
+		});
+	});
+	document.getElementById("result").addEventListener("click", () => {
+		var finalOutput = 0;
+		if (input.innerText) {
+			var finalOutput = eval(tmp.innerText + input.innerText);
+			input.innerText = finalOutput;
+			empty(tmp);
+		}
+		writeTestOutput(finalOutput);
+	});
   </script>
 </html>
