@@ -117,7 +117,6 @@ public class VerificationSteps {
             else
                 expectedValue = storedValue - difference;
 
-
             String expected = String.valueOf(expectedValue);
             if(isRounded != null) {
                 String leadingFormat = "#";
