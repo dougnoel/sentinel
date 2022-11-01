@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-	<head>
-		<meta charset="utf-8">
-		<title>Test Calculator</title>
-	</head>
+<head>
+	<meta charset="utf-8">
+	<title>Test Calculator</title>
+</head>
 <!--
 Copyright (c) 2022 by Marshall (https://codepen.io/marshall-ku/pen/MRjaGm)
 
@@ -18,62 +18,62 @@ Modifications By Tyler Bouchard -
 11/1/2022 - Added extremely basic text and value test outputs
             Added ids to all buttons for simple automation testing purposes
 //-->
-	<body>
-		<div id="calculator">
-			<div id="input-wrap">
-				<div id="tmp"></div>
-				<div id="input"></div>
-			</div>
-			<div id="button-wrap">
-				<button id="all-clear">AC</button>
-				<button id="clear">C</button>
-				<button id="sign">+/-</button>
-				<button id="divideBtn" class="amt divide">/</button>
-				<button id="7Btn" class="number">7</button>
-				<button id="8Btn" class="number">8</button>
-				<button id="9Btn" class="number">9</button>
-				<button id="multiplyBtn" class="amt times">*</button>
-				<button id="4Btn" class="number">4</button>
-				<button id="5Btn" class="number">5</button>
-				<button id="6Btn" class="number">6</button>
-				<button id="minusBtn" class="amt minus">-</button>
-				<button id="1Btn" class="number">1</button>
-				<button id="2Btn" class="number">2</button>
-				<button id="3Btn" class="number">3</button>
-				<button id="plusBtn" class="amt plus">+</button>
-				<button id="0Btn" class="number num-0">0</button>
-				<button id="dot">.</button>
-				<button id="result">=</button>
-			</div>
-		</div>
-        <div id="testOuput-Wrapper">
-            <div style="text-align:center; color:white;">Simple Result Tester</div>
-			<br>
-			<div style="text-align:center; color:white;">Fixed Decimal Length<br>(32 max):<br>
-				<input id="fixedOutputModifier" min="0" step="1" type="number" style="width:200px" onkeypress="return event.charCode >= 48 && event.charCode <= 57" value=0>
-			</div>
-            <div style="text-align:center; color:white;">ToFixed Rounded Value:<br>
-                <input id="valueOutputRounded" readonly type="number" style="width:200px" value=0>
-            </div>
-            <div style="text-align:center; color:white;">ToFixed Rounded Text:<br>
-                <div id="textOutputRounded" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
-            </div>
-			<div style="text-align:center; color:white;">Truncated Value:<br>
-				<input id="valueOutputTruncated" readonly type="number" style="width:200px" value=0>
-			</div>
-			<div style="text-align:center; color:white;">Truncated Text:<br>
-				<div id="textOutputTruncated" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
-			</div>
-			<br>
-			<div style="text-align:center; color:white;">Raw Value:<br>
-				<input id="valueOutputRaw" readonly type="number" style="width:200px" value=0>
-			</div>
-			<div style="text-align:center; color:white;">Raw Text:<br>
-				<div id="textOutputRaw" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
-			</div>
-        </div>
-	</body>
-	<style>
+<body>
+<div id="calculator">
+	<div id="input-wrap">
+		<div id="tmp"></div>
+		<div id="input"></div>
+	</div>
+	<div id="button-wrap">
+		<button id="all-clear">AC</button>
+		<button id="clear">C</button>
+		<button id="sign">+/-</button>
+		<button id="divideBtn" class="amt divide">/</button>
+		<button id="7Btn" class="number">7</button>
+		<button id="8Btn" class="number">8</button>
+		<button id="9Btn" class="number">9</button>
+		<button id="multiplyBtn" class="amt times">*</button>
+		<button id="4Btn" class="number">4</button>
+		<button id="5Btn" class="number">5</button>
+		<button id="6Btn" class="number">6</button>
+		<button id="minusBtn" class="amt minus">-</button>
+		<button id="1Btn" class="number">1</button>
+		<button id="2Btn" class="number">2</button>
+		<button id="3Btn" class="number">3</button>
+		<button id="plusBtn" class="amt plus">+</button>
+		<button id="0Btn" class="number num-0">0</button>
+		<button id="dot">.</button>
+		<button id="result">=</button>
+	</div>
+</div>
+<div id="testOuput-Wrapper">
+	<div style="text-align:center; color:white;">Simple Result Tester</div>
+	<br>
+	<div style="text-align:center; color:white;">Fixed Decimal Length<br>(32 max):<br>
+		<input id="fixedOutputModifier" min="0" step="1" type="number" style="width:200px" onkeypress="return event.charCode >= 48 && event.charCode <= 57" value=0>
+	</div>
+	<div style="text-align:center; color:white;">ToFixed Rounded Value:<br>
+		<input id="valueOutputRounded" readonly type="number" style="width:200px" value=0>
+	</div>
+	<div style="text-align:center; color:white;">ToFixed Rounded Text:<br>
+		<div id="textOutputRounded" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
+	</div>
+	<div style="text-align:center; color:white;">Truncated Value:<br>
+		<input id="valueOutputTruncated" readonly type="number" style="width:200px" value=0>
+	</div>
+	<div style="text-align:center; color:white;">Truncated Text:<br>
+		<div id="textOutputTruncated" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
+	</div>
+	<br>
+	<div style="text-align:center; color:white;">Raw Value:<br>
+		<input id="valueOutputRaw" readonly type="number" style="width:200px" value=0>
+	</div>
+	<div style="text-align:center; color:white;">Raw Text:<br>
+		<div id="textOutputRaw" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
+	</div>
+</div>
+</body>
+<style>
 		@font-face {
             font-family: "DungGeunMo";
             src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff")
@@ -160,7 +160,7 @@ Modifications By Tyler Bouchard -
             background: #f55530;
 		}
 	</style>
-	<script>
+<script>
 		const input = document.getElementById("input");
 		const valueOutputRoundedElement = document.getElementById("valueOutputRounded");
 		const textOutputRoundedElement = document.getElementById("textOutputRounded");
