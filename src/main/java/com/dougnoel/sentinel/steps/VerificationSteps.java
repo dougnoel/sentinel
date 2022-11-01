@@ -122,12 +122,13 @@ public class VerificationSteps {
                 String leadingFormat = "#";
                 if(decimalCount > 0)
                     leadingFormat+=".";
-                String decimalPlaces = "#".repeat(decimalCount);
+                String decimalPlaces = "0".repeat(decimalCount);
 
                 DecimalFormat formatOutput = new DecimalFormat(leadingFormat + decimalPlaces);
 
                 switch(isRounded){
                     case "rounded":
+                        formatOutput.setRoundingMode(RoundingMode.HALF_UP);
                         break;
                     case "truncated":
                         formatOutput.setRoundingMode(RoundingMode.DOWN);
