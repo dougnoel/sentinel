@@ -48,13 +48,22 @@ Modifications By Tyler Bouchard -
 		</div>
         <div id="testOuput-Wrapper">
             <div style="text-align:center; color:white;">Simple Result Tester</div>
-            <br>
-            <div style="text-align:center; color:white;">Simple Input Value Test:
-                <input id="valueOutput" readonly type="number" style="width:200px" value="0">
+			<br>
+			<div style="text-align:center; color:white;">Fixed Decimal Length<br>(32 max):
+				<input id="fixedOutputModifier" min="0" step="1" type="number" style="width:200px" onkeypress="return event.charCode >= 48 && event.charCode <= 57" value=0>
+			</div>
+            <div style="text-align:center; color:white;">ToFixed Value:
+                <input id="valueOutputRounded" readonly type="number" style="width:200px" value=0>
             </div>
-            <div style="text-align:center; color:white;">Simple Text Value Test:
-                <div id="textOutput" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px">0</div>
+            <div style="text-align:center; color:white;">ToFixed Text:
+                <div id="textOutputRounded" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
             </div>
+			<div style="text-align:center; color:white;">Truncated Value:
+				<input id="valueOutputTruncated" readonly type="number" style="width:200px" value=0>
+			</div>
+			<div style="text-align:center; color:white;">Truncated Text:
+				<div id="textOutputTruncated" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
+			</div>
         </div>
 	</body>
 	<style>
@@ -146,17 +155,52 @@ Modifications By Tyler Bouchard -
 	</style>
 	<script>
 		const input = document.getElementById("input");
-		const valueOutputElement = document.getElementById("valueOutput");
-		const textOutputElement = document.getElementById("textOutput");
+		const valueOutputRoundedElement = document.getElementById("valueOutputRounded");
+		const textOutputRoundedElement = document.getElementById("textOutputRounded");
+		const valueOutputTruncatedElement = document.getElementById("valueOutputTruncated");
+		const textOutputTruncatedElement = document.getElementById("textOutputTruncated");
+		const fixedOutputModifier = document.getElementById("fixedOutputModifier");
 		const tmp = document.getElementById("tmp");
+
+		function toFixedNoRound(number, precision) {
+			return (Math.floor(number * Math.pow(10, precision)) / Math.pow(10, precision)).toFixed(precision);
+		}
+
+		function writeTestOutput(outputValue) {
+			var roundedResult;
+			var resultAtPrecision;
+
+			if(fixedOutputModifier.value > 32)
+				fixedOutputModifier.value = 32;
+
+			if(fixedOutputModifier.value != 0 && fixedOutputModifier != '') {
+				roundedResult = outputValue.toFixed(fixedOutputModifier.value);
+				resultAtPrecision = toFixedNoRound(outputValue, fixedOutputModifier.value);
+			}
+			else {
+				roundedResult = outputValue;
+				resultAtPrecision = outputValue;
+			}
+
+			valueOutputRoundedElement.value = roundedResult;
+			textOutputRoundedElement.innerText = roundedResult;
+			valueOutputTruncatedElement.value = resultAtPrecision;
+			textOutputTruncatedElement.innerText = resultAtPrecision;
+		}
 
 		const empty = (element) => {
             element.innerText = "";
 		};
 
 		const clearTestOutput = () => {
-		    valueOutputElement.value = "0";
-		    textOutputElement.innerText = "0";
+			var zeroOutput = 0;
+			var roundedOutput = zeroOutput.toFixed(fixedOutputModifier.value);
+			var precisionOutput = toFixedNoRound(zeroOutput, fixedOutputModifier.value);;
+
+		    valueOutputRoundedElement.value = roundedOutput;
+		    textOutputRoundedElement.innerText = roundedOutput;
+		    valueOutputTruncatedElement.value = precisionOutput;
+			textOutputTruncatedElement.innerText = precisionOutput;
 		}
 
 		document.getElementById("all-clear").addEventListener("click", () => {
@@ -167,7 +211,6 @@ Modifications By Tyler Bouchard -
 
 		document.getElementById("clear").addEventListener("click", () => {
             empty(input);
-            clearTestOutput();
 		});
 
 		document.querySelectorAll(".number").forEach((element) => {
@@ -213,13 +256,15 @@ Modifications By Tyler Bouchard -
 		});
 
 		document.getElementById("result").addEventListener("click", () => {
+			var finalOutput = 0;
+
             if (input.innerText) {
                 var finalOutput = eval(tmp.innerText + input.innerText);
                 input.innerText = finalOutput;
-                valueOutputElement.value = finalOutput;
-                textOutputElement.innerText = finalOutput;
                 empty(tmp);
             }
+
+            writeTestOutput(finalOutput);
 		});
 	</script>
 </html>
