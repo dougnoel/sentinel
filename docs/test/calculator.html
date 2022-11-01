@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8">
+		<title>Test Calculator</title>
+	</head>
+<!--
+Copyright (c) 2022 by Marshall (https://codepen.io/marshall-ku/pen/MRjaGm)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//-->
+<!--
+Modifications By Tyler Bouchard -
+11/1/2022 - Added extremely basic text and value test outputs
+            Added ids to all buttons for simple automation testing purposes
+//-->
+	<body>
+		<div id="calculator">
+			<div id="input-wrap">
+				<div id="tmp"></div>
+				<div id="input"></div>
+			</div>
+			<div id="button-wrap">
+				<button id="all-clear">AC</button>
+				<button id="clear">C</button>
+				<button id="sign">+/-</button>
+				<button id="divideBtn" class="amt divide">/</button>
+				<button id="7Btn" class="number">7</button>
+				<button id="8Btn" class="number">8</button>
+				<button id="9Btn" class="number">9</button>
+				<button id="multiplyBtn" class="amt times">*</button>
+				<button id="4Btn" class="number">4</button>
+				<button id="5Btn" class="number">5</button>
+				<button id="6Btn" class="number">6</button>
+				<button id="minusBtn" class="amt minus">-</button>
+				<button id="1Btn" class="number">1</button>
+				<button id="2Btn" class="number">2</button>
+				<button id="3Btn" class="number">3</button>
+				<button id="plusBtn" class="amt plus">+</button>
+				<button id="0Btn" class="number num-0">0</button>
+				<button id="dot">.</button>
+				<button id="result">=</button>
+			</div>
+		</div>
+        <div id="testOuput-Wrapper">
+            <div style="text-align:center; color:white;">Simple Result Tester</div>
+            <br>
+            <div style="text-align:center; color:white;">Simple Input Value Test:
+                <input id="valueOutput" readonly type="number" style="width:200px" value="0">
+            </div>
+            <div style="text-align:center; color:white;">Simple Text Value Test:
+                <div id="textOutput" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px">0</div>
+            </div>
+        </div>
+	</body>
+	<style>
+		@font-face {
+            font-family: "DungGeunMo";
+            src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff")
+            format("woff");
+            font-weight: normal;
+            font-style: normal;
+		}
+		*,
+		*::before {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+		}
+		html,body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+		}
+		body {
+            font-family: "DungGeunMo";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #121212;
+		}
+		/* calculator */
+		#calculator {
+            width: 90%;
+            max-width: 430px;
+            padding: 25px;
+            border-radius: 25px;
+            background: linear-gradient(to bottom right, #404040, #0c0c0c);
+		}
+		/* input */
+		#input-wrap {
+            position: relative;
+            width: calc(100% - 4px);
+            margin-bottom: 5px;
+            padding: 0 5px;
+            background: #a1bd66;
+            text-align: right;
+            box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.5);
+		}
+		#input {
+            height: 5rem;
+            line-height: 5rem;
+            font-size: 2rem;
+		}
+		#tmp {
+            position: absolute;
+            right: 5px;
+            top: 0.25rem;
+            color: grey;
+		}
+		/* button */
+		#button-wrap {
+            display: flex;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: space-around;
+		}
+		#button-wrap > button {
+            width: calc(25% - 4px);
+            text-align: center;
+            line-height: 5rem;
+            margin: 2px 0;
+            background: grey;
+            color: #f1f1f1;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            outline: 0;
+            transition: 0.3s;
+		}
+		#button-wrap > button.num-0 {
+		    width: calc(50% - 4px);
+		}
+		#button-wrap > button.number {
+		    background: #5d5d5f;
+		}
+		#button-wrap > button:hover {
+		    box-shadow: inset 0px 0px 15px 0px rgba(0, 0, 0, 0.3);
+		}
+		#button-wrap > button#result {
+            background: #f55530;
+		}
+	</style>
+	<script>
+		const input = document.getElementById("input");
+		const valueOutputElement = document.getElementById("valueOutput");
+		const textOutputElement = document.getElementById("textOutput");
+		const tmp = document.getElementById("tmp");
+
+		const empty = (element) => {
+            element.innerText = "";
+		};
+
+		const clearTestOutput = () => {
+		    valueOutputElement.value = "0";
+		    textOutputElement.innerText = "0";
+		}
+
+		document.getElementById("all-clear").addEventListener("click", () => {
+            empty(input);
+            empty(tmp);
+            clearTestOutput();
+		});
+
+		document.getElementById("clear").addEventListener("click", () => {
+            empty(input);
+            clearTestOutput();
+		});
+
+		document.querySelectorAll(".number").forEach((element) => {
+            element.addEventListener("click", () => {
+                if (input.innerText.length > 19)
+                    return alert("최대 입력 범위를 초과했습니다!");
+
+                input.innerText += element.innerText;
+            });
+		});
+
+		document.getElementById("dot").addEventListener("click", () => {
+            if (input.innerText.includes(".")) return;
+
+            input.innerText += ".";
+		});
+
+		document.getElementById("sign").addEventListener("click", () => {
+            if (input.innerText.startsWith("-")) {
+                input.innerText = input.innerText.slice(1);
+            } else {
+                input.innerText = `-${input.innerText}`;
+            }
+		});
+
+		document.querySelectorAll(".amt").forEach((element) => {
+            element.addEventListener("click", () => {
+                if (input.innerText) {
+                    if (tmp.innerText) {
+                        tmp.innerText = `${tmp.innerText} ${input.innerText} ${element.innerText}`;
+                    } else {
+                        tmp.innerText = `${input.innerText} ${element.innerText}`;
+                    }
+                } else if (tmp.innerText.slice(-1).match(/-|\+|\*|\//)) {
+                    let string = tmp.innerText.slice(0, -1);
+                    string += element.innerText;
+
+                    tmp.innerText = string;
+                }
+
+                empty(input);
+            });
+		});
+
+		document.getElementById("result").addEventListener("click", () => {
+            if (input.innerText) {
+                var finalOutput = eval(tmp.innerText + input.innerText);
+                input.innerText = finalOutput;
+                valueOutputElement.value = finalOutput;
+                textOutputElement.innerText = finalOutput;
+                empty(tmp);
+            }
+		});
+	</script>
+</html>
