@@ -166,5 +166,27 @@ public class TextSteps {
         getElement(elementName).clear();
         Configuration.clear(elementName);
     }
-    
+
+    /**
+     * Stores the text of a given element with a given key
+     * @param elementName String the name of the element
+     * @param storageKey String the name of the record to store the data as
+     */
+    @When("^I store the text in the (.*) as \"(.*)\"$")
+    public static void storeText(String elementName, String storageKey){
+        String elementText = getElement(elementName).getText();
+        Configuration.update(storageKey, elementText);
+    }
+
+    /**
+     * Stores the value of an attribute for a given element with a given key
+     * @param attribute String the name of the attribute to store
+     * @param elementName String the name of the element
+     * @param storageKey String the name of the record to store the data as
+     */
+    @When("^I store the value of the attribute \"(.*?)\" in the (.*) as a variable with the name \"(.*)\"$")
+    public static void storeElementAttributeAs(String attribute, String elementName, String storageKey) {
+        String attributeValue = getElement(elementName).getAttribute(attribute);
+        Configuration.update(storageKey, attributeValue);
+    }
 }
