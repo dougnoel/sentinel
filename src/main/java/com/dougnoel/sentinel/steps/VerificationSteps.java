@@ -13,6 +13,9 @@ import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import org.openqa.selenium.Point;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 /**
  * Methods used to defined basic validations
  *
@@ -20,7 +23,8 @@ import org.openqa.selenium.Point;
 public class VerificationSteps {
 
     /**
-     * Used to compare the numerical text, or input element value, of an element to a stored value to verify how much it has changed.
+     * Used to compare the numerical text, or input element value, of an element to a stored value to verify how much it has changed
+     * assuming no rounding/truncation is required.
      * Can verify whether a value is greater than or less than the stored by a given amount.
      * <p>
      * Only numerical values will correctly work with this verification step.
@@ -29,9 +33,9 @@ public class VerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the numerical <b>value</b> of the <b>added number result input</b> element is <b>3</b> <b>less</b> than the previously stored <b>first number input</b></li>
-     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3</b> <b>greater</b> than the previously stored <b>first number input</b></li>
-     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3.5</b> <b>greater</b> than the previously stored <b>first decimal input</b></li>
+     * <li>I verify the numerical <b>value</b> of the <b>added number result input</b> element is <b>3</b> <b>less</b> than the previously stored <b>first number input</b> value</li>
+     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3</b> <b>greater</b> than the previously stored <b>first number input</b> value</li>
+     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3.5</b> <b>greater</b> than the previously stored <b>first decimal input</b> value</li>
      * </ul>
      * <b>Scenario Outline Example:</b>
      * <p>
@@ -43,10 +47,53 @@ public class VerificationSteps {
      * @param operator String whether we're checking if the new value is more or less than the stored value
      * @param storedValueKey String the key of the stored value
      */
-    @Then("^I verify the numerical (value|text) of the (.*?) element is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value")
-    public static void verifyNumericalDifference(String isInput, String elementName, double difference, String operator, String storedValueKey) {
+    @Then("^I verify the numerical (value|text) of the (.*?) element is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value$")
+    public static void verifyFullNumDifference(String isInput, String elementName, double difference, String operator, String storedValueKey) {
+        verifyNumDiffFixedDecimals(isInput, elementName, difference, operator, storedValueKey, null, -1);
+    }
+
+    /**
+     * Used to compare the numerical text, or input element value, of an element to a stored value to verify how much it
+     * has changed given a set number of decimal places truncated or rounded up/down
+     * Can verify whether a value is greater than or less than the stored by a given amount.
+     * <p>
+     * Only numerical values will correctly work with this verification step.
+     * <p>
+     * Supports decimals, rounding up/down, and truncation padded to a given decimal length:
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>Compare 0.0010 is equivalent to later displayed 0.0011 due to another operation</li>
+     * <li>Compare 2.00125-1.0001 rounded up to 0 decimal places is equivalent to displayed 1</li>
+     * <li>Compare 2.50125-1.0001 rounded up to 0 decimal places is equivalent to displayed 2</li>
+     * <li>Compare 2.50125-1.0001 truncated to 0 decimal places is equivalent to displayed 1</li>
+     * <li>Compare 0.00125-0.0001 rounded up to 4 decimal places is equivalent to displayed 0.0012</li>
+     * <li>Compare 0.00125-0.0001 rounded down to 4 decimal places is equivalent to displayed 0.0011</li>
+     * <li>Compare 0.00125-0.0002 truncated to 4 decimal places is equivalent to displayed 0.0010</li>
+     * </ul>
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the numerical <b>value</b> of the <b>added number result input</b> element is <b>3</b> <b>less</b> than the previously stored <b>first number input</b> value rounded up to 2 decimal places</li>
+     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3</b> <b>greater</b> than the previously stored <b>first number input</b> value rounded down to 3 decimal places</li>
+     * <li>I verify the numerical <b>text</b> of the <b>added number result span</b> element is <b>3.5</b> <b>greater</b> than the previously stored <b>first decimal input</b> value truncated to 3 decimal places</li>
+     * </ul>
+     * <b>Scenario Outline Example:</b>
+     * <p>
+     * I verify the numerical &lt;checking input or text value&gt of the &lt;element&gt element is &lt;numerical difference&gt &lt;less or more&gt than the previously &lt;stored or used&gt &lt;variable key&gt value &lt;rounding or truncating&gt to &lt;number of decimal places&gt decimal places
+     * <p>
+     * @param isInput String determine if we're fetching an input's value, or an element's numerical text to compare
+     * @param elementName String the name of the element whose value/text we are fetching
+     * @param difference Double how much more/less the new value is from the stored value
+     * @param operator String whether we're checking if the new value is more or less than the stored value
+     * @param storedValueKey String the key of the stored value
+     * @param isRounded String to determine if we're rounding up, down, or truncating
+     * @param decimalCount Integer how many decimal places we wish to pad/truncate/round to
+     */
+    @Then("^I verify the numerical (value|text) of the (.*?) element is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value (?:rounded (?:up|down)|truncated) to ([0-9]+) decimal places$")
+    public static void verifyNumDiffFixedDecimals(String isInput, String elementName, double difference, String operator, String storedValueKey, String isRounded, int decimalCount) {
         String unparsedStoredValue = null;
-        String unparsedElementValue = null;
+        String actual = null;
 
         try{
             unparsedStoredValue = Configuration.toString(storedValueKey);
@@ -59,11 +106,10 @@ public class VerificationSteps {
             }
 
             if (isInput.contentEquals("value"))
-                unparsedElementValue = getElement(elementName).getAttribute("value");
+                actual = getElement(elementName).getAttribute("value");
             else
-                unparsedElementValue = getElement(elementName).getText();
+                actual = getElement(elementName).getText();
 
-            double actualValue = Double.parseDouble(unparsedElementValue);
             double storedValue = Double.parseDouble(unparsedStoredValue);
             double expectedValue;
             if (operator.contentEquals("greater"))
@@ -71,13 +117,34 @@ public class VerificationSteps {
             else
                 expectedValue = storedValue - difference;
 
-            String expectedResult = SentinelStringUtils.format("Expected the numerical {} of the \"{}\" element to be \"{}\". {} {} than the stored value {}. The found value was instead \"{}\".",
-                    isInput, elementName, expectedValue, difference, operator, storedValue, actualValue);
 
-            Assert.assertEquals(expectedResult, actualValue, expectedValue, 0);
+            String expected = String.valueOf(expectedValue);
+            if(isRounded != null) {
+                String leadingFormat = "#";
+                if(decimalCount > 0)
+                    leadingFormat+=".";
+                String decimalPlaces = "#".repeat(decimalCount);
+
+                DecimalFormat formatOutput = new DecimalFormat(leadingFormat + decimalPlaces);
+
+                if(isRounded.contentEquals("rounded")) {
+                    if(isRounded.contains("up"))
+                        formatOutput.setRoundingMode(RoundingMode.UP);
+                    else
+                        formatOutput.setRoundingMode(RoundingMode.DOWN);
+                }
+
+                expected = formatOutput.format(expectedValue);
+            }
+
+            String expectedResult = SentinelStringUtils.format("Expected the numerical {} of the \"{}\" element to be \"{}\". {} {} than the stored value {}. The found value was instead \"{}\".",
+                    isInput, elementName, expected, difference, operator, storedValue, actual);
+
+            Assert.assertEquals(expectedResult, expected, actual);
+
         } catch (java.lang.NumberFormatException parseFailure) {
             String numberError = SentinelStringUtils.format("Expected numerical values, but the stored value was \"{}\", and the element contained \"{}\"",
-                    unparsedStoredValue, unparsedElementValue);
+                    unparsedStoredValue, actual);
 
             throw new NumberFormatException(numberError, parseFailure);
         }
