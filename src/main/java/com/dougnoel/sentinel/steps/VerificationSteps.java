@@ -90,7 +90,7 @@ public class VerificationSteps {
      * @param isRounded String to determine if we're rounding up, down, or truncating
      * @param decimalCount Integer how many decimal places we wish to pad/truncate/round to
      */
-    @Then("^I verify the numerical (value|text) of the (.*?) element is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value (?:rounded (?:up|down)|truncated) to ([0-9]+) decimal places$")
+    @Then("^I verify the numerical (value|text) of the (.*?) is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value (rounded|truncated) to ([0-9]+) decimal places$")
     public static void verifyNumDiffFixedDecimals(String isInput, String elementName, double difference, String operator, String storedValueKey, String isRounded, int decimalCount) {
         String unparsedStoredValue = null;
         String actual = null;
@@ -126,11 +126,14 @@ public class VerificationSteps {
 
                 DecimalFormat formatOutput = new DecimalFormat(leadingFormat + decimalPlaces);
 
-                if(isRounded.contentEquals("rounded")) {
-                    if(isRounded.contains("up"))
-                        formatOutput.setRoundingMode(RoundingMode.UP);
-                    else
+                switch(isRounded){
+                    case "rounded":
+                        break;
+                    case "truncated":
                         formatOutput.setRoundingMode(RoundingMode.DOWN);
+                        break;
+                    default:
+                        break;
                 }
 
                 expected = formatOutput.format(expectedValue);
