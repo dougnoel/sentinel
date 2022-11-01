@@ -145,4 +145,10 @@ public class TableSteps {
     public static void clickColumnHeaderToSort(String columnName, String tableName) {
     	getElementAsTable(tableName).clickColumnHeader(columnName);
 	}
+
+	@When("^I find the (\\d+)(?:st|nd|rd|th) column in the (.*?) and click the cell in the (\\d+)(?:st|nd|rd|th) row$")
+	public static void clickCoordsInTable(int xCoord, String tableName, int yCoord) {
+		getElementAsTable(tableName).clickElementAtCoord(xCoord,yCoord);
+	}
+
 }
