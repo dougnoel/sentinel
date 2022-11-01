@@ -184,8 +184,14 @@ Modifications By Tyler Bouchard -
     const fixedOutputModifier = document.getElementById("fixedOutputModifier");
     const tmp = document.getElementById("tmp");
 
-    function toFixedNoRound(number, precision) {
-      return (Math.floor(number * Math.pow(10, precision)) / Math.pow(10, precision)).toFixed(precision);
+    function truncate(number, precision) {
+      var factorOfTen = Math.pow(10, precision);
+      return (Math.sign(number) * (Math.floor(Math.abs(number) * factorOfTen) / factorOfTen)).toFixed(precision);
+    }
+
+    function roundNumber(number, precision) {
+	  var factorOfTen = Math.pow(10, precision);
+	  return (Math.sign(number) * (Math.round(Math.abs(number) * factorOfTen) / factorOfTen)).toFixed(precision);
     }
 
     function writeTestOutput(outputValue) {
@@ -193,8 +199,8 @@ Modifications By Tyler Bouchard -
       var truncatedResult;
       if (fixedOutputModifier.value > 32) fixedOutputModifier.value = 32;
       if (fixedOutputModifier != '') {
-        roundedResult = outputValue.toFixed(fixedOutputModifier.value);
-        truncatedResult = toFixedNoRound(outputValue, fixedOutputModifier.value);
+        roundedResult = roundNumber(outputValue, fixedOutputModifier.value);
+        truncatedResult = truncate(outputValue, fixedOutputModifier.value);
       } else {
         roundedResult = outputValue;
         truncatedResult = outputValue;
@@ -211,8 +217,8 @@ Modifications By Tyler Bouchard -
     };
     const clearTestOutput = () => {
       var zeroOutput = 0;
-      var roundedOutput = zeroOutput.toFixed(fixedOutputModifier.value);
-      var precisionOutput = toFixedNoRound(zeroOutput, fixedOutputModifier.value);
+      var roundedOutput = roundNumber(zeroOutput, fixedOutputModifier.value);
+      var precisionOutput = truncate(zeroOutput, fixedOutputModifier.value);
       valueOutputRoundedElement.value = roundedOutput;
       textOutputRoundedElement.innerText = roundedOutput;
       valueOutputTruncatedElement.value = precisionOutput;
