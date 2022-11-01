@@ -189,17 +189,12 @@ Modifications By Tyler Bouchard -
       return (Math.sign(number) * (Math.floor(Math.abs(number) * factorOfTen) / factorOfTen)).toFixed(precision);
     }
 
-    function roundNumber(number, precision) {
-	  var factorOfTen = Math.pow(10, precision);
-	  return (Math.sign(number) * (Math.round(Math.abs(number) * factorOfTen) / factorOfTen)).toFixed(precision);
-    }
-
     function writeTestOutput(outputValue) {
       var roundedResult;
       var truncatedResult;
       if (fixedOutputModifier.value > 32) fixedOutputModifier.value = 32;
       if (fixedOutputModifier != '') {
-        roundedResult = roundNumber(outputValue, fixedOutputModifier.value);
+        roundedResult = outputValue.toFixed(fixedOutputModifier.value);
         truncatedResult = truncate(outputValue, fixedOutputModifier.value);
       } else {
         roundedResult = outputValue;
@@ -217,7 +212,7 @@ Modifications By Tyler Bouchard -
     };
     const clearTestOutput = () => {
       var zeroOutput = 0;
-      var roundedOutput = roundNumber(zeroOutput, fixedOutputModifier.value);
+      var roundedOutput = zeroOutput.toFixed(fixedOutputModifier.value);
       var precisionOutput = truncate(zeroOutput, fixedOutputModifier.value);
       valueOutputRoundedElement.value = roundedOutput;
       textOutputRoundedElement.innerText = roundedOutput;
