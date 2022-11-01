@@ -64,6 +64,13 @@ Modifications By Tyler Bouchard -
 			<div style="text-align:center; color:white;">Truncated Text:<br>
 				<div id="textOutputTruncated" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
 			</div>
+			<br>
+			<div style="text-align:center; color:white;">Raw Value:<br>
+				<input id="valueOutputRaw" readonly type="number" style="width:200px" value=0>
+			</div>
+			<div style="text-align:center; color:white;">Raw Text:<br>
+				<div id="textOutputRaw" style="margin: 0 auto; background-color: white; font-family: arial; color:black; text-align:left; border:2px solid white; width:200px; overflow-wrap: break-word;">0</div>
+			</div>
         </div>
 	</body>
 	<style>
@@ -159,6 +166,8 @@ Modifications By Tyler Bouchard -
 		const textOutputRoundedElement = document.getElementById("textOutputRounded");
 		const valueOutputTruncatedElement = document.getElementById("valueOutputTruncated");
 		const textOutputTruncatedElement = document.getElementById("textOutputTruncated");
+		const valueOutputRawElement = document.getElementById("valueOutputRaw");
+		const textOutputRawElement = document.getElementById("textOutputRaw");
 		const fixedOutputModifier = document.getElementById("fixedOutputModifier");
 		const tmp = document.getElementById("tmp");
 
@@ -168,24 +177,26 @@ Modifications By Tyler Bouchard -
 
 		function writeTestOutput(outputValue) {
 			var roundedResult;
-			var resultAtPrecision;
+			var truncatedResult;
 
 			if(fixedOutputModifier.value > 32)
 				fixedOutputModifier.value = 32;
 
-			if(fixedOutputModifier.value != 0 && fixedOutputModifier != '') {
+			if(fixedOutputModifier != '') {
 				roundedResult = outputValue.toFixed(fixedOutputModifier.value);
-				resultAtPrecision = toFixedNoRound(outputValue, fixedOutputModifier.value);
+				truncatedResult = toFixedNoRound(outputValue, fixedOutputModifier.value);
 			}
 			else {
 				roundedResult = outputValue;
-				resultAtPrecision = outputValue;
+				truncatedResult = outputValue;
 			}
 
 			valueOutputRoundedElement.value = roundedResult;
 			textOutputRoundedElement.innerText = roundedResult;
-			valueOutputTruncatedElement.value = resultAtPrecision;
-			textOutputTruncatedElement.innerText = resultAtPrecision;
+			valueOutputTruncatedElement.value = truncatedResult;
+			textOutputTruncatedElement.innerText = truncatedResult;
+			valueOutputRawElement.value = outputValue;
+			textOutputRawElement.innerText = outputValue;
 		}
 
 		const empty = (element) => {
@@ -195,12 +206,14 @@ Modifications By Tyler Bouchard -
 		const clearTestOutput = () => {
 			var zeroOutput = 0;
 			var roundedOutput = zeroOutput.toFixed(fixedOutputModifier.value);
-			var precisionOutput = toFixedNoRound(zeroOutput, fixedOutputModifier.value);;
+			var precisionOutput = toFixedNoRound(zeroOutput, fixedOutputModifier.value);
 
 		    valueOutputRoundedElement.value = roundedOutput;
 		    textOutputRoundedElement.innerText = roundedOutput;
 		    valueOutputTruncatedElement.value = precisionOutput;
 			textOutputTruncatedElement.innerText = precisionOutput;
+			valueOutputRawElement.value = zeroOutput;
+			textOutputRawElement.innerText = zeroOutput;
 		}
 
 		document.getElementById("all-clear").addEventListener("click", () => {
