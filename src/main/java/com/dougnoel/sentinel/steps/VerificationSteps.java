@@ -12,6 +12,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import org.openqa.selenium.Point;
+import java.math.BigDecimal;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -47,7 +48,7 @@ public class VerificationSteps {
      * @param operator String whether we're checking if the new value is more or less than the stored value
      * @param storedValueKey String the key of the stored value
      */
-    @Then("^I verify the numerical (value|text) of the (.*?) element is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value$")
+    @Then("^I verify the numerical (value|text) of the (.*?) is (.*?) (greater|less) than the previously (?:stored|used) (.*?) value$")
     public static void verifyFullNumDifference(String isInput, String elementName, double difference, String operator, String storedValueKey) {
         verifyNumDiffFixedDecimals(isInput, elementName, difference, operator, storedValueKey, null, -1);
     }
@@ -111,11 +112,11 @@ public class VerificationSteps {
                 actual = getElement(elementName).getText();
 
             double storedValue = Double.parseDouble(unparsedStoredValue);
-            double expectedValue;
+            BigDecimal expectedValue;
             if (operator.contentEquals("greater"))
-                expectedValue = storedValue + difference;
+                expectedValue = BigDecimal.valueOf(storedValue + difference);
             else
-                expectedValue = storedValue - difference;
+                expectedValue = BigDecimal.valueOf(storedValue - difference);
 
             String expected = String.valueOf(expectedValue);
             if(isRounded != null) {
