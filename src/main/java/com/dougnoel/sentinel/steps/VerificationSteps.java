@@ -118,7 +118,7 @@ public class VerificationSteps {
             else
                 expectedValue = BigDecimal.valueOf(storedValue - difference);
 
-            String expected = String.valueOf(expectedValue);
+            String expected = expectedValue.toString();
             if(isRounded != null) {
                 String leadingFormat = "#";
                 if(decimalCount > 0)
