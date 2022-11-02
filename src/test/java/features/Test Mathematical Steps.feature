@@ -193,7 +193,6 @@ Feature: Math Verification Tests
       And I verify the truncated text div has the text "2"
       And I verify the truncated value input with the attribute value has the value 2
 
-    @this
   Scenario: Verifies old and new value comparison when we:
   -Store the number 2.5
   -Add .3005 on the webpage inputs
