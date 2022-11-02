@@ -55,5 +55,7 @@ elements:
     id: "textOutputTruncated"
   raw_value_input:
     id: "valueOutputRaw"
-  raw_text_input:
+  raw_text_div:
     id: "textOutputRaw"
+  calculator_results:
+    id: "input"
