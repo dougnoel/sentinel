@@ -104,3 +104,9 @@ Feature: Table Tests
       And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
+
+  @table-element-clickable
+  Scenario: I click the button on a table using its coordinates
+    Given I am on the Table Page
+    When I find the 8th column in the Example table and click the cell in the 1st row
+    Then I verify the JS alert contains the text This is Bob
