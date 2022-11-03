@@ -480,12 +480,20 @@ public class Table extends Element {
 
 	/**
 	 * Clicks the cell found at the given x,y coords in the table.
-	 * @param column int the x coord of the cell in the table
-	 * @param row int the y coord of the cell in the table
+	 * <br><br>
+	 * <b>Note:</b> Uses the constant xpath
+	 * <p>
+	 * <b>".//"+tableCellDataTag+"["+column+"]"</b>
+	 * <p>
+	 * to determine the location of the cell
+	 * @param column int the 1 based x coord of the cell in the table
+	 * @param row int the 1 based y coord of the cell in the table
 	 */
 	public void clickElementAtCoord(int column, int row) {
-		WebElement tableRow = getOrCreateRowElements().get(row);
-		WebElement cell = tableRow.findElement(By.xpath(".//" + tableCellDataTag + "[" + column + "]"));
+		WebElement tableRow = getOrCreateRowElements().get(--row);
+
+		String cellLocator = ".//" + tableCellDataTag + "[" + column + "]";
+		WebElement cell = tableRow.findElement(By.xpath(cellLocator));
 		cell.click();
 	}
 	
