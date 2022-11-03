@@ -51,3 +51,30 @@ Feature: Text Verification Tests
     Then I verify the middle name field is disabled
       And I verify the first name field is disabled
       And I verify the last name field is enabled
+
+  @text
+  Scenario: I store and verify an elements inner text
+    Given I am on the Guinea Pig Page
+    When I store the text in the example div as "div inner text"
+      And I store the text in the example link as "link inner text"
+    Then I wait until the example div contains the text used in the div inner text
+      And I wait until the example link does not contain the text used in the div inner text
+      And I wait until the example div does not contain the text used in the link inner text
+
+  @text
+  Scenario: I store and verify an elements value attribute
+    Given I am on the Guinea Pig Page
+    When I store the value of the attribute "value" in the example textbox as a variable with the name "textbox value"
+      And I store the value of the attribute "href" in the example link as a variable with the name "href value"
+    Then I verify the example textbox with the attribute value contains the same value used for the textbox value
+      And I verify the example textbox with the attribute value does not contain the same value used for the href value
+      And I verify the example link with the attribute href has the same value used for the href value
+
+  @text @this
+  Scenario: I store and verify an elements class attribute
+    Given I am on the Guinea Pig Page
+    When I store the value of the attribute "class" in the example div as a variable with the name "div class"
+      And I store the value of the attribute "class" in the example textbox as a variable with the name "textbox class"
+    Then I verify the example textbox with the attribute class contains the same value used for the textbox class
+      And I verify the example textbox with the attribute class does not contain the same value used for the div class
+      And I verify the example div with the attribute class has the same value used for the div class
