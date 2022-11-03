@@ -15,7 +15,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 4 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 1 button
@@ -34,7 +34,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 1 button
@@ -53,7 +53,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 3 button
@@ -76,7 +76,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 3 button
@@ -99,7 +99,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 3 button
@@ -123,7 +123,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 4 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 1 button
@@ -143,7 +143,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 1 button
@@ -163,7 +163,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 4 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 1 button
@@ -183,7 +183,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 1 button
@@ -204,7 +204,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 3 button
@@ -228,7 +228,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 3 button
@@ -252,7 +252,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 3 button
@@ -276,7 +276,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 3 button
@@ -301,7 +301,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 4 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 1 button
@@ -322,7 +322,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 1 button
@@ -343,7 +343,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 4 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 1 button
@@ -364,7 +364,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 1 button
@@ -386,7 +386,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 4 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 4 button
@@ -410,7 +410,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 3 button
@@ -435,7 +435,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the minus button
       And I click the dot button
       And I click the 3 button
@@ -460,7 +460,7 @@ Feature: Math Verification Tests
       And I click the dot button
       And I click the 5 button
       And I click the equals button
-      And I store the text in the raw text div as "starting number"
+      And I store the text in the raw text div as a variable with the name "starting number"
       And I click the plus button
       And I click the dot button
       And I click the 3 button
