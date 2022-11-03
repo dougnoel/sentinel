@@ -55,8 +55,8 @@ Feature: Text Verification Tests
   @text
   Scenario: I store and verify an elements inner text
     Given I am on the Guinea Pig Page
-    When I store the text in the example div as "div inner text"
-      And I store the text in the example link as "link inner text"
+    When I store the text in the example div as a variable with the name "div inner text"
+      And I store the text in the example link as a variable with the name "link inner text"
     Then I wait until the example div contains the text used in the div inner text
       And I wait until the example link does not contain the text used in the div inner text
       And I wait until the example div does not contain the text used in the link inner text
