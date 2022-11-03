@@ -110,3 +110,4 @@ Feature: Table Tests
     Given I am on the Table Page
     When I find the 8th column in the Example table and click the cell in the 1st row
     Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
