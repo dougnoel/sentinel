@@ -1,5 +1,5 @@
 urls:
-  default: C:/Users/tbouchard/source/Repos/sentinel/docs/test/calculator.html
+  default: https://dougnoel.github.io/sentinel/test/calculator.html
 elements:
   #Operators
   all_clear_button:
