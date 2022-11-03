@@ -148,6 +148,7 @@ public class TableSteps {
 
 	@When("^I find the (\\d+)(?:st|nd|rd|th) column in the (.*?) and click the cell in the (\\d+)(?:st|nd|rd|th) row$")
 	public static void clickCoordsInTable(int xCoord, String tableName, int yCoord) {
+		--yCoord;
 		getElementAsTable(tableName).clickElementAtCoord(xCoord,yCoord);
 	}
 
