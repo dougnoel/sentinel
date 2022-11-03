@@ -70,7 +70,7 @@ Feature: Text Verification Tests
       And I verify the example textbox with the attribute value does not contain the same value used for the href value
       And I verify the example link with the attribute href has the same value used for the href value
 
-  @text @this
+  @text
   Scenario: I store and verify an elements class attribute
     Given I am on the Guinea Pig Page
     When I store the value of the attribute "class" in the example div as a variable with the name "div class"
