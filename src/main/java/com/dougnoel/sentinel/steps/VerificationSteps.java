@@ -422,8 +422,8 @@ public class VerificationSteps {
     public static void verifyJsAlertText(String assertion, String expectedText)
     {
     	boolean negate = !StringUtils.isEmpty(assertion);
-    	String expectedResult = SentinelStringUtils.format("Expected the JS alert to {}contain the text {}.", negate ? "not ": "", expectedText);
     	var actualText = PageManager.getPage().getJsAlertText();
+        String expectedResult = SentinelStringUtils.format("Expected the JS alert to {}contain the text {}. The alert contained the text {}.", negate ? "not ": "", expectedText, actualText);
     	boolean result = actualText.contains(expectedText);
     	assertTrue(expectedResult, result != negate);
     }
