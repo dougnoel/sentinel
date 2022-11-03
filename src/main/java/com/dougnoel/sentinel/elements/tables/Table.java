@@ -156,7 +156,7 @@ public class Table extends Element {
 	protected WebElement getColumnHeaderElement(String columnHeader) {
 		Optional<WebElement> header = getOrCreateHeaderElements()
 				.stream()
-				.filter(element -> element.getText().strip().equals(columnHeader))
+				.filter(element -> element.getText().replaceAll("[\t\n\r]+"," ").strip().equals(columnHeader))
 				.findFirst();
 
 		if(header.isEmpty())
