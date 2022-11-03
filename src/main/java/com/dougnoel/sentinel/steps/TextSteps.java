@@ -177,7 +177,7 @@ public class TextSteps {
      * <p>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I store the text in the &lt;String&gt as a variable with the name "&lt;String&gt"
+     * I store the text in the &lt;String&gt; as a variable with the name "&lt;String&gt;"
      * <p>
      * @param elementName String the name of the element
      * @param storageKey String the name of the record to store the data as
@@ -200,7 +200,7 @@ public class TextSteps {
      * <p>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I store the value of the attribute "&lt;String&gt" in the &lt;String&gt as a variable with the name "&lt;String&gt"
+     * I store the value of the attribute "&lt;String&gt;" in the &lt;String&gt; as a variable with the name "&lt;String&gt;"
      * <p>
      * @param attribute String the name of the attribute to store
      * @param elementName String the name of the element

@@ -40,7 +40,7 @@ public class VerificationSteps {
      * </ul>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I verify the numerical &lt;checking input or text value&gt of the &lt;element&gt element is &lt;numerical difference&gt &lt;less or more&gt than the previously &lt;stored or used&gt &lt;variable key&gt value
+     * I verify the numerical &lt;checking input or text value&gt; of the &lt;element&gt; element is &lt;numerical difference&gt; &lt;less or more&gt; than the previously &lt;stored or used&gt; &lt;variable key&gt; value
      * <p>
      * @param isInput String determine if we're fetching an input's value, or an element's numerical text to compare
      * @param elementName String the name of the element whose value/text we are fetching
@@ -81,7 +81,7 @@ public class VerificationSteps {
      * </ul>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I verify the numerical &lt;checking input or text value&gt of the &lt;element&gt element is &lt;numerical difference&gt &lt;less or more&gt than the previously &lt;stored or used&gt &lt;variable key&gt value &lt;rounding or truncating&gt to &lt;number of decimal places&gt decimal places
+     * I verify the numerical &lt;checking input or text value&gt; of the &lt;element&gt; element is &lt;numerical difference&gt; &lt;less or more&gt; than the previously &lt;stored or used&gt; &lt;variable key&gt; value &lt;rounding or truncating&gt; to &lt;number of decimal places&gt; decimal places
      * <p>
      * @param isInput String determine if we're fetching an input's value, or an element's numerical text to compare
      * @param elementName String the name of the element whose value/text we are fetching

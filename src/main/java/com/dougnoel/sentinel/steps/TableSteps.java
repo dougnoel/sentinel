@@ -156,7 +156,7 @@ public class TableSteps {
 	 * <p>
 	 * <b>Scenario Outline Example:</b>
 	 * <p>
-	 * I find the &lt;integer&gt&lt;st,nd,rd,th&gt column in the &lt;String&gt and click the cell in the &lt;integer&gt&lt;st,nd,rd,th&gt row
+	 * I find the &lt;integer&gt&lt;st,nd,rd,th&gt; column in the &lt;String&gt; and click the cell in the &lt;integer&gt&lt;st,nd,rd,th&gt; row
 	 * <p>
 	 * @param xCoord Integer the column of the cell to click
 	 * @param tableName String the name of the table of the cell to click
