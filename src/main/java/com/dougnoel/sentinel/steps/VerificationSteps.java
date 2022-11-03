@@ -262,6 +262,31 @@ public class VerificationSteps {
     }
 
     /**
+     * Verifies an attribute for an element has a given previously stored value.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the boxes table with the attribute color has the same value used for the blue box</li>
+     * <li>I verify the New Div with the attribute style does not have the same value used for the font style</li>
+     * <li>I verify the Title Text with the attribute class contains the same value stored as the title text entry</li>
+     * <li>I verify the Submit Button with the attribute class does not contain the same value stored for the disabled attribute</li>
+     * </ul>
+     * @param elementName String element to inspect
+     * @param assertion String "has" for a positive check, anything else for negative
+     * @param matchType String whether we are doing an exact match or a partial match
+     * @param attribute String attribute to inspect
+     * @param valueKey String key of the stored value to expect
+     */
+    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?)( does not)? (has|have|contains?) the same value (?:used|stored) (?:as|for)(?: the)? (.*?)$")
+    public static void verifyElementAttributeHasStoredValue(String elementName, String attribute, String assertion, String matchType, String valueKey) {
+        String valueToVerify = Configuration.toString(valueKey);
+        String errorMessage = SentinelStringUtils.format("Could not find a text value stored with the {} key", valueKey);
+        Assert.assertNotNull(errorMessage, valueToVerify);
+
+        verifyElementAttributeHasValue(elementName, attribute, assertion, matchType, valueToVerify);
+    }
+
+    /**
      * Verifies an attribute for an element has a given value.
      * <p>
      * <b>Gherkin Examples:</b>
