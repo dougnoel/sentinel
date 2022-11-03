@@ -169,10 +169,20 @@ public class TextSteps {
 
     /**
      * Stores the text of a given element with a given key
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I store the text in the <b>example link</b> as a variable with the name "<b>example link inner text</b>"</li>
+     * </ul>
+     * <p>
+     * <b>Scenario Outline Example:</b>
+     * <p>
+     * I store the text in the &lt;String&gt as a variable with the name "&lt;String&gt"
+     * <p>
      * @param elementName String the name of the element
      * @param storageKey String the name of the record to store the data as
      */
-    @When("^I store the text in the (.*) as \"(.*)\"$")
+    @When("^I store the text in the (.*) as a variable with the name \"(.*)\"$")
     public static void storeText(String elementName, String storageKey){
         String elementText = getElement(elementName).getText();
         Configuration.update(storageKey, elementText);
@@ -180,6 +190,18 @@ public class TextSteps {
 
     /**
      * Stores the value of an attribute for a given element with a given key
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I store the value of the attribute "<b>class</b>" in the <b>example link</b> as a variable with the name "<b>link classes</b>"</li>
+     * <li>I store the value of the attribute "<b>href</b>" in the <b>example link</b> as a variable with the name "<b>link url</b>"</li>
+     * <li>I store the value of the attribute "<b>value</b>" in the <b>example input</b> as a variable with the name "<b>example input value</b>"</li>
+     * </ul>
+     * <p>
+     * <b>Scenario Outline Example:</b>
+     * <p>
+     * I store the value of the attribute "&lt;String&gt" in the &lt;String&gt as a variable with the name "&lt;String&gt"
+     * <p>
      * @param attribute String the name of the attribute to store
      * @param elementName String the name of the element
      * @param storageKey String the name of the record to store the data as
