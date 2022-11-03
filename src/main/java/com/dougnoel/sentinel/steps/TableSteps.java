@@ -146,10 +146,25 @@ public class TableSteps {
     	getElementAsTable(tableName).clickColumnHeader(columnName);
 	}
 
+	/**
+	 * Clicks a cell in a table by a given column and row
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>I find the <b>3rd</b> column in the <b>example table</b> and click the cell in the <b>2nd</b> row</li>
+	 * </ul>
+	 * <p>
+	 * <b>Scenario Outline Example:</b>
+	 * <p>
+	 * I find the &lt;integer&gt&lt;st,nd,rd,th&gt column in the &lt;String&gt and click the cell in the &lt;integer&gt&lt;st,nd,rd,th&gt row
+	 * <p>
+	 * @param xCoord Integer the column of the cell to click
+	 * @param tableName String the name of the table of the cell to click
+	 * @param yCoord Integer the row of the cell to click
+	 */
 	@When("^I find the (\\d+)(?:st|nd|rd|th) column in the (.*?) and click the cell in the (\\d+)(?:st|nd|rd|th) row$")
 	public static void clickCoordsInTable(int xCoord, String tableName, int yCoord) {
-		--yCoord;
-		getElementAsTable(tableName).clickElementAtCoord(xCoord,yCoord);
+		getElementAsTable(tableName).clickElementAtCoord(xCoord, yCoord);
 	}
 
 }
