@@ -490,7 +490,7 @@ public class Table extends Element {
 	 * <li>clickElementAtCoord(1,1) - Clicks the cell in the 1st column 1st row</li>
 	 * <li>clickElementAtCoord(8,2) - Clicks the cell in the 8th column 2nd row</li>
 	 * <li>clickElementAtCoord(1,0) - Clicks the cell in the 1st column last row</li>
-	 * <li>clickElementAtCoord(0,1) - Clicks the cell in the last column 1st row</li>
+	 * <li>clickElementAtCoord(-1,1) - Clicks the cell in the last column 1st row</li>
 	 * </ul>
 	 * <b>Note:</b> Uses the constant xpath
 	 * <p>
