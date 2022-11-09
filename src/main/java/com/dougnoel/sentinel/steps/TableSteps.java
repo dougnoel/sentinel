@@ -190,7 +190,7 @@ public class TableSteps {
 				break;
 		}
 
-		getElementAsTable(tableName).clickElementAtCoord(column, row);
+		getElementAsTable(tableName).clickElementInCell(column, row);
 	}
 
 }

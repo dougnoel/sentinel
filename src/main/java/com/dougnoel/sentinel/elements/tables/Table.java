@@ -500,7 +500,7 @@ public class Table extends Element {
 	 * @param column int the column number of the cell in the table
 	 * @param row int the row number of the cell in the table
 	 */
-	public void clickElementAtCoord(int column, int row) {
+	public void clickElementInCell(int column, int row) {
 		WebElement tableRow;
 		String cellLocator;
 
