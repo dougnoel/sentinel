@@ -168,47 +168,45 @@ public class TextSteps {
     }
 
     /**
-     * Stores the text of a given element with a given key
+     * Stores the text of a given element for later reference
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I store the text in the <b>example link</b> as a variable with the name "<b>example link inner text</b>"</li>
+     * <li>I note the text in the <b>example link</b>"</li>
      * </ul>
      * <p>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I store the text in the &lt;String&gt; as a variable with the name "&lt;String&gt;"
+     * I note the text in the &lt;String&gt;
      * <p>
-     * @param elementName String the name of the element
-     * @param storageKey String the name of the record to store the data as
+     * @param elementName String the name of the element, and subsequent storage key
      */
-    @When("^I store the text in the (.*) as a variable with the name \"(.*)\"$")
-    public static void storeText(String elementName, String storageKey){
+    @When("^I note the text in the (.*)$")
+    public static void storeText(String elementName){
         String elementText = getElement(elementName).getText();
-        Configuration.update(storageKey, elementText);
+        Configuration.update(elementName, elementText);
     }
 
     /**
-     * Stores the value of an attribute for a given element with a given key
+     * Stores the value of a given attribute for a given element
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I store the value of the attribute "<b>class</b>" in the <b>example link</b> as a variable with the name "<b>link classes</b>"</li>
-     * <li>I store the value of the attribute "<b>href</b>" in the <b>example link</b> as a variable with the name "<b>link url</b>"</li>
-     * <li>I store the value of the attribute "<b>value</b>" in the <b>example input</b> as a variable with the name "<b>example input value</b>"</li>
+     * <li>I note the <b>class</b> attribute of the <b>example link</b></li>
+     * <li>I note the <b>href</b> attribute of the <b>example link</b></li>
+     * <li>I note the <b>value</b> attribute of the <b>example input</b></li>
      * </ul>
      * <p>
      * <b>Scenario Outline Example:</b>
      * <p>
-     * I store the value of the attribute "&lt;String&gt;" in the &lt;String&gt; as a variable with the name "&lt;String&gt;"
+     * I note the "&lt;String&gt;" attribute of the "&lt;String&gt;"
      * <p>
      * @param attribute String the name of the attribute to store
-     * @param elementName String the name of the element
-     * @param storageKey String the name of the record to store the data as
+     * @param elementName String the name of the element, and subsequent storage key
      */
-    @When("^I store the value of the attribute \"(.*?)\" in the (.*) as a variable with the name \"(.*)\"$")
-    public static void storeElementAttributeAs(String attribute, String elementName, String storageKey) {
+    @When("^I note the (.*?) attribute of the (.*)$")
+    public static void storeElementAttributeAs(String attribute, String elementName) {
         String attributeValue = getElement(elementName).getAttribute(attribute);
-        Configuration.update(storageKey, attributeValue);
+        Configuration.update(elementName, attributeValue);
     }
 }

@@ -4,7 +4,6 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.*;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.exceptions.NumberFormatException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dougnoel.sentinel.pages.PageManager;
@@ -141,16 +140,20 @@ public class VerificationSteps {
                 expected = formatOutput.format(expectedValue);
             }
 
-            String expectedResult = SentinelStringUtils.format("Expected the numerical {} of the \"{}\" element to be \"{}\". {} {} than the stored value {}. The found value was instead \"{}\".",
+            String expectedResult = SentinelStringUtils.format("Expected the numerical {} of the {} element to be {}. {} {} than the stored value {}. The found value was instead {}.",
                     isInput, elementName, expected, difference, operator, storedValue, actual);
 
             Assert.assertEquals(expectedResult, expected, actual);
 
-        } catch (java.lang.NumberFormatException parseFailure) {
-            String numberError = SentinelStringUtils.format("Expected numerical values, but the stored value was \"{}\", and the element contained \"{}\"",
+        } catch (NumberFormatException parseFailure) {
+            String numberError = "";
+            if(unparsedStoredValue == null)
+                throw parseFailure;
+            else
+                numberError += SentinelStringUtils.format("Expected numerical values, but the stored value was {}, and the element value was {}",
                     unparsedStoredValue, actual);
 
-            throw new NumberFormatException(numberError, parseFailure);
+            throw new NumberFormatException(numberError);
         }
     }
 

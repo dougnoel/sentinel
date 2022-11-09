@@ -55,26 +55,26 @@ Feature: Text Verification Tests
   @text
   Scenario: I store and verify an elements inner text
     Given I am on the Guinea Pig Page
-    When I store the text in the example div as a variable with the name "div inner text"
-      And I store the text in the example link as a variable with the name "link inner text"
-    Then I wait until the example div contains the text used in the div inner text
-      And I wait until the example link does not contain the text used in the div inner text
-      And I wait until the example div does not contain the text used in the link inner text
+    When I note the text in the example div
+      And I note the text in the example link
+    Then I wait until the example div contains the text used in the example div
+      And I wait until the example link does not contain the text used in the example div
+      And I wait until the example div does not contain the text used in the example link
 
   @text
   Scenario: I store and verify an elements value attribute
     Given I am on the Guinea Pig Page
-    When I store the value of the attribute "value" in the example textbox as a variable with the name "textbox value"
-      And I store the value of the attribute "href" in the example link as a variable with the name "href value"
-    Then I verify the example textbox with the attribute value contains the same value used for the textbox value
-      And I verify the example textbox with the attribute value does not contain the same value used for the href value
-      And I verify the example link with the attribute href has the same value used for the href value
+    When I note the value attribute of the example textbox
+      And I note the href attribute of the example link
+    Then I verify the example textbox with the attribute value contains the same value used for the example textbox
+      And I verify the example textbox with the attribute value does not contain the same value used for the example link
+      And I verify the example link with the attribute href has the same value used for the example link
 
   @text
   Scenario: I store and verify an elements class attribute
     Given I am on the Guinea Pig Page
-    When I store the value of the attribute "class" in the example div as a variable with the name "div class"
-      And I store the value of the attribute "class" in the example textbox as a variable with the name "textbox class"
-    Then I verify the example textbox with the attribute class contains the same value used for the textbox class
-      And I verify the example textbox with the attribute class does not contain the same value used for the div class
-      And I verify the example div with the attribute class has the same value used for the div class
+    When I note the class attribute of the example div
+      And I note the class attribute of the example textbox
+    Then I verify the example textbox with the attribute class contains the same value used for the example textbox
+      And I verify the example textbox with the attribute class does not contain the same value used for the example div
+      And I verify the example div with the attribute class has the same value used for the example div
