@@ -479,20 +479,41 @@ public class Table extends Element {
 	}
 
 	/**
-	 * Clicks the cell found at the given x,y coords in the table.
-	 * <br><br>
+	 * Clicks the cell found at the given column, row position in the table.
+	 * <br>
+	 * 1,1 equates to the cell in the 1st row 1st column.
+	 * <br>
+	 * 0 or less equates to the last row or column
+	 * <p>
+	 * Example:
+	 * <p><ul>
+	 * <li>clickElementAtCoord(1,1) - Clicks the cell in the 1st column 1st row</li>
+	 * <li>clickElementAtCoord(8,2) - Clicks the cell in the 8th column 2nd row</li>
+	 * <li>clickElementAtCoord(1,0) - Clicks the cell in the 1st column last row</li>
+	 * <li>clickElementAtCoord(0,1) - Clicks the cell in the last column 1st row</li>
+	 * </ul>
 	 * <b>Note:</b> Uses the constant xpath
 	 * <p>
 	 * <b>".//"+tableCellDataTag+"["+column+"]"</b>
 	 * <p>
 	 * to determine the location of the cell
-	 * @param column int the 1 based x coord of the cell in the table
-	 * @param row int the 1 based y coord of the cell in the table
+	 * @param column int the column number of the cell in the table
+	 * @param row int the row number of the cell in the table
 	 */
 	public void clickElementAtCoord(int column, int row) {
-		WebElement tableRow = getOrCreateRowElements().get(--row);
+		WebElement tableRow;
+		String cellLocator;
 
-		String cellLocator = ".//" + tableCellDataTag + "[" + column + "]";
+		if(row < 1)
+			tableRow = getOrCreateRowElements().get(getOrCreateRowElements().size() - 1);
+		else
+			tableRow = getOrCreateRowElements().get(--row);
+
+		if(column < 1)
+			cellLocator = ".//" + tableCellDataTag + "[last()]";
+		else
+			cellLocator = ".//" + tableCellDataTag + "[" + column + "]";
+
 		WebElement cell = tableRow.findElement(By.xpath(cellLocator));
 		cell.click();
 	}
