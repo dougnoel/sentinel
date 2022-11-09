@@ -106,8 +106,20 @@ Feature: Table Tests
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
 
   @table-element-clickable
-  Scenario: I click the button on a table using its coordinates
+  Scenario: I click the button on a table using its column row position
     Given I am on the Table Page
-    When I find the 8th column in the Example table and click the cell in the 1st row
+    When I find the 9th column in the Example table and click the cell in the 1st row
     Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
+    When I find the 9th column in the Example table and click the cell in the first row
+    Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
+    When I find the last column in the Example table and click the cell in the last row
+    Then I verify the JS alert contains the text This is Dave
+      And I close the JS alert
+    When I find the last column in the Example table and click the cell in the first row
+    Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
+    When I find the last column in the Example table and click the cell in the 2nd row
+    Then I verify the JS alert contains the text This is Charlotte
       And I close the JS alert
