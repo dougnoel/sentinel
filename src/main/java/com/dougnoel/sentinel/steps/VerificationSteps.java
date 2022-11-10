@@ -233,17 +233,16 @@ public class VerificationSteps {
      * </ul>
      * @param elementName String element to inspect
      * @param assertion String "has" for a positive check, anything else for negative
-     * @param matchType String whether we are doing an exact match or a partial match
      * @param attribute String attribute to inspect
-     * @param valueKey String key of the stored value to expect
+     * @param key String key of the stored value to expect
      */
-    @Then("^I verify (?:the|a|an) (.*?) with (?:the|a|an) attribute (.*?)( does not)? (has|have|contains?) the same value (?:used|stored) (?:as|for)(?: the)? (.*?)$")
-    public static void verifyElementAttributeHasStoredValue(String elementName, String attribute, String assertion, String matchType, String valueKey) {
-        String valueToVerify = Configuration.toString(valueKey);
-        String errorMessage = SentinelStringUtils.format("Could not find a text value stored with the {} key", valueKey);
+    @Then("^I verify the (.*?) attribute of the (.*?)( does not)? match(?:es)? the (.*?)$")
+    public static void verifyElementAttributeHasStoredValue(String attribute, String elementName, String assertion, String key) {
+        String valueToVerify = Configuration.toString(key);
+        String errorMessage = SentinelStringUtils.format("Could not find a text value stored with the {} key", key);
         Assert.assertNotNull(errorMessage, valueToVerify);
 
-        verifyElementAttributeHasValue(elementName, attribute, assertion, matchType, valueToVerify);
+        verifyElementAttributeHasValue(elementName, attribute, assertion, "has", valueToVerify);
     }
 
     /**

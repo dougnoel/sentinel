@@ -66,15 +66,15 @@ Feature: Text Verification Tests
     Given I am on the Guinea Pig Page
     When I note the value attribute of the example textbox
       And I note the href attribute of the example link
-    Then I verify the example textbox with the attribute value contains the same value used for the example textbox
-      And I verify the example textbox with the attribute value does not contain the same value used for the example link
-      And I verify the example link with the attribute href has the same value used for the example link
+    Then I verify the value attribute of the example textbox matches the example textbox
+      And I verify the value attribute of the example textbox does not match the example link
+      And I verify the href attribute of the example link matches the example link
 
   @text
   Scenario: I store and verify an elements class attribute
     Given I am on the Guinea Pig Page
     When I note the class attribute of the example div
       And I note the class attribute of the example textbox
-    Then I verify the example textbox with the attribute class contains the same value used for the example textbox
-      And I verify the example textbox with the attribute class does not contain the same value used for the example div
-      And I verify the example div with the attribute class has the same value used for the example div
+    Then I verify the class attribute of the example textbox matches the example textbox
+      And I verify the class attribute of the example textbox does not match the example div
+      And I verify the class attribute of the example div matches the example div
