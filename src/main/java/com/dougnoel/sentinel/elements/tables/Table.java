@@ -357,7 +357,19 @@ public class Table extends Element {
 	public WebElement getElementInRowThatContains(By rowLocator, String elementLocatorText) {
 		return getElementInRowThatContains(rowLocator, By.xpath(".//*[contains(text(),'" + elementLocatorText + "')]"));
 	}
-	
+
+	/**
+	 * Returns a WebElement found inside the indicated row using another element in the row passed to this method
+	 * to find it.
+	 *
+	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
+	 * @param element com.dougnoel.sentinel.Element the element used to find the element to return
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
+	 */
+	public WebElement getElementInRowThatContains(int ordinalRow, Element element) {
+		return getElementInRowThatContains(ordinalRow, element.getXPath(ordinalRow));
+	}
+
 	/**
 	 * Returns a WebElement found inside the indicated row using the locator passed.
 	 * TODO: Fix this so that it uses Elements
