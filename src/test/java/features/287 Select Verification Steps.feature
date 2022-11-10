@@ -16,6 +16,7 @@ Feature: Select Verification Steps
   @287C
   Scenario: Verify Dropdown Has Currently Selected Option
     Then I verify the dropdown has the currently selected option Please select an option
+      And I verify the dropdown is not empty
     
   @287D
   Scenario: Verify Dropdown Does Not Have Currently Selected Option

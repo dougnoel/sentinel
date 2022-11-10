@@ -2,8 +2,15 @@ package com.dougnoel.sentinel.steps;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import com.dougnoel.sentinel.files.TestFile;
+import com.dougnoel.sentinel.system.FileManager;
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +19,7 @@ import com.dougnoel.sentinel.system.DownloadManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
+import org.junit.Assert;
 
 public class DownloadVerificationSteps {
 
@@ -64,5 +72,26 @@ public class DownloadVerificationSteps {
 	@When("I clear all files from the downloads folder")
 	public static void clearDownloadsFolder() throws IOException {
 		DownloadManager.clearDownloadDirectory();
+	}
+
+	/**
+	 * Looks inside the most recently downloaded zip file and asserts that it contains a file with the given extension in the top-level directory.
+	 * @param expectedFileType String the file extension to check for.
+	 */
+	@Then("^I verify the most recently downloaded zip file contains a file with the extension (.*?)$")
+	public static void verifyFileContentsOfZip(String expectedFileType) {
+		File mostRecentFile = DownloadManager.getMostRecentDownloadPath().toFile();
+		List<String> fileContent = null;
+		boolean result = false;
+		try(var zip = new ZipFile(mostRecentFile)){
+			fileContent = zip.stream().map(ZipEntry::getName).collect(Collectors.toList());
+			result = fileContent.stream().anyMatch(fileName -> StringUtils.endsWith(fileName, expectedFileType));
+		}
+		catch(IOException ioe){
+			Assert.fail(SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile.getPath()));
+		}
+		assertTrue(SentinelStringUtils.format("Expected zip file to contain a file with extension {}. Zip file location: {} Files in zip: {}",
+				expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
+				result);
 	}
 }

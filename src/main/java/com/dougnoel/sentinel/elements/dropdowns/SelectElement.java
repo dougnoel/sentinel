@@ -91,6 +91,11 @@ public class SelectElement extends Element {
         Select selectElement = new Select(this.element());
         return selectElement.getOptions().get(index).getText();
     }
+
+    @Override
+    public String getText(){
+        return getSelectedText();
+    }
     
     /**
      * Gets the text of the first item currently selected.
