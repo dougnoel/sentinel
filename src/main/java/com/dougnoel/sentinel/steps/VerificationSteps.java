@@ -24,10 +24,10 @@ public class VerificationSteps {
      * Used to compare the numerical text, or input element value, of an element to a stored value to verify how much it
      * has changed given a set number of decimal places truncated or rounded up/down
      * Can verify whether a value is greater than or less than the stored by a given amount.
-     * </p><p>
+     * <p>
      * Only numerical values will correctly work with this verification step.
      * Supports decimals, rounding up/down (half up), and truncation padded to a given decimal length.
-     * </p><p>
+     * <p>
      * Examples:
      * <ul>
      * <li>Compare 0.0010 is equivalent to later displayed -0.0011 due to another operation</li>
@@ -36,7 +36,7 @@ public class VerificationSteps {
      * <li>Compare 5-2 is equivalent to displayed 3</li>
      * <li>Compare 5-2 is equivalent to displayed 3.00</li>
      * </ul>
-     * </p><p>
+     * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
      * <li>I verify the value of the <b>raw text div</b> is <b>.3005</b> <b>greater</b> than the old value of the <b>raw text div</b></li>
@@ -45,10 +45,9 @@ public class VerificationSteps {
      * <li>I verify the value of the <b>rounded text div</b> is <b>.1</b> <b>less</b> than the old value of the <b>raw text div</b> <b>rounded</b> to <b>1</b> decimal place</li>
      * <li>I verify the value of the <b>truncated text div</b> is <b>3</b> <b>greater</b> than old the value of the <b>raw text div</b> <b>truncated</b> to <b>0</b> decimal places</li>
      * <li>I verify the value of the <b>truncated text div</b> is <b>.1</b> <b>less</b> than the old value of the <b>raw text div</b> <b>truncated</b> to <b>1</b> decimal place</li>
-     * </ul></p><p>
+     * </ul><p>
      * <b>Scenario Outline Example:</b>
      * I verify the value of the <b>&lt;String&gt;</b> is <b>&lt;Number&gt;</b> <b>&lt;String (greater|less)&gt;</b> than the old value of the <b>&lt;String&gt;</b> <i>&lt;<b>&lt;String (rounded|truncated)&gt;</b> to <b>&lt;Integer&gt;</b> decimal places&gt;</i>
-     * </p>
      * @param elementName String the name of the element whose value/text we are fetching
      * @param difference Double how much more/less the new value is from the stored value
      * @param operator String whether we're checking if the new value is more or less than the stored value
