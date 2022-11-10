@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -75,23 +76,26 @@ public class DownloadVerificationSteps {
 	}
 
 	/**
-	 * Looks inside the most recently downloaded zip file and asserts that it contains a file with the given extension in the top-level directory.
+	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension in the top-level directory.
+	 * @param assertion String " does not" for a negative check, otherwise positive check
 	 * @param expectedFileType String the file extension to check for.
 	 */
-	@Then("^I verify the most recently downloaded zip file contains a file with the extension (.*?)$")
-	public static void verifyFileContentsOfZip(String expectedFileType) {
+	@Then("^I verify the most recently downloaded zip file( does not)? contains? a file with the extension (.*?)$")
+	public static void verifyFileContentsOfZip(String assertion, String expectedFileType) throws IOException {
 		File mostRecentFile = DownloadManager.getMostRecentDownloadPath().toFile();
 		List<String> fileContent = null;
 		boolean result = false;
+		boolean negate = !StringUtils.isEmpty(assertion);
 		try(var zip = new ZipFile(mostRecentFile)){
 			fileContent = zip.stream().map(ZipEntry::getName).collect(Collectors.toList());
 			result = fileContent.stream().anyMatch(fileName -> StringUtils.endsWith(fileName, expectedFileType));
 		}
 		catch(IOException ioe){
-			Assert.fail(SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile.getPath()));
+			String message = SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile.getPath());
+			throw new IOException(message, ioe);
 		}
-		assertTrue(SentinelStringUtils.format("Expected zip file to contain a file with extension {}. Zip file location: {} Files in zip: {}",
-				expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
-				result);
+		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain a file with extension {}. Zip file location: {} Files in zip: {}",
+						(negate ? "not ": ""), expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
+				!negate, result);
 	}
 }
