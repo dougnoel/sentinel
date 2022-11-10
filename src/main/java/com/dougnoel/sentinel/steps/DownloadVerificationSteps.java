@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import com.dougnoel.sentinel.files.TestFile;
-import com.dougnoel.sentinel.system.FileManager;
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +17,6 @@ import com.dougnoel.sentinel.system.DownloadManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
-import org.junit.Assert;
 
 public class DownloadVerificationSteps {
 
