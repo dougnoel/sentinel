@@ -4,6 +4,7 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.*;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.math.Decimal;
 import org.apache.commons.lang3.StringUtils;
 
 import com.dougnoel.sentinel.pages.PageManager;
@@ -12,9 +13,6 @@ import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import org.openqa.selenium.Point;
 import java.math.BigDecimal;
-
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 
 /**
  * Methods used to defined basic validations
@@ -78,7 +76,6 @@ public class VerificationSteps {
                 actual = getElement(elementName).getText();
 
             double storedValue = Double.parseDouble(unparsedStoredValue);
-
             BigDecimal expectedValue;
             if (operator.contentEquals("greater"))
                 expectedValue = BigDecimal.valueOf(storedValue + difference);
@@ -86,55 +83,34 @@ public class VerificationSteps {
                 expectedValue = BigDecimal.valueOf(storedValue - difference);
 
             String expected = expectedValue.stripTrailingZeros().toString();
-
             if(isRounded != null) {
                 int parsedDecimalCount = 0;
+                boolean rounded = true;
+
                 if(decimalCount != null)
                     parsedDecimalCount = Integer.parseInt(decimalCount);
+                if(isRounded.contains("truncated"))
+                    rounded = false;
 
-                String leadingFormat = "#";
-                if(parsedDecimalCount > 0)
-                    leadingFormat+=".";
-                String decimalPlaces = "0".repeat(parsedDecimalCount);
-
-                DecimalFormat formatOutput = new DecimalFormat(leadingFormat + decimalPlaces);
-
-                switch(isRounded){
-                    case "rounded":
-                        formatOutput.setRoundingMode(RoundingMode.HALF_UP);
-                        break;
-                    case "truncated":
-                        formatOutput.setRoundingMode(RoundingMode.DOWN);
-                        break;
-                    default:
-                        break;
-                }
-
-                expected = formatOutput.format(expectedValue);
+                expected = Decimal.formatDecimal(expectedValue, parsedDecimalCount, rounded);
             }
 
-            String roundedState = "with ";
-            if(isRounded != null)
-                roundedState = isRounded + " to ";
-
-            String decimalState = "unspecified";
-            if(decimalCount != null)
-                decimalState = decimalCount;
-
             String expectedResult = SentinelStringUtils.format("Expected the value of the {} element to be {}. {} {} than the stored value {} {}{} decimal places. The found value was instead {}.",
-                    elementName, expected, difference, operator, unparsedStoredValue, roundedState, decimalState, actual);
+                    elementName, expected, difference, operator, unparsedStoredValue,
+                    (isRounded != null ? "with " : isRounded + " to "),
+                    (decimalCount != null ? "unspecified" : decimalCount),
+                    actual);
 
             Assert.assertEquals(expectedResult, expected, actual);
 
         } catch (NumberFormatException parseFailure) {
-            String numberError = "";
             if(unparsedStoredValue == null)
                 throw parseFailure;
-            else
-                numberError += SentinelStringUtils.format("Expected numerical values, but the stored value was {}, and the element value was {}",
-                    unparsedStoredValue, actual);
-
-            throw new NumberFormatException(numberError);
+            else {
+                String numberError = SentinelStringUtils.format("Expected numerical values, but the stored value was {}, and the element value was {}",
+                        unparsedStoredValue, actual);
+                throw new NumberFormatException(numberError);
+            }
         }
     }
 
@@ -290,39 +266,25 @@ public class VerificationSteps {
     public static void verifyElementAttributeHasValue(String elementName, String attribute, String assertion, String matchType, String value) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
-        String actualValue;
-        String expectedResult;
 
-        if (attribute.equals("class") && partialMatch) {
-            actualValue = getElement(elementName).getAttribute("class");
-            expectedResult = SentinelStringUtils.format("Expected the element \"{}\" to{} {} the class \"{}\". Had the actual class(es) \"{}\".",
-                    elementName, (negate ? " not" : ""), matchType.replace("has", "have").replace("contains", "contain"), value, actualValue);
+        String actual = getElement(elementName).getAttribute(attribute);
+        String expectedResult = SentinelStringUtils.format("The element \"{}\" with the attribute \"{}\" was expected to{} {} the value {}. The attribute had the value \"{}\".",
+                elementName, attribute, (negate ? " not" : ""),
+                matchType.replace("has", "have").replace("contains", "contain"), value, actual);
 
-            if (negate) {
-                assertFalse(expectedResult, getElement(elementName).classContains(value));
-            } else {
-                assertTrue(expectedResult, getElement(elementName).classContains(value));
-            }
-        }
-        else{
-            actualValue = getElement(elementName).getAttribute(attribute);
-            expectedResult = SentinelStringUtils.format("The element \"{}\" with the attribute \"{}\" was expected to{} {} the value {}. The attribute had the value \"{}\".",
-                    elementName, attribute, (negate ? " not" : ""), matchType.replace("has", "have").replace("contains", "contain"), value, actualValue);
+        boolean matchFound;
+        if (partialMatch) {
+            if(attribute.equals("class"))
+                matchFound = getElement(elementName).classContains(value);
+            else
+                matchFound = getElement(elementName).attributeContains(attribute, value);
+        } else
+            matchFound = getElement(elementName).attributeEquals(attribute, value);
 
-            if (partialMatch) {
-                if (negate) {
-                    assertFalse(expectedResult, getElement(elementName).attributeContains(attribute, value));
-                } else {
-                    assertTrue(expectedResult, getElement(elementName).attributeContains(attribute, value));
-                }
-            } else {
-                if (negate) {
-                    assertFalse(expectedResult, getElement(elementName).attributeEquals(attribute, value));
-                } else {
-                    assertTrue(expectedResult, getElement(elementName).attributeEquals(attribute, value));
-                }
-            }
-        }
+        if (negate)
+            assertFalse(expectedResult, matchFound);
+        else
+            assertTrue(expectedResult, matchFound);
     }
 
     /**
