@@ -74,7 +74,7 @@ Feature: Text Verification Tests
   Scenario: I store and verify an elements class attribute
     Given I am on the Guinea Pig Page
     When I note the class attribute of the example div
-      And I note the class attribute of the example textbox
-    Then I verify the class attribute of the example textbox matches the example textbox
-      And I verify the class attribute of the example textbox does not match the example div
+      And I note the class attribute of the send button
+    Then I verify the class attribute of the send button matches the send button
+      And I verify the class attribute of the send button does not match the example div
       And I verify the class attribute of the example div matches the example div
