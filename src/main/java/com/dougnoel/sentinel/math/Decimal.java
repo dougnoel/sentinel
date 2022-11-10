@@ -6,6 +6,12 @@ import java.text.DecimalFormat;
 
 public class Decimal {
     /**
+     * protected constructor since this is a static class
+     */
+    protected Decimal(){
+    }
+
+    /**
      * Takes an unformatted value, and formats it to the given decimal places with rounding or truncation
      * using BigDecimal.
      *
