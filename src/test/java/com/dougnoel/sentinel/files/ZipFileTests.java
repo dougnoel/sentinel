@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.files;
 
 import com.dougnoel.sentinel.steps.BaseSteps;
+import com.dougnoel.sentinel.steps.DownloadVerificationSteps;
 import com.dougnoel.sentinel.system.DownloadManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import org.junit.After;
@@ -47,5 +48,13 @@ public class ZipFileTests {
         String filename = DownloadManager.monitorDownload();
         ZipFile file = new ZipFile();
         assertEquals("Expected filename of created Zip object to match downloaded filename.", filename, file.getName());
+    }
+
+    @Test(expected = IOException.class)
+    public void verifyBadZipFileDownloadFromWebCannotOpen() throws InterruptedException, IOException {
+        BaseSteps.navigateToPage("RadioButtonPage");
+        BaseSteps.click("sample_download_link");
+        String filename = DownloadManager.monitorDownload();
+        DownloadVerificationSteps.verifyFileContentsOfZip("", "pdf");
     }
 }

@@ -75,12 +75,4 @@ public class DownloadManagerTests {
 	public void verifyUrlStreamDownloadFromWebCannotOpenHtmlAsPdf() throws IOException {
 		DownloadManager.verifyPDFContent(new URL("https://dougnoel.github.io/sentinel/test/radiobutton.html"), "This is page one.", 1, 1);
 	}
-
-	@Test(expected = IOException.class)
-	public void verifyBadZipFileDownloadFromWebCannotOpen() throws InterruptedException, IOException {
-		BaseSteps.navigateToPage("RadioButtonPage");
-		BaseSteps.click("sample_download_link");
-		String filename = DownloadManager.monitorDownload();
-		DownloadVerificationSteps.verifyFileContentsOfZip("", "pdf");
-	}
 }
