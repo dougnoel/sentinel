@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelectElement;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -20,7 +19,8 @@ public class TextVerificationSteps {
 	private static final Logger log = LogManager.getLogger(TextVerificationSteps.class.getName()); // Create a logger.
 	
     /**
-     * Verifies the element has text by asserting item contains text
+     * Verifies the element has (or does not have) any text.
+     * Can be used for Select (dropdown) elements to verify their currently-selected option.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
@@ -49,6 +49,7 @@ public class TextVerificationSteps {
      * will look for the text to not exist. Then it will look for the words has|have
      * to do an exact match or contain(s) to do a partial match. It uses the text
      * contained in double quotes for matching.
+     * Can be used for Select (dropdown) elements to verify their currently-selected option.
      * <p>
      * NOTE: If "URL" (without the quotes) is passed in all caps in place of the
      * element name, This step will check for the text to exist in the current page
@@ -175,47 +176,12 @@ public class TextVerificationSteps {
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));
     }
-    
+
     /**
-     * Used to verify that the selected option of a select element contains certain
-     * text. It takes an element name and then an optional "does not", which if
+     * Used to verify that the element contains the text previously
+     * in an element or otherwise stored. It takes an element name and then an optional "does not", which if
      * present means that the method will look for the text to not exist. Then it
-     * will look for any of the words has|have and uses the text contained in double
-     * quotes for matching.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I verify the City Dropdown has the text "New York" selected</li>
-     * <li>I verify the Area Select Box has the text "This is my example text."
-     * selected</li>
-     * <li>I verify the cola radio button does not have the text "Root beer"
-     * selected</li>
-     * </ul>
-     * 
-     * @param elementName String Name of the Element to verify
-     * @param assertion String if empty we expect this to be false
-     * @param textToMatch String Text to match
-     */
-    @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = getElementAsSelectElement(elementName).getText();
-        var expectedResult = SentinelStringUtils.format(
-                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
-                elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, selectedText.contains(textToMatch));
-        } else {
-            assertTrue(expectedResult, selectedText.contains(textToMatch));
-        }
-    }
-    
-    /**
-     * Used to verify that the selected option of a select element contains the text used
-     * in an element. It takes an element name and then an optional "does not", which if
-     * present means that the method will look for the text to not exist. Then it
-     * will look up the value set for the second element. This second element may be the 
+     * will look up the value set for the second element / other stored text. This second element may be the
      * same element or a different one. For example, you might select the first item in a
      * drop down and not know what you selected. Using this method, you can check to make
      * sure that the value appears correctly. Alternately, you might enter a value in a
@@ -223,30 +189,21 @@ public class TextVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the City Dropdown has the value selected for the City Dropdown</li>
+     * <li>I verify the Name input has the value selected for the City Dropdown</li>
      * <li>I verify the City Dropdown has the value entered for the City Field</li>
-     * <li>I verify the Shipping City Dropdown does not have the value used for the Billing City Dropdown</li>
+     * <li>I verify the Shipping City Label does not have the value used for the Billing City Dropdown</li>
      * </ul>
-     * 
+     *
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
+     * @param matchType String whether we are doing an exact match or a partial match
      * @param key String the key to retrieve the text to match from the configuration manager
      */
-    @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
-    public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
+    @Then("^I verify the (.*?)( does not)? (has|have|contains?) the value (?:entered|selected|used) for the (.*?)$")
+    public static void verifyTextContainsStoredValue(String elementName, String assertion, String matchType, String key) {
     	var textToMatch = Configuration.toString(key);
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = getElementAsSelectElement(elementName).getText();
-        var expectedResult = SentinelStringUtils.format(
-                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
-                elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, selectedText.contains(textToMatch));
-        } else {
-            assertTrue(expectedResult, selectedText.contains(textToMatch));
-        }
-    } 
+        verifyElementTextContains(elementName, assertion, matchType, textToMatch);
+    }
     
    /**
     * Used to verify that on mouse over an element contains certain text. 

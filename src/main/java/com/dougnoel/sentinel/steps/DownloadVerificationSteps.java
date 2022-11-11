@@ -3,12 +3,9 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
 
 import com.dougnoel.sentinel.files.ZipFile;
 import io.cucumber.java.en.When;
