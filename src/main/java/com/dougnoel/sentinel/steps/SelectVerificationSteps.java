@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 public class SelectVerificationSteps {
 
-    private static final Logger log = LogManager.getLogger(SelectVerificationSteps.class.getName()); // Create a logger.
     /**
      * Verifies a select has an option with the given text.
      * <p>
