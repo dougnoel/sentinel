@@ -53,6 +53,7 @@ public class ZipFileTests {
     @Test(expected = IOException.class)
     public void verifyBadZipFileDownloadFromWebCannotOpen() throws InterruptedException, IOException {
         BaseSteps.navigateToPage("RadioButtonPage");
+        DownloadManager.setFileExtension("pdf");
         BaseSteps.click("sample_download_link");
         String filename = DownloadManager.monitorDownload();
         DownloadVerificationSteps.verifyFileContentsOfZip("", "pdf");

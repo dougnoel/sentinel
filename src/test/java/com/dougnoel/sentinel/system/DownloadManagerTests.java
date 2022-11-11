@@ -58,6 +58,7 @@ public class DownloadManagerTests {
 	@Test
 	public void verifyFileDownloadFromWebAndSavePDFImage() throws InterruptedException, IOException {
 		BaseSteps.navigateToPage("RadioButtonPage");
+		DownloadManager.setFileExtension("pdf");
 		BaseSteps.click("sample_download_link");
 		String filename = DownloadManager.monitorDownload();
 		assertTrue("Expecting TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(filename));
