@@ -5,10 +5,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+
+import com.dougnoel.sentinel.files.ZipFile;
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,22 +74,25 @@ public class DownloadVerificationSteps {
 	}
 
 	/**
-	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension in the top-level directory.
+	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension.
+	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
 	 * @param assertion String " does not" for a negative check, otherwise positive check
 	 * @param expectedFileType String the file extension to check for.
 	 */
 	@Then("^I verify the most recently downloaded zip file( does not)? contains? a file with the extension (.*?)$")
 	public static void verifyFileContentsOfZip(String assertion, String expectedFileType) throws IOException {
-		File mostRecentFile = DownloadManager.getMostRecentDownloadPath().toFile();
-		List<String> fileContent = null;
-		boolean result = false;
+		Path mostRecentFile = DownloadManager.getMostRecentDownloadPath();
+		List<String> fileContent;
+		boolean result;
 		boolean negate = !StringUtils.isEmpty(assertion);
-		try(var zip = new ZipFile(mostRecentFile)){
-			fileContent = zip.stream().map(ZipEntry::getName).collect(Collectors.toList());
+
+		try{
+			ZipFile zip = new ZipFile(DownloadManager.getMostRecentDownloadPath());
+			fileContent = zip.getFileNames();
 			result = fileContent.stream().anyMatch(fileName -> StringUtils.endsWith(fileName, expectedFileType));
 		}
 		catch(IOException ioe){
-			String message = SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile.getPath());
+			String message = SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile);
 			throw new IOException(message, ioe);
 		}
 		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain a file with extension {}. Zip file location: {} Files in zip: {}",

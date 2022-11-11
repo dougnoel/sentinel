@@ -199,7 +199,7 @@ public class TextVerificationSteps {
     @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
     public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) {
         boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
+        String selectedText = getElementAsSelectElement(elementName).getText();
         var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
@@ -236,7 +236,7 @@ public class TextVerificationSteps {
     public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
     	var textToMatch = Configuration.toString(key);
         boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
+        String selectedText = getElementAsSelectElement(elementName).getText();
         var expectedResult = SentinelStringUtils.format(
                 "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
                 elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));

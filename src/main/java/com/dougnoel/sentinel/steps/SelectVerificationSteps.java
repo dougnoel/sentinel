@@ -57,7 +57,7 @@ public class SelectVerificationSteps {
 		
 		String expectedResult = SentinelStringUtils.format("Expected the element {} {} to have the currently selected option \"{}\".",
                 elementName, assertion, textOfOption);
-		var actualResult = dropdown.getSelectedText().equals(textOfOption);
+		var actualResult = dropdown.getText().equals(textOfOption);
 		if (assertion.contentEquals("has")) {
             assertTrue(expectedResult, actualResult);
         } else {
