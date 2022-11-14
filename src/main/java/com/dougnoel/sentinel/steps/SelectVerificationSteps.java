@@ -9,8 +9,6 @@ import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Then;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class SelectVerificationSteps {
 
