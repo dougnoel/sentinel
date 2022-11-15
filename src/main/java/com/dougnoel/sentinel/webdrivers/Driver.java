@@ -3,7 +3,6 @@ package com.dougnoel.sentinel.webdrivers;
 import java.util.EnumMap;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
-
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -78,8 +77,24 @@ public class Driver {
 	public static void goToNewWindow() {
 		getSentinelDriver().goToNewWindow();
 	}
-    
-    /**
+
+	/**
+	 * Sets the window that the driver will be using by handle/title
+	 */
+	public static void goToTitledWindow(String title) {
+		getSentinelDriver().goToTitledWindow(title);
+	}
+
+	/**
+	 * Checks if a window is found within the session
+	 * @param title String the title of the window to check for
+	 * @return true if the window is found, false if not
+	 */
+	public static boolean doesWindowExist(String title) {
+		return getSentinelDriver().doesWindowExist(title);
+	}
+
+	/**
      * Asks the current driver to move backwards to the previous window in the list. Use of
      * this method assumes that the user knows the expected state of the software they are 
      * testing and will test to make sure they are in the correct window.
@@ -123,4 +138,12 @@ public class Driver {
     public static String getCurrentUrl() {
     	return getSentinelDriver().getWebDriver().getCurrentUrl();
     }
+
+	/**
+	 * Returns the title of the current tab
+	 * @return String the title of the currently active tab/window
+	 */
+	public static String getTitle() {
+		return getSentinelDriver().getWebDriver().getTitle();
+	}
 }

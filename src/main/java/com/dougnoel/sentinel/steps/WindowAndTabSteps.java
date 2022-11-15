@@ -57,9 +57,9 @@ public class WindowAndTabSteps {
      * @throws InterruptedException if the thread gets interrupted
      */
     public static void switchTo(String pageName) throws InterruptedException {
-    	switchTo(pageName, null);
+    	switchTo(pageName, null, null);
     }
-    
+
     /**
      * Opens the given pageName in an existing window
      * <p>
@@ -70,18 +70,22 @@ public class WindowAndTabSteps {
      * <li>I verify a new tab opens to the Google Maps page</li>
      * </ul>
      * @param pageName String the page to open
-     * @param direction String (next|previous) the window to open
+     * @param title String title of the page to go to
+     * @param direction String (next|previous) window to open
      * @throws InterruptedException if the thread gets interrupted
      */
-    @Then("I (?:am redirected to|remain on|switch to) the (.*?)(?: o?i?n the (previous|next) (?:window|tab))?$")
-    public static void switchTo(String pageName, String direction) throws InterruptedException {
+    @Then("I (?:am redirected to|remain on|switch to) the (.*?)(?:with the title \"([^\"]*)\")?(?: o?i?n the (previous|next) (?:window|tab))?$")
+    public static void switchTo(String pageName, String title, String direction) throws InterruptedException {
     	PageManager.setPage(pageName);
     	if (!StringUtils.isEmpty(direction)) {
-        	if (direction.equals("next"))
-        		Driver.goToNextWindow();
-        	else
-        		Driver.goToPreviousWindow();	
-    	}
+            if (direction.equals("next"))
+                Driver.goToNextWindow();
+            else if (direction.equals("previous"))
+                Driver.goToPreviousWindow();
+        }
+        else if (!StringUtils.isEmpty(title))
+            Driver.goToTitledWindow(title);
+
     	PageManager.waitForPageLoad();
     }
 }
