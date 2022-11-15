@@ -18,7 +18,6 @@ import io.cucumber.junit.CucumberOptions;
 	, glue = { "com.dougnoel.sentinel.steps", "steps" }
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
-	, strict = true
 )
 
 public class SentinelTests {
