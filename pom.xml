@@ -739,7 +739,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- junit should usually be test scope unless this is a dedicated test library -->
+      <!-- junit should usually be test scope unless this is a dedicated test library, which it is. -->
     </dependency>
 
     <dependency>

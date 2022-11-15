@@ -11,6 +11,7 @@ import com.dougnoel.sentinel.system.SentinelScreenRecorder;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
+import junit.runner.Version;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true
@@ -25,6 +26,7 @@ public class SentinelTests {
     
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+    	log.info("JUnit version is: {}", Version.id());
         if(Configuration.toBoolean("recordTests"))
             SentinelScreenRecorder.startRecording();
     }

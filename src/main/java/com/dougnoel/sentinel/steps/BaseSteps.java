@@ -1,6 +1,7 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.IOException;
 
@@ -13,7 +14,6 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 
@@ -27,10 +27,11 @@ import io.cucumber.java.en.When;
  */
 public class BaseSteps {
     private static final Logger log = LogManager.getLogger(BaseSteps.class.getName()); // Create a logger.
+    private static final String WINDOWS = "windows";
     
-    @Before
-    public static void before(Scenario scenario) {
-        log.trace("Scenario ID: {} Scenario Name: {}", scenario.getId(), scenario.getName());
+    @Before(value="@WindowsOnly")
+    public static void before() {
+        assumeTrue(Configuration.operatingSystem().contentEquals(WINDOWS));
     }
     
     /**
