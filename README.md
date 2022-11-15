@@ -166,7 +166,7 @@ and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](
 #### 4.1.2 Publishing Javadocs to Github
 1. Make sure you have updated the version in the pomfile if necessary (pom.xml)
 2. Run `mvn javadoc:javadoc`
-3. Commit the changes and merge them with master. The files will be pulled from the docs folder and published on [https://dougnoel.github.io/sentinel/](https://dougnoel.github.io/sentinel/)
+3. Commit the changes and merge them with main. The files will be pulled from the docs folder and published on [https://dougnoel.github.io/sentinel/](https://dougnoel.github.io/sentinel/)
 
 For more information, refer to [Configuring a publishing source for your GitHub Pages site](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
 Additional information can be found under [About GitHub Pages and Jekyll](https://help.github.com/en/github/working-with-github-pages/about-github-pages-and-jekyll) and the [GitHub Pages site](https://pages.github.com/).

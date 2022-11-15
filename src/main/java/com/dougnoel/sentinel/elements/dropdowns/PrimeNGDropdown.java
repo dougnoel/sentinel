@@ -82,7 +82,7 @@ public class PrimeNGDropdown extends JSDropdownElement {
      * @return String the text value of the selected option
      */
 	@Override
-    public String getSelectedText() {
+    public String getText() {
     	return this.element(By.xpath("//span[contains(@class, 'p-dropdown-label')]")).getText();
    }
 }
