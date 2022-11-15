@@ -5,10 +5,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 public class Decimal {
-    /**
-     * protected constructor since this is a static class
-     */
-    protected Decimal(){
+    private Decimal(){
+        //private constructor since this is a static class
     }
 
     /**
