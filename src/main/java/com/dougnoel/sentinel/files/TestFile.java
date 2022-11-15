@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
+@SuppressWarnings("serial")
 public abstract class TestFile extends File{
     /**
      * Creates a TestFile from the DownloadManager's latest download and immediately checks that it exists. If it doesn't, an exception is thrown.

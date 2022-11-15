@@ -166,7 +166,7 @@ and any exceptions it throws. We follow the [Liferay-Portal Javadoc Guidelines](
 #### 4.1.2 Publishing Javadocs to Github
 1. Make sure you have updated the version in the pomfile if necessary (pom.xml)
 2. Run `mvn javadoc:javadoc`
-3. Commit the changes and merge them with master. The files will be pulled from the docs folder and published on [https://dougnoel.github.io/sentinel/](https://dougnoel.github.io/sentinel/)
+3. Commit the changes and merge them with main. The files will be pulled from the docs folder and published on [https://dougnoel.github.io/sentinel/](https://dougnoel.github.io/sentinel/)
 
 For more information, refer to [Configuring a publishing source for your GitHub Pages site](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
 Additional information can be found under [About GitHub Pages and Jekyll](https://help.github.com/en/github/working-with-github-pages/about-github-pages-and-jekyll) and the [GitHub Pages site](https://pages.github.com/).
@@ -177,22 +177,29 @@ The changelog is generated using [github_changelog_generator](https://github.com
 `github_changelog_generator -u dougnoel -p sentinel --token`
 
 ### 4.3 Built With
+* [Apache Commons CSV](https://commons.apache.org/proper/commons-csv/) - CSV reading/writing library
+* [Apache PDFBox](https://pdfbox.apache.org/) - PDF reading/writing library.
+* [Apache StringUtils](https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html) - Advanced String functionality that is optimized.
+* [Appium](https://appium.io/) - Automation for Application Platforms outside of the Web, used for WinAppDriver.
 * [Cucumber](https://cucumber.io/) - BDD Testing Framework
 * [Cucumber Extent Reporter](https://grasshopper.tech/1697/) Interface between Cucumber Results and Extent Reports.
 * [Commons Lang](https://commons.apache.org/proper/commons-lang/) - Apache Commons Lang 3 for common Java language options
 * [Extent Reports](http://extentreports.com/) - A report framework for automation testing.
 * [HttpComponents](http://hc.apache.org/) - Apache HttpComponents for API testing.
+* [Image Comparison](https://github.com/romankh3/image-comparison) - Library for comparing screenshots for screenshot testing.
 * [Jackson](https://github.com/FasterXML/jackson) - Libraries for reading YAML, JSON and other config files.
 * [Log4j2](https://logging.apache.org/log4j/2.x/) - Apache logging framework.
 * [PDFBox](https://pdfbox.apache.org/) - Apache library for reading PDF files.
 * [Maven](https://maven.apache.org/) - Apache dependency management.
 * [Maven Javadoc Plugin](https://maven.apache.org/plugins/maven-javadoc-plugin/) - Plugin to allow maven to generate Javadocs.
+* [Monte Screen Recorder](https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder) - Library for recording video of executions.
 * [Saucelabs](https://saucelabs.com/) - Multi-Platform, multi-browser external testing service.
 * [Selenium](https://www.seleniumhq.org/) - The automation framework workhorse.
 * [Swagger Parser](https://github.com/swagger-api/swagger-parser) - Reads Swagger API files, allowing us to use them as API Objects.
 * [Traprange](https://github.com/thoqbk/traprange) - Independent library developed using PDFBox to deal with tables in PDFs.
 * [Unirest](http://unirest.io/java.html) - A simple API library used for the API testing functionality.
 * [WebDriverManager](https://github.com/bonigarcia/webdrivermanager) 4.4.1 - Automatically detects browser versions and downloads the correct drivers.
+* [WinAppDriver](https://github.com/microsoft/WinAppDriver) - Microsoft maintained library for automating Windows OS.
 
 ### 4.4 Web Drivers
 All web drivers are managed by [WebDriverManager](https://github.com/bonigarcia/webdrivermanager). Both the operating system and browser are automatically detected and the appropriate web driver is downloaded. Downloaded drivers are cached on individual boxes. The following browsers are supported:
@@ -212,7 +219,11 @@ We use [Semantic Versioning](http://semver.org/) for versioning. For the version
 
 ## 6.0 Authors
 
-* **Doug Noël** - *Architect* - Initial work.
+* **Doug Noël** - *Architect* - Initial Work
+* **Sam Pacos** - *Developer* - IFrame Automatic Handling, Tables, Additional Contributions
+* **Paul Turchinetz** - *Developer* - Expanded Cucumber Steps, Dynamic Loading of Elements, Additional Contributions
+* **Tyler Bouchard** - *Contributor* - Windows Automation, Tables, Additional Contributions
+* **Peter Krzywicki** - *Contributor* - Minor Updates
 
 ## 7.0 License
 
