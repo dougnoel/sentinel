@@ -41,6 +41,8 @@ jobs:
       run: |
        chmod +x ./src/test/resources/scripts/InstallChrome.sh
         ./src/test/resources/scripts/InstallChrome.sh
+    - name: Install Chromium
+      run: choco install --no-progress -y chromium
     - name: Build with Maven and Analyze with Sonar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

@@ -15,6 +15,7 @@ public class WebDriverFactoryTest {
 	private static final String FIREFOX = "firefox";
 	private static final String GRIDURL = "gridUrl";
 	private static final String BROWSER = "browser";
+	private static final String CHROME_BROWSER_BINARY = "chromeBrowserBinary";
 	
 //	@BeforeClass
 //	public static void setUpBeforeAnyTestsAreRun() throws SentinelException {
@@ -29,8 +30,8 @@ public class WebDriverFactoryTest {
 		System.clearProperty(GRIDURL);
 		Configuration.clear(BROWSER);
 		System.clearProperty(BROWSER);
-		Configuration.clear("chromeBrowserBinary");
-		System.clearProperty("chromeBrowserBinary");
+		Configuration.clear(CHROME_BROWSER_BINARY);
+		System.clearProperty(CHROME_BROWSER_BINARY);
 		Configuration.clear("chromeOptions");
 		
 		Driver.quitAllDrivers();
@@ -48,6 +49,21 @@ public class WebDriverFactoryTest {
 	public void createChromeOptionsChromeDriver() {
 		Configuration.update("chromeOptions", "start-maximized");
 		WebDriverFactory.instantiateWebDriver();
+		PageManager.setPage("MockTestPage");
+		var js = (JavascriptExecutor)Driver.getWebDriver();
+		assertSame("Expecting window to be maximized.", "true", js.executeScript("return document.fullscreenEnabled").toString());
+	}
+
+	@Test
+	public void createChromiumDriver() {
+		Configuration.update("chromeOptions", "start-maximized");
+		Configuration.update(BROWSER, "chromium");
+		// We are assuming, for the sake of the unit tests, that chromium is installed using the Chocolately package
+		// manager, which installs the latest "stable" version of chromium for windows.
+		// `choco install chromium` installs the chromium binary in the following location.
+		Configuration.update(CHROME_BROWSER_BINARY, "C:/Program Files/Chromium/Application/chrome.exe");
+		var driver = WebDriverFactory.instantiateWebDriver();
+
 		PageManager.setPage("MockTestPage");
 		var js = (JavascriptExecutor)Driver.getWebDriver();
 		assertSame("Expecting window to be maximized.", "true", js.executeScript("return document.fullscreenEnabled").toString());
