@@ -1,7 +1,7 @@
 #language: en
 #Author: Doug Noël
 
-Feature: Text Verifcation Tests
+Feature: Text Verification Tests
   Testing to make sure text verification works.
 
   @text
@@ -11,7 +11,8 @@ Feature: Text Verifcation Tests
     Then I wait until the Form Authentication link contains the text "Form Authentication"
       And I wait until the Form Authentication link does not contain the text "Zoboomafoo"
     When I click the Form Authentication link
-      And I am redirected to the Internet Login Page
+    Then I switch to the Internet Login Page with the title "The Internet"
+      And I verify the tab has the title text "The Internet"
     Then I verify the username field is empty
     When I fill the account information into the username field and the password field
       And I enter Bob in the username field
@@ -23,6 +24,7 @@ Feature: Text Verifcation Tests
     When I press the browser back button
       And I press the browser forward button
       And I press the browser refresh button
+    Then I verify the tab does not contain the title text "Loading"
 
   @text
   Scenario: I randomly append/prepend/enter text, and verify the entry

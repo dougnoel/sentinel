@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -93,6 +94,34 @@ public class WindowList {
 	}
 
 	/**
+	 * Search the available window handles to find a window with the expected title. Searches until default timeout.
+	 * @param title the title of the window to get the handle of
+	 * @return the handle of the window that has the title expected
+	 */
+	private String getHandleFromTitle(String title) {
+		long searchTime = Time.out().getSeconds() * 1000;
+		long startTime = System.currentTimeMillis(); // fetch starting time
+
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
+			addNewWindows();
+			pruneClosedWindows();
+
+			for (String handle : windowHandles) {
+				try {
+					driver.switchTo().window(handle);
+					if (driver.getTitle().equals(title))
+						return handle;
+				} catch (Exception e) {
+					//Catch if the window changes while we're looking
+				}
+			}
+		}
+
+		String errorMessage = SentinelStringUtils.format("A window with the title {} was not found within the timeout of {} seconds.", title, Time.out().getSeconds());
+		throw new NoSuchElementException(errorMessage);
+	}
+
+	/**
 	 * Wait for a new window to be added, and moves the driver to the last window added.
 	 */
 	protected void goToNewWindow() {
@@ -161,7 +190,15 @@ public class WindowList {
     	driver.switchTo().window(windowHandles.get(currentWindow));
     	pruneClosedWindows();
     }
-    
+
+	/**
+	 * Switches to the window whose title matches the string passed
+	 * @param title String the title of the window to go to
+	 */
+	protected void goToTitledWindow(String title) {
+		driver.switchTo().window(getHandleFromTitle(title));
+	}
+
     /**
      * Empty out the list of windows.
      */
@@ -169,4 +206,21 @@ public class WindowList {
     	windowHandles.clear();
     	currentWindow = 0;
     }
+
+	/**
+	 * Checks if a window of the passed title exists
+	 * @param title String the title of the window to check for
+	 * @return true if a window is found that has the title passed as the string
+	 */
+	protected boolean doesWindowExist(String title) {
+		pruneClosedWindows();
+		addNewWindows();
+		for (String handle : windowHandles) {
+			driver.switchTo().window(handle);
+			if (driver.getTitle().equals(title))
+				return true;
+		}
+		addNewWindows();
+		return false;
+	}
 }

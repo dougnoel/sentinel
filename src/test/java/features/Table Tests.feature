@@ -88,6 +88,13 @@ Feature: Table Tests
     Then I verify the First Name column in the updatable table contains the same text used for the update first name input
 
   @updatable-html-table
+  Scenario: I verify a specific column does not contain a value used and stored earlier in the test
+    Given I am on the Updatable Table Page
+    When I randomly enter test in the update first name input
+      And I click the update table button
+    Then I verify the Last Name column in the updatable table does not contain the same text used for the update first name input
+
+  @updatable-html-table
   Scenario: I verify a specific column in a specific row contains a value used and stored earlier in the test
     Given I am on the Updatable Table Page
     When I randomly enter test in the update last name input
@@ -97,4 +104,3 @@ Feature: Table Tests
       And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
-

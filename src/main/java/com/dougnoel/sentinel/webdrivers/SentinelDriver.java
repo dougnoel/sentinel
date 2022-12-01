@@ -25,7 +25,11 @@ public class SentinelDriver {
 		windows = new WindowList(driver);
 		pages.add(PageManager.getPage());
 	}
-	
+
+	/**
+	 * Returns the webdriver
+	 * @return Webdriver the current webdriver
+	 */
 	protected WebDriver getWebDriver() {
 		return this.driver;
 	}
@@ -40,8 +44,26 @@ public class SentinelDriver {
 	/**
 	 * Wait for, and go to, next window.
 	 */
-	protected void goToNewWindow() { windows.goToNewWindow(); }
-    
+	protected void goToNewWindow() {
+		windows.goToNewWindow();
+	}
+
+	/**
+	 * Wait for, and go to, the window with the same title as the given string.
+	 */
+	protected void goToTitledWindow(String title) {
+		windows.goToTitledWindow(title);
+	}
+
+	/**
+	 * Checks if a window is found within the session
+	 * @param title String the title of the window to check for
+	 * @return true if the window is found, false if not
+	 */
+	protected boolean doesWindowExist(String title) {
+		return windows.doesWindowExist(title);
+	}
+
     /**
      * Go to previous window.
      */

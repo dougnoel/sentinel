@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import com.dougnoel.sentinel.steps.DownloadVerificationSteps;
 import org.junit.After;
 import org.junit.Test;
 
@@ -57,6 +58,7 @@ public class DownloadManagerTests {
 	@Test
 	public void verifyFileDownloadFromWebAndSavePDFImage() throws InterruptedException, IOException {
 		BaseSteps.navigateToPage("RadioButtonPage");
+		DownloadManager.setFileExtension("pdf");
 		BaseSteps.click("sample_download_link");
 		String filename = DownloadManager.monitorDownload();
 		assertTrue("Expecting TestPDF.pdf to be downloaded.", DownloadManager.isFileDownloaded(filename));
@@ -74,5 +76,4 @@ public class DownloadManagerTests {
 	public void verifyUrlStreamDownloadFromWebCannotOpenHtmlAsPdf() throws IOException {
 		DownloadManager.verifyPDFContent(new URL("https://dougnoel.github.io/sentinel/test/radiobutton.html"), "This is page one.", 1, 1);
 	}
-	
 }

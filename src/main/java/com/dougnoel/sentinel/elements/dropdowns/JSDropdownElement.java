@@ -77,7 +77,7 @@ public abstract class JSDropdownElement extends Dropdown {
      * @return String the text value of the selected option
      */
     @Override
-    public String getSelectedText() {
+    public String getText() {
     	return this.element().getText();
     }
 }

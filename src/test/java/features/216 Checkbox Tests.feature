@@ -10,3 +10,5 @@ Feature: 216 Checkbox Tests
       And I click on checkbox two
         Then I verify checkbox one is checked
       And I verify checkbox two is unchecked
+    When I context click on checkbox one
+    Then I verify checkbox one is checked
