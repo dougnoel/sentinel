@@ -213,6 +213,12 @@ public class ElementTests {
         BaseSteps.navigateToPage("KeyPressesPage");
         var input = (Textbox) getElement("key press input");
         input.sendKeys("A");
+        input.sendSpecialKey(Keys.ESCAPE);
+        input.sendSpecialKey(Keys.ENTER);
+        input.sendSpecialKey(Keys.RETURN);
+        input.sendSpecialKey(Keys.TAB);
+        input.sendSpecialKey(Keys.PAGE_UP);
+        input.sendSpecialKey(Keys.PAGE_DOWN);
         input.sendSpecialKey(Keys.BACK_SPACE);
         TextVerificationSteps.verifyElementTextContains("result text", "", "contains", "BACK_SPACE");
         assertTrue("Expecting key press input to be empty.", input.getText().isEmpty());
