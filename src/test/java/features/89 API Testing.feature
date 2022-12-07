@@ -1,7 +1,8 @@
 #language: en
 @89
 Feature: 89 API Testing
-  Testing API code.
+  Tests using the Swagger Pet Store example API.
+  https://petstore3.swagger.io/
 
   @89A
   Scenario: 89A Swagger Test
