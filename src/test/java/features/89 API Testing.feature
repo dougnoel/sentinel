@@ -9,4 +9,4 @@ Feature: 89 API Testing
     Given I use the API named Pet Store API
     When I send 1 to the pet endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "Bizcocho"
+      And I validate the response contains the text "photoUrls"
