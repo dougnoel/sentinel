@@ -1,8 +1,6 @@
 package com.dougnoel.sentinel.apis;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 import org.apache.http.client.utils.URIBuilder;
@@ -12,6 +10,7 @@ import org.openqa.selenium.JavascriptExecutor;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.AuthenticationType;
+import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 import io.swagger.parser.OpenAPIParser;
@@ -22,15 +21,13 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 public class API {
 	private static final Logger log = LogManager.getLogger(API.class.getName()); // Create a logger.
 	private String apiName;
+	private AuthenticationType authenticationType = NONE;
+	private Object authToken = null;
+	private Request request = new Request();
 	
-	protected static final AuthenticationType JWT = AuthenticationType.JWT;
-	protected static final AuthenticationType AUTH_KEY = AuthenticationType.AUTH_KEY;
-	protected static final AuthenticationType NONE = AuthenticationType.NONE;
-    
-	protected AuthenticationType authenticationType = NONE;
-	Object authToken = null;
-	
-	protected URL url = null;
+	private static final AuthenticationType JWT = AuthenticationType.JWT;
+	private static final AuthenticationType AUTH_KEY = AuthenticationType.AUTH_KEY;
+	private static final AuthenticationType NONE = AuthenticationType.NONE;
 	
     /**
      * Constructor
@@ -50,31 +47,19 @@ public class API {
     }
 	
 	/**
-	 * Returns a java.net.URI constructed from the URL listed in the API yaml file.
-	 * 
-	 * @return java.net.URI the constructed URI
+	 * Sets the authentication type that this API uses.
+	 * @param authType com.dougnoel.sentinel.enums.AuthenticationType the type of authentication this API uses
 	 */
-	public URIBuilder getURIBuilder(String passedText) {		
-		String swaggerUrl = Configuration.getAPIURL(APIManager.getAPI().getName());
-		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
-		OpenAPI openAPI = result.getOpenAPI();
-		List<Server> servers = openAPI.getServers();
-		
-		try {
-			return new URIBuilder(servers.get(0).getUrl() + passedText);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	public void setAuthType(AuthenticationType authType) {
 		if(authType == JWT || authType == AUTH_KEY) {
 			authenticationType = authType;
 		}
 	}
 	
+	/**
+	 * Returns the authentication token.
+	 * @return String the authentication token
+	 */
 	public String getAuthToken() {
 		String token = null;
 		if (authToken != null) {
@@ -84,7 +69,7 @@ public class API {
 	}
 	
 	/**
-	 * Creates an AuthToken
+	 * Creates an authentication token based on the authentication type set. By capturing it from the currently open browser window.
 	 */
 	public void setAuthToken() {
 		switch (authenticationType) {
@@ -101,4 +86,27 @@ public class API {
 			break;
 		}
 	}
+		
+	/**
+	 * Returns a java.net.URI constructed from the URL listed in the API yaml file.
+	 * 
+	 * @return java.net.URI the constructed URI
+	 */
+	protected URIBuilder getURIBuilder(String passedText) {		
+		String swaggerUrl = Configuration.getAPIURL(APIManager.getAPI().getName());
+		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
+		OpenAPI openAPI = result.getOpenAPI();
+		List<Server> servers = openAPI.getServers();
+		
+		try {
+			return new URIBuilder(servers.get(0).getUrl() + passedText);
+		} catch (URISyntaxException e) {
+			throw new IOException(e);
+		}
+	}
+	
+	public Request getRequest() {
+		return request; 
+	}
+
 }
