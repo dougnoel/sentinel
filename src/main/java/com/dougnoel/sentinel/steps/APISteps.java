@@ -1,15 +1,9 @@
 package com.dougnoel.sentinel.steps;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,13 +11,18 @@ import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.apis.Response;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class APISteps {
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
+	
+	@Before
+	public void beforeScenario() {
+	    APIManager.reset();
+	}
 	
 	/**
 	 * Gets a JWT Token from a currently open browser that you have logged into
@@ -53,30 +52,72 @@ public class APISteps {
 	public void setAPI(String apiName) {
         APIManager.setAPI(apiName);
 	}
-	
-	@When("^I send (.*) to the (.*) endpoint$")
-	public void apiGet(String value, String endpointName) throws URISyntaxException, IOException {
-		
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		
-		//Build the request
-		HttpGet httpGet = new HttpGet(APIManager.getAPI().getURIBuilder("/" +endpointName + "/" + value).build());
 
-		
-		//Get the response
-		Response response = new Response(httpClient.execute(httpGet));
-		log.trace("Response Code: {} Response: {}", response.getResponseCode(), response.getResponse());
-		APIManager.setResponse(response);
-		Integer expectedValue = 200;
-		assertEquals("Response 200 was expected.", expectedValue, response.getResponseCode());
-		
+	/**
+	 * Sets the body of the active API call to the string passed.
+	 * 
+	 * @param request String the json to be passed as the body of the request.
+	 */
+	@Given("I set the API body to")
+	public void setRequestBody(String body) {
+        APIManager.setBody(body);
+        log.trace("Body passed: {}", body);
 	}
 	
+	@When("^I add a (.*?) parameter with the value (.*?)$")
+	public void addParameter(String parameter, String value) {
+		APIManager.addParameter(parameter, value);
+	}
+	
+	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
+	public void apiPost(String apiCallType, String endpoint) {
+		switch(apiCallType) {
+		case "DELETE":
+			APIManager.DELETE(endpoint);
+			break;
+		case "GET":
+			APIManager.GET(endpoint);
+			break;
+		case "POST":
+			APIManager.POST(endpoint);
+			break;
+		case "PUT":
+			APIManager.PUT(endpoint);
+			break;
+		}
+	}
+	
+	/**
+	 * Sends a GET or DELETE to the specified endpoint for the indicated record
+	 * @param apiCallType String the type of call to make
+	 * @param parameter String the value to send to the endpoint
+	 * @param endpoint String the endpoint name as referenced in the swagger file
+	 */
+	@When("^I (DELETE|GET) record (.*) from the (.*?) endpoint$")
+	public void apiGet(String apiCallType, String parameter, String endpoint) {
+		switch(apiCallType) {
+		case "DELETE":
+			APIManager.DELETE(endpoint, parameter);
+			break;
+		case "GET":
+			APIManager.GET(endpoint, parameter);
+			break;
+		}
+	}
+	
+	/**
+	 * Verify that the response code returned from the last API call is what we expect.
+	 * https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+	 * 
+	 * @param statusCode int the status code expected
+	 */
 	@When("^I verify the response code equals (\\d{3})$")
 	public void verifyResponseCodeEquals(int statusCode) {
-		Integer responseCode = APIManager.getResponse().getResponseCode();
-		log.trace("I verify response code value: {}", responseCode);
-		assertTrue(statusCode == responseCode);
+		Response response = APIManager.getResponse();
+		Integer responseCode = response.getResponseCode();
+		var expectedResult = SentinelStringUtils.format("Expected the response code to be {}, and it was {}.\nFull response:\n{}",
+				statusCode, responseCode, response.getResponse());
+		assertTrue(expectedResult, statusCode == responseCode);
 	}
 	
 //	@When("^I verify the response contains (.*)$")
