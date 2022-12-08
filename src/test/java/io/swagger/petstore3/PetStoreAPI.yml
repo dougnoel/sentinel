@@ -1,5 +1,6 @@
 urls:
   default: https://petstore3.swagger.io/api/v3/openapi.json
+  localhost: https://127.0.0.1/api/v3/openapi.json:8080
 testdata:
   default:
     puppydata:
