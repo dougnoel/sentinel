@@ -318,22 +318,32 @@ public class Configuration {
 	 * @return APIData the class for the data on the desired page
 	 */
 	private static APIData loadAPIData(String apiName) {
-		APIData apiData = null;
+		return (APIData) loadYAMLData(apiName);
+	}
+	
+	/**
+	 * Returns data from yaml file.
+	 * 
+	 * @param yamlName String the name of the API object for data retrieval
+	 * @return YAMLData the class for the data on the desired page
+	 */
+	private static YAMLData loadYAMLData(String yamlName) {
+		YAMLData yamlData = null;
 		try {
-			apiData = APIData.loadYaml(findPageObjectFilePath(apiName));
+			yamlData = YAMLData.loadYaml(findPageObjectFilePath(yamlName));
 		} catch (FileException fe) {
 			throw (FileException) fe;
 		} catch (Exception e) {
-			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", apiName);
-			throw new FileException(errorMessage, e, new File(apiName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", yamlName);
+			throw new FileException(errorMessage, e, new File(yamlName + ".yml"));
 		}
 
-		if (apiData == null) {
+		if (yamlData == null) {
 			var errorMessage = "The file appears to contain no data. Please ensure the file is properly formatted.";
-			throw new FileException(errorMessage, new File(apiName + ".yml"));
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
 		
-		return apiData;
+		return yamlData;
 	}
 	
 	/**
@@ -373,43 +383,42 @@ public class Configuration {
 	 * @return String the url for the given page and current environment
 	 */
 	protected static String getPageURL(String pageName) {
-		String baseURL = null;
-		var pageData = loadPageData(pageName);
-		String env = Configuration.environment();
-
-		if (pageData.containsUrl(env)) {
-			baseURL = pageData.getUrl(env);
-		} else if (pageData.containsUrl(DEFAULT)){
-			baseURL = pageData.getUrl(DEFAULT);
-			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
-		} else if (pageData.containsUrl("base")){
-			baseURL = pageData.getUrl("base");
-			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
-		}
-		if (StringUtils.isEmpty(baseURL)) {
-			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
-		}
-		return baseURL;
+		return getURL(pageName);
 	}
 	
+	/**
+	 * Returns a URL for the given page name based on the environment value set.
+	 *
+	 * @param apiName String the name of the api from which the url is retrieved
+	 * @return String the url for the given api and current environment
+	 */
 	public static String getAPIURL(String apiName) {
+		return getURL(apiName);
+	}
+	
+	/**
+	 * Returns a URL for the given yaml file based on the environment value set.
+	 *
+	 * @param yamlName String the name of the yaml file from which the url is retrieved
+	 * @return String the url for the given yaml object and current environment
+	 */
+	private static String getURL(String yamlName) {
 		String baseURL = null;
-		var apiData = loadAPIData(apiName);
+		var yamlData = loadYAMLData(yamlName);
 		String env = Configuration.environment();
 
-		if (apiData.containsUrl(env)) {
-			baseURL = apiData.getUrl(env);
-		} else if (apiData.containsUrl(DEFAULT)){
-			baseURL = apiData.getUrl(DEFAULT);
+		if (yamlData.containsUrl(env)) {
+			baseURL = yamlData.getUrl(env);
+		} else if (yamlData.containsUrl(DEFAULT)){
+			baseURL = yamlData.getUrl(DEFAULT);
 			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
-		} else if (apiData.containsUrl("base")){
-			baseURL = apiData.getUrl("base");
+		} else if (yamlData.containsUrl("base")){
+			baseURL = yamlData.getUrl("base");
 			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
 		}
 		if (StringUtils.isEmpty(baseURL)) {
-			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the API object. See the project README for details.", env, apiName);
-			throw new FileException(errorMessage, new File(apiName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, yamlName);
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
 		return baseURL;
 	}
@@ -548,8 +557,8 @@ public class Configuration {
 	 */
 	public static String getAPITestData(String testDataObjectName, String testDataObjectKey) {
 		String yamlName = APIManager.getAPI().getName();
-		var pageData = API_DATA.computeIfAbsent(yamlName, Configuration::loadAPIData);
-		return getTestData(yamlName, pageData, testDataObjectName, testDataObjectKey);
+		var yamlData = API_DATA.computeIfAbsent(yamlName, Configuration::loadAPIData);
+		return getTestData(yamlName, yamlData, testDataObjectName, testDataObjectKey);
 	}
 	
 	/**
