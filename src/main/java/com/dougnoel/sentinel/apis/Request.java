@@ -26,14 +26,14 @@ import com.dougnoel.sentinel.exceptions.IOException;
 public class Request {
 	private static final Logger log = LogManager.getLogger(Request.class.getName()); // Create a logger.
 
-	private HttpRequestBase request = null;
+	private HttpRequestBase httpRequest = null;
 	private List<NameValuePair> parameters = new ArrayList<>();
 	private StringEntity body = null;
 	
 	private void reset() {
 		parameters.clear();
 		body = null;
-		request = null;
+		httpRequest = null;
 	}
 	
 	/**
@@ -53,25 +53,25 @@ public class Request {
 	    if (!parameters.isEmpty()) {
 			URI uri;
 			try {
-				uri = new URIBuilder(request.getURI())
+				uri = new URIBuilder(httpRequest.getURI())
 				  .addParameters(parameters)
 				  .build();
-				request.setURI(uri);
+				httpRequest.setURI(uri);
 			} catch (URISyntaxException e) {
 				throw new IOException(e);
 			}
 	    }
 
-	    log.trace("URI Constructed: {}", request.getURI());
-		return request;
+	    log.trace("URI Constructed: {}", httpRequest.getURI());
+		return httpRequest;
 	}
 	
 	/**
 	 * Sets this as a json request.
 	 */
 	private void setHeaders() {
-		request.setHeader("Accept", "application/json");
-		request.setHeader("Content-type", "application/json");
+		httpRequest.setHeader("Accept", "application/json");
+		httpRequest.setHeader("Content-type", "application/json");
 	}
 	
 	/**
@@ -97,18 +97,18 @@ public class Request {
 		try {
 			switch(type) {
 			case DELETE:
-				request = new HttpDelete(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				httpRequest = new HttpDelete(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
 				break;
 			case GET:
-				request = new HttpGet(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				httpRequest = new HttpGet(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
 				break;
 			case POST:
-				request = new HttpPost(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
-				((HttpEntityEnclosingRequestBase) request).setEntity(body);
+				httpRequest = new HttpPost(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				((HttpEntityEnclosingRequestBase) httpRequest).setEntity(body);
 				break;
 			case PUT:
-				request = new HttpPut(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
-				((HttpEntityEnclosingRequestBase) request).setEntity(body);
+				httpRequest = new HttpPut(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				((HttpEntityEnclosingRequestBase) httpRequest).setEntity(body);
 				break;
 			}
 		} catch (URISyntaxException e) {
@@ -127,7 +127,7 @@ public class Request {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		Response response;
 		try {
-			response = new Response(httpClient.execute(request));
+			response = new Response(httpClient.execute(httpRequest));
 		} catch (java.io.IOException e) {
 			throw new IOException(e);
 		}

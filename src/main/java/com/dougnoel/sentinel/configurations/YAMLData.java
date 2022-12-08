@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,7 +70,7 @@ public class YAMLData {
     	if (accounts.containsKey(env)) {
     		return accounts.get(env).get(account);
     	}
-    	return null;
+    	return Collections.emptyMap();
     }
     
     /**

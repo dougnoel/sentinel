@@ -296,8 +296,6 @@ public class Configuration {
 		PageData pageData = null;
 		try {
 			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
-		} catch (FileException fe) {
-			throw (FileException) fe;
 		} catch (Exception e) {
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
 			throw new FileException(errorMessage, e, new File(pageName + ".yml"));
@@ -331,8 +329,6 @@ public class Configuration {
 		YAMLData yamlData = null;
 		try {
 			yamlData = YAMLData.loadYaml(findPageObjectFilePath(yamlName));
-		} catch (FileException fe) {
-			throw (FileException) fe;
 		} catch (Exception e) {
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", yamlName);
 			throw new FileException(errorMessage, e, new File(yamlName + ".yml"));

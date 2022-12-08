@@ -79,7 +79,6 @@ public class API {
 			authToken = ((JavascriptExecutor) WebDriverFactory.getWebDriver()).executeScript(jsExpression);
 			break;
 		case AUTH_KEY:
-			//TODO: Implement Auth Token setting
 			log.error("Auth Token capture is not yet implemented.");
 			break;
 		case NONE:
