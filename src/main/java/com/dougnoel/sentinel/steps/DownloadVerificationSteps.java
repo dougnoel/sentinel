@@ -1,9 +1,13 @@
 package com.dougnoel.sentinel.steps;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 
+import com.dougnoel.sentinel.files.ZipFile;
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,5 +68,32 @@ public class DownloadVerificationSteps {
 	@When("I clear all files from the downloads folder")
 	public static void clearDownloadsFolder() throws IOException {
 		DownloadManager.clearDownloadDirectory();
+	}
+
+	/**
+	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension.
+	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
+	 * @param assertion String " does not" for a negative check, otherwise positive check
+	 * @param expectedFileType String the file extension to check for.
+	 */
+	@Then("^I verify the most recently downloaded zip file( does not)? contains? a file with the extension (.*?)$")
+	public static void verifyFileContentsOfZip(String assertion, String expectedFileType) throws IOException {
+		Path mostRecentFile = DownloadManager.getMostRecentDownloadPath();
+		List<String> fileContent;
+		boolean result;
+		boolean negate = !StringUtils.isEmpty(assertion);
+
+		try{
+			ZipFile zip = new ZipFile(DownloadManager.getMostRecentDownloadPath());
+			fileContent = zip.getFileNames();
+			result = fileContent.stream().anyMatch(fileName -> StringUtils.endsWith(fileName, expectedFileType));
+		}
+		catch(IOException ioe){
+			String message = SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile);
+			throw new IOException(message, ioe);
+		}
+		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain a file with extension {}. Zip file location: {} Files in zip: {}",
+						(negate ? "not ": ""), expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
+				!negate, result);
 	}
 }

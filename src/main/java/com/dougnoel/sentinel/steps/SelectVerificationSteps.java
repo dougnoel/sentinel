@@ -39,32 +39,7 @@ public class SelectVerificationSteps {
             assertTrue(expectedResult, dropdown.doesNotHaveOption(textOfOption));
         }
 	}
-    /**
-     * Verifies a select element's currently selected option has the given text.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I verify the size dropdown has the currently selected option XS</li>
-     * <li>I verify the color dropdown does not have the currently selected option Red</li>
-     * </ul>
-     * @param elementName String select element to check
-     * @param assertion String "has" for a positive check, anything else for negative
-     * @param textOfOption String text to match against
-     */
-    @Then("^I verify (?:the|a|an) (.*?) (has|does not have) the currently selected option (.*?)$")
-	public static void verifyDropdownHasCurrentlySelectedOption(String elementName, String assertion, String textOfOption) {
-		var dropdown = (SelectElement)getElement(elementName);
-		
-		String expectedResult = SentinelStringUtils.format("Expected the element {} {} to have the currently selected option \"{}\".",
-                elementName, assertion, textOfOption);
-		var actualResult = dropdown.getSelectedText().equals(textOfOption);
-		if (assertion.contentEquals("has")) {
-            assertTrue(expectedResult, actualResult);
-        } else {
-            assertFalse(expectedResult, actualResult);
-        }
-	}
-    
+
     /**
      * Verifies a select element has or does not have the given number of options.
      * <p>
