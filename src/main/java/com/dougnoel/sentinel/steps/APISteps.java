@@ -24,8 +24,8 @@ public class APISteps {
 	 * Gets a JWT Token from a currently open browser that you have logged into
 	 * and sets it for the curently active API
 	 */
-	@When("^I grab the JWT$")
-	public void i_grab_the_jwt() {
+	@When("^I scrape the JWT from the current page$")
+	public void scrapeJWT() {
 		AuthenticationType authType = AuthenticationType.JWT;
 		APIManager.getAPI().setAuthType(authType);
 		APIManager.getAPI().setAuthToken();

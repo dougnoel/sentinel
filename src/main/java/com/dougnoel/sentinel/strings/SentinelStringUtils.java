@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.strings;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.CharUtils;
@@ -77,8 +78,7 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
     	while ((length = inputStream.read(buffer)) != -1) {
     	    result.write(buffer, 0, length);
     	}
-    	// StandardCharsets.UTF_8.name() > JDK 7
-    	return result.toString("UTF-8");
+    	return result.toString(StandardCharsets.UTF_8);
     }
 
 	/**
