@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.apis.Response;
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Given;
@@ -19,17 +18,6 @@ import io.cucumber.java.en.When;
 
 public class APISteps {
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
-
-	/**
-	 * Gets a JWT Token from a currently open browser that you have logged into
-	 * and sets it for the curently active API
-	 */
-	@When("^I scrape the JWT from the current page$")
-	public void scrapeJWT() {
-		AuthenticationType authType = AuthenticationType.JWT;
-		APIManager.getAPI().setAuthType(authType);
-		APIManager.getAPI().setAuthToken();
-	}
 	
 	/**
 	 * Loads an API based on the environment you are currently testing.

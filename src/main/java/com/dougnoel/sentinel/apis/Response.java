@@ -14,10 +14,6 @@ public class Response {
 		this.httpResponse = httpResponse;
 		this.jsonResponse = SentinelStringUtils.inputStreamToString(this.httpResponse.getEntity().getContent()); //This has to be done when we first get the response because once we read the stream, it is gone.
 	}
-	
-	public void addJsonResponse(String jsonResponse) {
-		this.jsonResponse = jsonResponse;
-	}
 
 	public String getResponse() {
 		return jsonResponse;
