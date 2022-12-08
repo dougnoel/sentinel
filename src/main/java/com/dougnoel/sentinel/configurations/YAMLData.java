@@ -70,7 +70,7 @@ public class YAMLData {
     	if (accounts.containsKey(env)) {
     		return accounts.get(env).get(account);
     	}
-    	return Collections.emptyMap();
+    	return null;
     }
     
     /**

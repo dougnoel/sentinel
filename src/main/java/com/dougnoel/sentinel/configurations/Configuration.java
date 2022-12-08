@@ -467,11 +467,11 @@ public class Configuration {
 		String env = environment();
 		var pageData = loadPageData(pageName);
 		Map <String,String> accountData = pageData.getAccount(env, account);
-		if (accountData.isEmpty()) {
+		if (Objects.equals(accountData, null)) {
 			env = DEFAULT;
 			accountData = pageData.getAccount(env, account);
 		}
-		if (accountData.isEmpty()) {
+		if (Objects.equals(accountData, null)) {
 			var errorMessage = SentinelStringUtils.format("Account {} could not be found for the {} environment in {}.yml", account, env, pageName);
 			throw new FileException(errorMessage, new File(pageName + ".yml"));
 		}
