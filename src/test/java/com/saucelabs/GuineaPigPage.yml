@@ -2,22 +2,16 @@ urls:
   default: https://saucelabs.com/test/guinea-pig
 elements:
   example_link:
-    elementType: Link
     partialtext: "i am a link"
   invisible_div:
-    elementType: Div
     id: "invisible div"
   example_div:
-    elementType: Div
     id: "i_am_an_id"
   fake_div:
-    elementType: Div
     id: "fake div"
   hidden_div:
-    elementType: Div
     id: "invisible div"
   your_comments_span:
-    elementType: Span
     id: "your_comments"
   email_text_area:
     elementType: TextBox
@@ -31,3 +25,5 @@ elements:
     class: "jumpButton"
     id: "submit"
     name: "submit"
+  example_textbox:
+    id: "i_am_a_textbox"

@@ -51,3 +51,30 @@ Feature: Text Verification Tests
     Then I verify the middle name field is disabled
       And I verify the first name field is disabled
       And I verify the last name field is enabled
+
+  @text
+  Scenario: I store and verify an elements inner text
+    Given I am on the Guinea Pig Page
+    When I note the text in the example div
+      And I note the text in the example link
+    Then I wait until the example div contains the text used in the example div
+      And I wait until the example link does not contain the text used in the example div
+      And I wait until the example div does not contain the text used in the example link
+
+  @text
+  Scenario: I store and verify an elements value attribute
+    Given I am on the Guinea Pig Page
+    When I note the value attribute of the example textbox
+      And I note the href attribute of the example link
+    Then I verify the value attribute of the example textbox matches the example textbox
+      And I verify the value attribute of the example textbox does not match the example link
+      And I verify the href attribute of the example link matches the example link
+
+  @text
+  Scenario: I store and verify an elements class attribute
+    Given I am on the Guinea Pig Page
+    When I note the class attribute of the example div
+      And I note the class attribute of the send button
+    Then I verify the class attribute of the send button matches the send button
+      And I verify the class attribute of the send button does not match the example div
+      And I verify the class attribute of the example div matches the example div
