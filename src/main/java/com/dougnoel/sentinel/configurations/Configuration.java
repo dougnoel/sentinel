@@ -488,7 +488,8 @@ public class Configuration {
 	}
 	
 	/**
-	 * Gets the value of the given key of the given testdata object in the current environment. Defaults to "default" if environment is not set.
+	 * Gets the value of the given key of the given testdata object in the current environment. 
+	 * Defaults to "default" if environment is not set.
 	 * <p>Example of testdata:</p>
 	 * <pre>
 	 * testdata:
@@ -507,77 +508,78 @@ public class Configuration {
 	 * @return String the value of the given key in the given object
 	 */
 	public static String getTestdataValue(String testdataObjectName, String testdataObjectKey){
-		String normalizedTestdataObjectName = testdataObjectName.replaceAll("\\s+", "_");
-		String normalizedTestdataObjectKey = testdataObjectKey.replaceAll("\\s+", "_");
-		String pageName = PageManager.getPage().getName();
-		String env = environment();
-		var pageData = loadPageData(pageName);
-		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
-		if (testdata == null || testdata.isEmpty()) {
-			env = DEFAULT;
-			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
-		}
-		if (testdata == null || testdata.isEmpty()) {
-			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
-		}
-		String data = testdata.get(normalizedTestdataObjectKey);
-		if (data == null) {
-			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testdataObjectKey, normalizedTestdataObjectName, env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
-		}
-		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
-		return data;
+		String yamlName = PageManager.getPage().getName();
+		var pageData = PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
+		return getTestData(yamlName, pageData, testdataObjectName, testdataObjectKey);
 	}
 	
+	/**
+	 * Gets the value of the given key of the given testdata object in the current environment. 
+	 * Defaults to "default" if environment is not set.
+	 * <p>Example of testdata:</p>
+	 * <pre>
+	 * testdata:
+	 *   default:
+	 *     puppydata:
+	 *       json: |
+	 *        {
+	 *          "id": 10,
+	 *          "name": "doggie",
+	 *          "category": {
+	 *            "id": 1,
+	 *            "name": "Dogs"
+	 *          },
+	 *          "photoUrls": [
+	 *            "string"
+	 *          ],
+	 *          "tags": [
+	 *            {
+	 *              "id": 0,
+	 *              "name": "string"
+	 *            }
+	 *          ],
+	 *          "status": "available"
+	 *        }
+	 * </pre>
+	 * <p>To retrieve the version of report, call <b>getTestdataValue("report", "version")</b></p>
+	 * @param testDataObjectName String name of the testdata object
+	 * @param testDataObjectKey String name of the property of the given testdata object
+	 * @return String the value of the given key in the given object
+	 */
 	public static String getAPITestData(String testDataObjectName, String testDataObjectKey) {
-		String pageName = APIManager.getAPI().getName();
-		var pageData = API_DATA.computeIfAbsent(pageName, Configuration::loadAPIData);
-		return getTestData(pageData, testDataObjectName, testDataObjectKey);
-//		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
-//		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
-//		String pageName = APIManager.getAPI().getName();
-//		String env = environment();
-//		var pageData = API_DATA.computeIfAbsent(pageName, Configuration::loadAPIData);
-//		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
-//		if (testdata == null || testdata.isEmpty()) {
-//			env = DEFAULT;
-//			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
-//		}
-//		if (testdata == null || testdata.isEmpty()) {
-//			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
-//			throw new FileException(errorMessage, new File(pageName + ".yml"));
-//		}
-//		String data = testdata.get(normalizedTestdataObjectKey);
-//		if (data == null) {
-//			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, pageName);
-//			throw new FileException(errorMessage, new File(pageName + ".yml"));
-//		}
-//		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
-//		return data;
+		String yamlName = APIManager.getAPI().getName();
+		var pageData = API_DATA.computeIfAbsent(yamlName, Configuration::loadAPIData);
+		return getTestData(yamlName, pageData, testDataObjectName, testDataObjectKey);
 	}
 	
-	public static String getTestData(YAMLData pageData, String testDataObjectName, String testDataObjectKey) {
+	/**
+	 * Helper method to get testdata from API and Page objects.
+	 * @param yamlName String the name of the yaml file to inspect
+	 * @param yamlData YAMLData the data file to look in
+	 * @param testDataObjectName String name of the testdata object
+	 * @param testDataObjectKey String name of the property of the given testdata object
+	 * @return String the value of the given key in the given object
+	 */
+	public static String getTestData(String yamlName, YAMLData yamlData, String testDataObjectName, String testDataObjectKey) {
 		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
 		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
-		String pageName = APIManager.getAPI().getName();
 		String env = environment();
 		
-		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+		Map <String,String> testdata = yamlData.getTestdata(env, normalizedTestdataObjectName);
 		if (testdata == null || testdata.isEmpty()) {
 			env = DEFAULT;
-			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+			testdata = yamlData.getTestdata(env, normalizedTestdataObjectName);
 		}
 		if (testdata == null || testdata.isEmpty()) {
-			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, yamlName);
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
 		String data = testdata.get(normalizedTestdataObjectKey);
 		if (data == null) {
-			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, yamlName);
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
-		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
+		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, yamlName, data);
 		return data;
 	}
 	

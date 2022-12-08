@@ -2,9 +2,6 @@ package com.dougnoel.sentinel.apis;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
-
 import com.dougnoel.sentinel.configurations.YAMLData;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -17,9 +14,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * or account data based on the given environment and the account map within that environment.
  */
 public class APIData extends YAMLData {
-	public Map<String,String> urls;
-	public Map<String,Map<String,Map<String,String>>> accounts;
-	public String include;
 
 	/**
 	 * Returns APIData for the given fileName as a string.
