@@ -47,7 +47,6 @@ public class Request {
 	
 	/**
 	 * Returns a URI that includes any parameters if it is set. Otherwise it returns the existing URI.
-	 * @param request HttpRequestBase the request to which to add the query string
 	 * @return HttpRequestBase the new request object
 	 */
 	private HttpRequestBase buildURI() {

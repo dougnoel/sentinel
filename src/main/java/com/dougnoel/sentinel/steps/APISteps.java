@@ -52,7 +52,7 @@ public class APISteps {
 	/**
 	 * Sets the body of the active API call to the string passed.
 	 * 
-	 * @param request String the json to be passed as the body of the request.
+	 * @param body String the json to be passed as the body of the request.
 	 */
 	@Given("I set the API body to")
 	public void setRequestBody(String body) {
@@ -64,7 +64,7 @@ public class APISteps {
 	 * Loads the indicated testdata located in the API object yaml file to use
 	 * as the json for the body of the request.
 	 * 
-	 * @param request String the name of the testdata entry to use
+	 * @param testdataName String the name of the testdata entry to use
 	 */
 	@Given("^I load (.*?) to use as the API body$")
 	public void loadRequestBody(String testdataName) {
