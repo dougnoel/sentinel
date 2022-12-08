@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.apis.APIData;
+import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageData;
@@ -474,6 +475,14 @@ public class Configuration {
 		return data;
 	}
 	
+	/**
+	 * Returns an element if found in the PAGE_DATA store for the passed page name. If it is not found
+	 * the yaml file is searched and it is created in the PAGE_DATA store before being returned.
+	 * 
+	 * @param elementName the element to search for in the page object
+	 * @param pageName the name of the page object to search
+	 * @return the element and all of its locators
+	 */
 	public static Map <String,String> getElement(String elementName, String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
 	}
@@ -521,10 +530,71 @@ public class Configuration {
 		return data;
 	}
 	
+	public static String getAPITestData(String testDataObjectName, String testDataObjectKey) {
+		String pageName = APIManager.getAPI().getName();
+		var pageData = API_DATA.computeIfAbsent(pageName, Configuration::loadAPIData);
+		return getTestData(pageData, testDataObjectName, testDataObjectKey);
+//		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
+//		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
+//		String pageName = APIManager.getAPI().getName();
+//		String env = environment();
+//		var pageData = API_DATA.computeIfAbsent(pageName, Configuration::loadAPIData);
+//		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+//		if (testdata == null || testdata.isEmpty()) {
+//			env = DEFAULT;
+//			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+//		}
+//		if (testdata == null || testdata.isEmpty()) {
+//			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
+//			throw new FileException(errorMessage, new File(pageName + ".yml"));
+//		}
+//		String data = testdata.get(normalizedTestdataObjectKey);
+//		if (data == null) {
+//			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, pageName);
+//			throw new FileException(errorMessage, new File(pageName + ".yml"));
+//		}
+//		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
+//		return data;
+	}
+	
+	public static String getTestData(YAMLData pageData, String testDataObjectName, String testDataObjectKey) {
+		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
+		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
+		String pageName = APIManager.getAPI().getName();
+		String env = environment();
+		
+		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+		if (testdata == null || testdata.isEmpty()) {
+			env = DEFAULT;
+			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+		}
+		if (testdata == null || testdata.isEmpty()) {
+			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
+		}
+		String data = testdata.get(normalizedTestdataObjectKey);
+		if (data == null) {
+			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, pageName);
+			throw new FileException(errorMessage, new File(pageName + ".yml"));
+		}
+		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
+		return data;
+	}
+	
+	/**
+	 * Returns a String array containing all the included pages in a page object (if any).
+	 * @param pageName String the page to check for includes
+	 * @return String[] the pages found that are part of this page
+	 */
 	public static String[] getPageParts(String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getPageParts();
 	}
 	
+	/**
+	 * Returns a formatted error message. Helper method to reduce code duplication.
+	 * @param configurtaionValue String the configuration that was not set
+	 * @return String the formatted error message
+	 */
 	private static String configurationNotFoundErrorMessage(String configurtaionValue) {
 		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.", configurtaionValue, configurtaionValue, configurtaionValue);
 	}

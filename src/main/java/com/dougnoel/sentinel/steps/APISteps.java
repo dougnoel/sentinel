@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.apis.Response;
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.AuthenticationType;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -55,6 +56,19 @@ public class APISteps {
 	 */
 	@Given("I set the API body to")
 	public void setRequestBody(String body) {
+        APIManager.setBody(body);
+        log.trace("Body passed: {}", body);
+	}
+
+	/**
+	 * Loads the indicated testdata located in the API object yaml file to use
+	 * as the json for the body of the request.
+	 * 
+	 * @param request String the name of the testdata entry to use
+	 */
+	@Given("^I load (.*?) to use as the API body$")
+	public void loadRequestBody(String testdataName) {
+		String body = Configuration.getAPITestData(testdataName, "json");
         APIManager.setBody(body);
         log.trace("Body passed: {}", body);
 	}

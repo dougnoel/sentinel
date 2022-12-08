@@ -7,27 +7,7 @@ Feature: 89 API Testing
   @89A
   Scenario: 89A POST Swagger Test
     Given I use the API named Pet Store API
-    When I set the API body to
-    """
-    {
-	  "id": 10,
-	  "name": "doggie",
-	  "category": {
-	    "id": 1,
-	    "name": "Dogs"
-	  },
-	  "photoUrls": [
-	    "string"
-	  ],
-	  "tags": [
-	    {
-	      "id": 0,
-	      "name": "string"
-	    }
-	  ],
-	  "status": "available"
-	}
-    """
+    When I load puppydata to use as the API body
     And I send a POST request to the pet endpoint
     Then I verify the response code equals 200
       And I validate the response contains the text "doggie"

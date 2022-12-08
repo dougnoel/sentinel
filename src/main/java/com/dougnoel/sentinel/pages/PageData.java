@@ -3,11 +3,10 @@ package com.dougnoel.sentinel.pages;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 
+import com.dougnoel.sentinel.configurations.YAMLData;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -19,12 +18,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * java class. It contains getter methods for page urls, and account data based on the given environment or account data 
  * based on the given environment and the account map within that environment.
  */
-public class PageData {
+public class PageData extends YAMLData {
 	public Map<String,String> urls;
 	public Map<String,String> executables;
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> elements;
-	public Map<String,Map<String,Map<String,String>>> testdata;
 	public String include;
 
 	/**
@@ -77,28 +75,6 @@ public class PageData {
     		return accounts.get(env).get(account);
     	}
     	return null;
-    }
-    
-    /**
-	 * Returns testdata data for the given environment and the given dataobject (named in the YAML page object).
-	 * <p>Example of test data:</p>
-	 * <pre>
-	 * testdata:
-	 *   alpha:
-	 *     report:
-	 *       id: 123456
-	 *       version: 1
-	 * </pre>
-	 * 
-	 * @param env String the desired environment (qa, sit, etc.)
-	 * @param dataObject String the requested dataobject
-	 * @return Map&lt;String, String&gt; the dataobject data, or null if the requested environment doesn't exist
-	 */
-    public Map<String,String> getTestdata(String env, String dataObject) {
-    	if (testdata != null && testdata.containsKey(env)) {
-    		return testdata.get(env).get(dataObject);
-    	}
-    	return new ConcurrentHashMap<>();
     }
     
     /**
