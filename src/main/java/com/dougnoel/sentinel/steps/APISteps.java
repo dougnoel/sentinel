@@ -42,7 +42,7 @@ public class APISteps {
 	 * 
 	 * @param body String the json to be passed as the body of the request.
 	 */
-	@Given("I set the API body to")
+	@Given("I set the request body to")
 	public void setRequestBody(String body) {
         APIManager.setBody(body);
         log.trace("Body passed: {}", body);
@@ -54,7 +54,7 @@ public class APISteps {
 	 * 
 	 * @param testdataName String the name of the testdata entry to use
 	 */
-	@Given("^I load (.*?) to use as the API body$")
+	@Given("^I load (.*?) to use as the request body$")
 	public void loadRequestBody(String testdataName) {
 		String body = Configuration.getAPITestData(testdataName, "json");
         APIManager.setBody(body);
