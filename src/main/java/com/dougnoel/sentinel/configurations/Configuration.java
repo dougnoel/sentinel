@@ -54,6 +54,41 @@ public class Configuration {
 	}
 	
 	/**
+	 * Set the test environment and os values, as these cannot change throughout the run of the tests.
+	 */
+	static {
+		initializeEnvironment();
+		initializeOS();
+	}
+	
+	/**
+	 * Initializes the test environment used to retrieve environment-specific info during this test execution.
+	 * If no environment is set, a warning message is logged and a default value of "localhost" is set.
+	 */
+	private static void initializeEnvironment() {
+		env = System.getProperty("env");
+		if (env == null) {
+			env = "localhost";
+			String warningMessage = "localhost env being used by default. " + 
+					Configuration.configurationNotFoundErrorMessage("env");
+			log.warn(warningMessage);
+		}
+	}
+	
+	/**
+	 * Initializes the operating system value if passed (for example passing it to Saucelabs and we
+	 * don' want it to be this os.) If it's not passed, we detect it and set it. OS does not change 
+	 * during test execution.
+	 */
+	private static void initializeOS() {
+    	var operatingSystem = Configuration.toString("os");
+    	if (operatingSystem == null) {
+    		operatingSystem = detectOperatingSystem();
+    		appProps.setProperty("os", operatingSystem);
+    	}
+	}
+	
+	/**
 	 * Returns the configuration value for the given configuration property and the given environment from 
 	 * the ConfigurationData class.
 	 * 
@@ -242,20 +277,10 @@ public class Configuration {
 	
 	/**
 	 * Returns the system environment.
-	 * If no environment is set, a warning message is logged and a default value of "localhost" is set.
 	 * 
 	 * @return String text of system env info
 	 */
 	public static String environment() {
-		if (env == null) {
-			env = System.getProperty("env");
-			if (env == null) {
-				env = "localhost";
-				String warningMessage = "localhost env being used by default. " + 
-						Configuration.configurationNotFoundErrorMessage("env");
-				log.warn(warningMessage);
-			}
-		}
 		return env;
 	}
 	
@@ -425,6 +450,15 @@ public class Configuration {
 		return data;
 	}
 	
+	/**
+	 * Returns an element's list of locators if it exists in the page object yaml file. If we have 
+	 * already retrieved the item once, it is stored in the PAGE_DATA map under the name of the page 
+	 * for faster recall.
+	 * 
+	 * @param elementName String the name of the element in the page object under the 'elements' section
+	 * @param pageName String the page object to check
+	 * @return Map&lt;String, String&gt; the locators for an element
+	 */
 	public static Map <String,String> getElement(String elementName, String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
 	}
@@ -472,10 +506,20 @@ public class Configuration {
 		return data;
 	}
 	
+	/**
+	 * Returns a list of page objects that are included in the passed page object.
+	 * @param pageName String the page object to check for included page parts
+	 * @return String[] the list of pages to include as part of this page object
+	 */
 	public static String[] getPageParts(String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getPageParts();
 	}
 	
+	/**
+	 * Creates an error message for an expected configuration not being found.
+	 * @param configurtaionValue String the value we couldn't find
+	 * @return String the formatted error message
+	 */
 	private static String configurationNotFoundErrorMessage(String configurtaionValue) {
 		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.", configurtaionValue, configurtaionValue, configurtaionValue);
 	}
@@ -504,13 +548,8 @@ public class Configuration {
      * Returns a sanitized version of the operating system set in the config file or on the command line.
      * @return String a sanitized string containing the operating system
      */
-    public static String operatingSystem() {
-    	var operatingSystem = Configuration.toString("os");
-    	if (operatingSystem == null) {
-    		operatingSystem = detectOperatingSystem();
-    	}
-        
-        return operatingSystem;
+    public static String operatingSystem() {        
+        return appProps.getProperty("os");
     }
     
     /**
