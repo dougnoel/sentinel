@@ -81,20 +81,21 @@
 
     <appium.version>7.3.0</appium.version>
     <commons-lang3.version>3.9</commons-lang3.version>
-    <extentreports.version>4.1.5</extentreports.version>
-    <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
+    <extentreports.version>5.0.9</extentreports.version>
+    <extent.cucumber.adapter.artifactID>extentreports-cucumber7-adapter</extent.cucumber.adapter.artifactID> <!-- The name of this changes for every major Cucumber rev unfortunately. -->
+    <extent.cucumber.reports.version>1.9.1</extent.cucumber.reports.version>
     <gson.version>2.8.9</gson.version>
     <guava.version>30.1.1-jre</guava.version>
     <httpcore.version>4.4.12</httpcore.version>
     <httpclient.version>4.5.13</httpclient.version>
-    <io.cucumber.version>5.6.0</io.cucumber.version>
+    <io.cucumber.version>7.8.1</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
     <jackson2.version>2.12.7</jackson2.version>
     <junit.version>5.5.1</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
     <lombok.version>1.18.24</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
-    <pdfbox.version>2.0.24</pdfbox.version>
+    <pdfbox.version>2.0.27</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
     <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.1.2</swagger-parser.version>
@@ -473,7 +474,7 @@
 
 	<dependency>
 		<groupId>tech.grasshopper</groupId>
-		<artifactId>extentreports-cucumber5-adapter</artifactId>
+		<artifactId>${extent.cucumber.adapter.artifactID}</artifactId>
 		<version>${extent.cucumber.reports.version}</version>
 	</dependency>
 
@@ -727,7 +728,7 @@
 
     <dependency>
 	  <groupId>tech.grasshopper</groupId>
-	  <artifactId>extentreports-cucumber5-adapter</artifactId>
+	  <artifactId>${extent.cucumber.adapter.artifactID}</artifactId>
 	</dependency>
 
     <dependency>
@@ -738,7 +739,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- junit should usually be test scope but this is a dedicated test library -->
+      <!-- junit should usually be test scope unless this is a dedicated test library, which it is. -->
     </dependency>
 
     <dependency>
@@ -767,5 +768,5 @@
     </dependency>
     
   </dependencies>
-  <description>A Selenium framework that implements the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.</description>
+  <description>A Selenium framework that implements a generic Cucumber interface and the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed. Also works for Windows automation and API automation.</description>
 </project>
