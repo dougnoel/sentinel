@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
+@SuppressWarnings("serial")
 public class ZipFile extends TestFile {
 
     /**

@@ -11,6 +11,7 @@ import com.dougnoel.sentinel.system.SentinelScreenRecorder;
 import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
+import junit.runner.Version;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true
@@ -18,7 +19,6 @@ import io.cucumber.junit.CucumberOptions;
 	, glue = { "com.dougnoel.sentinel.steps", "steps" }
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
-	, strict = true
 )
 
 public class SentinelTests {
@@ -26,6 +26,7 @@ public class SentinelTests {
     
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+    	log.info("JUnit version is: {}", Version.id());
         if(Configuration.toBoolean("recordTests"))
             SentinelScreenRecorder.startRecording();
     }
