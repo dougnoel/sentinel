@@ -34,7 +34,6 @@ public class Configuration {
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
 	
 	private static final String ENV_REPLACE_STRING = "{env}";
-	private static String env = null;
 	
 	private static Properties appProps = new Properties();
 	
@@ -65,14 +64,15 @@ public class Configuration {
 	 * Initializes the test environment used to retrieve environment-specific info during this test execution.
 	 * If no environment is set, a warning message is logged and a default value of "localhost" is set.
 	 */
-	private static void initializeEnvironment() {
-		env = System.getProperty("env");
+	protected static void initializeEnvironment() {
+		var env = System.getProperty("env");
 		if (env == null) {
 			env = "localhost";
 			String warningMessage = "localhost env being used by default. " + 
 					Configuration.configurationNotFoundErrorMessage("env");
 			log.warn(warningMessage);
 		}
+		appProps.setProperty("env", env);
 	}
 	
 	/**
@@ -281,19 +281,7 @@ public class Configuration {
 	 * @return String text of system env info
 	 */
 	public static String environment() {
-		return env;
-	}
-	
-	/**
-	 * Setter intended only for unit testing. Sets the stored value and also the System Property.
-	 * @param env String env to set, null to clear
-	 */
-	protected static void environment(String env) {
-		Configuration.env = env;
-		if (env == null)
-			System.clearProperty("env");
-		else
-			System.setProperty("env", env);
+		return appProps.getProperty("env");
 	}
 
 	/**

@@ -1,7 +1,5 @@
 package com.dougnoel.sentinel.assertions;
 
-import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.Driver;
@@ -16,17 +14,12 @@ public class TableAssertTests {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        Time.reset();
-        Configuration.update("timeout", 1);
-
         BaseSteps.navigateToPage("InternetTablesPage");
         table = getElementAsTable("table 1");
     }
 
     @AfterClass
     public static void tearDownAfterClass() {
-        Time.reset();
-        Configuration.update("timeout", 10);
         Driver.quitAllDrivers();
     }
 

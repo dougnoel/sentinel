@@ -12,6 +12,7 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ConfigurationTests {
 	private static String originalEnvironment = null;
+	private static final String ENV = "env";
 	private static final String STAGE = "stage";
 	private static final String DEV = "dev";
 	private static final String DEFAULT = "default";
@@ -28,13 +29,13 @@ public class ConfigurationTests {
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
-		Configuration.environment(STAGE);
+		Configuration.update(ENV, STAGE);
 		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
-		Configuration.environment(originalEnvironment);
+		Configuration.update(ENV, originalEnvironment);
 		Driver.quitAllDrivers();
 	}
 

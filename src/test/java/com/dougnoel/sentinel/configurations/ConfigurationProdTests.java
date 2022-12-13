@@ -8,22 +8,23 @@ import org.junit.Test;
 
 public class ConfigurationProdTests {
 	private static String originalEnvironment = null;
+	private static final String ENV = "env";
 	private static final String PROD = "prod";
 	
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
-		Configuration.environment(PROD);
+		Configuration.update(ENV, PROD);
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
-		Configuration.environment(originalEnvironment);
+		Configuration.update(ENV, originalEnvironment);
 	}
 	
 	@Test
 	public void loadProdUrl() {
-		Configuration.environment(PROD);
+		Configuration.update(ENV, PROD);
 		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", Configuration.url("DefaultUrls"));
 	}
 }

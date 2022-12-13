@@ -13,7 +13,6 @@ import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.steps.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Point;
@@ -22,23 +21,13 @@ import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
-import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 
 public class ElementTests {
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        Time.reset();
-        Configuration.update("timeout", 1);
-    }
-
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        Time.reset();
-        Configuration.update("timeout", 10);
         Driver.quitAllDrivers();
     }
 

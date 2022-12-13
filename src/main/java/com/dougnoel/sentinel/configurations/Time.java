@@ -8,6 +8,8 @@ public class Time {
 	private static final Logger log = LogManager.getLogger(Time.class);
 	
 	private static Duration timeout = Duration.ZERO;
+	private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+	private static final Duration DEFAULT_LONG_TIMEOUT = Duration.ofSeconds(60);
 	private static final Duration interval = Duration.ofMillis(10);
 	private static final Duration loopInterval = Duration.ofMillis(100);
 
@@ -15,6 +17,43 @@ public class Time {
 
 	private Time() {
 		
+	}
+	
+	static {
+		initializeTimeOut();
+		initalizeLongProcessTimeout();
+	}
+	
+	/**
+	 * Checks to see if a custom timeout value is configured. If so, that is the timeout used
+	 * to initialize all timeout checks. Otherwise the DEFAULT_TIMEOUT is used.
+	 */
+	protected static void initializeTimeOut() {
+		timeout = getTimeoutInitializationValue("timeout", DEFAULT_TIMEOUT);
+	}
+	
+	/**
+	 * Checks to see if a custom longProcessTimeout value is configured. If so, that is the timeout used
+	 * to initialize all longProcessTimeout checks. Otherwise the DEFAULT_LONG_TIMEOUT is used.
+	 */
+	protected static void initalizeLongProcessTimeout() {
+		longProcessTimeout = getTimeoutInitializationValue("longProcessTimeout", DEFAULT_LONG_TIMEOUT);
+	}
+	
+	/**
+	 * Common code for setting timeouts.
+	 * 
+	 * @param timeOutName String the name of the timeout value to read and write
+	 * @param defaultValue String the default value to use if the value isn't set.
+	 * @return Duration the value is returned to be set to the internal value for tracking.
+	 */
+	private static Duration getTimeoutInitializationValue(String timeOutName, Duration defaultValue) {
+		var timeout = Duration.ofSeconds(Configuration.toLong(timeOutName));
+		if (timeout.isZero()) {
+			timeout = defaultValue;
+			log.debug("No {} property set, using the default timeout value of {} seconds. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-Dtimeout='.", timeOutName, timeout, timeOutName);
+		}
+		return timeout;
 	}
 	
 	/**
@@ -39,13 +78,6 @@ public class Time {
 	 * 
 	 */
 	public static Duration out() {
-		if (timeout.isZero()) {
-			timeout = Duration.ofSeconds(Configuration.toLong("timeout"));
-			if (timeout.isZero()) {
-				timeout = Duration.ofSeconds(10);
-				log.debug("No timeout property set, using the default timeout value of {} seconds. This can be set in the sentinel.yml config file with a 'timeout=' property or on the command line with the switch '-Dtimeout='.", timeout);
-			}
-		}
 		return timeout;
 	}
 
@@ -56,13 +88,6 @@ public class Time {
 	 *
 	 */
 	public static Duration longProcessTimeout(){
-		if (longProcessTimeout.isZero()) {
-			longProcessTimeout = Duration.ofSeconds(Configuration.toLong("longProcessTimeout"));
-			if (longProcessTimeout.isZero()) {
-				longProcessTimeout = Duration.ofSeconds(60);
-				log.debug("No longProcessTimeout property set, using the default timeout value of {} seconds. This can be set in the sentinel.yml config file with a 'longProcessTimeout=' property or on the command line with the switch '-longProcessTimeout='.", longProcessTimeout);
-			}
-		}
 		return longProcessTimeout;
 	}
 	
@@ -81,15 +106,14 @@ public class Time {
 	public static Duration loopInterval() {
 		return loopInterval;
 	}
-	
+
 	/**
-	 * Resets the timeout value so it will be re-read from the configuration.
+	 * Set the timeout to a new value for unit testing.
+	 * 
+	 * @param Duration long the amount of time to set the timeout to
 	 */
-	public static void reset() {
-		timeout = Duration.ZERO;
-		longProcessTimeout = Duration.ZERO;
-		Configuration.clear("timeout");
-		Configuration.clear("longProcessTimeout");
+	protected static void setTimeout(Duration time) {
+		timeout = time;
 	}
 
 }

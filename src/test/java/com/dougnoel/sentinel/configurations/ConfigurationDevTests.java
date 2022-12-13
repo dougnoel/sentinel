@@ -11,6 +11,7 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ConfigurationDevTests {
 	private static String originalEnvironment = null;
+	private static final String ENV = "env";
 	private static final String DEV = "dev";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
@@ -20,14 +21,14 @@ public class ConfigurationDevTests {
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
-		Configuration.environment(DEV);
+		Configuration.update(ENV, DEV);
 		System.setProperty("download", "downloads");
 		PageManager.setPage("MockTestPage");
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
-		Configuration.environment(originalEnvironment);
+		Configuration.update(ENV, originalEnvironment);
 		Driver.quitAllDrivers();
 	}
 	
