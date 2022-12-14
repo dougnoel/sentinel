@@ -24,6 +24,6 @@ public class ConfigurationProdTests {
 	@Test
 	public void loadProdUrl() {
 		Configuration.environment(PROD);
-		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", Configuration.url("DefaultUrls"));
+		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", Configuration.getPageURL("DefaultUrls"));
 	}
 }

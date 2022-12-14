@@ -55,7 +55,7 @@ public class ZipFileTests {
         BaseSteps.navigateToPage("RadioButtonPage");
         DownloadManager.setFileExtension("pdf");
         BaseSteps.click("sample_download_link");
-        String filename = DownloadManager.monitorDownload();
+        DownloadManager.monitorDownload();
         DownloadVerificationSteps.verifyFileContentsOfZip("", "pdf");
     }
 }
