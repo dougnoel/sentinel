@@ -10,6 +10,7 @@ Feature: 89 API Testing
     When I load puppydata to use as the request body
       And I send a POST request to the pet endpoint
     Then I verify the response code equals 200
+      And I verify the response was received in less than 2 seconds
       And I validate the response contains the text "doggie"
       
   @89B
@@ -17,6 +18,7 @@ Feature: 89 API Testing
     Given I use the API named Pet Store API
     When I GET record {test_id} from the pet endpoint
     Then I verify the response code equals 200
+      And I verify the response was received in less than 0.8 seconds
       And I validate the response contains the text "photoUrls"
       
   @89C

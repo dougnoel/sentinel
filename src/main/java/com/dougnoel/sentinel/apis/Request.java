@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.apis;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.NameValuePair;
@@ -29,12 +30,6 @@ public class Request {
 	private HttpRequestBase httpRequest = null;
 	private List<NameValuePair> parameters = new ArrayList<>();
 	private StringEntity body = null;
-	
-	private void reset() {
-		parameters.clear();
-		body = null;
-		httpRequest = null;
-	}
 	
 	/**
 	 * Set a parameter and its value for a request. They will show up as part of the query string in the API request.
@@ -127,13 +122,24 @@ public class Request {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		Response response;
 		try {
+			long startTime = System.nanoTime();
 			response = new Response(httpClient.execute(httpRequest));
+			response.setResponseTime(Duration.ofNanos(System.nanoTime() - startTime));
 		} catch (java.io.IOException e) {
 			throw new IOException(e);
 		}
 		log.trace("Response Code: {} Response: {}", response.getResponseCode(), response.getResponse());
 		APIManager.setResponse(response);
 		reset();
+	}
+	
+	/**
+	 * Reset all values so we can make a new request.
+	 */
+	private void reset() {
+		parameters.clear();
+		body = null;
+		httpRequest = null;
 	}
 
 }
