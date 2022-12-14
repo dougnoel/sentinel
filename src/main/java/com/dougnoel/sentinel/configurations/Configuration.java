@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.dougnoel.sentinel.apis.APIData;
+import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageData;
@@ -32,6 +34,7 @@ public class Configuration {
 	private static final Logger log = LogManager.getLogger(Configuration.class);
 
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
+	private static final Map<String,APIData> API_DATA = new ConcurrentHashMap<>();
 	
 	private static final String ENV_REPLACE_STRING = "{env}";
 	private static String env = null;
@@ -277,8 +280,9 @@ public class Configuration {
 	 * @param pageName String the name of the page object
 	 * @return File the OS path to the config file
 	 */
-	public static File findPageObjectFilePath(String pageName)  {
-		return FileManager.findFilePath(pageName + ".yml");
+	public static File findPageObjectFilePath(String pageName) {
+		String fileName = pageName + ".yml";
+		return FileManager.findFilePath(fileName);
 	}
 
 	/**
@@ -293,8 +297,6 @@ public class Configuration {
 		try {
 			pageData = PageData.loadYaml(findPageObjectFilePath(pageName));
 		} catch (Exception e) {
-			if (e instanceof FileException)
-				throw (FileException)e;
 			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", pageName);
 			throw new FileException(errorMessage, e, new File(pageName + ".yml"));
 		}
@@ -305,6 +307,39 @@ public class Configuration {
 		}
 		
 		return pageData;
+	}
+	
+	/**
+	 * Returns API data from yaml file.
+	 * 
+	 * @param apiName String the name of the API object for data retrieval
+	 * @return APIData the class for the data on the desired page
+	 */
+	private static APIData loadAPIData(String apiName) {
+		return (APIData) loadYAMLData(apiName);
+	}
+	
+	/**
+	 * Returns data from yaml file.
+	 * 
+	 * @param yamlName String the name of the API object for data retrieval
+	 * @return YAMLData the class for the data on the desired page
+	 */
+	private static YAMLData loadYAMLData(String yamlName) {
+		YAMLData yamlData = null;
+		try {
+			yamlData = YAMLData.loadYaml(findPageObjectFilePath(yamlName));
+		} catch (Exception e) {
+			var errorMessage = SentinelStringUtils.format("Could not load the {}.yml page object.", yamlName);
+			throw new FileException(errorMessage, e, new File(yamlName + ".yml"));
+		}
+
+		if (yamlData == null) {
+			var errorMessage = "The file appears to contain no data. Please ensure the file is properly formatted.";
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
+		}
+		
+		return yamlData;
 	}
 	
 	/**
@@ -334,32 +369,52 @@ public class Configuration {
 	 * @return String the desired URL
 	 */
 	public static String url() {
-		return url(PageManager.getPage().getName());
+		return getPageURL(PageManager.getPage().getName());
 	}
 	
 	/**
 	 * Returns a URL for the given page name based on the environment value set.
-	 
+	 *
 	 * @param pageName String the name of the page from which the url is retrieved
 	 * @return String the url for the given page and current environment
 	 */
-	protected static String url(String pageName) {
+	protected static String getPageURL(String pageName) {
+		return getURL(pageName);
+	}
+	
+	/**
+	 * Returns a URL for the given page name based on the environment value set.
+	 *
+	 * @param apiName String the name of the api from which the url is retrieved
+	 * @return String the url for the given api and current environment
+	 */
+	public static String getAPIURL(String apiName) {
+		return getURL(apiName);
+	}
+	
+	/**
+	 * Returns a URL for the given yaml file based on the environment value set.
+	 *
+	 * @param yamlName String the name of the yaml file from which the url is retrieved
+	 * @return String the url for the given yaml object and current environment
+	 */
+	private static String getURL(String yamlName) {
 		String baseURL = null;
-		var pageData = loadPageData(pageName);
+		var yamlData = loadYAMLData(yamlName);
 		String env = Configuration.environment();
 
-		if (pageData.containsUrl(env)) {
-			baseURL = pageData.getUrl(env);
-		} else if (pageData.containsUrl(DEFAULT)){
-			baseURL = pageData.getUrl(DEFAULT);
+		if (yamlData.containsUrl(env)) {
+			baseURL = yamlData.getUrl(env);
+		} else if (yamlData.containsUrl(DEFAULT)){
+			baseURL = yamlData.getUrl(DEFAULT);
 			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
-		} else if (pageData.containsUrl("base")){
-			baseURL = pageData.getUrl("base");
+		} else if (yamlData.containsUrl("base")){
+			baseURL = yamlData.getUrl("base");
 			baseURL = StringUtils.replace(baseURL, ENV_REPLACE_STRING, env);
 		}
 		if (StringUtils.isEmpty(baseURL)) {
-			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("A url was not found for the {} environment in your {}.yml file. Please add a URL to the page object. See the project README for details.", env, yamlName);
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
 		return baseURL;
 	}
@@ -425,12 +480,21 @@ public class Configuration {
 		return data;
 	}
 	
+	/**
+	 * Returns an element if found in the PAGE_DATA store for the passed page name. If it is not found
+	 * the yaml file is searched and it is created in the PAGE_DATA store before being returned.
+	 * 
+	 * @param elementName the element to search for in the page object
+	 * @param pageName the name of the page object to search
+	 * @return the element and all of its locators
+	 */
 	public static Map <String,String> getElement(String elementName, String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getElement(elementName);
 	}
 	
 	/**
-	 * Gets the value of the given key of the given testdata object in the current environment. Defaults to "default" if environment is not set.
+	 * Gets the value of the given key of the given testdata object in the current environment. 
+	 * Defaults to "default" if environment is not set.
 	 * <p>Example of testdata:</p>
 	 * <pre>
 	 * testdata:
@@ -449,33 +513,95 @@ public class Configuration {
 	 * @return String the value of the given key in the given object
 	 */
 	public static String getTestdataValue(String testdataObjectName, String testdataObjectKey){
-		String normalizedTestdataObjectName = testdataObjectName.replaceAll("\\s+", "_");
-		String normalizedTestdataObjectKey = testdataObjectKey.replaceAll("\\s+", "_");
-		String pageName = PageManager.getPage().getName();
+		String yamlName = PageManager.getPage().getName();
+		var pageData = PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
+		return getTestData(yamlName, pageData, testdataObjectName, testdataObjectKey);
+	}
+	
+	/**
+	 * Gets the value of the given key of the given testdata object in the current environment. 
+	 * Defaults to "default" if environment is not set.
+	 * <p>Example of testdata:</p>
+	 * <pre>
+	 * testdata:
+	 *   default:
+	 *     puppydata:
+	 *       json: |
+	 *        {
+	 *          "id": 10,
+	 *          "name": "doggie",
+	 *          "category": {
+	 *            "id": 1,
+	 *            "name": "Dogs"
+	 *          },
+	 *          "photoUrls": [
+	 *            "string"
+	 *          ],
+	 *          "tags": [
+	 *            {
+	 *              "id": 0,
+	 *              "name": "string"
+	 *            }
+	 *          ],
+	 *          "status": "available"
+	 *        }
+	 * </pre>
+	 * <p>To retrieve the version of report, call <b>getTestdataValue("report", "version")</b></p>
+	 * @param testDataObjectName String name of the testdata object
+	 * @param testDataObjectKey String name of the property of the given testdata object
+	 * @return String the value of the given key in the given object
+	 */
+	public static String getAPITestData(String testDataObjectName, String testDataObjectKey) {
+		String yamlName = APIManager.getAPI().getName();
+		var yamlData = API_DATA.computeIfAbsent(yamlName, Configuration::loadAPIData);
+		return getTestData(yamlName, yamlData, testDataObjectName, testDataObjectKey);
+	}
+	
+	/**
+	 * Helper method to get testdata from API and Page objects.
+	 * @param yamlName String the name of the yaml file to inspect
+	 * @param yamlData YAMLData the data file to look in
+	 * @param testDataObjectName String name of the testdata object
+	 * @param testDataObjectKey String name of the property of the given testdata object
+	 * @return String the value of the given key in the given object
+	 */
+	public static String getTestData(String yamlName, YAMLData yamlData, String testDataObjectName, String testDataObjectKey) {
+		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
+		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
 		String env = environment();
-		var pageData = loadPageData(pageName);
-		Map <String,String> testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+		
+		Map <String,String> testdata = yamlData.getTestdata(env, normalizedTestdataObjectName);
 		if (testdata == null || testdata.isEmpty()) {
 			env = DEFAULT;
-			testdata = pageData.getTestdata(env, normalizedTestdataObjectName);
+			testdata = yamlData.getTestdata(env, normalizedTestdataObjectName);
 		}
 		if (testdata == null || testdata.isEmpty()) {
-			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, yamlName);
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
 		String data = testdata.get(normalizedTestdataObjectKey);
 		if (data == null) {
-			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testdataObjectKey, normalizedTestdataObjectName, env, pageName);
-			throw new FileException(errorMessage, new File(pageName + ".yml"));
+			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, yamlName);
+			throw new FileException(errorMessage, new File(yamlName + ".yml"));
 		}
-		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, pageName, data);
+		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, yamlName, data);
 		return data;
 	}
 	
+	/**
+	 * Returns a String array containing all the included pages in a page object (if any).
+	 * @param pageName String the page to check for includes
+	 * @return String[] the pages found that are part of this page
+	 */
 	public static String[] getPageParts(String pageName) {
 		return PAGE_DATA.computeIfAbsent(pageName, Configuration::loadPageData).getPageParts();
 	}
 	
+	/**
+	 * Returns a formatted error message. Helper method to reduce code duplication.
+	 * @param configurtaionValue String the configuration that was not set
+	 * @return String the formatted error message
+	 */
 	private static String configurationNotFoundErrorMessage(String configurtaionValue) {
 		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.", configurtaionValue, configurtaionValue, configurtaionValue);
 	}
