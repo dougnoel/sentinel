@@ -50,7 +50,7 @@
     <maven-compiler-plugin.showWarnings>true</maven-compiler-plugin.showWarnings>
     <maven-compiler-plugin.showDeprecation>true</maven-compiler-plugin.showDeprecation>
 
-    <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.4.0</maven-dependency-plugin.version>
     <maven-dependency-plugin.verbose>true</maven-dependency-plugin.verbose>
     <maven-dependency-plugin.outputXML>true</maven-dependency-plugin.outputXML>
     
