@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.NotFoundException;
 
 import com.dougnoel.sentinel.apis.APIData;
 import com.dougnoel.sentinel.apis.APIManager;
@@ -19,6 +20,7 @@ import com.dougnoel.sentinel.pages.PageData;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.system.FileManager;
+import com.dougnoel.sentinel.system.TestManager;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -493,7 +495,7 @@ public class Configuration {
 	}
 	
 	/**
-	 * Gets the value of the given key of the given testdata object in the current environment. 
+	 * Returns the value of the given key of the given testdata object in the current environment. 
 	 * Defaults to "default" if environment is not set.
 	 * <p>Example of testdata:</p>
 	 * <pre>
@@ -515,11 +517,11 @@ public class Configuration {
 	public static String getTestdataValue(String testdataObjectName, String testdataObjectKey){
 		String yamlName = PageManager.getPage().getName();
 		var pageData = PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
-		return getTestData(yamlName, pageData, testdataObjectName, testdataObjectKey);
+		return getTestData(pageData, testdataObjectName, testdataObjectKey);
 	}
 	
 	/**
-	 * Gets the value of the given key of the given testdata object in the current environment. 
+	 * Returns the value of the given key of the given testdata object in the current environment. 
 	 * Defaults to "default" if environment is not set.
 	 * <p>Example of testdata:</p>
 	 * <pre>
@@ -546,7 +548,7 @@ public class Configuration {
 	 *          "status": "available"
 	 *        }
 	 * </pre>
-	 * <p>To retrieve the version of report, call <b>getTestdataValue("report", "version")</b></p>
+	 * <p>To retrieve the json for puppydata, call <b>getTestdataValue("puppydata", "json")</b></p>
 	 * @param testDataObjectName String name of the testdata object
 	 * @param testDataObjectKey String name of the property of the given testdata object
 	 * @return String the value of the given key in the given object
@@ -554,18 +556,37 @@ public class Configuration {
 	public static String getAPITestData(String testDataObjectName, String testDataObjectKey) {
 		String yamlName = APIManager.getAPI().getName();
 		var yamlData = API_DATA.computeIfAbsent(yamlName, Configuration::loadAPIData);
-		return getTestData(yamlName, yamlData, testDataObjectName, testDataObjectKey);
+		return getTestData(yamlData, testDataObjectName, testDataObjectKey);
+	}
+	
+	/**
+	 * Returns the value of the given key of the given testdata in the active object in the current environment. 
+	 * @param testDataObjectName String name of the testdata object
+	 * @param testDataObjectKey String name of the property of the given testdata object
+	 * @return String the value of the given key in the given object
+	 */
+	public static String getTestData(String testDataObjectName, String testDataObjectKey) {
+		switch (TestManager.getActiveTestObject().getType()) {
+		case API:
+			return getAPITestData(testDataObjectName, testDataObjectKey);
+		case PAGE:
+			return getTestdataValue(testDataObjectName, testDataObjectKey);
+		case UNKNOWN:
+			return getTestData(Configuration.loadYAMLData(TestManager.getActiveTestObject().getName()), 
+					testDataObjectName, testDataObjectKey);
+		default:
+			throw new NotFoundException(TestManager.getActiveTestObject().getName() + " does not have a type.");
+		}
 	}
 	
 	/**
 	 * Helper method to get testdata from API and Page objects.
-	 * @param yamlName String the name of the yaml file to inspect
 	 * @param yamlData YAMLData the data file to look in
 	 * @param testDataObjectName String name of the testdata object
 	 * @param testDataObjectKey String name of the property of the given testdata object
 	 * @return String the value of the given key in the given object
 	 */
-	public static String getTestData(String yamlName, YAMLData yamlData, String testDataObjectName, String testDataObjectKey) {
+	public static String getTestData(YAMLData yamlData, String testDataObjectName, String testDataObjectKey) {
 		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
 		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
 		String env = environment();
@@ -576,15 +597,17 @@ public class Configuration {
 			testdata = yamlData.getTestdata(env, normalizedTestdataObjectName);
 		}
 		if (testdata == null || testdata.isEmpty()) {
+			var yamlName = yamlData.getName();
 			var errorMessage = SentinelStringUtils.format("Testdata {} could not be found for the {} environment in {}.yml", normalizedTestdataObjectName, env, yamlName);
-			throw new FileException(errorMessage, new File(yamlName + ".yml"));
+			throw new FileException(errorMessage, new File(yamlData.getName() + ".yml"));
 		}
 		String data = testdata.get(normalizedTestdataObjectKey);
 		if (data == null) {
+			var yamlName = yamlData.getName();
 			var errorMessage = SentinelStringUtils.format("Data for {} key could not be found in {} for the {} environment in {}.yml", testDataObjectKey, normalizedTestdataObjectName, env, yamlName);
-			throw new FileException(errorMessage, new File(yamlName + ".yml"));
+			throw new FileException(errorMessage, new File(yamlData + ".yml"));
 		}
-		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, yamlName, data);
+		log.debug("{} loaded for testdata object {} in {} environment from {}.yml: {}", normalizedTestdataObjectKey, normalizedTestdataObjectName, env, yamlData.getName(), data);
 		return data;
 	}
 	

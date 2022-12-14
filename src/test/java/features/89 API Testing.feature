@@ -15,7 +15,7 @@ Feature: 89 API Testing
   @89B
   Scenario: 89B GET Swagger Test
     Given I use the API named Pet Store API
-    When I GET record 10 from the pet endpoint
+    When I GET record {test_id} from the pet endpoint
     Then I verify the response code equals 200
       And I validate the response contains the text "photoUrls"
       

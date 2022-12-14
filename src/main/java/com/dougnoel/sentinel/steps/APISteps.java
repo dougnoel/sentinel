@@ -117,7 +117,7 @@ public class APISteps {
 	 */
 	@When("^I (DELETE|GET) record (.*) from the (.*?) endpoint$")
 	public void sendRequest(String apiCallType, String parameter, String endpoint) {
-		sendRequest(apiCallType, endpoint + "/" + parameter);
+		sendRequest(apiCallType, endpoint + "/" + SentinelStringUtils.replaceVariable(parameter));
 	}
 	
 	/**
