@@ -112,12 +112,26 @@ public class CsvFile extends TestFile{
     }
 
     /**
-     * Returns the number of rows in the CSV file.
-     * @return int the number of rows in the CSV file.
+     * Returns the total number of rows in the CSV file, including headers.
+     * @return int the total number of rows in the CSV file, including headers.
      */
-    public int getNumberOfRows(){
+    public int getNumberOfTotalRows(){
         try(var parser = getParser()){
             return parser.getRecords().size();
+        }
+        catch(IOException ioe){
+            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
+            return -1;
+        }
+    }
+
+    /**
+     * Returns the number of rows of data in the CSV file. Does not include header rows.
+     * @return int the number of data rows in the CSV file. Does not include header rows.
+     */
+    public int getNumberOfDataRows(){
+        try(var parser = getParser()){
+            return parser.getRecords().size() - numHeaderRows;
         }
         catch(IOException ioe){
             log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
@@ -332,4 +346,62 @@ public class CsvFile extends TestFile{
             return allColumnData.stream().allMatch(cell -> StringUtils.equals(cell, textToMatch));
         }
     }
+
+    public boolean verifyAllColumnCellsEmpty(String columnHeader){
+        return verifyAllColumnCellsEmpty(getColumnIndex(columnHeader));
+    }
+
+    public boolean verifyAllColumnCellsEmpty(int columnIndex){
+        var allColumnData = readAllCellDataForColumn(columnIndex);
+        return allColumnData.stream().allMatch(StringUtils::isEmpty);
+    }
+
+    public boolean verifyAllColumnCellsNotEmpty(String columnHeader){
+        return verifyAllColumnCellsNotEmpty(getColumnIndex(columnHeader));
+    }
+
+    public boolean verifyAllColumnCellsNotEmpty(int columnIndex){
+        var allColumnData = readAllCellDataForColumn(columnIndex);
+        return allColumnData.stream().noneMatch(StringUtils::isEmpty);
+    }
+
+    public boolean verifyColumnHeaderEquals(String columnHeader, boolean partialMatch){
+        var headers = readHeaders();
+        if(partialMatch)
+            return headers.stream().anyMatch(actualHeader -> StringUtils.contains(actualHeader, columnHeader));
+        else
+            return headers.stream().anyMatch(actualHeader -> StringUtils.equals(actualHeader, columnHeader));
+    }
+
+    /**
+     * Returns true if any cell in the given column match the text value given.
+     *
+     * @param columnHeader String the name of the column
+     * @param textToMatch String the text that should be in a cell
+     * @param partialMatch boolean if true, method returns true if any cell contains the textToMatch. if false, method returns true if any cell equals the textToMatch.
+     * @return boolean true if the column contains the given text in any cell, false if not
+     */
+    public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch, boolean partialMatch){
+        return verifyAllColumnCellsContain(getColumnIndex(columnHeader), textToMatch, partialMatch);
+    }
+
+    /**
+     * Returns true if any cells in the given column match the text value given.
+     *
+     * @param columnIndex int the index of the column. Starting at 1.
+     * @param textToMatch String the text that should be in a cell
+     * @param partialMatch boolean if true, method returns true if any cell contains the textToMatch. if false, method returns true if any cell equals the textToMatch.
+     * @return boolean true if the column contains the given text in any cell, false if not
+     */
+    public boolean verifyAnyColumnCellContains(int columnIndex, String textToMatch, boolean partialMatch){
+        var allColumnData = readAllCellDataForColumn(columnIndex);
+
+        if(partialMatch){
+            return allColumnData.stream().anyMatch(cell -> StringUtils.contains(cell, textToMatch));
+        }
+        else{
+            return allColumnData.stream().anyMatch(cell -> StringUtils.equals(cell, textToMatch));
+        }
+    }
+
 }

@@ -3,12 +3,16 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 import com.dougnoel.sentinel.files.ZipFile;
+import com.dougnoel.sentinel.system.FileManager;
 import io.cucumber.java.en.When;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -96,4 +100,24 @@ public class DownloadVerificationSteps {
 						(negate ? "not ": ""), expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
 				!negate, result);
 	}
+
+//
+//	public static void verifyFileContainsString(String assertion, String expectedText) throws IOException {
+//		Path mostRecentFile = DownloadManager.getMostRecentDownloadPath();
+//		String fileContent;
+//		boolean result;
+//		boolean negate = !StringUtils.isEmpty(assertion);
+//
+//		try{
+//			fileContent = FileUtils.readFileToString(mostRecentFile.toFile(), "UTF-8");
+//			result = fileContent.contains(expectedText);
+//		}
+//		catch(IOException ioe){
+//			String message = SentinelStringUtils.format("Unable to open most recently downloaded file. Most recently downloaded file path {}", mostRecentFile);
+//			throw new IOException(message, ioe);
+//		}
+//		assertEquals(SentinelStringUtils.format("Expected file to {}contain a the text {}. File location: {}",
+//						(negate ? "not ": ""), expectedText, mostRecentFile),
+//				!negate, result);
+//	}
 }
