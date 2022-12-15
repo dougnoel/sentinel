@@ -274,7 +274,7 @@ Modifications By Tyler Bouchard -
 	});
 	document.querySelectorAll(".number").forEach((element) => {
 		element.addEventListener("click", () => {
-			if (input.innerText.length > 19) return alert("최대 입력 범위를 초과했습니다!");
+			if (input.innerText.length > 19) return alert("Maximum input range exceeded!");
 			input.innerText += element.innerText;
 		});
 	});

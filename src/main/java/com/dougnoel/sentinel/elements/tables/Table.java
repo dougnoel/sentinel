@@ -490,6 +490,45 @@ public class Table extends Element {
 		getElementInRowThatContains(ordinalRow, elementToClick).click();
 	}
 
+	/**
+	 * Clicks the cell found at the given column, row position in the table.
+	 * <br>
+	 * 1,1 equates to the cell in the 1st row 1st column.
+	 * <br>
+	 * 0 or less equates to the last row or column
+	 * <p>
+	 * Example:
+	 * <p><ul>
+	 * <li>clickElementAtCoord(1,1) - Clicks the cell in the 1st column 1st row</li>
+	 * <li>clickElementAtCoord(8,2) - Clicks the cell in the 8th column 2nd row</li>
+	 * <li>clickElementAtCoord(1,0) - Clicks the cell in the 1st column last row</li>
+	 * <li>clickElementAtCoord(-1,1) - Clicks the cell in the last column 1st row</li>
+	 * </ul>
+	 * <b>Note:</b> Uses the constant xpath
+	 * <p>
+	 * <b>".//"+tableCellDataTag+"["+column+"]"</b>
+	 * <p>
+	 * to determine the location of the cell
+	 * @param column int the column number of the cell in the table
+	 * @param row int the row number of the cell in the table
+	 */
+	public void clickElementInCell(int column, int row) {
+		WebElement tableRow;
+		String cellLocator;
+
+		if(row < 1)
+			tableRow = getOrCreateRowElements().get(getOrCreateRowElements().size() - 1);
+		else
+			tableRow = getOrCreateRowElements().get(--row);
+
+		if(column < 1)
+			cellLocator = ".//" + tableCellDataTag + "[last()]";
+		else
+			cellLocator = ".//" + tableCellDataTag + "[" + column + "]";
+
+		WebElement cell = tableRow.findElement(By.xpath(cellLocator));
+		cell.click();
+	}
 	
 	/**
 	 * Returns a list of all the cell values in the given column.

@@ -1,9 +1,12 @@
+com.dougnoel.sentinel.apis
+com.dougnoel.sentinel.assertions
 com.dougnoel.sentinel.configurations
 com.dougnoel.sentinel.elements
 com.dougnoel.sentinel.elements.dropdowns
 com.dougnoel.sentinel.elements.tables
 com.dougnoel.sentinel.enums
 com.dougnoel.sentinel.exceptions
+com.dougnoel.sentinel.files
 com.dougnoel.sentinel.pages
 com.dougnoel.sentinel.steps
 com.dougnoel.sentinel.strings
