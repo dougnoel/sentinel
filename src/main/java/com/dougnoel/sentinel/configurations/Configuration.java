@@ -10,10 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NotFoundException;
-
-import com.dougnoel.sentinel.apis.APIData;
-import com.dougnoel.sentinel.apis.APIManager;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageData;
@@ -21,6 +17,7 @@ import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.system.FileManager;
 import com.dougnoel.sentinel.system.TestManager;
+import com.dougnoel.sentinel.system.YAMLObject;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -36,7 +33,7 @@ public class Configuration {
 	private static final Logger log = LogManager.getLogger(Configuration.class);
 
 	private static final Map<String,PageData> PAGE_DATA = new ConcurrentHashMap<>();
-	private static final Map<String,APIData> API_DATA = new ConcurrentHashMap<>();
+	private static final Map<String,YAMLData> YAML_DATA = new ConcurrentHashMap<>();
 	
 	private static final String ENV_REPLACE_STRING = "{env}";
 	private static String env = null;
@@ -312,16 +309,6 @@ public class Configuration {
 	}
 	
 	/**
-	 * Returns API data from yaml file.
-	 * 
-	 * @param apiName String the name of the API object for data retrieval
-	 * @return APIData the class for the data on the desired page
-	 */
-	private static APIData loadAPIData(String apiName) {
-		return (APIData) loadYAMLData(apiName);
-	}
-	
-	/**
 	 * Returns data from yaml file.
 	 * 
 	 * @param yamlName String the name of the API object for data retrieval
@@ -510,21 +497,8 @@ public class Configuration {
 	 *       version: 1
 	 * </pre>
 	 * <p>To retrieve the version of report, call <b>getTestdataValue("report", "version")</b></p>
-	 * @param testdataObjectName String name of the testdata object
-	 * @param testdataObjectKey String name of the property of the given testdata object
-	 * @return String the value of the given key in the given object
-	 */
-	public static String getTestdataValue(String testdataObjectName, String testdataObjectKey){
-		String yamlName = PageManager.getPage().getName();
-		var pageData = PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
-		return getTestData(pageData, testdataObjectName, testdataObjectKey);
-	}
-	
-	/**
-	 * Returns the value of the given key of the given testdata object in the current environment. 
-	 * Defaults to "default" if environment is not set.
-	 * <p>Example of testdata:</p>
-	 * <pre>
+	 * <p>Example 2 of testdata:</p>
+	 * <pre>2
 	 * testdata:
 	 *   default:
 	 *     puppydata:
@@ -553,30 +527,21 @@ public class Configuration {
 	 * @param testDataObjectKey String name of the property of the given testdata object
 	 * @return String the value of the given key in the given object
 	 */
-	public static String getAPITestData(String testDataObjectName, String testDataObjectKey) {
-		String yamlName = APIManager.getAPI().getName();
-		var yamlData = API_DATA.computeIfAbsent(yamlName, Configuration::loadAPIData);
-		return getTestData(yamlData, testDataObjectName, testDataObjectKey);
-	}
-	
-	/**
-	 * Returns the value of the given key of the given testdata in the active object in the current environment. 
-	 * @param testDataObjectName String name of the testdata object
-	 * @param testDataObjectKey String name of the property of the given testdata object
-	 * @return String the value of the given key in the given object
-	 */
 	public static String getTestData(String testDataObjectName, String testDataObjectKey) {
-		switch (TestManager.getActiveTestObject().getType()) {
-		case API:
-			return getAPITestData(testDataObjectName, testDataObjectKey);
+		YAMLObject yamlObject = TestManager.getActiveTestObject();
+		String yamlName = yamlObject.getName();
+		YAMLData yamlData;
+		switch (yamlObject.getType()) {
 		case PAGE:
-			return getTestdataValue(testDataObjectName, testDataObjectKey);
+			yamlData = PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
+			break;
+		case API:
 		case UNKNOWN:
-			return getTestData(Configuration.loadYAMLData(TestManager.getActiveTestObject().getName()), 
-					testDataObjectName, testDataObjectKey);
 		default:
-			throw new NotFoundException(TestManager.getActiveTestObject().getName() + " does not have a type.");
+			yamlData = YAML_DATA.computeIfAbsent(yamlName, Configuration::loadYAMLData);
+			break;
 		}
+		return getTestData(yamlData, testDataObjectName, testDataObjectKey);
 	}
 	
 	/**
@@ -586,7 +551,7 @@ public class Configuration {
 	 * @param testDataObjectKey String name of the property of the given testdata object
 	 * @return String the value of the given key in the given object
 	 */
-	public static String getTestData(YAMLData yamlData, String testDataObjectName, String testDataObjectKey) {
+	private static String getTestData(YAMLData yamlData, String testDataObjectName, String testDataObjectKey) {
 		String normalizedTestdataObjectName = testDataObjectName.replaceAll("\\s+", "_");
 		String normalizedTestdataObjectKey = testDataObjectKey.replaceAll("\\s+", "_");
 		String env = environment();

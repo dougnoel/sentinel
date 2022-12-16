@@ -54,7 +54,7 @@ public class CsvSteps {
     public static void openSpecificFileAsCsv(String fileLocation, int numberOfHeaderRows) throws FileNotFoundException {
         String filePath;
         try{
-            filePath = Configuration.getTestdataValue(fileLocation.trim(), "fileLocation");
+            filePath = Configuration.getTestData(fileLocation.trim(), "fileLocation");
         }
         catch(FileException fe){
             filePath = fileLocation;

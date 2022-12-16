@@ -58,7 +58,7 @@ public class APISteps {
 	 */
 	@Given("^I load (.*?) to use as the request body$")
 	public void loadRequestBody(String testdataName) {
-		String body = Configuration.getAPITestData(testdataName, "json");
+		String body = Configuration.getTestData(testdataName, "json");
         APIManager.setBody(body);
         log.trace("Body passed: {}", body);
 	}
