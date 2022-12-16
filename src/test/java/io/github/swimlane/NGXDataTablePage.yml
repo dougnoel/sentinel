@@ -4,3 +4,9 @@ elements:
   example_table:
     elementType: NGXDataTable
     xpath: "/html/body/app-root/div/content/basic-auto-demo/div/ngx-datatable"
+  row_grouping_table:
+    elementType: NGXDataTable
+    xpath: "/html/body/app-root/div/content/row-grouping-demo/div/ngx-datatable"
+  comment_box:
+    elementType: Textbox
+    xpath: "//input[contains(concat(' ', @type, ' '), ' text ')]"

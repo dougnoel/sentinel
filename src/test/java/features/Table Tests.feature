@@ -123,3 +123,10 @@ Feature: Table Tests
     When I find the last column in the Example table and click the cell in the 2nd row
     Then I verify the JS alert contains the text This is Charlotte
       And I close the JS alert
+
+  @#443 @table-enter-text
+  Scenario: Enter text into a text box within a table
+    Given I am on the NGX Data Table Page
+    When I pass the argument "/#row-grouping" to the NGX Data Table Page
+    Then I find the 5th row in the Row Grouping Table and enter the text test5 in the comment box
+      And I verify the cell in the 5th row and the Comment column of the Row Grouping Table contains the text test5
