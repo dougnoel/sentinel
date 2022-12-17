@@ -32,7 +32,7 @@ public class API extends YAMLObject {
 	 * @return java.net.URI the constructed URI
 	 */
 	protected URIBuilder getURIBuilder(String passedText) {		
-		String swaggerUrl = Configuration.getAPIURL(APIManager.getAPI().getName());
+		String swaggerUrl = Configuration.getURL(APIManager.getAPI());
 		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
 		OpenAPI openAPI = result.getOpenAPI();
 		List<Server> servers = openAPI.getServers();

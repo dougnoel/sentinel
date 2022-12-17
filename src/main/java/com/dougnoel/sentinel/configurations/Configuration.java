@@ -36,7 +36,6 @@ public class Configuration {
 	private static final Map<String,YAMLData> YAML_DATA = new ConcurrentHashMap<>();
 	
 	private static final String ENV_REPLACE_STRING = "{env}";
-	private static String env = null;
 	
 	private static Properties appProps = new Properties();
 	
@@ -107,9 +106,7 @@ public class Configuration {
 				if(propertyValue == null) {
 					propertyValue = getOrCreateConfigurationData(property);
 				}
-				else {
-					appProps.setProperty(property, propertyValue);
-				}
+				appProps.setProperty(property, propertyValue);
 				return propertyValue;
 			} catch (FileException e) {
 				log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
@@ -139,6 +136,11 @@ public class Configuration {
 		String propertyValue = toString(property);
 		if (propertyValue == null) {
 			appProps.setProperty(property, defaultValue);
+			if (property.contentEquals("env")) {
+				String warningMessage = SentinelStringUtils.format("localhost env being used by default. {}", 
+						Configuration.configurationNotFoundErrorMessage("env"));
+				log.warn(warningMessage);
+			}
 			return defaultValue;
 		}
 		return propertyValue; 
@@ -249,28 +251,7 @@ public class Configuration {
 	 * @return String text of system env info
 	 */
 	public static String environment() {
-		if (env == null) {
-			env = System.getProperty("env");
-			if (env == null) {
-				env = "localhost";
-				String warningMessage = "localhost env being used by default. " + 
-						Configuration.configurationNotFoundErrorMessage("env");
-				log.warn(warningMessage);
-			}
-		}
-		return env;
-	}
-	
-	/**
-	 * Setter intended only for unit testing. Sets the stored value and also the System Property.
-	 * @param env String env to set, null to clear
-	 */
-	protected static void environment(String env) {
-		Configuration.env = env;
-		if (env == null)
-			System.clearProperty("env");
-		else
-			System.setProperty("env", env);
+		return toString("env", "localhost");
 	}
 
 	/**
@@ -287,9 +268,8 @@ public class Configuration {
 	/**
 	 * Returns page data through yaml instructions to a config path in given pageName string. 
 	 * 
-	 * @see com.dougnoel.sentinel.configurations.Configuration#findPageObjectFilePath(String)
 	 * @param pageName String the name of the page for which the data is retrieved
-	 * @return PageData the class for the data on desired page
+	 * @return PageData the data from the configuration file on disk
 	 */
 	private static PageData loadPageData(String pageName) {
 		PageData pageData = null;
@@ -311,8 +291,8 @@ public class Configuration {
 	/**
 	 * Returns data from yaml file.
 	 * 
-	 * @param yamlName String the name of the API object for data retrieval
-	 * @return YAMLData the class for the data on the desired page
+	 * @param yamlName String the name of the object for data retrieval
+	 * @return YAMLData the data from the configuration file on disk
 	 */
 	private static YAMLData loadYAMLData(String yamlName) {
 		YAMLData yamlData = null;
@@ -329,6 +309,25 @@ public class Configuration {
 		}
 		
 		return yamlData;
+	}
+	
+	/**
+	 * Returns yamlData for the given yamlObject by determining what type it is and calling
+	 * the appropriate method. If the object has already been loaded from disk, it is returned,
+	 * otherwise it is loaded from disk then returned.
+	 * @param yamlObject YAMLObject the API/Page object to retrieve data for
+	 * @return YAMLData the data from the API/Page configuration file
+	 */
+	private static YAMLData getYAMLData(YAMLObject yamlObject) {
+		String yamlName = yamlObject.getName();
+		switch (yamlObject.getType()) {
+		case PAGE:
+			return PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
+		case API:
+		case UNKNOWN:
+		default:
+			return YAML_DATA.computeIfAbsent(yamlName, Configuration::loadYAMLData);
+		}
 	}
 	
 	/**
@@ -351,45 +350,14 @@ public class Configuration {
 	}
 	
 	/**
-	 * Returns the URL for the currently active page based on the environment value set. 
 	 * 
-	 * @see com.dougnoel.sentinel.pages.PageManager#getPage()
-	 * @see com.dougnoel.sentinel.pages.Page#getName()
-	 * @return String the desired URL
-	 */
-	public static String url() {
-		return getPageURL(PageManager.getPage().getName());
-	}
-	
-	/**
-	 * Returns a URL for the given page name based on the environment value set.
-	 *
-	 * @param pageName String the name of the page from which the url is retrieved
-	 * @return String the url for the given page and current environment
-	 */
-	protected static String getPageURL(String pageName) {
-		return getURL(pageName);
-	}
-	
-	/**
-	 * Returns a URL for the given page name based on the environment value set.
-	 *
-	 * @param apiName String the name of the api from which the url is retrieved
-	 * @return String the url for the given api and current environment
-	 */
-	public static String getAPIURL(String apiName) {
-		return getURL(apiName);
-	}
-	
-	/**
-	 * Returns a URL for the given yaml file based on the environment value set.
-	 *
-	 * @param yamlName String the name of the yaml file from which the url is retrieved
+	 * @param yamlObject YAMLObject the YAML Object (API/Page object) to retrieve the URL from
 	 * @return String the url for the given yaml object and current environment
 	 */
-	private static String getURL(String yamlName) {
+	public static String getURL(YAMLObject yamlObject) {
 		String baseURL = null;
-		var yamlData = loadYAMLData(yamlName);
+		var yamlData = getYAMLData(yamlObject);
+		var yamlName = yamlObject.getName();
 		String env = Configuration.environment();
 
 		if (yamlData.containsUrl(env)) {
@@ -452,7 +420,7 @@ public class Configuration {
 	 * @return String requested username or password
 	 */
 	public static String accountInformation(String account, String key) {
-		String pageName = PageManager.getPage().getName();
+		String pageName = TestManager.getActiveTestObject().getName();
 		String env = environment();
 		var pageData = loadPageData(pageName);
 		Map <String,String> accountData = pageData.getAccount(env, account);
@@ -528,19 +496,7 @@ public class Configuration {
 	 * @return String the value of the given key in the given object
 	 */
 	public static String getTestData(String testDataObjectName, String testDataObjectKey) {
-		YAMLObject yamlObject = TestManager.getActiveTestObject();
-		String yamlName = yamlObject.getName();
-		YAMLData yamlData;
-		switch (yamlObject.getType()) {
-		case PAGE:
-			yamlData = PAGE_DATA.computeIfAbsent(yamlName, Configuration::loadPageData);
-			break;
-		case API:
-		case UNKNOWN:
-		default:
-			yamlData = YAML_DATA.computeIfAbsent(yamlName, Configuration::loadYAMLData);
-			break;
-		}
+		YAMLData yamlData = getYAMLData(TestManager.getActiveTestObject());
 		return getTestData(yamlData, testDataObjectName, testDataObjectKey);
 	}
 	
@@ -603,14 +559,17 @@ public class Configuration {
 		browser = Configuration.toString(BROWSER);
 		if (browser == null) {
 			browser = "chrome";
+			appProps.setProperty(BROWSER, browser);
 			String infoMessage = "Chrome browser being used by default. " + 
 					Configuration.configurationNotFoundErrorMessage(BROWSER);
 			log.info(infoMessage);
 		}
-        // Make sure whatever string we are passed is all lower case and all spaces are removed.
-        browser = browser.replaceAll("\\s+", "").toLowerCase();
-        if (browser.equals("ie"))
+		else // Make sure whatever string we are passed is all lower case and all spaces are removed.
+			browser = browser.replaceAll("\\s+", "").toLowerCase();
+        if (browser.equals("ie")) {
             browser = "internetexplorer";
+            appProps.setProperty(BROWSER, browser);
+        }
         return browser;
     }
     
@@ -622,6 +581,7 @@ public class Configuration {
     	var operatingSystem = Configuration.toString("os");
     	if (operatingSystem == null) {
     		operatingSystem = detectOperatingSystem();
+    		appProps.setProperty("os", operatingSystem);
     	}
         
         return operatingSystem;

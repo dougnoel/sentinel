@@ -73,7 +73,7 @@ public class PageManager {
 	public static void open(String pageName, String arguments) {
     	PageManager.setPage(pageName);
     	if (pageObjectType == PageObjectType.WEBPAGE) {
-	    	String url = Configuration.url();
+	    	String url = Configuration.getURL(PageManager.getPage());
 	    	url += arguments == null ? "" : arguments;
 	    	log.debug("Loading the the {} page using the url: {}", pageName, url);
 	    	driver().get(url);
