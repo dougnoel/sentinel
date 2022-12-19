@@ -1,8 +1,11 @@
 urls:
   default: https://dougnoel.github.io/sentinel/test/table.html
 elements:
-   example_table:
-      elementType: Table
-      css: blah
-      id: mytable
-      xpath: //*[@id="mytable"]
+  example_table:
+    elementType: Table
+    css: blah
+    id: mytable
+    xpath: //*[@id="mytable"]
+  comment_box:
+    elementType: Textbox
+    xpath: ".//input[@type='text']"

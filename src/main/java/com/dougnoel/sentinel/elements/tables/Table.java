@@ -207,21 +207,20 @@ public class Table extends Element {
 	/**
 	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
 	 */
-	protected void createRowData(){
+	protected void createRowData() {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
-		while((System.currentTimeMillis() - startTime) < searchTime) {
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
 				var dataRows = getOrCreateRowElements();
 				for (WebElement row : dataRows) {
 					List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
 					ArrayList<String> cells = new ArrayList<>();
-					cellElements.stream().forEach(cellElement -> cells.add(cellElement.getText()));
+					cellElements.forEach(cellElement -> cells.add(fetchDataFromCellInterior(cellElement)));
 					rows.add(cells);
 				}
 				return;
-			}
-			catch(org.openqa.selenium.StaleElementReferenceException sere) {
+			} catch (org.openqa.selenium.StaleElementReferenceException sere) {
 				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
 				rowElements = null; // reset the row elements so the ones that are stale aren't used in the next iteration
 			}
@@ -367,7 +366,7 @@ public class Table extends Element {
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 */
 	public WebElement getElementInRowThatContains(int ordinalRow, Element element) {
-		return getElementInRowThatContains(ordinalRow, element.getXPath(ordinalRow));
+		return getElementInRowThatContains(ordinalRow, element.getXPath());
 	}
 
 	/**
@@ -543,13 +542,33 @@ public class Table extends Element {
 			log.error(errorMessage);
 			throw new NoSuchElementException(errorMessage);
 		}
-		 // add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
+		// add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
 		int xpathIndexOfHeader = arrayIndexOfHeader + 1;
 		
 		List<String> cellData = new ArrayList<>();
 		this.element().findElements(By.xpath(".//" + tableCellDataTag + "[" + xpathIndexOfHeader + "]")).stream()
-				.forEach(cell -> cellData.add(cell.getText()));
+				.forEach(cellElement -> cellData.add(fetchDataFromCellInterior(cellElement)));
 		return cellData;
+	}
+
+	/**
+	 * Accepts a WebElement for a cell, and attempts first to get a value from a child input.
+	 * Failing this, it returns the text of the given element for items such as headers.
+	 * @param cellElement WebElement the element object for the cell to fetch data from
+	 * @return String the text/value found within the element
+	 */
+	protected String fetchDataFromCellInterior(WebElement cellElement){
+		String data;
+		data = cellElement.getText();
+		if (StringUtils.isBlank(data)){
+			try{
+				data = cellElement.findElement(By.tagName("input")).getAttribute("value");
+			}
+			catch(NoSuchElementException nsee){
+				log.trace("NoSuchElementException caught while attempting to find input element in table cell. Cell is blank.");
+			}
+		}
+		return data;
 	}
 
 	/**
