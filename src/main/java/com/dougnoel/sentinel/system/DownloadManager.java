@@ -34,7 +34,6 @@ import de.redsix.pdfcompare.PdfComparator;
 import de.redsix.pdfcompare.RenderingException;
 import de.redsix.pdfcompare.env.SimpleEnvironment;
 
-import static org.junit.Assert.assertEquals;
 
 /**
  * Manages Download actions and interactions, which handles CRUD and IO for Sentinel. This includes deleting files, getting/setting files, filenames, or file extensions,

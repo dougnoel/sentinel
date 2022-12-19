@@ -1,7 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.files.CsvFile;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -16,7 +15,6 @@ import org.junit.Assert;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
-import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 import static org.junit.Assert.*;
 
 
