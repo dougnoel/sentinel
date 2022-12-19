@@ -347,24 +347,52 @@ public class CsvFile extends TestFile{
         }
     }
 
+    /**
+     * Returns true if all cells in the given column are empty.
+     * @param columnHeader String name of the column.
+     * @return boolean true if all cells are empty, false otherwise (any cell has content).
+     */
     public boolean verifyAllColumnCellsEmpty(String columnHeader){
         return verifyAllColumnCellsEmpty(getColumnIndex(columnHeader));
     }
 
+    /**
+     * Returns true if all cells in the given column are empty.
+     * @param columnIndex int index of the column, starting at 1.
+     * @return boolean true if all cells are empty, false otherwise (any cell has content).
+     */
     public boolean verifyAllColumnCellsEmpty(int columnIndex){
         var allColumnData = readAllCellDataForColumn(columnIndex);
         return allColumnData.stream().allMatch(StringUtils::isEmpty);
     }
 
+    /**
+     * Returns true if all cells in the given columns are not empty (all cells have content).
+     * @param columnHeader String name of the column.
+     * @return boolean true if all cells are not empty, false otherwise (any cell does not have content).
+     */
     public boolean verifyAllColumnCellsNotEmpty(String columnHeader){
         return verifyAllColumnCellsNotEmpty(getColumnIndex(columnHeader));
     }
 
+    /**
+     * Returns true if all cells in the given columns are not empty (all cells have content).
+     * @param columnIndex int index of the column, starting at 1.
+     * @return boolean true if all cells are not empty, false otherwise (any cell does not have content).
+     */
     public boolean verifyAllColumnCellsNotEmpty(int columnIndex){
         var allColumnData = readAllCellDataForColumn(columnIndex);
         return allColumnData.stream().noneMatch(StringUtils::isEmpty);
     }
 
+    /**
+     * Returns true if the csv file has the given header.
+     * If partialMatch == true, then the comparison is a "contains", meaning this method will return true if any column contains the given columnHeader.
+     * If partialMatch == false, then this comparison is an "equals", meaning this method will return true only if any column exactly matches the given columnHeader.
+     * @param columnHeader String name of the column to check existence of.
+     * @param partialMatch boolean true if the comparison should be "contains", false if comparison should be "equals".
+     * @return boolean true if the csv file has a column header matching the given columnHeader
+     */
     public boolean verifyColumnHeaderEquals(String columnHeader, boolean partialMatch){
         var headers = readHeaders();
         if(partialMatch)

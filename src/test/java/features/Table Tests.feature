@@ -114,12 +114,12 @@ Feature: Table Tests
     When I find the 9th column in the Example table and click the cell in the first row
     Then I verify the JS alert contains the text This is Bob
       And I close the JS alert
-    When I find the last column in the Example table and click the cell in the last row
+    When I find the 9th column in the Example table and click the cell in the last row
     Then I verify the JS alert contains the text This is Dave
       And I close the JS alert
-    When I find the last column in the Example table and click the cell in the first row
+    When I find the 9th column in the Example table and click the cell in the first row
     Then I verify the JS alert contains the text This is Bob
       And I close the JS alert
-    When I find the last column in the Example table and click the cell in the 2nd row
+    When I find the 9th column in the Example table and click the cell in the 2nd row
     Then I verify the JS alert contains the text This is Charlotte
       And I close the JS alert
