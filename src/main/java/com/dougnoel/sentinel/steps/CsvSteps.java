@@ -179,7 +179,19 @@ public class CsvSteps {
         }
     }
 
-
+    /**
+     * Verifies all cells in the csv column are or are not empty. If checking that all column cells are empty, this method will assert that every cell is empty.
+     * If checking that all column cells are not empty, this method will assert that every cell is NOT empty (all cells have at least some content).
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify all cells are empty in the Zip Code column in the csv file</li>
+     * <li>I verify all cells are not empty in the Name column of the CSV file</li>
+     * </ul>
+     *
+     * @param assertion String if null, checks that all cells are empty. Otherwise, checks that all cells are not empty.
+     * @param column String name of the column in the csv, or an ordinal column index (1st, 2nd, 3rd, etc.)
+     */
     @Then("^I verify all cells are (not )?empty in the (.*) column (?:of|in) the (?:CSV|csv) file$")
     public static void verifyCsvAllColumnCellsAreEmpty(String assertion, String column){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
@@ -241,7 +253,7 @@ public class CsvSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the Name column of the csv contains the same text entered text for the username</li>
+     * <li>I verify the Name column of the csv contains the same text entered for the username</li>
      * <li>I verify the Contact column of the csv contains the same text used for the phone number field</li>
      * <li>I verify the Airport Code column of the CSV contains the same text selected for the airport's code RDU</li>
      * <li>I verify the Airport Code column of the CSV does not contain the same text selected for the airport's code RDU</li>
@@ -278,9 +290,15 @@ public class CsvSteps {
 
     /**
      * Verifies the CSV has the given number of rows of data, not including the header rows.
+     *  <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the csv has 1 data row</li>
+     * <li>I verify the CSV has 22 data rows</li>
+     * </ul>
      * @param numRows int the number of rows to verify against.
      */
-    @Then("^I verify the (?:CSV|csv) has (\\d+) data rows")
+    @Then("^I verify the (?:CSV|csv) has (\\d+) data rows?")
     public static void verifyNumberOfRows(int numRows){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
         String errorMessage = SentinelStringUtils.format("Expected the CSV to have {} rows, not including headers.", numRows);

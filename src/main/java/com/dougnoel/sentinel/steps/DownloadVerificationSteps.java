@@ -100,24 +100,4 @@ public class DownloadVerificationSteps {
 						(negate ? "not ": ""), expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
 				!negate, result);
 	}
-
-//
-//	public static void verifyFileContainsString(String assertion, String expectedText) throws IOException {
-//		Path mostRecentFile = DownloadManager.getMostRecentDownloadPath();
-//		String fileContent;
-//		boolean result;
-//		boolean negate = !StringUtils.isEmpty(assertion);
-//
-//		try{
-//			fileContent = FileUtils.readFileToString(mostRecentFile.toFile(), "UTF-8");
-//			result = fileContent.contains(expectedText);
-//		}
-//		catch(IOException ioe){
-//			String message = SentinelStringUtils.format("Unable to open most recently downloaded file. Most recently downloaded file path {}", mostRecentFile);
-//			throw new IOException(message, ioe);
-//		}
-//		assertEquals(SentinelStringUtils.format("Expected file to {}contain a the text {}. File location: {}",
-//						(negate ? "not ": ""), expectedText, mostRecentFile),
-//				!negate, result);
-//	}
 }
