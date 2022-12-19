@@ -1,17 +1,9 @@
 package com.dougnoel.sentinel.elements.tables;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
 
 /**
  * Implements an ngx-datatable WebElement. Contains functionality for counting values, finding values inside a table, and other
