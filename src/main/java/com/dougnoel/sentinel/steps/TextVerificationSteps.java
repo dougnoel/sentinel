@@ -112,15 +112,6 @@ public class TextVerificationSteps {
                     }
                 }
         }
-
-        if (elementName.contains("URL")) {
-            verifyURLTextContains(text);
-        }
-        else if(elementName.contains("most recently downloaded file")){
-
-        }else {
-
-        }
     }
 
     /**

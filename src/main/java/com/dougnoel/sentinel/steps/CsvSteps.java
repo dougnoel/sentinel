@@ -153,7 +153,7 @@ public class CsvSteps {
     public static void verifyCsvAllColumnCellsHaveValue(String assertion, String column, String matchType, String textToMatch){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
 
         var expectedResult = SentinelStringUtils.format(
                 "Expected all cells in the {} column of the CSV file to {}contain the text {}.",
