@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 @SuppressWarnings("serial")
 public class CsvFile extends TestFile{
     private static final Logger log = LogManager.getLogger(CsvFile.class.getName()); // Create a logger.
+    public static final String IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE = "IOException caught while parsing CSV file {}.";
 
     private final CSVFormat csvFormat;
     private final int numHeaderRows;
@@ -120,7 +121,7 @@ public class CsvFile extends TestFile{
             return parser.getRecords().size();
         }
         catch(IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
+            log.trace(SentinelStringUtils.format(IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE, toPath()));
             return -1;
         }
     }
@@ -134,7 +135,7 @@ public class CsvFile extends TestFile{
             return parser.getRecords().size() - numHeaderRows;
         }
         catch(IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
+            log.trace(SentinelStringUtils.format(IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE, toPath()));
             return -1;
         }
     }
@@ -190,7 +191,7 @@ public class CsvFile extends TestFile{
             return  allFileContents;
         }
         catch (IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
+            log.trace(SentinelStringUtils.format(IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE, toPath()));
             return Collections.emptyList();
         }
     }

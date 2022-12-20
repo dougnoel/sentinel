@@ -111,7 +111,7 @@ public class CsvSteps {
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
         int rowIndex = rowNum.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(rowNum);
-        boolean partialMatch = matchType.contains("contain");
+        boolean partialMatch = matchType.contains(CONTAIN);
 
         var expectedResult = SentinelStringUtils.format(
                 "Expected the cell in the {} row and the {} column of the CSV file to {}contain the text {}.",
@@ -261,7 +261,7 @@ public class CsvSteps {
      * @param key String the key to retrieve the text to match from the configuration manager
      */
     @Then("^I verify the (.*?) column of the (?:csv|CSV)( do(?:es)? not)? contains? the same text (?:entered|selected|used) for the (.*)$")
-    public static void verifyStoredTextAppearsInColumn(String column, String assertion, String key) throws Exception {
+    public static void verifyStoredTextAppearsInColumn(String column, String assertion, String key) {
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
         var textToMatch = Configuration.toString(key);
         boolean negate = !StringUtils.isEmpty(assertion);

@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 @SuppressWarnings("serial")
@@ -40,7 +41,7 @@ public abstract class TestFile extends File{
      * @throws IOException in the case that the file does not exist or cannot be read, or another generic IO error.
      */
     public String getAllText() throws IOException {
-        return FileUtils.readFileToString(this, "UTF-8");
+        return FileUtils.readFileToString(this, StandardCharsets.UTF_8);
     }
 
 }

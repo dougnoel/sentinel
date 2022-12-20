@@ -77,36 +77,49 @@ public class TextVerificationSteps {
         String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
         String partialMatchText = partialMatch ? "contain" : "exactly match";
-        
+
+        String expectedResult;
+
+        switch(elementName){
+            case("URL"):
+                verifyURLTextContains(text);
+                break;
+            case("most recently downloaded file"):
+                expectedResult = SentinelStringUtils.format(
+                        "Expected the most recently downloaded file to contain the text {}. File location:",
+                        text, DownloadManager.getMostRecentDownloadPath());
+                log.trace(expectedResult);
+                assertEquals(expectedResult, !negate, DownloadManager.verifyTextInFile(text));
+                break;
+            default:
+                String elementText = getElement(elementName).getText();
+                expectedResult = SentinelStringUtils.format(
+                        "Expected the {} element to {}{} the text {}. The element contained the text: {}",
+                        elementName, negateText, partialMatchText, text, elementText
+                                .replace("\n", " "));
+                log.trace(expectedResult);
+                if (partialMatch) {
+                    if (negate) {
+                        assertFalse(expectedResult, elementText.contains(text));
+                    } else {
+                        assertTrue(expectedResult, elementText.contains(text));
+                    }
+                } else {
+                    if (negate) {
+                        assertFalse(expectedResult, StringUtils.equals(elementText, text));
+                    } else {
+                        assertTrue(expectedResult, StringUtils.equals(elementText, text));
+                    }
+                }
+        }
+
         if (elementName.contains("URL")) {
             verifyURLTextContains(text);
         }
         else if(elementName.contains("most recently downloaded file")){
-            var expectedResult = SentinelStringUtils.format(
-                    "Expected the most recently downloaded file to contain the text {}. File location:",
-                    text, DownloadManager.getMostRecentDownloadPath());
-            log.trace(expectedResult);
-            assertEquals(expectedResult, !negate, DownloadManager.verifyTextInFile(text));
+
         }else {
-            String elementText = getElement(elementName).getText();
-            var expectedResult = SentinelStringUtils.format(
-                    "Expected the {} element to {}{} the text {}. The element contained the text: {}",
-                    elementName, negateText, partialMatchText, text, elementText
-                            .replace("\n", " "));
-            log.trace(expectedResult);
-            if (partialMatch) {
-                if (negate) {
-                    assertFalse(expectedResult, elementText.contains(text));
-                } else {
-                    assertTrue(expectedResult, elementText.contains(text));
-                }
-            } else {
-                if (negate) {
-                    assertFalse(expectedResult, StringUtils.equals(elementText, text));
-                } else {
-                    assertTrue(expectedResult, StringUtils.equals(elementText, text));
-                }
-            }
+
         }
     }
 

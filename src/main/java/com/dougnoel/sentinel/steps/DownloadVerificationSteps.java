@@ -3,16 +3,12 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
 import com.dougnoel.sentinel.files.ZipFile;
-import com.dougnoel.sentinel.system.FileManager;
 import io.cucumber.java.en.When;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
