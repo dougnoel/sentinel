@@ -27,12 +27,15 @@ public class CsvFile extends TestFile{
     private final CSVFormat csvFormat;
     private final int numHeaderRows;
 
+    private List<List<String>> csvContents;
+
     /**
      * Create default CSV file from most recently-downloaded path.
      * @throws FileNotFoundException in the case that a file does not exist at that path.
      */
     public CsvFile() throws FileNotFoundException {
         this(1);
+        loadCsvFile();
     }
 
     /**
@@ -44,6 +47,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = CSVFormat.DEFAULT;
         numHeaderRows = 1;
+        loadCsvFile();
     }
 
     /**
@@ -56,6 +60,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = format;
         numHeaderRows = 1;
+        loadCsvFile();
     }
 
     /**
@@ -67,6 +72,7 @@ public class CsvFile extends TestFile{
         super();
         csvFormat = CSVFormat.DEFAULT;
         numHeaderRows = numberOfHeaderRows;
+        loadCsvFile();
     }
 
     /**
@@ -79,6 +85,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = CSVFormat.DEFAULT;
         numHeaderRows = numberOfHeaderRows;
+        loadCsvFile();
     }
 
     /**
@@ -92,6 +99,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = format;
         numHeaderRows = numberOfHeaderRows;
+        loadCsvFile();
     }
 
     @Override
@@ -112,18 +120,16 @@ public class CsvFile extends TestFile{
         return CSVParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
     }
 
+    private void loadCsvFile(){
+        csvContents = readAllFileContents();
+    }
+
     /**
      * Returns the total number of rows in the CSV file, including headers.
      * @return int the total number of rows in the CSV file, including headers.
      */
     public int getNumberOfTotalRows(){
-        try(var parser = getParser()){
-            return parser.getRecords().size();
-        }
-        catch(IOException ioe){
-            log.trace(SentinelStringUtils.format(IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE, toPath()));
-            return -1;
-        }
+        return csvContents.size();
     }
 
     /**
@@ -131,13 +137,7 @@ public class CsvFile extends TestFile{
      * @return int the number of data rows in the CSV file. Does not include header rows.
      */
     public int getNumberOfDataRows(){
-        try(var parser = getParser()){
-            return parser.getRecords().size() - numHeaderRows;
-        }
-        catch(IOException ioe){
-            log.trace(SentinelStringUtils.format(IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE, toPath()));
-            return -1;
-        }
+        return csvContents.size() - numHeaderRows;
     }
 
     /**
@@ -148,13 +148,7 @@ public class CsvFile extends TestFile{
      */
     public List<String> readRowData(int rowIndex){
         int actualRowIndex = rowIndex - 1 + numHeaderRows;
-        try(var parser = getParser()){
-            return parser.getRecords().get(actualRowIndex).toList();
-        }
-        catch(IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing row {}. Taking into consideration {} header row(s)", actualRowIndex, numHeaderRows));
-            return Collections.emptyList();
-        }
+        return csvContents.get(actualRowIndex);
     }
 
     /**
@@ -205,13 +199,7 @@ public class CsvFile extends TestFile{
         if(numHeaderRows < 1){
             throw new IndexOutOfBoundsException("This method is undefined for CSV files without header rows.");
         }
-        try(var parser = getParser()){
-            return parser.getRecords().get(numHeaderRows - 1).toList(); //last header row is treated as the one that the data rows conform to.
-        }
-        catch(IOException ioe){
-            log.trace("IOException caught while parsing column headers.");
-            return Collections.emptyList();
-        }
+        return csvContents.get(numHeaderRows - 1); //last header row is treated as the one that the data rows conform to.
     }
 
     /**
@@ -231,6 +219,7 @@ public class CsvFile extends TestFile{
         } catch (IOException e) {
             throw new FileException(e, this);
         }
+        csvContents = newFileContents;
     }
 
     /**
@@ -259,9 +248,8 @@ public class CsvFile extends TestFile{
      */
     public void writeAllCellsInColumn(int columnIndex, String newValue){
         int adjustedColumnIndex = columnIndex - 1;
-        var fileContents = readAllFileContents();
-        fileContents.stream().skip(numHeaderRows).forEach(row -> row.set(adjustedColumnIndex, newValue));
-        writeFileContents(fileContents);
+        csvContents.stream().skip(numHeaderRows).forEach(row -> row.set(adjustedColumnIndex, newValue));
+        writeFileContents(csvContents);
     }
 
     /**
@@ -313,7 +301,7 @@ public class CsvFile extends TestFile{
         int adjustedColumnIndex = columnIndex - 1;
         List<String> allCellDataForColumn = new ArrayList<>();
         //skip header row(s), then add the column data from each row
-        readAllFileContents().stream().skip(numHeaderRows).forEach(row -> allCellDataForColumn.add(row.get(adjustedColumnIndex)));
+        csvContents.stream().skip(numHeaderRows).forEach(row -> allCellDataForColumn.add(row.get(adjustedColumnIndex)));
         return allCellDataForColumn;
     }
 
