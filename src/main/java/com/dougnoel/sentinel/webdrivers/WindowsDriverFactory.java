@@ -52,8 +52,7 @@ public class WindowsDriverFactory {
 	 *
 	 * @return WebDriver returns a WindowsDriver&lt;WebElement&gt;
 	 */
-	protected static WebDriver createWinAppDriver() {
-		startWinAppDriverExe();
+	protected static WebDriver createWindowsDriver() {
 		String executable = FileManager.winSpecialFolderConverter(Configuration.executable());
 
 		AppiumServiceBuilder builder = new AppiumServiceBuilder();
@@ -96,33 +95,10 @@ public class WindowsDriverFactory {
 	 * @param driver WindowsDriver&lt;WebElement&gt; the WindowsDriver to quit
 	 */
 	protected static void quit(WindowsDriver driver) {
-		driver.closeApp();
+		driver.quit();
 		numberOfDriversRunning -= 1;
 		if (numberOfDriversRunning <= 0) {
 			numberOfDriversRunning = 0;
-			stopWinAppDriverExe();
-		}
-	}
-
-	/**
-	 * Starts the WinAppDriver executable program if it is not running
-	 * so that Windows programs can be driven using it. Sets the
-	 * winAppDrvierProcess member variable to be the running process.
-	 * Future optimizations of this method are tracked in issues #284 and #285.
-	 */
-	private static void startWinAppDriverExe() {
-
-	}
-
-	/**
-	 * Stops WinAppDriver running if it is running and sets the
-	 * WinAppDriverProcess member variable to null so that we know
-	 * we need to start it up again if necessary.
-	 */
-	private static void stopWinAppDriverExe() {
-		if (winAppDriverProcess != null) {
-			winAppDriverProcess.destroy();
-			winAppDriverProcess = null;
 		}
 	}
 }
