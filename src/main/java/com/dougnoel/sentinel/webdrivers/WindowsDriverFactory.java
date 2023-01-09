@@ -28,8 +28,8 @@ import static io.appium.java_client.service.local.flags.GeneralServerFlag.BASEPA
  *
  *         Creates WinAppDriver.
  */
-public class WinAppDriverFactory {
-	private static final Logger log = LogManager.getLogger(WinAppDriverFactory.class);
+public class WindowsDriverFactory {
+	private static final Logger log = LogManager.getLogger(WindowsDriverFactory.class);
 	private static Process winAppDriverProcess = null;
 	//private static final String DRIVER_URL = Configuration.toString("winAppDriverUrl", "http://127.0.0.1:4723/wd/hub");
 	//private static final String WINAPPDRIVER_PATH = Configuration.toString("winAppDriverPath", "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe");
@@ -40,7 +40,7 @@ public class WinAppDriverFactory {
 	/**
 	 * Exists to defeat instantiation.
 	 */
-	private WinAppDriverFactory() {}
+	private WindowsDriverFactory() {}
 
 	/**
 	 * Returns a newly created WindowsDriver as a WebDriver, based on the currently
@@ -66,12 +66,12 @@ public class WinAppDriverFactory {
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", executable);
-		capabilities.setCapability("ms:experimental-webdriver", true);
+//		capabilities.setCapability("ms:experimental-webdriver", true);
 		//capabilities.setCapability("app", "C:\\Windows\\System32\\calc.exe");
 		//capabilities.setCapability("appium:app", "C:\\Windows\\System32\\calc.exe");
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("automationName", "Windows");
-		capabilities.setCapability("deviceName", "Windows10Machine");
+//		capabilities.setCapability("deviceName", "Windows10Machine");
 
 		WindowsDriver driver = null;
 		try {
