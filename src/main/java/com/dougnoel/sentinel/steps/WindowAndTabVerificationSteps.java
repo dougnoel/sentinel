@@ -43,7 +43,7 @@ public class WindowAndTabVerificationSteps {
             condition = ExpectedConditions.not(condition);
 
         try {
-            result = new WebDriverWait(Driver.getWebDriver(), Time.out().toSeconds(), Time.interval().toMillis())
+            result = new WebDriverWait(Driver.getWebDriver(), Time.out(), Time.interval())
                     .ignoring(StaleElementReferenceException.class)
                     .until(condition);
         }

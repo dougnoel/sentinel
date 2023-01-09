@@ -79,7 +79,7 @@
 
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
-    <appium.version>7.3.0</appium.version>
+    <appium.version>8.3.0</appium.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <extentreports.version>4.1.5</extentreports.version>
     <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
@@ -96,9 +96,9 @@
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.24</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
-    <selenium-java.version>3.141.59</selenium-java.version>
+    <selenium-java.version>4.7.2</selenium-java.version>
     <swagger-parser.version>2.1.1</swagger-parser.version>
-    <webdrivermanager.version>4.4.1</webdrivermanager.version>
+    <webdrivermanager.version>5.3.1</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
     <commons-csv.version>1.9.0</commons-csv.version>

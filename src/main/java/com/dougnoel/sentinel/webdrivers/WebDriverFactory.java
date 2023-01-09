@@ -2,6 +2,7 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.util.HashMap;
 
+import io.github.bonigarcia.wdm.webdriver.WebDriverBrowser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -12,7 +13,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
-import org.openqa.selenium.opera.OperaDriver;
+//import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -79,10 +80,6 @@ public class WebDriverFactory {
         	WebDriverManager.iedriver().setup();
         	driver = new InternetExplorerDriver(ieOptions);
             break;
-        case "opera":
-        	WebDriverManager.operadriver().setup();
-        	driver = new OperaDriver();
-        	break;
         case "safari":
         	driver = new SafariDriver();
             break;

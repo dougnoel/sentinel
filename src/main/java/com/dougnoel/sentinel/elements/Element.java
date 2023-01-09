@@ -22,7 +22,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
-import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -345,7 +344,7 @@ public class Element {
 			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
 		}
 		log.error(errorMessage);
-		throw new ElementNotVisibleException(errorMessage);
+		throw new ElementNotInteractableException(errorMessage);
 	}
 	
 	/**
@@ -520,7 +519,7 @@ public class Element {
 	 */
 	public boolean isDisplayed() {
 		try {
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
 		}
@@ -540,7 +539,7 @@ public class Element {
 	 */
 	public boolean isHidden() {
 		try {
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.invisibilityOf(element()));
 		}
@@ -562,7 +561,7 @@ public class Element {
 	 */
 	public boolean isEnabled() {
 		try {
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> (element().isEnabled() && (element().getAttribute("readonly") == null)));
 		}
@@ -584,7 +583,7 @@ public class Element {
 	 */
 	public boolean isDisabled() {
 		try {
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.or(ExpectedConditions.attributeContains(element(), "disabled", ""), ExpectedConditions.attributeContains(element(), "readonly", "")));
 		}
@@ -603,7 +602,7 @@ public class Element {
 	 */
 	public boolean isSelected() {
 		try {
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementToBeSelected(element()));
 		}
@@ -622,7 +621,7 @@ public class Element {
 	 */
 	public boolean isNotSelected() {
 		try {
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
 		}
@@ -688,7 +687,7 @@ public class Element {
 
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
-				return new WebDriverWait(driver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
+				return new WebDriverWait(driver(), Time.out(), Time.interval())
 						.ignoring(StaleElementReferenceException.class)
 						.ignoring(TimeoutException.class)
 						.until(condition);
@@ -712,7 +711,7 @@ public class Element {
 	 */
 	public boolean hasAttribute(String attribute) {
 		try{
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 					.ignoring(StaleElementReferenceException.class)
 					.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
 		}
@@ -734,7 +733,7 @@ public class Element {
 	 */
 	public boolean doesNotHaveAttribute(String attribute) {
 		try{
-			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+			return new WebDriverWait(driver(), Time.out(), Time.interval())
 					.ignoring(StaleElementReferenceException.class)
 					.until(ExpectedConditions.not(
 							ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));

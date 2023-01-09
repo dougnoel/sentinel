@@ -107,7 +107,7 @@ public class SelectElement extends Element {
      */
     public boolean hasOption(String text) {
     	Select selectElement = new Select(this.element());
-    	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out().toSeconds(), Time.interval().toMillis())
+    	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> selectElement.getOptions().stream().anyMatch(el -> el.getText().endsWith(text)));
     }
@@ -118,7 +118,7 @@ public class SelectElement extends Element {
      */
     public boolean doesNotHaveOption(String text) {
     	Select selectElement = new Select(this.element());
-    	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out().toSeconds(), Time.interval().toMillis())
+    	return new WebDriverWait(WebDriverFactory.getWebDriver(), Time.out(), Time.interval())
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> selectElement.getOptions().stream().noneMatch(el -> el.getText().endsWith(text)));
     }
