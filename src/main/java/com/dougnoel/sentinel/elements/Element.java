@@ -953,10 +953,9 @@ public class Element {
 	}
 
 	/**
-	 * Returns the stored XPath for this element.
-	 * Returns null if no XPath exists in the page object.
+	 * Returns the first stored selector for this element.
 	 *
-	 * @return the xPath for the element listed in the page object
+	 * @return By the selector for the element listed in the page object
 	 */
 	public By getBy() {
 		var optional = selectors.keySet().stream().findFirst();
