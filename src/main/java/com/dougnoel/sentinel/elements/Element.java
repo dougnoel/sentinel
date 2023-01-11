@@ -952,4 +952,18 @@ public class Element {
 		return element().getLocation();
 	}
 
+	/**
+	 * Returns the first stored selector for this element.
+	 *
+	 * @return By the selector for the element listed in the page object
+	 */
+	public By getBy() {
+		var optional = selectors.keySet().stream().findFirst();
+		if(optional.isEmpty())
+			throw new NoSuchElementException("No selectors found.");
+		var selectorType = optional.get();
+		var selector = selectors.get(selectorType);
+		return createByLocator(selectorType, selector);
+	}
+
 }

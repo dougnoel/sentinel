@@ -29,7 +29,7 @@ public class NGXDataTable extends Table {
 		tableSiblingCellLocator = "//../../..//*";
 		tableHeaderSortElementLocator = ".//span[contains(concat(' ', @class, ' '), ' sort-btn ')]";
 	}
-	
+
 	/**
 	 * Returns number of row elements from getOrCreateRowElements
 	 * 
@@ -42,5 +42,4 @@ public class NGXDataTable extends Table {
 		log.trace("Number of rows found: {}", numberOfRows);
 		return numberOfRows;
 	}
-	
 }
