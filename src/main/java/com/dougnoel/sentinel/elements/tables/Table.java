@@ -366,7 +366,7 @@ public class Table extends Element {
 	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
 	 */
 	public WebElement getElementInRowThatContains(int ordinalRow, Element element) {
-		return getElementInRowThatContains(ordinalRow, element.getXPath());
+		return getElementInRowThatContains(ordinalRow, element.getBy());
 	}
 
 	/**
