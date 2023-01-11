@@ -201,7 +201,7 @@ public class TableSteps {
 	 * <b>Gherkin Examples:</b>
 	 * <ul>
 	 * <li>I find the 3rd row in the Stats Editor Table and enter the text "3" in the Sequence Number</li>
-	 * <li>I find the Last in the Stats Editor Table and enter the text "3" in the Sequence Number</l
+	 * <li>I find the Last in the Stats Editor Table and enter the text "3" in the Sequence Number</li>
 	 * </ul>
 	 * @param ordinal String the row number. Can be "la" to specify the last row, or an integer.
 	 * @param tableName String the name of the table to search
