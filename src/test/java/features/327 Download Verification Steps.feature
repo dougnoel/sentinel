@@ -17,6 +17,7 @@ Feature: Download Verification Steps
   Scenario: Download via filename verification
     When I click the sample download link
     Then I verify a new file is downloaded with the name TestPDF.pdf
+      And I verify the most recently downloaded file contains the text "%PDF-1.5"
 
   @386 @upload
   Scenario: Download via file extension verification and then re-upload the same file

@@ -22,9 +22,12 @@ import org.apache.logging.log4j.Logger;
 @SuppressWarnings("serial")
 public class CsvFile extends TestFile{
     private static final Logger log = LogManager.getLogger(CsvFile.class.getName()); // Create a logger.
+    public static final String IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE = "IOException caught while parsing CSV file {}.";
 
     private final CSVFormat csvFormat;
     private final int numHeaderRows;
+
+    private List<List<String>> csvContents;
 
     /**
      * Create default CSV file from most recently-downloaded path.
@@ -32,6 +35,7 @@ public class CsvFile extends TestFile{
      */
     public CsvFile() throws FileNotFoundException {
         this(1);
+        loadCsvFile();
     }
 
     /**
@@ -43,6 +47,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = CSVFormat.DEFAULT;
         numHeaderRows = 1;
+        loadCsvFile();
     }
 
     /**
@@ -55,6 +60,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = format;
         numHeaderRows = 1;
+        loadCsvFile();
     }
 
     /**
@@ -66,6 +72,7 @@ public class CsvFile extends TestFile{
         super();
         csvFormat = CSVFormat.DEFAULT;
         numHeaderRows = numberOfHeaderRows;
+        loadCsvFile();
     }
 
     /**
@@ -78,6 +85,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = CSVFormat.DEFAULT;
         numHeaderRows = numberOfHeaderRows;
+        loadCsvFile();
     }
 
     /**
@@ -91,6 +99,7 @@ public class CsvFile extends TestFile{
         super(pathToFile);
         csvFormat = format;
         numHeaderRows = numberOfHeaderRows;
+        loadCsvFile();
     }
 
     @Override
@@ -111,18 +120,24 @@ public class CsvFile extends TestFile{
         return CSVParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
     }
 
+    private void loadCsvFile(){
+        csvContents = readAllFileContents();
+    }
+
     /**
-     * Returns the number of rows in the CSV file.
-     * @return int the number of rows in the CSV file.
+     * Returns the total number of rows in the CSV file, including headers.
+     * @return int the total number of rows in the CSV file, including headers.
      */
-    public int getNumberOfRows(){
-        try(var parser = getParser()){
-            return parser.getRecords().size();
-        }
-        catch(IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
-            return -1;
-        }
+    public int getNumberOfTotalRows(){
+        return csvContents.size();
+    }
+
+    /**
+     * Returns the number of rows of data in the CSV file. Does not include header rows.
+     * @return int the number of data rows in the CSV file. Does not include header rows.
+     */
+    public int getNumberOfDataRows(){
+        return csvContents.size() - numHeaderRows;
     }
 
     /**
@@ -133,13 +148,7 @@ public class CsvFile extends TestFile{
      */
     public List<String> readRowData(int rowIndex){
         int actualRowIndex = rowIndex - 1 + numHeaderRows;
-        try(var parser = getParser()){
-            return parser.getRecords().get(actualRowIndex).toList();
-        }
-        catch(IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing row {}. Taking into consideration {} header row(s)", actualRowIndex, numHeaderRows));
-            return Collections.emptyList();
-        }
+        return csvContents.get(actualRowIndex);
     }
 
     /**
@@ -176,7 +185,7 @@ public class CsvFile extends TestFile{
             return  allFileContents;
         }
         catch (IOException ioe){
-            log.trace(SentinelStringUtils.format("IOException caught while parsing CSV file {}.", toPath()));
+            log.trace(SentinelStringUtils.format(IOEXCEPTION_CAUGHT_WHILE_PARSING_CSV_FILE, toPath()));
             return Collections.emptyList();
         }
     }
@@ -190,13 +199,7 @@ public class CsvFile extends TestFile{
         if(numHeaderRows < 1){
             throw new IndexOutOfBoundsException("This method is undefined for CSV files without header rows.");
         }
-        try(var parser = getParser()){
-            return parser.getRecords().get(numHeaderRows - 1).toList(); //last header row is treated as the one that the data rows conform to.
-        }
-        catch(IOException ioe){
-            log.trace("IOException caught while parsing column headers.");
-            return Collections.emptyList();
-        }
+        return csvContents.get(numHeaderRows - 1); //last header row is treated as the one that the data rows conform to.
     }
 
     /**
@@ -216,6 +219,7 @@ public class CsvFile extends TestFile{
         } catch (IOException e) {
             throw new FileException(e, this);
         }
+        csvContents = newFileContents;
     }
 
     /**
@@ -244,9 +248,8 @@ public class CsvFile extends TestFile{
      */
     public void writeAllCellsInColumn(int columnIndex, String newValue){
         int adjustedColumnIndex = columnIndex - 1;
-        var fileContents = readAllFileContents();
-        fileContents.stream().skip(numHeaderRows).forEach(row -> row.set(adjustedColumnIndex, newValue));
-        writeFileContents(fileContents);
+        csvContents.stream().skip(numHeaderRows).forEach(row -> row.set(adjustedColumnIndex, newValue));
+        writeFileContents(csvContents);
     }
 
     /**
@@ -298,7 +301,7 @@ public class CsvFile extends TestFile{
         int adjustedColumnIndex = columnIndex - 1;
         List<String> allCellDataForColumn = new ArrayList<>();
         //skip header row(s), then add the column data from each row
-        readAllFileContents().stream().skip(numHeaderRows).forEach(row -> allCellDataForColumn.add(row.get(adjustedColumnIndex)));
+        csvContents.stream().skip(numHeaderRows).forEach(row -> allCellDataForColumn.add(row.get(adjustedColumnIndex)));
         return allCellDataForColumn;
     }
 
@@ -332,4 +335,90 @@ public class CsvFile extends TestFile{
             return allColumnData.stream().allMatch(cell -> StringUtils.equals(cell, textToMatch));
         }
     }
+
+    /**
+     * Returns true if all cells in the given column are empty.
+     * @param columnHeader String name of the column.
+     * @return boolean true if all cells are empty, false otherwise (any cell has content).
+     */
+    public boolean verifyAllColumnCellsEmpty(String columnHeader){
+        return verifyAllColumnCellsEmpty(getColumnIndex(columnHeader));
+    }
+
+    /**
+     * Returns true if all cells in the given column are empty.
+     * @param columnIndex int index of the column, starting at 1.
+     * @return boolean true if all cells are empty, false otherwise (any cell has content).
+     */
+    public boolean verifyAllColumnCellsEmpty(int columnIndex){
+        var allColumnData = readAllCellDataForColumn(columnIndex);
+        return allColumnData.stream().allMatch(StringUtils::isEmpty);
+    }
+
+    /**
+     * Returns true if all cells in the given columns are not empty (all cells have content).
+     * @param columnHeader String name of the column.
+     * @return boolean true if all cells are not empty, false otherwise (any cell does not have content).
+     */
+    public boolean verifyAllColumnCellsNotEmpty(String columnHeader){
+        return verifyAllColumnCellsNotEmpty(getColumnIndex(columnHeader));
+    }
+
+    /**
+     * Returns true if all cells in the given columns are not empty (all cells have content).
+     * @param columnIndex int index of the column, starting at 1.
+     * @return boolean true if all cells are not empty, false otherwise (any cell does not have content).
+     */
+    public boolean verifyAllColumnCellsNotEmpty(int columnIndex){
+        var allColumnData = readAllCellDataForColumn(columnIndex);
+        return allColumnData.stream().noneMatch(StringUtils::isEmpty);
+    }
+
+    /**
+     * Returns true if the csv file has the given header.
+     * If partialMatch == true, then the comparison is a "contains", meaning this method will return true if any column contains the given columnHeader.
+     * If partialMatch == false, then this comparison is an "equals", meaning this method will return true only if any column exactly matches the given columnHeader.
+     * @param columnHeader String name of the column to check existence of.
+     * @param partialMatch boolean true if the comparison should be "contains", false if comparison should be "equals".
+     * @return boolean true if the csv file has a column header matching the given columnHeader
+     */
+    public boolean verifyColumnHeaderEquals(String columnHeader, boolean partialMatch){
+        var headers = readHeaders();
+        if(partialMatch)
+            return headers.stream().anyMatch(actualHeader -> StringUtils.contains(actualHeader, columnHeader));
+        else
+            return headers.stream().anyMatch(actualHeader -> StringUtils.equals(actualHeader, columnHeader));
+    }
+
+    /**
+     * Returns true if any cell in the given column match the text value given.
+     *
+     * @param columnHeader String the name of the column
+     * @param textToMatch String the text that should be in a cell
+     * @param partialMatch boolean if true, method returns true if any cell contains the textToMatch. if false, method returns true if any cell equals the textToMatch.
+     * @return boolean true if the column contains the given text in any cell, false if not
+     */
+    public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch, boolean partialMatch){
+        return verifyAllColumnCellsContain(getColumnIndex(columnHeader), textToMatch, partialMatch);
+    }
+
+    /**
+     * Returns true if any cells in the given column match the text value given.
+     *
+     * @param columnIndex int the index of the column. Starting at 1.
+     * @param textToMatch String the text that should be in a cell
+     * @param partialMatch boolean if true, method returns true if any cell contains the textToMatch. if false, method returns true if any cell equals the textToMatch.
+     * @return boolean true if the column contains the given text in any cell, false if not
+     */
+    public boolean verifyAnyColumnCellContains(int columnIndex, String textToMatch, boolean partialMatch){
+        var allColumnData = readAllCellDataForColumn(columnIndex);
+
+        if(partialMatch){
+            return allColumnData.stream().anyMatch(cell -> StringUtils.contains(cell, textToMatch));
+        }
+        else{
+            return allColumnData.stream().anyMatch(cell -> StringUtils.equals(cell, textToMatch));
+        }
+    }
+
 }

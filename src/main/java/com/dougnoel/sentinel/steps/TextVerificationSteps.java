@@ -1,9 +1,9 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import com.dougnoel.sentinel.system.DownloadManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +13,8 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
+
+import java.io.IOException;
 
 public class TextVerificationSteps {
 	
@@ -70,34 +72,45 @@ public class TextVerificationSteps {
      * @param text String The text to verify exists in the element.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) {
+    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
         String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
         String partialMatchText = partialMatch ? "contain" : "exactly match";
-        
-        if (elementName.contains("URL")) {
-            verifyURLTextContains(text);
-        } else {
-            String elementText = getElement(elementName).getText();
-            var expectedResult = SentinelStringUtils.format(
-                    "Expected the {} element to {}{} the text {}. The element contained the text: {}",
-                    elementName, negateText, partialMatchText, text, elementText
-                            .replace("\n", " "));
-            log.trace(expectedResult);
-            if (partialMatch) {
-                if (negate) {
-                    assertFalse(expectedResult, elementText.contains(text));
+
+        String expectedResult;
+
+        switch(elementName){
+            case("URL"):
+                verifyURLTextContains(text);
+                break;
+            case("most recently downloaded file"):
+                expectedResult = SentinelStringUtils.format(
+                        "Expected the most recently downloaded file to contain the text {}. File location:",
+                        text, DownloadManager.getMostRecentDownloadPath());
+                log.trace(expectedResult);
+                assertEquals(expectedResult, !negate, DownloadManager.verifyTextInFile(text));
+                break;
+            default:
+                String elementText = getElement(elementName).getText();
+                expectedResult = SentinelStringUtils.format(
+                        "Expected the {} element to {}{} the text {}. The element contained the text: {}",
+                        elementName, negateText, partialMatchText, text, elementText
+                                .replace("\n", " "));
+                log.trace(expectedResult);
+                if (partialMatch) {
+                    if (negate) {
+                        assertFalse(expectedResult, elementText.contains(text));
+                    } else {
+                        assertTrue(expectedResult, elementText.contains(text));
+                    }
                 } else {
-                    assertTrue(expectedResult, elementText.contains(text));
+                    if (negate) {
+                        assertFalse(expectedResult, StringUtils.equals(elementText, text));
+                    } else {
+                        assertTrue(expectedResult, StringUtils.equals(elementText, text));
+                    }
                 }
-            } else {
-                if (negate) {
-                    assertFalse(expectedResult, StringUtils.equals(elementText, text));
-                } else {
-                    assertTrue(expectedResult, StringUtils.equals(elementText, text));
-                }
-            }
         }
     }
 
@@ -200,7 +213,7 @@ public class TextVerificationSteps {
      * @param key String the key to retrieve the text to match from the configuration manager
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the value (?:entered|selected|used) for the (.*?)$")
-    public static void verifyTextContainsStoredValue(String elementName, String assertion, String matchType, String key) {
+    public static void verifyTextContainsStoredValue(String elementName, String assertion, String matchType, String key) throws IOException {
     	var textToMatch = Configuration.toString(key);
         verifyElementTextContains(elementName, assertion, matchType, textToMatch);
     }
