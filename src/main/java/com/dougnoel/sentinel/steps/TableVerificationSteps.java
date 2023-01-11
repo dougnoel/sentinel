@@ -111,13 +111,18 @@ public class TableVerificationSteps {
      * <li>I verify the Lottery table does not have a Date column</li>
      * <li>I verify the Discography table does not have the Album Name column </li>
      * </ul>
-     * @param tableName String name of the table containing the column
-     * @param columnName String name of the column to verify
+     * @param tableName String name of the table containing the column. If equal (ignore case) to "csv", we redirect to the CsvSteps.verifyColumnExists() method.
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param matchType String whether we are doing an exact match or a partial match
+     * @param columnName String name of the column to verify
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) (?:a|the) (.*?) column$")
     public static void verifyColumnExists(String tableName, String assertion, String matchType, String columnName) throws Exception {
+        if(tableName.equalsIgnoreCase("csv")){
+            CsvSteps.verifyCsvColumnExists(assertion, matchType, columnName);
+            return;
+        }
+
         Table table = getElementAsTable(tableName);
         boolean negate = !StringUtils.isEmpty(assertion);
         String negateText = negate ? "not " : "";
