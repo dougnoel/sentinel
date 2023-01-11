@@ -1,5 +1,5 @@
 #Author: Doug Noël
-@example @table
+@example @table @441
 Feature: Table Tests
   Testing the Table Page Object Functionality
 	
@@ -123,3 +123,11 @@ Feature: Table Tests
     When I find the 9th column in the Example table and click the cell in the 2nd row
     Then I verify the JS alert contains the text This is Charlotte
       And I close the JS alert
+
+  @443 @table-enter-text
+  Scenario: Enter text into a text box within a table
+    Given I am on the Table Page
+    When I find the 2nd row in the Example Table and enter the text test5 in the comment box
+    Then I verify the cell in the 2nd row and the Comment column of the Example Table contains the text test5
+    When I find the last row in the Example Table and enter the text test123 in the comment box
+    Then I verify the cell in the last row and the Comment column of the Example Table contains the text test123
