@@ -48,15 +48,17 @@ public class VerificationSteps {
      * </ul><p>
      * <b>Scenario Outline Example:</b>
      * I verify the value of the <b>&lt;String&gt;</b> is <b>&lt;Number&gt;</b> <b>&lt;String (greater|less)&gt;</b> than the old value of the <b>&lt;String&gt;</b> <i>&lt;<b>&lt;String (rounded|truncated)&gt;</b> to <b>&lt;Integer&gt;</b> decimal places&gt;</i>
-     * @param elementName String the name of the element whose value/text we are fetching
+     * @param isStored String a value determining if we're fetching a stored value rather than an element value or raw value
+     * @param isElement String a value determining if we're fetching an element value rather than a raw value
+     * @param elementValueOrKey String a raw value, element name to get a value from, or key for a value determined by isStored and isElement
      * @param difference Double how much more/less the new value is from the stored value
      * @param operator String whether we're checking if the new value is more or less than the stored value
      * @param storedValueKey String the key of the stored value
      * @param isRounded String to determine if we're rounding <i>(half-up)</i>, or truncating
      * @param decimalCount String how many decimal places we wish to pad/truncate/round to <i>(0 if null with rounding/truncation specified)</i>
      */
-    @Then("^I verify the value of the (.*?) is (.*?) (greater|less) than the old value of the (.*?)( (rounded|truncated) to )?(([0-9]+) decimal places?)?$")
-    public static void verifyNumDiffFixedDecimals(String elementName, double difference, String operator, String storedValueKey, String isRounded, String decimalCount) {
+    @Then("^I verify the( stored)? value( of the )?(.*?) is (.*?) (greater|less) than the old value of the (.*?)( (rounded|truncated) to )?(([0-9]+) decimal places?)?$")
+    public static void verifyElementValueDiffFixedDecimals(String isStored, String isElement, String elementValueOrKey, double difference, String operator, String storedValueKey, String isRounded, Integer decimalCount) {
         String unparsedStoredValue = null;
         String actual = null;
 
@@ -70,9 +72,16 @@ public class VerificationSteps {
                 throw new NumberFormatException(storedValueMissingError);
             }
 
-            actual = getElement(elementName).getAttribute("value");
-            if(actual == null)
-                actual = getElement(elementName).getText();
+            if(!isStored.isBlank()) {
+                actual = Configuration.toString(elementValueOrKey);
+            }
+            else if (!isElement.isBlank()) {
+                actual = getElement(elementValueOrKey).getAttribute("value");
+                if (actual == null)
+                    actual = getElement(elementValueOrKey).getText();
+            }
+            else
+                actual = elementValueOrKey;
 
             double storedValue = Double.parseDouble(unparsedStoredValue);
             BigDecimal expectedValue;
@@ -81,23 +90,23 @@ public class VerificationSteps {
             else
                 expectedValue = BigDecimal.valueOf(storedValue - difference);
 
-            String expected = expectedValue.stripTrailingZeros().toString();
+            String expected = expectedValue.stripTrailingZeros().toPlainString();
             if(isRounded != null) {
                 int parsedDecimalCount = 0;
                 boolean rounded = true;
 
                 if(decimalCount != null)
-                    parsedDecimalCount = Integer.parseInt(decimalCount);
+                    parsedDecimalCount = decimalCount.intValue();
                 if(isRounded.contains("truncated"))
                     rounded = false;
 
                 expected = Decimal.formatDecimal(expectedValue, parsedDecimalCount, rounded);
             }
 
-            String expectedResult = SentinelStringUtils.format("Expected the value of the {} element to be {}. {} {} than the stored value {} {}{} decimal places. The found value was instead {}.",
-                    elementName, expected, difference, operator, unparsedStoredValue,
-                    (isRounded != null ? "with " : isRounded + " to "),
-                    (decimalCount != null ? "unspecified" : decimalCount),
+            String expectedResult = SentinelStringUtils.format("Expected the value {}. {} {} than the value {} {}{} decimal places. Found the value {} instead.",
+                    expected, difference, operator, unparsedStoredValue,
+                    (isRounded == null ? "with " : isRounded + " to "),
+                    (decimalCount == null ? "unspecified" : decimalCount.toString()),
                     actual);
 
             Assert.assertEquals(expectedResult, expected, actual);
@@ -106,7 +115,7 @@ public class VerificationSteps {
             if(unparsedStoredValue == null)
                 throw parseFailure;
             else {
-                String numberError = SentinelStringUtils.format("Expected numerical values, but the stored value was {}, and the element value was {}",
+                String numberError = SentinelStringUtils.format("Expected numerical values, but the old value was {}, and the new value was {}",
                         unparsedStoredValue, actual);
                 throw new NumberFormatException(numberError);
             }
