@@ -83,7 +83,7 @@ public class CsvFileTests {
     public void getNumberOfRowsInCsv() throws FileNotFoundException {
         var filePath = Path.of(filePathZeroHeaders);
         CsvFile file = new CsvFile(filePath, 0);
-        assertEquals("Expected CSV file to have 4 rows total.", 4, file.getNumberOfRows());
+        assertEquals("Expected CSV file to have 4 rows total.", 4, file.getNumberOfTotalRows());
     }
 
     @Test

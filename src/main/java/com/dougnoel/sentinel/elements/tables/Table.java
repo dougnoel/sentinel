@@ -157,7 +157,7 @@ public class Table extends Element {
 	protected WebElement getColumnHeaderElement(String columnHeader) {
 		Optional<WebElement> header = getOrCreateHeaderElements()
 				.stream()
-				.filter(element -> element.getText().strip().equals(columnHeader))
+				.filter(element -> element.getText().replaceAll("[\t\n\r]+"," ").strip().equals(columnHeader))
 				.findFirst();
 
 		if(header.isEmpty())
@@ -208,21 +208,20 @@ public class Table extends Element {
 	/**
 	 * Creates row data by searching each passed row element for cells, and then adding cells to the table's rows list.
 	 */
-	protected void createRowData(){
+	protected void createRowData() {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
-		while((System.currentTimeMillis() - startTime) < searchTime) {
+		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
 				var dataRows = getOrCreateRowElements();
 				for (WebElement row : dataRows) {
 					List<WebElement> cellElements = row.findElements(By.tagName(tableCellDataTag));
 					ArrayList<String> cells = new ArrayList<>();
-					cellElements.stream().forEach(cellElement -> cells.add(cellElement.getText()));
+					cellElements.forEach(cellElement -> cells.add(fetchDataFromCellInterior(cellElement)));
 					rows.add(cells);
 				}
 				return;
-			}
-			catch(org.openqa.selenium.StaleElementReferenceException sere) {
+			} catch (org.openqa.selenium.StaleElementReferenceException sere) {
 				log.trace("StaleElementReferenceException caught while creating row data. Resetting row elements and trying again.");
 				rowElements = null; // reset the row elements so the ones that are stale aren't used in the next iteration
 			}
@@ -358,7 +357,19 @@ public class Table extends Element {
 	public WebElement getElementInRowThatContains(By rowLocator, String elementLocatorText) {
 		return getElementInRowThatContains(rowLocator, By.xpath(".//*[contains(text(),'" + elementLocatorText + "')]"));
 	}
-	
+
+	/**
+	 * Returns a WebElement found inside the indicated row using another element in the row passed to this method
+	 * to find it.
+	 *
+	 * @param ordinalRow int takes -1 , 1...n where -1 signifies the last row
+	 * @param element com.dougnoel.sentinel.Element the element used to find the element to return
+	 * @return org.openqa.selenium.WebElement the first element inside the table that was found using the given locator
+	 */
+	public WebElement getElementInRowThatContains(int ordinalRow, Element element) {
+		return getElementInRowThatContains(ordinalRow, element.getBy());
+	}
+
 	/**
 	 * Returns a WebElement found inside the indicated row using the locator passed.
 	 * TODO: Fix this so that it uses Elements
@@ -479,6 +490,45 @@ public class Table extends Element {
 		getElementInRowThatContains(ordinalRow, elementToClick).click();
 	}
 
+	/**
+	 * Clicks the cell found at the given column, row position in the table.
+	 * <br>
+	 * 1,1 equates to the cell in the 1st row 1st column.
+	 * <br>
+	 * 0 or less equates to the last row or column
+	 * <p>
+	 * Example:
+	 * <p><ul>
+	 * <li>clickElementAtCoord(1,1) - Clicks the cell in the 1st column 1st row</li>
+	 * <li>clickElementAtCoord(8,2) - Clicks the cell in the 8th column 2nd row</li>
+	 * <li>clickElementAtCoord(1,0) - Clicks the cell in the 1st column last row</li>
+	 * <li>clickElementAtCoord(-1,1) - Clicks the cell in the last column 1st row</li>
+	 * </ul>
+	 * <b>Note:</b> Uses the constant xpath
+	 * <p>
+	 * <b>".//"+tableCellDataTag+"["+column+"]"</b>
+	 * <p>
+	 * to determine the location of the cell
+	 * @param column int the column number of the cell in the table
+	 * @param row int the row number of the cell in the table
+	 */
+	public void clickElementInCell(int column, int row) {
+		WebElement tableRow;
+		String cellLocator;
+
+		if(row < 1)
+			tableRow = getOrCreateRowElements().get(getOrCreateRowElements().size() - 1);
+		else
+			tableRow = getOrCreateRowElements().get(--row);
+
+		if(column < 1)
+			cellLocator = ".//" + tableCellDataTag + "[last()]";
+		else
+			cellLocator = ".//" + tableCellDataTag + "[" + column + "]";
+
+		WebElement cell = tableRow.findElement(By.xpath(cellLocator));
+		cell.click();
+	}
 	
 	/**
 	 * Returns a list of all the cell values in the given column.
@@ -493,13 +543,33 @@ public class Table extends Element {
 			log.error(errorMessage);
 			throw new NoSuchElementException(errorMessage);
 		}
-		 // add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
+		// add 1 because the List.getIndex method is 0-indexed and XPath is 1-indexed
 		int xpathIndexOfHeader = arrayIndexOfHeader + 1;
 		
 		List<String> cellData = new ArrayList<>();
 		this.element().findElements(By.xpath(".//" + tableCellDataTag + "[" + xpathIndexOfHeader + "]")).stream()
-				.forEach(cell -> cellData.add(cell.getText()));
+				.forEach(cellElement -> cellData.add(fetchDataFromCellInterior(cellElement)));
 		return cellData;
+	}
+
+	/**
+	 * Accepts a WebElement for a cell, and attempts first to get a value from a child input.
+	 * Failing this, it returns the text of the given element for items such as headers.
+	 * @param cellElement WebElement the element object for the cell to fetch data from
+	 * @return String the text/value found within the element
+	 */
+	protected String fetchDataFromCellInterior(WebElement cellElement){
+		String data;
+		data = cellElement.getText();
+		if (StringUtils.isBlank(data)){
+			try{
+				data = cellElement.findElement(By.tagName("input")).getAttribute("value");
+			}
+			catch(NoSuchElementException nsee){
+				log.trace("NoSuchElementException caught while attempting to find input element in table cell. Cell is blank.");
+			}
+		}
+		return data;
 	}
 
 	/**

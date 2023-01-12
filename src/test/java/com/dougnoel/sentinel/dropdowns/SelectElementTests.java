@@ -26,7 +26,7 @@ public class SelectElementTests {
 	public void SelectAsValueTest() {
 		BaseSteps.navigateToPage("DropdownPage");
 		getElementAsDropdown("Dropdown").select(SelectorType.VALUE, "1");
-		assertEquals("Expecting select element to be selected.", "Option 1", getElementAsDropdown("Dropdown").getSelectedText());
+		assertEquals("Expecting select element to be selected.", "Option 1", getElementAsDropdown("Dropdown").getText());
 	}
 
 }

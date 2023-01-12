@@ -21,6 +21,12 @@ import com.google.common.reflect.ClassPath.ClassInfo;
 
 import org.openqa.selenium.NoSuchElementException;
 
+/**
+ * An implementation of the Factory design pattern for creating Elements for Page objects.
+ * 
+ * @author dougnoel@gmail.com
+ *
+ */
 public class ElementFactory {
     
     protected static Map<String,Class<?>> elementClasses = new HashMap<>();
@@ -37,10 +43,11 @@ public class ElementFactory {
      * If we don't find the element type in either location, we create a base Element type.
      * 
      * @param elementName String the name of the element to create
-     * @param page Page the page object to lookup the element from
+     * @param page Page the page object that contains the element definition
      * @return Object the element that is created
      */
 	public static Object createElement(String elementName, Page page) {
+		//elementData is a map of all the selectors (ex. XPATH|"//body/blah")
 		Map<String, String> elementData = findElementData(elementName, page.getName());
 		
 		if (elementData == null) {

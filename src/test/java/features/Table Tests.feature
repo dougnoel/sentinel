@@ -1,5 +1,5 @@
 #Author: Doug Noël
-@example @table
+@example @table @441
 Feature: Table Tests
   Testing the Table Page Object Functionality
 	
@@ -104,3 +104,30 @@ Feature: Table Tests
       And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
+
+  @table-element-clickable
+  Scenario: I click the button on a table using its column row position
+    Given I am on the Table Page
+    When I find the 9th column in the Example table and click the cell in the 1st row
+    Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
+    When I find the 9th column in the Example table and click the cell in the first row
+    Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
+    When I find the 9th column in the Example table and click the cell in the last row
+    Then I verify the JS alert contains the text This is Dave
+      And I close the JS alert
+    When I find the 9th column in the Example table and click the cell in the first row
+    Then I verify the JS alert contains the text This is Bob
+      And I close the JS alert
+    When I find the 9th column in the Example table and click the cell in the 2nd row
+    Then I verify the JS alert contains the text This is Charlotte
+      And I close the JS alert
+
+  @443 @table-enter-text
+  Scenario: Enter text into a text box within a table
+    Given I am on the Table Page
+    When I find the 2nd row in the Example Table and enter the text test5 in the comment box
+    Then I verify the cell in the 2nd row and the Comment column of the Example Table contains the text test5
+    When I find the last row in the Example Table and enter the text test123 in the comment box
+    Then I verify the cell in the last row and the Comment column of the Example Table contains the text test123

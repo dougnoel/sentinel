@@ -1,7 +1,7 @@
 #language: en
 #Author: ty.pixelplane@gmail.com
 
-@239
+@239 @WindowsOnly
 Feature: 239 Implement WinAppDriver to automate windows
   As a user I want to be able to automate Windows 10 OS,
   so that I can automate things that cannot be automated in the browser.
