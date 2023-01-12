@@ -122,7 +122,7 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return String the string with variables replaced as applicable
 	 */
 	public static String replaceVariable(String text) {
-		Matcher matcher = Pattern.compile("\\{.*?\\}").matcher(text);
+		Matcher matcher = Pattern.compile("\\{[^\\}]*+\\}").matcher(text);
 		while (matcher.find()) {
 			var variable = matcher.group();
 			var variableName = StringUtils.substring(variable, 1, -1);
