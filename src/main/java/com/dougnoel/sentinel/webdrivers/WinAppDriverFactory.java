@@ -6,7 +6,6 @@ import java.lang.ProcessBuilder.Redirect;
 import java.net.URL;
 import java.util.Optional;
 
-import com.dougnoel.sentinel.system.FileManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -50,7 +49,7 @@ public class WinAppDriverFactory {
 	 */
 	protected static WebDriver createWinAppDriver() {
 		startWinAppDriverExe();
-		String executable = FileManager.winSpecialFolderConverter(Configuration.executable());
+		String executable = Configuration.executable();
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", executable);
