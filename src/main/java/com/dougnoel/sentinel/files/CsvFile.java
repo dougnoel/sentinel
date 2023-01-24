@@ -399,7 +399,7 @@ public class CsvFile extends TestFile{
      * @return boolean true if the column contains the given text in any cell, false if not
      */
     public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch, boolean partialMatch){
-        return verifyAllColumnCellsContain(getColumnIndex(columnHeader), textToMatch, partialMatch);
+        return verifyAnyColumnCellContains(getColumnIndex(columnHeader), textToMatch, partialMatch);
     }
 
     /**
