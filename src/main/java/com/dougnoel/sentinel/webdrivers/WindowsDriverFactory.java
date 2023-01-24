@@ -66,8 +66,6 @@ public class WindowsDriverFactory {
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", executable);
 		capabilities.setCapability("ms:experimental-webdriver", true);
-		//capabilities.setCapability("app", "C:\\Windows\\System32\\calc.exe");
-		//capabilities.setCapability("appium:app", "C:\\Windows\\System32\\calc.exe");
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("automationName", "Windows");
 //		capabilities.setCapability("deviceName", "Windows10Machine");

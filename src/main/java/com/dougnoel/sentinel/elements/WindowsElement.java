@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.time.Duration;
 import java.util.Map;
 
 import com.dougnoel.sentinel.configurations.Time;
@@ -21,6 +22,9 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Interaction;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.Color;
 
 import io.appium.java_client.MobileBy;
@@ -144,12 +148,13 @@ public class WindowsElement extends Element {
 		var remainingText = getText();
 		if(StringUtils.isNotEmpty(remainingText)){
 			var element = element();
-			Actions action = new Actions(Driver.getWebDriver());
+			/*Actions action = new Actions(Driver.getWebDriver());
 			action.keyDown(element, Keys.LEFT_CONTROL)
 			.sendKeys("a")
 			.keyUp(Keys.LEFT_CONTROL)
 			.sendKeys(Keys.BACK_SPACE)
-			.perform();
+			.perform();*/
+			element.clear();
 
 			remainingText = getText();
 			if(StringUtils.isNotEmpty(remainingText)){
@@ -171,6 +176,19 @@ public class WindowsElement extends Element {
 	@Override
 	public Element click() {
 		element().click();
+		return this;
+	}
+
+	/**
+	 * Hovers over an element using PointerInput.
+	 * @return Element for chaining
+	 */
+	@Override
+	public Element hover() {
+		PointerInput input = new PointerInput(PointerInput.Kind.TOUCH, "input");
+		Sequence hover = new Sequence(input, 1);
+		hover.addAction(input.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), element().getLocation().x, element().getLocation().y));
+		//new Actions(Driver.getWebDriver()).moveToElement(element()).build().perform();
 		return this;
 	}
 
