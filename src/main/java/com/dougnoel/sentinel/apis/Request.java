@@ -29,6 +29,7 @@ public class Request {
 
 	private HttpRequestBase httpRequest = null;
 	private List<NameValuePair> parameters = new ArrayList<>();
+	private List<NameValuePair> headers = new ArrayList<>();
 	private StringEntity body = null;
 	
 	/**
@@ -65,10 +66,22 @@ public class Request {
 	 * Sets this as a json request.
 	 */
 	private void setHeaders() {
+		if (!headers.isEmpty()){
+			for(NameValuePair h : headers){
+				httpRequest.setHeader(h.getName(), h.getValue());
+			}
+		}
 		httpRequest.setHeader("Accept", "application/json");
 		httpRequest.setHeader("Content-type", "application/json");
 	}
-	
+	/**
+	 * Set a header and its value for a request.
+	 * @param name String the name being passed
+	 * @param value String the value to be passed
+	 */
+	public void addHeader(String name, String value) {
+		headers.add(new BasicNameValuePair(name, value));
+	}
 	/**
 	 * Creates a StringEntity to hold the json body.
 	 * @param body String the JSON to encode.
@@ -140,6 +153,7 @@ public class Request {
 		parameters.clear();
 		body = null;
 		httpRequest = null;
+		headers.clear();
 	}
 
 }
