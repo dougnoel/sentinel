@@ -120,23 +120,16 @@ public class Element {
 	}
 
 	/**
-	 * Searches for an element using the given locator for the passed duration. It will look
-	 * multiple times, as determined by the Time.interval() value which defaults to 10 milliseconds.
-	 * 
+	 * Searches for an element using the given locator and executes immediately
+	 *
 	 * @param locator By Selenium By locator
-	 * @param timeout Duration the amount of time we look for an element before returning failure
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement if found, otherwise null
 	 */
-	private WebElement getElementWithWait(final By locator, Duration timeout) {
+	private WebElement getElement(final By locator) {
 		try {
-		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
-			       .withTimeout(timeout)
-			       .pollingEvery(Time.interval())
-			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
-
-		return wait.until(d -> driver().findElement(locator));
+			return driver().findElement(locator);
 		}
-		catch (org.openqa.selenium.TimeoutException e) {
+		catch (org.openqa.selenium.TimeoutException | StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
 			return null;
 		}
 	}
@@ -191,7 +184,7 @@ public class Element {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		while((System.currentTimeMillis() - startTime) < searchTime) {
-			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+			element = findElementInCurrentFrame();
 	    	if (element != null) {
 	    		return element;
 	    	}
@@ -240,7 +233,7 @@ public class Element {
     		try {
     			for (WebElement iframe : iframes) {
         			driver().switchTo().frame(iframe);
-        			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+        			element = findElementInCurrentFrame();
         			if (element != null) {
         				return element;
         			}
@@ -262,17 +255,15 @@ public class Element {
 	}
 
 	/**
-	 * Searches for the current element within the current frame context. Searches each selector for the passed
-	 * amount of time as a Duration object. Recommended to be 100 milliseconds.
-	 * 
-	 * @param duration Duration total time to search for the element per selector
+	 * Searches for the current element within the current frame context. Searches each selector.
+	 *
 	 * @return WebElement the element if it is found, otherwise null
 	 */
-	protected WebElement findElementInCurrentFrameForDuration(Duration duration) {
-		WebElement element = null;
+	protected WebElement findElementInCurrentFrame() {
+		WebElement element;
 		for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 			log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
-			element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), duration);
+			element = getElement(createByLocator(selector.getKey(), selector.getValue()));
 			if (element != null) {
 				return element;
 			}
@@ -643,7 +634,7 @@ public class Element {
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			driver().switchTo().defaultContent();
-			WebElement element = findElementInCurrentFrameForDuration(Time.interval());
+			WebElement element = findElementInCurrentFrame();
 			if(element == null){
 				element = findElementInIFrame();
 			}
