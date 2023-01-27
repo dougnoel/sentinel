@@ -16,21 +16,7 @@ import javax.imageio.ImageIO;
 import com.dougnoel.sentinel.exceptions.FileException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotInteractableException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.Colors;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -129,7 +115,7 @@ public class Element {
 		try {
 			return driver().findElement(locator);
 		}
-		catch (org.openqa.selenium.TimeoutException | StaleElementReferenceException | org.openqa.selenium.NoSuchElementException e) {
+		catch (TimeoutException | StaleElementReferenceException | NoSuchElementException | InvalidArgumentException e) {
 			return null;
 		}
 	}
@@ -179,7 +165,6 @@ public class Element {
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
 	 */
 	protected WebElement element() {
-		driver().switchTo().defaultContent();
 		WebElement element = null;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
@@ -188,6 +173,7 @@ public class Element {
 	    	if (element != null) {
 	    		return element;
 	    	}
+			driver().switchTo().defaultContent();
 	    	element = findElementInIFrame();
 	    	if (element != null) {
 	    		return element;
@@ -249,7 +235,6 @@ public class Element {
     			log.trace(errorMessage);
     			return null;
     		}
-    		
     	}
     	return null;
 	}
@@ -469,10 +454,12 @@ public class Element {
 	 * @return FluentWait the wait object that can be invoked
 	 */
 	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
-		return new FluentWait<WebDriver>(driver())
-			       .withTimeout(timeout)
-			       .pollingEvery(Time.interval())
-			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+		return new FluentWait<>(driver())
+				.withTimeout(timeout)
+				.pollingEvery(Time.interval())
+				.ignoring(NoSuchElementException.class)
+				.ignoring(StaleElementReferenceException.class)
+				.ignoring(InvalidArgumentException.class);
 	}
 	
 	/**
