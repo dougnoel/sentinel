@@ -64,4 +64,12 @@ Feature: 89 API Testing
     Then I verify the response code equals 200
     When I GET record 10 from the pet endpoint
     Then I verify the response code equals 404
-  
+
+  @89F
+  Scenario: 89E DELETE Header Swagger Test
+    Given I use the API named Pet Store API
+    When I add an api_key header with the value 123
+    When I DELETE record 10 from the pet endpoint
+    Then I verify the response code equals 200
+    When I GET record 10 from the pet endpoint
+    Then I verify the response code equals 404

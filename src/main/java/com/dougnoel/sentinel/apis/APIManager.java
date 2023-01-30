@@ -58,7 +58,16 @@ public class APIManager {
 	public static void addParameter(String parameter, String value) {
 		getAPI().getRequest().addParameter(parameter, value);
 	}
-	
+
+	/**
+	 * Set a header and its value for a request.
+	 * @param name String the name being passed
+	 * @param value String the value to be passed
+	 */
+	public static void addHeader(String name, String value) {
+		getAPI().getRequest().addHeader(name, value);
+	}
+
 	/**
 	 * Send a request of the given type. The response will be stored in a Response object
 	 * that the APIManager can retrieve.

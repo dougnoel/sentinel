@@ -180,5 +180,16 @@ public class APISteps {
             }
         }
     }
-	
+
+	/**
+	 * Adds header into API request
+	 *
+	 * @param name String name of a header
+	 * @param value String value of the header
+	 */
+	@When("^I add an? (.*?) header with the value (.*?)$")
+	public void addHeader(String name, String value) {
+		APIManager.addHeader(name, value);
+	}
+
 }
