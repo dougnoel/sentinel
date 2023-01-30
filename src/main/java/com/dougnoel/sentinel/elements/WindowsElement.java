@@ -56,7 +56,7 @@ public class WindowsElement extends Element {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+			element = findElementInCurrentFrame();
 			if (element != null)
 				return element;
 		}
