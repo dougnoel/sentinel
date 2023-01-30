@@ -196,7 +196,9 @@ public class Element {
 			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 					.withTimeout(Time.out())
 					.pollingEvery(Time.interval())
-					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+					.ignoring(org.openqa.selenium.NoSuchElementException.class)
+					.ignoring(StaleElementReferenceException.class)
+					.ignoring(InvalidArgumentException.class);
 
 			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
@@ -229,7 +231,7 @@ public class Element {
         			driver().switchTo().parentFrame();
         		}
     		}
-    		catch(StaleElementReferenceException | NoSuchFrameException e) {
+    		catch(StaleElementReferenceException | NoSuchFrameException | InvalidArgumentException e) {
     			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
     					elementType, getName(), e);
     			log.trace(errorMessage);
