@@ -28,6 +28,10 @@ Feature: Verify and Edit CSVs
       And I verify all cells are empty in the comment column in the csv file
       And I verify all cells are not empty in the 4th column in the csv file
       And I verify all cells are empty in the 5th column in the csv file
+      And I verify the surname column of the csv has the text Truman
+      And I verify the surname column of the csv does not have the text truman
+      And I verify the 3rd column of the csv contains the text Tru
+      And I verify the 3rd column of the csv does not contain the text tru
     When I open src/test/resources/csv/test_0header.csv as a CSV file with 0 header rows
       And I set all values in the 4th column to 6 in the CSV file
     Then I verify the CSV file has the value 6 in the 4th column and the 1st row
