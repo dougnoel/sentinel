@@ -16,12 +16,14 @@ import com.dougnoel.sentinel.elements.ElementFactory;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
+import com.dougnoel.sentinel.enums.YAMLObjectType;
+import com.dougnoel.sentinel.system.YAMLObject;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
  * Page class to contain the details of an page.
  */
-public class Page {
+public class Page extends YAMLObject {
 	
 	protected static final SelectorType CLASS = SelectorType.CLASS;
 	protected static final SelectorType CSS = SelectorType.CSS;
@@ -33,8 +35,7 @@ public class Page {
 	protected static final PageObjectType EXECUTABLE = PageObjectType.EXECUTABLE;
 
     protected Map<String,Element> elements;
-    
-    private String pageName;
+
     private PageObjectType pageType = null;
     
     /**
@@ -42,21 +43,9 @@ public class Page {
      * @param pageName String the exact name of the page as stored on disk without extension.
      */
     public Page(String pageName) {
-    	this.pageName = pageName;
+    	super(pageName);
+    	this.yamlObjectType = YAMLObjectType.PAGE;
         elements = new HashMap<>();
-    }
-
-    /**
-     * Returns the name of the page without the .yml extension but otherwise
-     * exactly matching the page object name on file. Since a page object
-     * cannot be created without a valid page object yaml file, this value will
-     * never be null or empty. The page name will also not have any spaces in it
-     * as those are always stripped before creation.
-     * 
-     * @return String the name of the page object
-     */
-    public String getName() {
-        return pageName;
     }
 
     /**
@@ -116,7 +105,7 @@ public class Page {
 	public PageObjectType getPageObjectType() {
 		
 		if (pageType == null) {
-			pageType = Configuration.getPageObjectType(pageName);
+			pageType = Configuration.getPageObjectType(yamlObjectName);
 		}
 		return pageType;
 	}
@@ -144,9 +133,8 @@ public class Page {
 	 * Gets the text on the JS alert.
 	 * 
 	 * @return String the text in the JS alert
-	 * @throws NoAlertPresentException if no alert is present.
 	 */
-	public String getJsAlertText() throws NoAlertPresentException {
+	public String getJsAlertText() {
 		var driver = WebDriverFactory.getWebDriver();
 		String text = "";
 		String currentWindow = driver.getWindowHandle();

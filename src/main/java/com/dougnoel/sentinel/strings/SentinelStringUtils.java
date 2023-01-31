@@ -4,11 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.CharUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.openqa.selenium.InvalidArgumentException;
+
+import com.dougnoel.sentinel.configurations.Configuration;
 
 public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 
@@ -100,6 +104,32 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 				.forEach(builder::append);
 
 		return Integer.parseInt(builder.toString());
+	}
+	
+	/**
+	 * Returns a string with any strings enclosed in curly braces "{}" replaced with values
+	 * stored in the passed YAMLData object under testdata/variables. For example, given the string
+	 * "{first_name} Smith" and the yaml entry in the passed file:
+	 * 
+	 * testdata:
+	 *   default:
+	 *     variables:
+	 *       first_name: Bob
+	 *   
+	 * This method would return: "Bob Smith".
+	 * If there are no values to replace, this method returns the string intact.
+	 * @param text String the text to search for variable replacement
+	 * @return String the string with variables replaced as applicable
+	 */
+	public static String replaceVariable(String text) {
+		Matcher matcher = Pattern.compile("\\{[^\\}]*+\\}").matcher(text);
+		while (matcher.find()) {
+			var variable = matcher.group();
+			var variableName = StringUtils.substring(variable, 1, -1);
+			var value = Configuration.getTestData("variables", variableName);
+			text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+		}
+		return text;
 	}
 
 }
