@@ -2,16 +2,20 @@ package com.dougnoel.sentinel.configurations;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.system.TestManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ConfigurationTests {
 	private static String originalEnvironment = null;
+	private static final String ENV = "env";
+	private static final String PROD = "prod";
 	private static final String STAGE = "stage";
 	private static final String DEV = "dev";
 	private static final String DEFAULT = "default";
@@ -28,13 +32,19 @@ public class ConfigurationTests {
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() {
 		originalEnvironment = Configuration.environment();
-		Configuration.environment(STAGE);
+		Configuration.update(ENV, STAGE);
 		PageManager.setPage("MockTestPage");
+	}
+	
+	@After
+	public void tearDownAfterEachTest() {
+		PageManager.setPage("MockTestPage");
+		Configuration.update(ENV, STAGE);
 	}
 
 	@AfterClass
 	public static void tearDownAfterAllTestsAreFinished() throws Exception {
-		Configuration.environment(originalEnvironment);
+		Configuration.update(ENV, originalEnvironment);
 		Driver.quitAllDrivers();
 	}
 
@@ -68,6 +78,11 @@ public class ConfigurationTests {
 		Configuration.accountInformation(DOESNOTEXIST, PASSWORD);
 	}
 	
+	public void getEnvironmentDefault() {
+		Configuration.clear(ENV);
+		assertEquals("Expecting the default env to be set if none is given.", "localhost", Configuration.environment());
+	}
+	
 	@Test
 	public void loadDefaultEnvironmentUsername() {
 		assertEquals("Expecting the default env RegularUser username", "test", Configuration.accountInformation(REGULARUSER, USERNAME));
@@ -80,34 +95,45 @@ public class ConfigurationTests {
 	
 	@Test
 	public void loadValueForNonExistentEnvironment() {
-		System.setProperty("env", DEV);
+		Configuration.update(ENV, DEV);
 		assertEquals("Expecting the default env RegularUser password", "test", Configuration.accountInformation(REGULARUSER, PASSWORD));
 	}
 	
 	@Test(expected = FileException.class)
 	public void failToLoadNonExistentUsernameAndNonExistentEnvironment() {
-		System.setProperty("env", DEV);
+		Configuration.update(ENV, DEV);
 		Configuration.accountInformation(DOESNOTEXIST, USERNAME);
 	}	
 	
 	@Test
 	public void loadStageUrlUsingDefault() {
-		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.getPageURL("DefaultUrls"));
+		PageManager.setPage("DefaultUrls");
+		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.getURL(TestManager.getActiveTestObject()));
 	}
 	
 	@Test
 	public void loadStageUrlUsingBase() {
-		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.getPageURL("BaseUrl"));
+		PageManager.setPage("BaseUrl");
+		assertEquals("Expecting constructed Url.", "http://stage.dougnoel.com/", Configuration.getURL(TestManager.getActiveTestObject()));
+	}
+	
+	@Test
+	public void loadProdUrl() {
+		Configuration.update(ENV, PROD);
+		PageManager.setPage("DefaultUrls");
+		assertEquals("Expecting loaded Url.", "http://dougnoel.com/", Configuration.getURL(TestManager.getActiveTestObject()));
 	}
 	
 	@Test(expected = FileException.class)
 	public void failToLoadDefaultUrl() {
-		Configuration.getPageURL("NoDefaultUrl");
+		PageManager.setPage("NoDefaultUrl");
+		Configuration.getURL(TestManager.getActiveTestObject());
 	}
 	
 	@Test(expected = FileException.class)
 	public void failToLoadPageWhenFindingUrl() {
-		Configuration.getPageURL("FakePageObject");
+		PageManager.setPage("FakePageObject");
+		Configuration.getURL(TestManager.getActiveTestObject());
 	}
 
 	@Test

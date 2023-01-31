@@ -57,7 +57,7 @@ public class CsvSteps {
     public static void openSpecificFileAsCsv(String fileLocation, int numberOfHeaderRows) throws FileNotFoundException {
         String filePath;
         try{
-            filePath = Configuration.getTestdataValue(fileLocation.trim(), "fileLocation");
+            filePath = Configuration.getTestData(fileLocation.trim(), "fileLocation");
         }
         catch(FileException fe){
             filePath = fileLocation;
@@ -260,28 +260,50 @@ public class CsvSteps {
      * @param assertion String Assertion dictating if we are checking if the column does contain or does not contain
      * @param key String the key to retrieve the text to match from the configuration manager
      */
-    @Then("^I verify the (.*?) column of the (?:csv|CSV)( do(?:es)? not)? contains? the same text (?:entered|selected|used) for the (.*)$")
-    public static void verifyStoredTextAppearsInColumn(String column, String assertion, String key) {
-        CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
+    @Then("^I verify the (.*?) column of the (?:csv|CSV)( do(?:es)? not)? (has|have|contains?) the same text (?:entered|selected|used) for the (.*)$")
+    public static void verifyStoredTextAppearsInColumn(String column, String assertion, String matchType, String key) {
         var textToMatch = Configuration.toString(key);
-        boolean negate = !StringUtils.isEmpty(assertion);
         String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
         Assert.assertNotNull(errorMessage, textToMatch);
 
-        errorMessage = SentinelStringUtils.format("Expected the {} column of the {} to contain any cells with the text {}", column, textToMatch);
+        verifyTextAppearsInColumn(column, assertion, matchType, textToMatch);
+    }
+
+    /**
+     * Verifies a csv column does or does not contain text. Can be partial or exact match.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify the Name column of the csv contains the text Sam</li>
+     * <li>I verify the Timezone column of the csv has the text EST </li>
+     * <li>I verify the Airport Code column of the CSV does not contain the text RDU</li>
+     * <li>I verify the Airport Code column of the CSV does not have the text RDU</li>
+     * </ul>
+     * @param column String Name of the column to verify
+     * @param assertion String Assertion dictating if we are checking if the column does contain or does not contain
+     * @param textToMatch String the key to retrieve the text to match from the configuration manager
+     */
+    @Then("^I verify the (.*?) column of the (?:csv|CSV)( do(?:es)? not)? (has|have|contains?) the text (.*)$")
+    public static void verifyTextAppearsInColumn(String column, String assertion, String matchType, String textToMatch) {
+        CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String errorMessage;
+        boolean partialMatch = matchType.contains(CONTAIN);
+
+        errorMessage = SentinelStringUtils.format("Expected the {} column of the CSV to contain any cells with the text {}", column, textToMatch);
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertFalse(errorMessage, file.verifyAnyColumnCellContains(SentinelStringUtils.parseOrdinal(column), textToMatch, true));
+                assertFalse(errorMessage, file.verifyAnyColumnCellContains(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             } else {
-                assertTrue(errorMessage, file.verifyAnyColumnCellContains(SentinelStringUtils.parseOrdinal(column), textToMatch, true));
+                assertTrue(errorMessage, file.verifyAnyColumnCellContains(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
             if (negate) {
-                assertFalse(errorMessage, file.verifyAnyColumnCellContains(column, textToMatch, true));
+                assertFalse(errorMessage, file.verifyAnyColumnCellContains(column, textToMatch, partialMatch));
             } else {
-                assertTrue(errorMessage, file.verifyAnyColumnCellContains(column, textToMatch, true));
+                assertTrue(errorMessage, file.verifyAnyColumnCellContains(column, textToMatch, partialMatch));
             }
         }
     }
