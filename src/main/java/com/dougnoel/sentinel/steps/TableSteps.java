@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
+import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -191,6 +192,32 @@ public class TableSteps {
 		}
 
 		getElementAsTable(tableName).clickElementInCell(column, row);
+	}
+
+	/**
+	 * Enters a text value in a table in a row. The row is determined by
+	 * ordinal value (last, 1st, 2nd, 3rd, etc.).
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>I find the 3rd row in the Stats Editor Table and enter the text "3" in the Sequence Number</li>
+	 * <li>I find the Last in the Stats Editor Table and enter the text "3" in the Sequence Number</li>
+	 * </ul>
+	 * @param ordinal String the row number. Can be "la" to specify the last row, or an integer.
+	 * @param tableName String the name of the table to search
+	 * @param text String the text to enter into the element
+	 * @param elementName String the name of the element into which to enter text
+	 */
+	@When("^I find the (\\d+|la)(?:st|nd|rd|th) row in the (.*?) and enter the text (.*?) in the (.*?)$")
+	public static void enterAssociatedTextInTable(String ordinal, String tableName, String text, String elementName) {
+
+		int ordinalRow;
+		if (StringUtils.equals(ordinal, "la") ) {
+			ordinalRow = -1;
+		} else {
+			ordinalRow = Integer.parseInt(ordinal);
+		}
+		getElementAsTable(tableName).getElementInRowThatContains(ordinalRow, getElement(elementName)).sendKeys(text);
 	}
 
 }

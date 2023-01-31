@@ -2,6 +2,8 @@ urls:
   default: https://petstore3.swagger.io/api/v3/openapi.json
 testdata:
   default:
+    variables:
+      test_id: 10
     puppydata:
       json: |
        {

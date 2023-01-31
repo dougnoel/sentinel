@@ -3,6 +3,8 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Duration;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +58,7 @@ public class APISteps {
 	 */
 	@Given("^I load (.*?) to use as the request body$")
 	public void loadRequestBody(String testdataName) {
-		String body = Configuration.getAPITestData(testdataName, "json");
+		String body = Configuration.getTestData(testdataName, "json");
         APIManager.setBody(body);
         log.trace("Body passed: {}", body);
 	}
@@ -117,7 +119,7 @@ public class APISteps {
 	 */
 	@When("^I (DELETE|GET) record (.*) from the (.*?) endpoint$")
 	public void sendRequest(String apiCallType, String parameter, String endpoint) {
-		sendRequest(apiCallType, endpoint + "/" + parameter);
+		sendRequest(apiCallType, endpoint + "/" + SentinelStringUtils.replaceVariable(parameter));
 	}
 	
 	/**
@@ -129,12 +131,21 @@ public class APISteps {
 	@When("^I verify the response code equals (\\d{3})$")
 	public void verifyResponseCodeEquals(int statusCode) {
 		Response response = APIManager.getResponse();
-		Integer responseCode = response.getResponseCode();
+		int responseCode = response.getResponseCode();
 		var expectedResult = SentinelStringUtils.format("Expected the response code to be {}, and it was {}.\nFull response:\n{}",
 				statusCode, responseCode, response.getResponse());
 		assertTrue(expectedResult, statusCode == responseCode);
 	}
-
+	
+	@When("^I verify the response was received in less than (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?$")
+	public void verifyResponseTime(double time) {
+		Duration timeLimit = Duration.ofMillis((long) (time * 1000));
+		Duration responseTime = APIManager.getResponse().getReponseTime();
+		
+		String expectedResult = SentinelStringUtils.format("Expected the response to take less than {} seconds, but the response took {} ",
+				time, responseTime);
+		assertTrue(expectedResult, responseTime.compareTo(timeLimit) < 0);
+	}
 
 	/**
 	 * Validates text in an API response.
@@ -148,7 +159,7 @@ public class APISteps {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
 
-        Integer responseCode = APIManager.getResponse().getResponseCode();
+        int responseCode = APIManager.getResponse().getResponseCode();
         String responseText = APIManager.getResponse().getResponse();
         String expectedResult = SentinelStringUtils.format(
                 "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
@@ -169,5 +180,16 @@ public class APISteps {
             }
         }
     }
-	
+
+	/**
+	 * Adds header into API request
+	 *
+	 * @param name String name of a header
+	 * @param value String value of the header
+	 */
+	@When("^I add an? (.*?) header with the value (.*?)$")
+	public void addHeader(String name, String value) {
+		APIManager.addHeader(name, value);
+	}
+
 }

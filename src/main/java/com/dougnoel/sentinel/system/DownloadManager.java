@@ -34,9 +34,10 @@ import de.redsix.pdfcompare.PdfComparator;
 import de.redsix.pdfcompare.RenderingException;
 import de.redsix.pdfcompare.env.SimpleEnvironment;
 
+
 /**
  * Manages Download actions and interactions, which handles CRUD and IO for Sentinel. This includes deleting files, getting/setting files, filenames, or file extensions,
- * monitoring downloads, verifying file has been downloaded, parsing PDF content for content verification, and 
+ * monitoring downloads, verifying file has been downloaded, parsing PDF content for content verification, and more.
  */
 public class DownloadManager {
     private static final Logger log = LogManager.getLogger(DownloadManager.class.getName()); // Create a logger.
@@ -142,7 +143,38 @@ public class DownloadManager {
     }
 
     /**
-     * Returns true is the given text appears on a particular page of the passed PDF that is opened in a new tab,
+     * Returns true if the given file contains the given text. Reads the file with the given text encoding.
+     * @param textFile File the file to check the text of.
+     * @param expectedText String the text to search for.
+     * @param encoding String encoding of the text file. Standard is "UTF-8", or maybe "ASCII"
+     * @return boolean true if the file contains the text. false otherise
+     * @throws IOException in the case that the file does not exist, cannot be read, or another generic IO exception
+     */
+    public static boolean verifyTextInFile(File textFile, String expectedText, String encoding) throws IOException {
+        String fileContent;
+
+        try{
+            fileContent = FileUtils.readFileToString(textFile, encoding);
+            return fileContent.contains(expectedText);
+        }
+        catch(IOException ioe){
+            String message = SentinelStringUtils.format("Unable to open file with absolute path {}.", textFile.getAbsolutePath());
+            throw new IOException(message, ioe);
+        }
+    }
+
+    /**
+     * Returns true if the most recently-downloaded file contains the given text. Reads the file with UTF-8 encoding.
+     * @param expectedText String the text to search for.
+     * @return boolean true if the file contains the text. false otherise
+     * @throws IOException in the case that the file does not exist, cannot be read, or another generic IO exception
+     */
+    public static boolean verifyTextInFile(String expectedText) throws IOException {
+        return verifyTextInFile(getMostRecentDownloadPath().toFile(), expectedText, "UTF-8");
+    }
+
+    /**
+     * Returns true if the given text appears on a particular page of the passed PDF that is opened in a new tab,
      * without needing to download it. It takes the URL of the PDF which can be done
      * by using PageManager.getCurrentUrl() if the PDF is the active window. It also
      * takes a string of the text you expect to find, and the page number you expect

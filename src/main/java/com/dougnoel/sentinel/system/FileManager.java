@@ -224,25 +224,24 @@ public class FileManager {
 	 * @param pathToProcess String path to replace windows special folder shortcuts
 	 * @return String the path string with windows special folder shortcuts replaced with their environment equivalent path
 	 */
-	public static String winSpecialFolderConverter(String pathToProcess){
+	public static String winSpecialFolderConverter(String pathToProcess) {
 		String originalPath = pathToProcess;
-		final String DETECTED_OS = operatingSystem();
+		String dectectedOS = operatingSystem();
+		if (dectectedOS.equals("windows")) {
+			Map<String, String> windowsSpecialFoldersList = Map.ofEntries(entry("%appdata%", System.getenv("APPDATA")),
+					entry("%localappdata%", System.getenv("LOCALAPPDATA")),
+					entry("%USERPROFILE%", System.getenv("USERPROFILE")));
 
-		final Map<String, String> WINDOWS_SPECIAL_FOLDERS = Map.ofEntries(
-				entry("%appdata%", System.getenv("APPDATA")),
-				entry("%localappdata%", System.getenv("LOCALAPPDATA")),
-				entry("%USERPROFILE%", System.getenv("USERPROFILE"))
-		);
-		if(DETECTED_OS.equals("windows")) {
-			for(Map.Entry<String, String> entry : WINDOWS_SPECIAL_FOLDERS.entrySet()){
+			for (Map.Entry<String, String> entry : windowsSpecialFoldersList.entrySet()) {
 				pathToProcess = StringUtils.replaceIgnoreCase(pathToProcess, entry.getKey(), entry.getValue());
-				if(!pathToProcess.equals(originalPath)){
+				if (!pathToProcess.equals(originalPath)) {
 					break;
 				}
 			}
-		}
-		else {
-			String unsupportedMessage = SentinelStringUtils.format("Currently only windows operating systems are supported for special folders. Your detected operating system: {}", DETECTED_OS);
+		} else {
+			String unsupportedMessage = SentinelStringUtils.format(
+					"Currently only windows operating systems are supported for special folders. Your detected operating system: {}",
+					dectectedOS);
 			throw new FileException(unsupportedMessage, new File(pathToProcess));
 		}
 

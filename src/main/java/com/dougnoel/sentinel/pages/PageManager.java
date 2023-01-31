@@ -12,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.configurations.Time;
 import com.dougnoel.sentinel.enums.PageObjectType;
+import com.dougnoel.sentinel.system.TestManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
 /**
@@ -43,9 +44,10 @@ public class PageManager {
 	 */
 	public static void setPage(String pageName) {
 		try {
-			PageManager.page = PageFactory.buildOrRetrievePage(pageName);
-			pageObjectType = PageManager.getPage().getPageObjectType();
+			page = PageFactory.buildOrRetrievePage(pageName);
+			pageObjectType = page.getPageObjectType();
 			page.clearTables();
+			TestManager.setActiveTestObject(page);
 		} catch (NullPointerException npe) {
 			page = null;
 		}
@@ -71,7 +73,7 @@ public class PageManager {
 	public static void open(String pageName, String arguments) {
     	PageManager.setPage(pageName);
     	if (pageObjectType == PageObjectType.WEBPAGE) {
-	    	String url = Configuration.url();
+	    	String url = Configuration.getURL(PageManager.getPage());
 	    	url += arguments == null ? "" : arguments;
 	    	log.debug("Loading the the {} page using the url: {}", pageName, url);
 	    	driver().get(url);

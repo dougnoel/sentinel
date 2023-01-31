@@ -19,6 +19,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  *
  */
 public class YAMLData {
+	public String name;
 	public Map<String,String> urls;
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public String include;
@@ -47,9 +48,10 @@ public class YAMLData {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature
 				.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		APIData pageData = null;
+		YAMLData pageData = null;
 		try {
 			pageData = mapper.readValue(fileName, APIData.class);
+			pageData.name = StringUtils.substring(fileName.toString(), 0, -4);
 		} catch (Exception e) {
 			throw new FileException(e, fileName);
 		}
@@ -125,5 +127,13 @@ public class YAMLData {
     		return testdata.get(env).get(dataObject);
     	}
     	return new ConcurrentHashMap<>();
+    }
+    
+    /**
+     * Returns the name of the YAMLFile
+     * @return String the name of the file without the .yml extension
+     */
+    public String getName() {
+    	return name;
     }
 }

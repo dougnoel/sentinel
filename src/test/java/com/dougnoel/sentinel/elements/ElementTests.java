@@ -209,7 +209,7 @@ public class ElementTests {
     }
 
     @Test
-    public void sendSpecialKey() {
+    public void sendSpecialKey() throws java.io.IOException {
         BaseSteps.navigateToPage("KeyPressesPage");
         var input = (Textbox) getElement("key press input");
         input.sendKeys("A");
