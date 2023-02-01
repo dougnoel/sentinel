@@ -25,6 +25,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    - name: Setup Appium
+    - uses: actions/setup-node@v3
+      with:
+        node-version: lts/*
+        check-latest: true
+      run: |
+        npm install -g --force appium
     - name: Cache SonarCloud packages
       uses: actions/cache@v1
       with:
