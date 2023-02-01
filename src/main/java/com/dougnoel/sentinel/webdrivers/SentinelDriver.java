@@ -2,14 +2,10 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageManager;
-
 import io.appium.java_client.windows.WindowsDriver;
-//import io.appium.java_client.windows.WindowsElement;
 
 /**
  * Tracks all the windows attached to a particular driver.

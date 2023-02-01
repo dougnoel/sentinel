@@ -80,9 +80,10 @@ public class WebDriverFactory {
         	driver = new InternetExplorerDriver(ieOptions);
             break;
         case "safari":
-        	driver = new SafariDriver();
+            driver = new SafariDriver();
             break;
         case "opera":
+            WebDriverManager.operadriver().setup();
             driver = new OperaDriver();
             break;
         default:
