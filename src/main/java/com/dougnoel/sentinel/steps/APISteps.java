@@ -210,29 +210,12 @@ public class APISteps {
 	}
 
 	/**
-	 * Stores the current response body, code, or response time as a string using the given key
+	 * Stores the current response body using the given key
 	 *
-	 * @param responseSectionToStore String the portion of the response to store
 	 * @param key String the key to store the response under
 	 */
-	@When("^I save the response (body|code|time) as (.*?)$")
-	public void storeResponseValue(String responseSectionToStore, String key) {
-		String valueToStore = null;
-
-		switch(responseSectionToStore) {
-			case "body":
-				valueToStore = APIManager.getResponse().getResponse();
-				break;
-			case "code":
-				valueToStore = Integer.toString(APIManager.getResponse().getResponseCode());
-				break;
-			case "header":
-				valueToStore = Long.toString(APIManager.getResponse().getReponseTime().getSeconds());
-				break;
-			default:
-				break;
-		}
-
-		Configuration.update(key, valueToStore);
+	@When("^I save the response body as (.*?)$")
+	public void storeResponseValue(String key) {
+		Configuration.update(key, APIManager.getResponse().getResponse());
 	}
 }
