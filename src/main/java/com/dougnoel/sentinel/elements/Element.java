@@ -519,7 +519,7 @@ public class Element {
 	 */
 	public boolean isDisplayed() {
 		try {
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.visibilityOf(element())).isDisplayed();
 		}
@@ -539,7 +539,7 @@ public class Element {
 	 */
 	public boolean isHidden() {
 		try {
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.invisibilityOf(element()));
 		}
@@ -561,7 +561,7 @@ public class Element {
 	 */
 	public boolean isEnabled() {
 		try {
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(d -> (element().isEnabled() && (element().getAttribute("readonly") == null)));
 		}
@@ -583,7 +583,7 @@ public class Element {
 	 */
 	public boolean isDisabled() {
 		try {
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.or(ExpectedConditions.attributeContains(element(), "disabled", ""), ExpectedConditions.attributeContains(element(), "readonly", "")));
 		}
@@ -602,7 +602,7 @@ public class Element {
 	 */
 	public boolean isSelected() {
 		try {
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementToBeSelected(element()));
 		}
@@ -621,7 +621,7 @@ public class Element {
 	 */
 	public boolean isNotSelected() {
 		try {
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 				.ignoring(StaleElementReferenceException.class)
 				.until(ExpectedConditions.elementSelectionStateToBe(element(), false));
 		}
@@ -687,7 +687,7 @@ public class Element {
 
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
-				return new WebDriverWait(driver(), Time.out(), Time.interval())
+				return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 						.ignoring(StaleElementReferenceException.class)
 						.ignoring(TimeoutException.class)
 						.until(condition);
@@ -711,7 +711,7 @@ public class Element {
 	 */
 	public boolean hasAttribute(String attribute) {
 		try{
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 					.ignoring(StaleElementReferenceException.class)
 					.until(ExpectedConditions.attributeToBeNotEmpty(element(), attribute));
 		}
@@ -733,7 +733,7 @@ public class Element {
 	 */
 	public boolean doesNotHaveAttribute(String attribute) {
 		try{
-			return new WebDriverWait(driver(), Time.out(), Time.interval())
+			return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
 					.ignoring(StaleElementReferenceException.class)
 					.until(ExpectedConditions.not(
 							ExpectedConditions.attributeToBeNotEmpty(element(), attribute)));

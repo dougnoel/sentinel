@@ -79,7 +79,7 @@
 
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
-    <appium.version>8.3.0</appium.version>
+    <appium.version>7.6.0</appium.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <extentreports.version>5.0.9</extentreports.version>
     <extent.cucumber.adapter.artifactID>extentreports-cucumber7-adapter</extent.cucumber.adapter.artifactID> <!-- The name of this changes for every major Cucumber rev unfortunately. -->
@@ -97,7 +97,7 @@
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.27</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
-    <selenium-java.version>4.7.2</selenium-java.version>
+    <selenium-java.version>3.141.59</selenium-java.version>
     <swagger-parser.version>2.1.2</swagger-parser.version>
     <webdrivermanager.version>5.3.1</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>

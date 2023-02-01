@@ -46,6 +46,6 @@ public class GridWebDriverFactory {
 		var cap = driver.getCapabilities();
 		driver.quit();
 		
-		return cap.getBrowserVersion();
+		return cap.getVersion();
 	}
 }

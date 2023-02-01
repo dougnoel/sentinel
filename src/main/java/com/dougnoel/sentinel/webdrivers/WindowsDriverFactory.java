@@ -1,26 +1,13 @@
 package com.dougnoel.sentinel.webdrivers;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
-import java.net.URL;
-import java.util.Optional;
-
 import com.dougnoel.sentinel.system.FileManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
-import io.appium.java_client.service.local.flags.ServerArgument;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.configurations.Time;
-import com.dougnoel.sentinel.system.JavaURL;
-
 import io.appium.java_client.windows.WindowsDriver;
-
 import static io.appium.java_client.service.local.flags.GeneralServerFlag.BASEPATH;
 
 /**
@@ -30,9 +17,6 @@ import static io.appium.java_client.service.local.flags.GeneralServerFlag.BASEPA
  */
 public class WindowsDriverFactory {
 	private static final Logger log = LogManager.getLogger(WindowsDriverFactory.class);
-	private static Process winAppDriverProcess = null;
-	//private static final String DRIVER_URL = Configuration.toString("winAppDriverUrl", "http://127.0.0.1:4723/wd/hub");
-	//private static final String WINAPPDRIVER_PATH = Configuration.toString("winAppDriverPath", "C:/Program Files (x86)/Windows Application Driver/WinAppDriver.exe");
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
@@ -43,9 +27,10 @@ public class WindowsDriverFactory {
 	private WindowsDriverFactory() {}
 
 	/**
+	 * Creates a new Appium service and starts a new instance of WinAppDriver.exe associated to that service.
+	 * <p>
 	 * Returns a newly created WindowsDriver as a WebDriver, based on the currently
-	 * active page object and environment. If the WinAppDriver.exe program is not started,
-	 * it also starts that.
+	 * active page object and environment.
 	 * <p>
 	 * Note: This method cannot tell if WinAppDriver.exe has already been started externally
 	 * and will create a port conflict if it is already running.
@@ -56,29 +41,23 @@ public class WindowsDriverFactory {
 		String executable = FileManager.winSpecialFolderConverter(Configuration.executable());
 
 		AppiumServiceBuilder builder = new AppiumServiceBuilder();
-		builder.withIPAddress("127.0.0.1").usingPort(4725);
-		//builder.withArgument(BASEPATH , "/wd/hub");
-
+		builder.withIPAddress("127.0.0.1").withArgument(BASEPATH , "/wd/hub").usingPort(4725);
 		AppiumDriverLocalService service = AppiumDriverLocalService.buildService(builder);
-		//service.withBasePath("");*/
-
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", executable);
+		capabilities.setCapability("forceMjsonwp", true);
 		capabilities.setCapability("ms:experimental-webdriver", true);
 		capabilities.setCapability("platformName", "Windows");
 		capabilities.setCapability("automationName", "Windows");
-//		capabilities.setCapability("deviceName", "Windows10Machine");
+		capabilities.setCapability("deviceName", "Windows10Machine");
 
 		WindowsDriver driver = null;
 		try {
 			driver = new WindowsDriver(service, capabilities);
-			//driver = new WindowsDriver(new URL("http://127.0.0.1:4723"), capabilities);
 		}
 		catch (Exception e) {
-			//stopWinAppDriverExe();
 			log.error("{} Driver creation failed for: {}\n{}", e.getCause(), executable, e.getMessage());
-			//throw e;
 		}
 
 		log.info("Driver created: {}\nLog Location:       {}\nError Log Location: {}", driver, STDOUT, STDERR);

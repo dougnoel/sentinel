@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.elements.tables;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -956,7 +955,7 @@ public class Table extends Element {
 		if(negate != (verifySpecificCellContains(columnHeader, rowIndex, textToMatch, partialMatch) == null))
 			return true; //check condition initially before starting page refresh cycle
 
-		WebDriverWait webDriverWait = new WebDriverWait(WebDriverFactory.getWebDriver(), Duration.ofSeconds(numberOfSecondsToWait));
+		WebDriverWait webDriverWait = new WebDriverWait(WebDriverFactory.getWebDriver(), numberOfSecondsToWait);
 		webDriverWait.ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
 
 		try{

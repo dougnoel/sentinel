@@ -2,7 +2,6 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.util.HashMap;
 
-import io.github.bonigarcia.wdm.webdriver.WebDriverBrowser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -13,7 +12,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
-//import org.openqa.selenium.opera.OperaDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -82,6 +81,9 @@ public class WebDriverFactory {
             break;
         case "safari":
         	driver = new SafariDriver();
+            break;
+        case "opera":
+            driver = new OperaDriver();
             break;
         default:
             throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
