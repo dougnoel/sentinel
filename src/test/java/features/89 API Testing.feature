@@ -84,7 +84,8 @@ Feature: 89 API Testing
     Then I verify the response code equals 200
       And I validate the response contains the same text used for the previousResponseBody
       And I validate the response has the same text used for the previousResponseBody
-    When I load puppydata to use as the request body
-      And I send a POST request to the pet endpoint
+    When I add a status parameter with the value available
+      And I send a GET request to the pet/findByStatus endpoint
     Then I verify the response code equals 200
-      And I validate the response does not contain the same text used for the previousResponseBody
+      And I validate the response contains the same text used for the previousResponseBody
+      And I validate the response does not have the same text used for the previousResponseBody
