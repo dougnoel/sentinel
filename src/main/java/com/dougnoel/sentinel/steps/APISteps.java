@@ -94,8 +94,8 @@ public class APISteps {
      * </ul>
      * <p>
      *  
-	 * @param apiCallType
-	 * @param endpoint
+	 * @param apiCallType String the type of API call to make
+	 * @param endpoint String the endpoint to make the call to
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public void sendRequest(String apiCallType, String endpoint) {
@@ -154,7 +154,7 @@ public class APISteps {
 	 * @param matchType String use "contains" for a partial match otherwise it will be an exact match
 	 * @param text String the text to match
 	 */
-	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
+	@Then("^I validate the response( does not)? (has|have|contains?) the text (.*?)$")
     public void verifyResponseContains(String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
