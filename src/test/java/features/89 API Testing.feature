@@ -3,7 +3,7 @@
 Feature: 89 API Testing
   Tests using the Swagger Pet Store example API.
   https://petstore3.swagger.io/
-      
+
   @89A
   Scenario: 89A POST Swagger Test
     Given I use the API named Pet Store API
@@ -77,10 +77,10 @@ Feature: 89 API Testing
   @89G
   Scenario: 89G Storing and comparing against stored values
     Given I use the API named Pet Store API
-    When I GET record {test_id} from the pet endpoint
+    When I GET record 12 from the pet endpoint
     Then I verify the response code equals 200
     When I save the response body as previousResponseBody
-      And I GET record {test_id} from the pet endpoint
+      And I GET record 12 from the pet endpoint
     Then I verify the response code equals 200
       And I validate the response contains the same text used for the previousResponseBody
       And I validate the response has the same text used for the previousResponseBody
