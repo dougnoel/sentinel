@@ -18,6 +18,11 @@ import javax.imageio.ImageIO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.FileException;
@@ -262,5 +267,52 @@ public class FileManager {
 	 */
 	public static TestFile getCurrentTestFile(){
 		return currentTestFile;
+	}
+	
+	/**
+	 * Adds a testing environment to the PDF report.
+	 */
+	public static void modifyPDFReport() {
+		try {
+	      //Loading an existing document
+	      File file = new File("reports/ExtentPdf.pdf");
+	      PDDocument document = PDDocument.load(file);
+	       
+	      //Retrieving the pages of the document 
+	      PDPage page = new PDPage(new PDRectangle(PDRectangle.A4.getHeight(), PDRectangle.A4.getWidth()));
+	      PDPageContentStream contentStream = new PDPageContentStream(document, page);
+	      
+	      //Begin the Content stream 
+	      contentStream.beginText(); 
+	       
+	      //Setting the font to the Content stream  
+	      contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);
+
+	      //Setting the position for the line 
+	      contentStream.newLineAtOffset(25, 500);
+
+	      String text = "Environment Tested: " + Configuration.environment();
+
+	      //Adding text in the form of string 
+	      contentStream.showText(text);      
+
+	      //Ending the content stream
+	      contentStream.endText();
+
+	      //Closing the content stream
+	      contentStream.close();
+
+	      PDPage firstPage = document.getPages().get(0);
+	      document.getPages().insertBefore(page, firstPage);
+	      
+	      //Saving the document
+	      document.save(new File("reports/ExtentPdfFinal.pdf"));
+
+	      //Closing the document
+	      document.close();
+		}
+		catch(IOException ioe) {
+			throw new com.dougnoel.sentinel.exceptions.IOException(ioe);
+		}
 	}
 }
