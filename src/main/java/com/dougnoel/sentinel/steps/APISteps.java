@@ -152,6 +152,19 @@ public class APISteps {
 	}
 
 	/**
+	 * Validates text in an API response against previously stored text
+	 *
+	 * @param assertion String null to see if the text exists, "does not" to see if it is absent
+	 * @param matchType String use "contains" for a partial match otherwise it will be an exact match
+	 * @param key Key that the text to match is stored under
+	 */
+	@Then("^I validate the response( does not)? (has|have|contains?) the same text (?:entered|selected|used) for the (.*)$")
+	public void verifyResponseContainsStored(String assertion, String matchType, String key) {
+		String storedText = Configuration.toString(key);
+		verifyResponseContains(assertion, matchType, storedText);
+	}
+
+	/**
 	 * Validates text in an API response.
 	 * 
 	 * @param assertion String null to see if the text exists, "does not" to see if it is absent
@@ -196,4 +209,30 @@ public class APISteps {
 		APIManager.addHeader(name, value);
 	}
 
+	/**
+	 * Stores the current response body, code, or response time as a string using the given key
+	 *
+	 * @param responseSectionToStore String the portion of the response to store
+	 * @param key String the key to store the response under
+	 */
+	@When("^I save the response (body|code|time) as (.*?)$")
+	public void storeResponseValue(String responseSectionToStore, String key) {
+		String valueToStore = null;
+
+		switch(responseSectionToStore) {
+			case "body":
+				valueToStore = APIManager.getResponse().getResponse();
+				break;
+			case "code":
+				valueToStore = Integer.toString(APIManager.getResponse().getResponseCode());
+				break;
+			case "header":
+				valueToStore = Long.toString(APIManager.getResponse().getReponseTime().getSeconds());
+				break;
+			default:
+				break;
+		}
+
+		Configuration.update(key, valueToStore);
+	}
 }
