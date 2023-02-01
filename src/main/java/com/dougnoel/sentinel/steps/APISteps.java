@@ -136,7 +136,11 @@ public class APISteps {
 				statusCode, responseCode, response.getResponse());
 		assertTrue(expectedResult, statusCode == responseCode);
 	}
-	
+
+	/**
+	 * Verify the response was received within a given time in seconds.
+	 * @param time double the number of seconds to verify the response time against
+	 */
 	@When("^I verify the response was received in less than (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?$")
 	public void verifyResponseTime(double time) {
 		Duration timeLimit = Duration.ofMillis((long) (time * 1000));
