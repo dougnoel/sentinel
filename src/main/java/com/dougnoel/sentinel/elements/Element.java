@@ -16,20 +16,7 @@ import javax.imageio.ImageIO;
 import com.dougnoel.sentinel.exceptions.FileException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotInteractableException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.InvalidSelectorException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.Colors;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -119,23 +106,16 @@ public class Element {
 	}
 
 	/**
-	 * Searches for an element using the given locator for the passed duration. It will look
-	 * multiple times, as determined by the Time.interval() value which defaults to 10 milliseconds.
-	 * 
+	 * Searches for an element using the given locator and executes immediately
+	 *
 	 * @param locator By Selenium By locator
-	 * @param timeout Duration the amount of time we look for an element before returning failure
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement if found, otherwise null
 	 */
-	private WebElement getElementWithWait(final By locator, Duration timeout) {
+	private WebElement getElement(final By locator) {
 		try {
-		FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
-			       .withTimeout(timeout)
-			       .pollingEvery(Time.interval())
-			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
-
-		return wait.until(d -> driver().findElement(locator));
+			return driver().findElement(locator);
 		}
-		catch (org.openqa.selenium.TimeoutException e) {
+		catch (TimeoutException | StaleElementReferenceException | NoSuchElementException | InvalidArgumentException e) {
 			return null;
 		}
 	}
@@ -185,15 +165,15 @@ public class Element {
 	 * @return org.openqa.selenium.WebElement the Selenium WebElement object type that can be acted upon
 	 */
 	protected WebElement element() {
-		driver().switchTo().defaultContent();
 		WebElement element = null;
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		while((System.currentTimeMillis() - startTime) < searchTime) {
-			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+			element = findElementInCurrentFrame();
 	    	if (element != null) {
 	    		return element;
 	    	}
+			driver().switchTo().defaultContent();
 	    	element = findElementInIFrame();
 	    	if (element != null) {
 	    		return element;
@@ -216,7 +196,9 @@ public class Element {
 			FluentWait<WebDriver> wait = new FluentWait<WebDriver>(driver())
 					.withTimeout(Time.out())
 					.pollingEvery(Time.interval())
-					.ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+					.ignoring(org.openqa.selenium.NoSuchElementException.class)
+					.ignoring(StaleElementReferenceException.class)
+					.ignoring(InvalidArgumentException.class);
 
 			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
@@ -239,7 +221,7 @@ public class Element {
     		try {
     			for (WebElement iframe : iframes) {
         			driver().switchTo().frame(iframe);
-        			element = findElementInCurrentFrameForDuration(Time.loopInterval());
+        			element = findElementInCurrentFrame();
         			if (element != null) {
         				return element;
         			}
@@ -249,29 +231,26 @@ public class Element {
         			driver().switchTo().parentFrame();
         		}
     		}
-    		catch(StaleElementReferenceException | NoSuchFrameException e) {
+    		catch(StaleElementReferenceException | NoSuchFrameException | InvalidArgumentException e) {
     			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
     					elementType, getName(), e);
     			log.trace(errorMessage);
     			return null;
     		}
-    		
     	}
     	return null;
 	}
 
 	/**
-	 * Searches for the current element within the current frame context. Searches each selector for the passed
-	 * amount of time as a Duration object. Recommended to be 100 milliseconds.
-	 * 
-	 * @param duration Duration total time to search for the element per selector
+	 * Searches for the current element within the current frame context. Searches each selector.
+	 *
 	 * @return WebElement the element if it is found, otherwise null
 	 */
-	protected WebElement findElementInCurrentFrameForDuration(Duration duration) {
-		WebElement element = null;
+	protected WebElement findElementInCurrentFrame() {
+		WebElement element;
 		for (Map.Entry<SelectorType, String> selector : selectors.entrySet()) {
 			log.trace("Attempting to find {} {} with {}: {}", elementType, getName(), selector.getKey(), selector.getValue());
-			element = getElementWithWait(createByLocator(selector.getKey(), selector.getValue()), duration);
+			element = getElement(createByLocator(selector.getKey(), selector.getValue()));
 			if (element != null) {
 				return element;
 			}
@@ -344,7 +323,7 @@ public class Element {
 			errorMessage += "\nElement is disabled. Please make sure the element is enabled to send text.";
 		}
 		log.error(errorMessage);
-		throw new ElementNotInteractableException(errorMessage);
+		throw new ElementNotVisibleException(errorMessage);
 	}
 	
 	/**
@@ -477,10 +456,12 @@ public class Element {
 	 * @return FluentWait the wait object that can be invoked
 	 */
 	private FluentWait<WebDriver> constructElementWait(Duration timeout) {
-		return new FluentWait<WebDriver>(driver())
-			       .withTimeout(timeout)
-			       .pollingEvery(Time.interval())
-			       .ignoring(org.openqa.selenium.NoSuchElementException.class, StaleElementReferenceException.class);
+		return new FluentWait<>(driver())
+				.withTimeout(timeout)
+				.pollingEvery(Time.interval())
+				.ignoring(NoSuchElementException.class)
+				.ignoring(StaleElementReferenceException.class)
+				.ignoring(InvalidArgumentException.class);
 	}
 	
 	/**
@@ -642,7 +623,7 @@ public class Element {
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			driver().switchTo().defaultContent();
-			WebElement element = findElementInCurrentFrameForDuration(Time.interval());
+			WebElement element = findElementInCurrentFrame();
 			if(element == null){
 				element = findElementInIFrame();
 			}
@@ -687,7 +668,7 @@ public class Element {
 
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
 			try {
-				return new WebDriverWait(driver(), Time.out().toSeconds(), Time.interval().toMillis())
+				return new WebDriverWait(driver(), Time.interval().toMillis(), Time.loopInterval().toMillis())
 						.ignoring(StaleElementReferenceException.class)
 						.ignoring(TimeoutException.class)
 						.until(condition);

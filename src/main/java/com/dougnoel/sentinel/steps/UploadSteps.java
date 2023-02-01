@@ -40,7 +40,7 @@ public class UploadSteps {
         List<String> filesToUpload = new ArrayList<>();
 
         for (String pathLocator : filePathLocators) {
-            filesToUpload.add(Configuration.getTestdataValue(pathLocator.trim(), "fileLocation"));
+            filesToUpload.add(Configuration.getTestData(pathLocator.trim(), "fileLocation"));
         }
 
         getElement(elementName).sendFilePaths(filesToUpload);

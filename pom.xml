@@ -91,7 +91,7 @@
     <io.cucumber.version>7.8.1</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
     <jackson2.version>2.12.7</jackson2.version>
-    <junit.version>5.5.1</junit.version>
+    <junit.version>5.9.2</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
     <lombok.version>1.18.24</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>

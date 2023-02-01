@@ -3,6 +3,7 @@ package com.dougnoel.sentinel.apis;
 import org.openqa.selenium.NotFoundException;
 
 import com.dougnoel.sentinel.enums.RequestType;
+import com.dougnoel.sentinel.system.TestManager;
 
 /**
  * Tracks which API is currently being used and requests the APIFactory create it if it does not exist.
@@ -24,7 +25,8 @@ public class APIManager {
 	 */
 	public static void setAPI(String apiName) {
 		try {
-			APIManager.api = APIFactory.buildOrRetrieveAPI(apiName);
+			api = APIFactory.buildOrRetrieveAPI(apiName);
+			TestManager.setActiveTestObject(api);
 		} catch (NullPointerException npe) {
 			api = null;
 		}
@@ -56,7 +58,16 @@ public class APIManager {
 	public static void addParameter(String parameter, String value) {
 		getAPI().getRequest().addParameter(parameter, value);
 	}
-	
+
+	/**
+	 * Set a header and its value for a request.
+	 * @param name String the name being passed
+	 * @param value String the value to be passed
+	 */
+	public static void addHeader(String name, String value) {
+		getAPI().getRequest().addHeader(name, value);
+	}
+
 	/**
 	 * Send a request of the given type. The response will be stored in a Response object
 	 * that the APIManager can retrieve.
