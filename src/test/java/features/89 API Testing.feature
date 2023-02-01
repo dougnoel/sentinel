@@ -73,3 +73,18 @@ Feature: 89 API Testing
     Then I verify the response code equals 200
     When I GET record 10 from the pet endpoint
     Then I verify the response code equals 404
+
+  @89G
+  Scenario: 89G Storing and comparing against stored values
+    Given I use the API named Pet Store API
+    When I GET record {test_id} from the pet endpoint
+    Then I verify the response code equals 200
+    When I save the response body as previousResponseBody
+      And I GET record {test_id} from the pet endpoint
+    Then I verify the response code equals 200
+      And I validate the response contains the same text used for the previousResponseBody
+      And I validate the response has the same text used for the previousResponseBody
+    When I load puppydata to use as the request body
+      And I send a POST request to the pet endpoint
+    Then I verify the response code equals 200
+      And I validate the response does not contain the same text used for the previousResponseBody
