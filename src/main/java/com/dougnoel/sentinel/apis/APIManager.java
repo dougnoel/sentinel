@@ -75,23 +75,26 @@ public class APIManager {
 	 * @param endpoint the endpoint to send the request
 	 */
 	public static void sendRequest(RequestType type, String endpoint) {
-		getAPI().getRequest().createAndSendRequest(type, endpoint);
+		response = getAPI().getRequest().createAndSendRequest(type, endpoint);
+		getAPI().setResponse(endpoint, response);
 	}
 	
 	/**
 	 * Returns the most recent response.
-	 * @return Response the response
+	 * @return com.dougnoel.sentinel.apis.Response the Response object requested
 	 */
 	public static Response getResponse() {
 		return response;
 	}
-
+	
 	/**
-	 * Sets the most recent response.
-	 * @param response Response the response
+	 * Returns the response stored for the given endpoint under the currently active API.
+	 * 
+	 * @param endpoint String the name of the endpoint the request was sent to
+	 * @return com.dougnoel.sentinel.apis.Response the Response object requested
 	 */
-	public static void setResponse(Response response) {
-		APIManager.response = response;
+	public static Response getResponse(String endpoint) {
+		return getAPI().getResponse(endpoint);
 	}
 	
 }

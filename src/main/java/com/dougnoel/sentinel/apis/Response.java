@@ -7,7 +7,7 @@ import org.apache.http.HttpResponse;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 /**
- * Wrapper for an hhtp response for testing the response.
+ * Wrapper for an http response for testing the response.
  * @author dougnoel
  *
  */
@@ -19,7 +19,7 @@ public class Response {
 	
 	/**
 	 * 
-	 * @param httpResponse HttpResponse the aPI call response used to create this object
+	 * @param httpResponse HttpResponse the API call response used to create this object
 	 * @throws IOException if the parsing fails
 	 */
 	public Response(HttpResponse httpResponse) throws IOException {
@@ -29,8 +29,11 @@ public class Response {
 
 	/**
 	 * Returns the http response as a String
+	 * @deprecated
+	 * This method is no longer needed for comparison operations.
 	 * @return String the http response
 	 */
+	@Deprecated
 	public String getResponse() {
 		return jsonResponse;
 	}
@@ -58,4 +61,48 @@ public class Response {
 	public Duration getReponseTime() {
 		return responseTime;
 	}
+
+	/**
+	 * Compares only the actual contents of the response when creating a hashcode.
+	 * This was code automatically generated using Elcipse.
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((jsonResponse == null) ? 0 : jsonResponse.hashCode());
+		return result;
+	}
+
+	/**
+	 * Compares only the actual contents of the response. Is also used by contains().
+	 * This was code automatically generated using Elcipse.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Response other = (Response) obj;
+		if (jsonResponse == null) {
+			if (other.jsonResponse != null)
+				return false;
+		} 
+		else if (!jsonResponse.equals(other.jsonResponse))
+			return false;
+		return true;
+	}
+
+	/**
+	 * @param s CharSequence 
+	 * @return boolean 
+	 * @see java.lang.String#contains(java.lang.CharSequence)
+	 */
+	public boolean contains(CharSequence s) {
+		return jsonResponse.contains(s);
+	}
+	
 }

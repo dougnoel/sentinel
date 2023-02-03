@@ -95,13 +95,14 @@ public class Request {
 	}
 	
 	/**
-	 * Construct a request, send it to the active API, and store the response for retrieval.
+	 * Construct a request, send it to the active API, and return the response.
 	 * Parameterization is handled at the cucumber step level.
 	 * 
 	 * @param type com.dougnoel.sentinel.enums.RequestType the type of request to send
 	 * @param endpoint the endpoint to send the request
+	 * @return com.dougnoel.sentinel.apis.Response the response encapsulated in a Response object
 	 */
-	public void createAndSendRequest(RequestType type, String endpoint) {
+	public Response createAndSendRequest(RequestType type, String endpoint) {
 		try {
 			switch(type) {
 			case DELETE:
@@ -124,14 +125,16 @@ public class Request {
 		}
 		setHeaders();
 		buildURI();
-	    sendRequest();
+	    return sendRequest();
 	}
 	
 	/**
-	 * Send the request, store the response for later retrieval, and reset the request so it can be used again
-	 * by the API for another request.
+	 * Returns the response from the server after passing the request to the API server.
+	 * Clears out the request so that the request object can be used again.
+	 * 
+	 * @return com.dougnoel.sentinel.apis.Response the response encapsulated in a Response object
 	 */
-	private void sendRequest() {
+	private Response sendRequest() {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		Response response;
 		try {
@@ -141,9 +144,8 @@ public class Request {
 		} catch (java.io.IOException e) {
 			throw new IOException(e);
 		}
-		log.trace("Response Code: {} Response: {}", response.getResponseCode(), response.getResponse());
-		APIManager.setResponse(response);
 		reset();
+		return response;
 	}
 	
 	/**
