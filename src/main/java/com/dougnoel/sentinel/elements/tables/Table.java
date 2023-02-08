@@ -1,11 +1,13 @@
 package com.dougnoel.sentinel.elements.tables;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
@@ -972,5 +974,24 @@ public class Table extends Element {
 			log.error(errorMsg);
 			return false;
 		}
+	}
+
+	/**
+	 * Compares all values in the given column to the given referenceNumber, using the given comparisonType.
+	 * Converts all values in the given column to double.
+	 * Valid comparisonType values = {"less than", "greater than"}. Any other value of comparisonType will make this method perform an "equals" comparison.
+	 * @param columnHeader String name of the column
+	 * @param comparisonType String type of comparison to perform. Valid values are "less than", "greater than". Any other string will force an "equals" comparison.
+	 * @param referenceNumber double the number to compare against.
+	 * @return boolean true if all values in the column satisfy the given comparison. false otherwise.
+	 */
+	public boolean verifyNumericValuesInWholeColumn(String columnHeader, String comparisonType, double referenceNumber){
+		var allColumnData = getAllCellDataForColumn(columnHeader).stream().map(Double::parseDouble).collect(Collectors.toList());
+		if(comparisonType.equalsIgnoreCase("less than"))
+			return allColumnData.stream().allMatch(cellValue -> cellValue < referenceNumber);
+		else if(comparisonType.equalsIgnoreCase("greater than"))
+			return allColumnData.stream().allMatch(cellValue -> cellValue > referenceNumber);
+		else
+			return allColumnData.stream().allMatch(cellValue -> cellValue == referenceNumber);
 	}
 }
