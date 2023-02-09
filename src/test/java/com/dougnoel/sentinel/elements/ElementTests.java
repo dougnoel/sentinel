@@ -364,4 +364,10 @@ public class ElementTests {
         Assert.assertFalse("Timed out waiting for cell in the 1st row and Last Name column to not have the text Smith",
                 table.waitForSpecificCellToContain(1, "Last Name", 1, "Smith", true, true));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void compareTableColumnValuesWithInvalidComparisonType() {
+        BaseSteps.navigateToPage("TablePage");
+        ElementFunctions.getElementAsTable("example table").verifyNumericValuesInWholeColumn("ID", "fake comparison", 3.0);
+    }
 }
