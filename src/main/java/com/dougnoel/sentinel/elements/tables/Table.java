@@ -986,11 +986,15 @@ public class Table extends Element {
 	 */
 	public boolean verifyNumericValuesInWholeColumn(String columnHeader, String comparisonType, double referenceNumber){
 		var allColumnData = getAllCellDataForColumn(columnHeader).stream().map(Double::parseDouble).collect(Collectors.toList());
-		if(comparisonType.equalsIgnoreCase("less than"))
-			return allColumnData.stream().allMatch(cellValue -> cellValue < referenceNumber);
-		else if(comparisonType.equalsIgnoreCase("greater than"))
-			return allColumnData.stream().allMatch(cellValue -> cellValue > referenceNumber);
-		else
-			return allColumnData.stream().allMatch(cellValue -> cellValue == referenceNumber);
+		switch (comparisonType.toLowerCase()){
+			case "less than":
+				return allColumnData.stream().allMatch(cellValue -> cellValue < referenceNumber);
+			case "greater than":
+				return allColumnData.stream().allMatch(cellValue -> cellValue > referenceNumber);
+			case "equal to":
+				return allColumnData.stream().allMatch(cellValue -> cellValue == referenceNumber);
+			default:
+				throw new IllegalArgumentException(SentinelStringUtils.format("Unknown comparison type '{}'. Cannot compare column values.", comparisonType));
+		}
 	}
 }
