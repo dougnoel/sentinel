@@ -131,3 +131,17 @@ Feature: Table Tests
     Then I verify the cell in the 2nd row and the Comment column of the Example Table contains the text test5
     When I find the last row in the Example Table and enter the text test123 in the comment box
     Then I verify the cell in the last row and the Comment column of the Example Table contains the text test123
+
+  @491 @table-numeric-comparisons
+  Scenario: Numeric Comparisons on column values
+    Given I am on the Table Page
+    When I find the 1st row in the Example Table and enter the text 5 in the comment box
+      And I find the 2nd row in the Example Table and enter the text .012 in the comment box
+      And I find the 3rd row in the Example Table and enter the text 3.141 in the comment box
+    Then I verify all values in the Comment column in the Example Table are less than 6.1
+      And I verify all values in the Comment column in the Example Table are greater than 0
+    When I press the browser refresh button
+      And I find the 1st row in the Example Table and enter the text 5 in the comment box
+      And I find the 2nd row in the Example Table and enter the text 5.0 in the comment box
+      And I find the 3rd row in the Example Table and enter the text 5.000 in the comment box
+    Then I verify all values in the Comment column in the Example Table are equal to 5

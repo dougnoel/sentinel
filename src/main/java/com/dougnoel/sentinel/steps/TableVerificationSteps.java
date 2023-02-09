@@ -422,6 +422,13 @@ public class TableVerificationSteps {
     /**
      * Verifies all values in the given column are in the given state relative to the given referenceNumber, using the given comparisonType.
      * Assumes all values in the given column are numeric, and able to be converted to double.
+     *
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify all values in the Comment column in the Example Table are less than 6.1</li>
+     * <li>I verify all values in the Weight column in the Specimen Table are greater than 100</li>
+     * <li>I verify all values in the Count column in the Sales Table are equal to 22</li>
+     * </ul>
      * @param columnName String name of the column in the table
      * @param tableName String name of the table element
      * @param comparisonType String type of comparison to perform. Options: "less than", "greater than", "equal to".

@@ -1,6 +1,5 @@
 package com.dougnoel.sentinel.elements.tables;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
