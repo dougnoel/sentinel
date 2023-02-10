@@ -5,6 +5,8 @@ import org.openqa.selenium.NotFoundException;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.system.TestManager;
 
+import io.cucumber.java.Scenario;
+
 /**
  * Tracks which API is currently being used and requests the APIFactory create it if it does not exist.
  * @author dougnoel@gmail.com
@@ -14,6 +16,7 @@ public class APIManager {
 	//Only one API should be in use at a time. We are consciously not multi-threading.
 	private static API api = null;
 	private static Response response = null;
+	private static Scenario scenario = null;
 	
 	private APIManager() {
 		// Exists only to defeat instantiation.
@@ -96,5 +99,21 @@ public class APIManager {
 	public static Response getResponse(String endpoint) {
 		return getAPI().getResponse(endpoint);
 	}
+
+	/**
+	 * @return Scenario the scenario
+	 */
+	public static Scenario getScenario() {
+		return scenario;
+	}
+
+	/**
+	 * @param scenario Scenario the scenario to set
+	 */
+	public static void setScenario(Scenario scenario) {
+		APIManager.scenario = scenario;
+	}
+	
+	
 	
 }

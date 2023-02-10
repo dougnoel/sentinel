@@ -11,6 +11,7 @@ import com.dougnoel.sentinel.enums.YAMLObjectType;
 import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.system.YAMLObject;
 
+import io.cucumber.java.Scenario;
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
@@ -18,7 +19,7 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 public class API extends YAMLObject {
 	private Request request = new Request();
-	protected Map<String,Response> responses = new HashMap<>();
+	protected Map<Scenario,ResponseSet> responses = new HashMap<>();
 	
     /**
      * Constructor

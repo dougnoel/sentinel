@@ -14,12 +14,20 @@ import com.dougnoel.sentinel.apis.Response;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class APISteps {
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
+	
+    @Before
+    public void before(Scenario scenario) {
+        APIManager.setScenario(scenario);
+    }
 	
 	/**
 	 * Loads an API based on the environment you are currently testing.
