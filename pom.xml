@@ -97,7 +97,7 @@
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <pdfbox.version>2.0.27</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
-    <selenium-java.version>3.141.59</selenium-java.version>
+    <selenium-java.version>4.8.0</selenium-java.version>
     <swagger-parser.version>2.1.2</swagger-parser.version>
     <webdrivermanager.version>5.3.2</webdrivermanager.version>
     <image-comparison.version>4.4.0</image-comparison.version>
