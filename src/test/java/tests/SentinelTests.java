@@ -13,11 +13,10 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 import junit.runner.Version;
-
 @RunWith(Cucumber.class)
 @CucumberOptions(monochrome = true
 	, features = "src/test/java/features"
-	, glue = { "com.dougnoel.sentinel.steps", "steps" }
+	, glue = { "com.dougnoel.sentinel.steps", "steps", "hooks" }
 	, plugin = {"json:target/cucumber.json",
 			"com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"}
 )
