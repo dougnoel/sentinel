@@ -36,8 +36,9 @@ public class Configuration {
 	private static final Map<String,YAMLData> YAML_DATA = new ConcurrentHashMap<>();
 	
 	private static final String ENV_REPLACE_STRING = "{env}";
-	
-	private static Properties appProps = new Properties();
+	private static final String ENV = "env";
+
+	private static final Properties appProps = new Properties();
 	
 	private static ConfigurationData sentinelConfigurations = null;
 	
@@ -79,8 +80,8 @@ public class Configuration {
 				throw new FileException(errorMessage, e, CONFIGURATION_FILE);
 			}
 		}
-	 
-		return sentinelConfigurations.getConfigurationValue(environment(), configurationKey);	
+
+		return sentinelConfigurations.getConfigurationValue(environment(), configurationKey);
 	}
 	
 	/**
@@ -100,20 +101,25 @@ public class Configuration {
 	public static String toString(String property) {
 		String propertyValue = appProps.getProperty(property);
 		
+		if(propertyValue == null)
+			propertyValue = System.getProperty(property);
+
 		if(propertyValue == null) {
 			try {
-				propertyValue = System.getProperty(property);
-				if(propertyValue == null) {
-					propertyValue = getOrCreateConfigurationData(property);
+				if (property.contentEquals(ENV)) {
+					String warningMessage = "Configuration value 'env' not found in runtime or command-line configuration. Default value will be used.";
+					log.warn(warningMessage);
+					return null;
 				}
-				appProps.setProperty(property, propertyValue);
-				return propertyValue;
+				propertyValue = getOrCreateConfigurationData(property);
 			} catch (FileException e) {
-				log.trace(e.getMessage(),Arrays.toString(e.getStackTrace()));
+				log.trace(e.getMessage(), Arrays.toString(e.getStackTrace()));
 				return null;
 			}
 		}
-		
+
+		if(propertyValue != null)
+			appProps.setProperty(property, propertyValue);
 		return propertyValue;
 	}
 	
@@ -136,11 +142,10 @@ public class Configuration {
 		String propertyValue = toString(property);
 		if (propertyValue == null) {
 			appProps.setProperty(property, defaultValue);
-			if (property.contentEquals("env")) {
-				String warningMessage = SentinelStringUtils.format("localhost env being used by default. {}", 
-						Configuration.configurationNotFoundErrorMessage("env"));
-				log.warn(warningMessage);
-			}
+			String warningMessage = SentinelStringUtils.format("{} being used by default for configuration property {}. {}",
+						defaultValue, property, Configuration.configurationNotFoundErrorMessage(property));
+			log.warn(warningMessage);
+
 			return defaultValue;
 		}
 		return propertyValue; 
@@ -166,6 +171,11 @@ public class Configuration {
 	public static void clear(String property) {
 		appProps.remove(property);
 	}
+
+	/**
+	 * Clears all configuration values that have been set since runtime started.
+	 */
+	public static void clearAllSessionAppProps() { appProps.clear(); }
 	
 	/**
 	 * Returns the given configuration value stored in the passed property as a Double, or 0.0 if nothing is
@@ -251,7 +261,7 @@ public class Configuration {
 	 * @return String text of system env info
 	 */
 	public static String environment() {
-		return toString("env", "localhost");
+		return toString(ENV, "localhost");
 	}
 
 	/**
@@ -547,7 +557,12 @@ public class Configuration {
 	 * @return String the formatted error message
 	 */
 	private static String configurationNotFoundErrorMessage(String configurtaionValue) {
-		return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.", configurtaionValue, configurtaionValue, configurtaionValue);
+		if(configurtaionValue.equalsIgnoreCase(ENV))
+			return SentinelStringUtils.format("No {} property set. This can be set on the command line with the switch '-D{}='.",
+					configurtaionValue);
+		else
+			return SentinelStringUtils.format("No {} property set. This can be set in the sentinel.yml config file with a '{}=' property or on the command line with the switch '-D{}='.",
+					configurtaionValue, configurtaionValue, configurtaionValue);
 	}
 	
     /**

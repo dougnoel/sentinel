@@ -115,7 +115,7 @@ public class Element {
 		try {
 			return driver().findElement(locator);
 		}
-		catch (TimeoutException | StaleElementReferenceException | NoSuchElementException | InvalidArgumentException e) {
+		catch (TimeoutException | StaleElementReferenceException | NoSuchElementException | InvalidArgumentException | NoSuchWindowException e) {
 			return null;
 		}
 	}
@@ -198,7 +198,8 @@ public class Element {
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class)
 					.ignoring(StaleElementReferenceException.class)
-					.ignoring(InvalidArgumentException.class);
+					.ignoring(InvalidArgumentException.class)
+					.ignoring(NoSuchWindowException.class);
 
 			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
@@ -231,7 +232,7 @@ public class Element {
         			driver().switchTo().parentFrame();
         		}
     		}
-    		catch(StaleElementReferenceException | NoSuchFrameException | InvalidArgumentException e) {
+    		catch(StaleElementReferenceException | NoSuchFrameException | InvalidArgumentException | NoSuchWindowException e) {
     			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
     					elementType, getName(), e);
     			log.trace(errorMessage);
@@ -461,7 +462,8 @@ public class Element {
 				.pollingEvery(Time.interval())
 				.ignoring(NoSuchElementException.class)
 				.ignoring(StaleElementReferenceException.class)
-				.ignoring(InvalidArgumentException.class);
+				.ignoring(InvalidArgumentException.class)
+				.ignoring(NoSuchWindowException.class);
 	}
 	
 	/**
@@ -635,6 +637,9 @@ public class Element {
 			} catch (StaleElementReferenceException e) {
 				log.trace("doesNotExist() StaleElementException return result: true");
 				return true;
+			} catch(InvalidArgumentException | NoSuchWindowException e){
+				log.trace("Unable to determine existence of element. Retrying.");
+				return doesNotExist();
 			}
 		}
 		log.trace("doesNotExist() return result: false");
