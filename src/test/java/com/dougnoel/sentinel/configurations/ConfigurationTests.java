@@ -16,10 +16,15 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 
 public class ConfigurationTests {
 	private static final Path CONFIG_FILE_PATH = Path.of("conf/sentinel.yml");
+	private static final String TIMEOUT = "timeout";
+	private static final String LONG_PROCESS_TIMEOUT = "longProcessTimeout";
 	private static String originalEnvironment = null;
+	private static Duration orignalTimeout = Time.out();;
+	private static Duration orignalLongProcessTimeout = Time.longProcessTimeout();
 	private static final String ENV = "env";
 	private static final String PROD = "prod";
 	private static final String STAGE = "stage";
@@ -53,6 +58,11 @@ public class ConfigurationTests {
 		Configuration.update(ENV, originalEnvironment);
 		Driver.quitAllDrivers();
 		Files.deleteIfExists(CONFIG_FILE_PATH);
+		Time.reset();
+		System.setProperty(TIMEOUT, Long.toString(orignalTimeout.getSeconds()));
+		Configuration.update(TIMEOUT, orignalTimeout.getSeconds());
+		System.setProperty(LONG_PROCESS_TIMEOUT, Long.toString(orignalLongProcessTimeout.getSeconds()));
+		Configuration.update(LONG_PROCESS_TIMEOUT, orignalLongProcessTimeout.getSeconds());
 	}
 
 	@Test
@@ -220,15 +230,10 @@ public class ConfigurationTests {
 
 	@Test
 	public void clearConfigurationDoesNotWipeTimeout(){
-		Configuration.clear("timeout");
-		System.setProperty("timeout", "3");
+		System.setProperty(TIMEOUT, "3");
 		Time.reset();
-		Time.out();
 		Configuration.clearAllSessionAppProps();
 		assertEquals("Expecting timeout to still be 3 after all config values cleared.", Time.out().toSeconds(), 3);
-		Configuration.clear("timeout");
-		System.clearProperty("timeout");
-		Time.reset();
 	}
 
 	@Test
