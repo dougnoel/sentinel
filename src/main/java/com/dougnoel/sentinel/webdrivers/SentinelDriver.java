@@ -111,7 +111,11 @@ public class SentinelDriver {
 	@SuppressWarnings("unchecked")
 	protected void quit() {
 		if (driver.getClass().getSimpleName().contentEquals("WindowsDriver"))
-			WindowsDriverFactory.quit((WindowsDriver) driver);
+			try {
+				WindowsDriverFactory.quit((WindowsDriver) driver);
+			} catch(org.openqa.selenium.NoSuchSessionException e) {
+				//There was an error quitting a windows driver from Appium but the session exception does not handle it due to threading
+			}
 		else {
 			WebDriverFactory.quit();
 		}

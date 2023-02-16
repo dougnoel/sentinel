@@ -1,4 +1,5 @@
 package com.dougnoel.sentinel.webdrivers;
+import com.dougnoel.sentinel.exceptions.NoSuchSessionException;
 import com.dougnoel.sentinel.system.FileManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
@@ -20,11 +21,19 @@ public class WindowsDriverFactory {
 	private static Integer numberOfDriversRunning = 0;
 	private static final String STDOUT = "logs/WinAppDriver.log";
 	private static final String STDERR = "logs/WinAppDriverError.log";
+	private static AppiumDriverLocalService appiumService;
 
 	/**
 	 * Exists to defeat instantiation.
 	 */
 	private WindowsDriverFactory() {}
+
+	protected static void startAppiumService() {
+		AppiumServiceBuilder builder = new AppiumServiceBuilder();
+		builder.withIPAddress("127.0.0.1").withArgument(BASEPATH , "/wd/hub").usingPort(4725);
+		appiumService = AppiumDriverLocalService.buildService(builder);
+		appiumService.isRunning();
+	}
 
 	/**
 	 * Creates a new Appium service and starts a new instance of WinAppDriver.exe associated to that service.
@@ -38,11 +47,10 @@ public class WindowsDriverFactory {
 	 * @return WebDriver returns a WindowsDriver&lt;WebElement&gt;
 	 */
 	protected static WebDriver createWindowsDriver() {
-		String executable = FileManager.winSpecialFolderConverter(Configuration.executable());
+		if (numberOfDriversRunning == 0)
+			startAppiumService();
 
-		AppiumServiceBuilder builder = new AppiumServiceBuilder();
-		builder.withIPAddress("127.0.0.1").withArgument(BASEPATH , "/wd/hub").usingPort(4725);
-		AppiumDriverLocalService service = AppiumDriverLocalService.buildService(builder);
+		String executable = FileManager.winSpecialFolderConverter(Configuration.executable());
 
 		DesiredCapabilities capabilities = new DesiredCapabilities();
 		capabilities.setCapability("app", executable);
@@ -54,7 +62,7 @@ public class WindowsDriverFactory {
 
 		WindowsDriver driver = null;
 		try {
-			driver = new WindowsDriver(service, capabilities);
+			driver = new WindowsDriver(appiumService, capabilities);
 		}
 		catch (Exception e) {
 			log.error("{} Driver creation failed for: {}\n{}", e.getCause(), executable, e.getMessage());
@@ -76,6 +84,11 @@ public class WindowsDriverFactory {
 		numberOfDriversRunning -= 1;
 		if (numberOfDriversRunning <= 0) {
 			numberOfDriversRunning = 0;
+			try {
+				appiumService.stop();
+			} catch(org.openqa.selenium.NoSuchSessionException e) {
+				throw new NoSuchSessionException("Unable to stop the Appium service.");
+			}
 		}
 	}
 }
