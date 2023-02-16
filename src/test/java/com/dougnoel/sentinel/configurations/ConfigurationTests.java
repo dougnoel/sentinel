@@ -255,6 +255,6 @@ public class ConfigurationTests {
 						"...");
 		Configuration.clearAllSessionAppProps();
 		assertEquals(SentinelStringUtils.format("Expecting {} to still be set after all config values cleared.", TEST_VALUE),
-				Configuration.toString(TEST_VALUE), "1234");
+				"1234", Configuration.toString(TEST_VALUE));
 	}
 }
