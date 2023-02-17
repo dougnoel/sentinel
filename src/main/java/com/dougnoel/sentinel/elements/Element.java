@@ -951,4 +951,9 @@ public class Element {
 		return createByLocator(selectorType, selector);
 	}
 
+	public boolean exists(){
+		driver().switchTo().defaultContent();
+		return findElementInCurrentFrame() != null || findElementInIFrame() != null;
+	}
+
 }

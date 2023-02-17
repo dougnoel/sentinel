@@ -401,6 +401,7 @@ public class DownloadManager {
     		Path downloadPath = Path.of(parentDirectoryPath, "/downloads/");
     		downloadPath.toFile().mkdir(); //make download directory if it doesn't already exist
     		downloadDirectory = downloadPath.toString();
+            log.debug(SentinelStringUtils.format("Setting download directory to {}", downloadDirectory));
     	}
         return downloadDirectory;
     }
@@ -408,7 +409,7 @@ public class DownloadManager {
     /**
      * Sets given downloadDirectory object
      * 
-     * @param downloadDirectory String the downdloadDirectory to set
+     * @param downloadDirectory String the downloadDirectory to set
      */
     public static void setDownloadDirectory(String downloadDirectory) {
         DownloadManager.downloadDirectory = downloadDirectory;
@@ -419,6 +420,7 @@ public class DownloadManager {
      * @throws IOException in the case that an IOException occurs while clearing the directory
      */
     public static void clearDownloadDirectory() throws IOException {
+        log.debug(SentinelStringUtils.format("Clearing download directory at {}", downloadDirectory));
         FileUtils.cleanDirectory(new File(downloadDirectory));
     }
 
