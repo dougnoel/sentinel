@@ -956,7 +956,7 @@ public class Element {
 	 * Does not loop for the full timeout.
 	 * @return boolean true if the element is found. false otherwise.
 	 */
-	public boolean exists(){
+	public boolean existsAtThisInstant(){
 		driver().switchTo().defaultContent();
 		return findElementInCurrentFrame() != null || findElementInIFrame() != null;
 	}

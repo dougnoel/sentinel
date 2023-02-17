@@ -119,7 +119,7 @@ public class ElementFunctions {
 				.ignoring(WebDriverException.class);
 
 		try{
-			wait.until(x -> getElement(elementName).exists() || getElement(otherElementName).exists());
+			wait.until(x -> getElement(elementName).existsAtThisInstant() || getElement(otherElementName).existsAtThisInstant());
 			return true;
 		}
 		catch(TimeoutException e){
