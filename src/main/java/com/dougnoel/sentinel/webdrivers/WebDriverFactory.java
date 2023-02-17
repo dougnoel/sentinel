@@ -145,11 +145,8 @@ public class WebDriverFactory {
         String commandlineOptions = Configuration.toString("chromeOptions");
         if (commandlineOptions != null)
             chromeOptions.addArguments(commandlineOptions);
-    	var headless = Configuration.toString("headless");
-    	if (headless != null && !headless.equalsIgnoreCase("false")) {
-    		chromeOptions.addArguments("--no-sandbox");
-    		chromeOptions.addArguments("--disable-dev-shm-usage");
-    		chromeOptions.addArguments("--headless=new");
+    	if (Configuration.toBoolean("headless")) {
+            chromeOptions.addArguments("--headless=new");
     	}
     	var binary = Configuration.toString("chromeBrowserBinary");
     	if (binary != null)
