@@ -14,15 +14,15 @@ import static org.junit.Assert.assertTrue;
 public class WindowListTest {
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() {
         Time.reset();
         Configuration.update("timeout", 3);
     }
 
     @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+    public static void tearDownAfterClass() {
         Time.reset();
-        Configuration.update("timeout", 10);
+        Configuration.clear("timeout");
         Driver.quitAllDrivers();
     }
 

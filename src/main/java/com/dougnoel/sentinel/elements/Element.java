@@ -903,7 +903,7 @@ public class Element {
 	 * Get the value of the given attribute of the element. Will return the current value, 
 	 * even if this has been modified after the page has been loaded. <br>
 	 * More exactly, this method will return the value of the property with the given name,
-	 * if it exists. If it does not, then the value of the attribute with the given name is returned. 
+	 * if it exists. If it does not, then the value of the attribute with the given name is returned.
 	 * If neither exists, null is returned. <br>
 	 * The "style" attribute is converted as best can be to a text representation with a trailingsemi-colon. <br>
 	 * The following are deemed to be "boolean" attributes, and will return either "true" or null: 
@@ -951,6 +951,11 @@ public class Element {
 		return createByLocator(selectorType, selector);
 	}
 
+	/**
+	 * Performs exactly 1 sweep across the DOM for the element (includes all selectors).
+	 * Does not loop for the full timeout.
+	 * @return boolean true if the element is found. false otherwise.
+	 */
 	public boolean exists(){
 		driver().switchTo().defaultContent();
 		return findElementInCurrentFrame() != null || findElementInIFrame() != null;

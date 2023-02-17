@@ -105,6 +105,13 @@ public class ElementFunctions {
     	return errorMessage;
     }
 
+	/**
+	 * Waits the configured timeout for either of the two elements to be found. Does not take into consideration visibility of elements.
+	 * Does not take into consideration which element is found first.
+	 * @param elementName String an element to search for.
+	 * @param otherElementName String another element to search for.
+	 * @return boolean true if either of the elements are found within the configured timeout. false otherwise.
+	 */
 	public static boolean waitForEitherElementToExist(String elementName, String otherElementName){
 		var wait = new FluentWait<>(WebDriverFactory.getWebDriver())
 				.withTimeout(Time.out())

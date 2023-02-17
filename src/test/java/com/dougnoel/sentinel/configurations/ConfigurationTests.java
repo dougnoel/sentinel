@@ -233,7 +233,7 @@ public class ConfigurationTests {
 		System.setProperty(TIMEOUT, "3");
 		Time.reset();
 		Configuration.clearAllSessionAppProps();
-		assertEquals("Expecting timeout to still be 3 after all config values cleared.", Time.out().toSeconds(), 3);
+		assertEquals("Expecting timeout to still be 3 after all config values cleared.", 3, Time.out().toSeconds());
 	}
 
 	@Test
@@ -241,7 +241,7 @@ public class ConfigurationTests {
 		Configuration.clear(ENV);
 		System.setProperty(ENV, TEST_VALUE);
 		Configuration.clearAllSessionAppProps();
-		assertEquals(SentinelStringUtils.format("Expecting {} to still be {} after all config values cleared.", ENV, TEST_VALUE), Configuration.environment(), TEST_VALUE);
+		assertEquals(SentinelStringUtils.format("Expecting {} to still be {} after all config values cleared.", ENV, TEST_VALUE), TEST_VALUE, Configuration.environment());
 		Configuration.clear(ENV);
 		System.clearProperty(ENV);
 	}
