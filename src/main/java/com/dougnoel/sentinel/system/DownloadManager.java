@@ -97,7 +97,7 @@ public class DownloadManager {
         String downloadedFileName = null;
         var valid = true;
         
-        long timeOut = Time.longProcessTimeout().toSeconds();
+        long timeOut = Time.out().toSeconds();
         long loopTime = Time.loopInterval().toMillis();
         var downloadFolderPath = Paths.get(downloadDir);
         var watchService = FileSystems.getDefault().newWatchService();
