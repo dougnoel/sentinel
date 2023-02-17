@@ -141,13 +141,14 @@ public class WebDriverFactory {
      */
     private static WebDriver createChromeDriver() {
     	var chromeOptions = new ChromeOptions();
+        if (Configuration.toBoolean("headless")) {
+            chromeOptions.addArguments("--headless=new");
+        }
     	setChromeDownloadDirectory(chromeOptions);
         String commandlineOptions = Configuration.toString("chromeOptions");
         if (commandlineOptions != null)
             chromeOptions.addArguments(commandlineOptions);
-    	if (Configuration.toBoolean("headless")) {
-            chromeOptions.addArguments("--headless=new");
-    	}
+
     	var binary = Configuration.toString("chromeBrowserBinary");
     	if (binary != null)
     		chromeOptions.setBinary(binary);
