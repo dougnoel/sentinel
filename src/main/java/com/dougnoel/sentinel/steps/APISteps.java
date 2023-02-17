@@ -80,7 +80,7 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) parameter with the value (.*?)$")
 	public void addParameter(String parameter, String value) {
-		APIManager.addParameter(parameter, value);
+		APIManager.addParameter(parameter, Configuration.toString(value, value));
 	}
 	
 	/**
@@ -189,7 +189,17 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) header with the value (.*?)$")
 	public void addHeader(String name, String value) {
-		APIManager.addHeader(name, value);
+		APIManager.addHeader(name, Configuration.toString(value, value));
 	}
 
+	/**
+	 * Sets the body of the active API call to the string passed.
+	 *
+	 * @param body String the json to be passed as the body of the request.
+	 */
+	@Given("I set the request body with variables to")
+	public void setVariableRequestBody(String body) {
+		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
+		log.trace("Body passed: {}", body);
+	}
 }

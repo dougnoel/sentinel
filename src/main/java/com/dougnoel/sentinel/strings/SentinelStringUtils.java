@@ -132,4 +132,44 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 		return text;
 	}
 
+	/**
+	 * Returns a string with any strings with pattern "\$(int|str) \{.*?\}" replaced with values
+	 * stored configuration. For example, given the string
+	 {
+	 "id": $int {id},
+	 "name": "puppy",
+	 "category": {
+	 "id": 1,
+	 "name":  $str {category_name}
+	 			}
+	 }
+	 * This method would return: {
+	 * 	 "id": 10,
+	 * 	 "name": "puppy",
+	 * 	 "category": {
+	 * 	 "id": 1,
+	 * 	 "name": "Dog"
+	 *    }}.
+	 * If there are no values to replace, this method returns the string intact.
+	 * @param text String the text to search for variable replacement
+	 * @return String the string with variables replaced as applicable
+	 */
+	public static String replaceStoredVariables(String text) {
+		Matcher matcher = Pattern.compile("\\$(int|str) \\{.*?\\}").matcher(text);
+		while (matcher.find()) {
+
+			var variable = matcher.group();
+			var splitted = variable.split(" ");
+
+			var value = Configuration.toString(splitted[1].substring(1, splitted[1].length() - 1));
+			if(splitted[0].contains("int")) {
+				text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+			}
+			else{
+				text = StringUtils.replaceOnce(text, variable, "\""+value+"\""); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+
+			}
+			}
+		return text;
+	}
 }

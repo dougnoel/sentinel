@@ -73,3 +73,32 @@ Feature: 89 API Testing
     Then I verify the response code equals 200
     When I GET record 10 from the pet endpoint
     Then I verify the response code equals 404
+
+  @89G
+  Scenario: 89E Body With Parameters Test
+    Given I use the API named Pet Store API
+    When I initialize the data
+    When I set the request body with variables to
+    """
+    {
+	  "id": $int {id},
+	  "name": "puppy",
+	  "category": {
+	    "id": 1,
+	    "name":  $str {category_name}
+	  },
+	  "photoUrls": [
+	    "string"
+	  ],
+	  "tags": [
+	    {
+	      "id": 0,
+	      "name": "string"
+	    }
+	  ],
+	  "status": "available"
+	}
+    """
+    And I send a PUT request to the pet endpoint
+    Then I verify the response code equals 200
+    And I validate the response contains the text "puppy"
