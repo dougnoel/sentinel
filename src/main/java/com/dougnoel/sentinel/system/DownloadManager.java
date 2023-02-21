@@ -401,7 +401,7 @@ public class DownloadManager {
     		Path downloadPath = Path.of(parentDirectoryPath, "/downloads/");
     		downloadPath.toFile().mkdir(); //make download directory if it doesn't already exist
     		downloadDirectory = downloadPath.toString();
-            log.trace(SentinelStringUtils.format("Setting download directory to {}", downloadDirectory));
+            log.trace("Setting download directory to {}", downloadDirectory);
     	}
         return downloadDirectory;
     }
@@ -420,7 +420,7 @@ public class DownloadManager {
      * @throws IOException in the case that an IOException occurs while clearing the directory
      */
     public static void clearDownloadDirectory() throws IOException {
-        log.trace(SentinelStringUtils.format("Clearing download directory at {}", downloadDirectory));
+        log.trace("Clearing download directory at {}", downloadDirectory);
         FileUtils.cleanDirectory(new File(downloadDirectory));
     }
 
