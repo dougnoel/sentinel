@@ -1,11 +1,11 @@
 package com.dougnoel.sentinel.webdrivers;
-import com.dougnoel.sentinel.exceptions.NoSuchSessionException;
 import com.dougnoel.sentinel.system.FileManager;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import com.dougnoel.sentinel.configurations.Configuration;
 import io.appium.java_client.windows.WindowsDriver;
@@ -60,9 +60,9 @@ public class WindowsDriverFactory {
 		capabilities.setCapability("automationName", "Windows");
 		capabilities.setCapability("deviceName", "Windows10Machine");
 
-		WindowsDriver driver = null;
+		WindowsDriver<WebElement> driver = null;
 		try {
-			driver = new WindowsDriver(appiumService, capabilities);
+			driver = new WindowsDriver<>(appiumService, capabilities);
 		}
 		catch (Exception e) {
 			log.error("{} Driver creation failed for: {}\n{}", e.getCause(), executable, e.getMessage());
@@ -79,16 +79,12 @@ public class WindowsDriverFactory {
 	 *
 	 * @param driver WindowsDriver&lt;WebElement&gt; the WindowsDriver to quit
 	 */
-	protected static void quit(WindowsDriver driver) {
+	protected static void quit(WindowsDriver<WebElement> driver) {
 		driver.quit();
 		numberOfDriversRunning -= 1;
 		if (numberOfDriversRunning <= 0) {
 			numberOfDriversRunning = 0;
-			try {
-				appiumService.stop();
-			} catch(org.openqa.selenium.NoSuchSessionException e) {
-				throw new NoSuchSessionException("Unable to stop the Appium service.");
-			}
+			appiumService.stop();
 		}
 	}
 }

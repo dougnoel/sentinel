@@ -171,18 +171,6 @@ public class WindowsElement extends Element {
 	}
 
 	/**
-	 * Context clicks an Element.
-	 *
-	 * @return Element (for chaining)
-	 */
-	@Override
-	public WindowsElement contextClick(){
-		Actions actions = new Actions(Driver.getWebDriver());
-		actions.contextClick(this.element()).build().perform();
-		return this;
-	}
-
-	/**
 	 * Returns the Color of the pixel at the given xOffset, yOffset relative to the top left pixel of the element.
 	 * WARNING!!! Windows (OS) setting "Make everything bigger" (app and text scaling) must be set to 100% for proper use of this method.
 	 * @param xOffset int the pixels to the right of the left edge of the element
