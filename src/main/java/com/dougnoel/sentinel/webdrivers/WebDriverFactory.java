@@ -79,12 +79,12 @@ public class WebDriverFactory {
         	WebDriverManager.iedriver().setup();
         	driver = new InternetExplorerDriver(ieOptions);
             break;
-        case "opera":
-        	WebDriverManager.operadriver().setup();
-        	driver = new OperaDriver();
-        	break;
         case "safari":
-        	driver = new SafariDriver();
+            driver = new SafariDriver();
+            break;
+        case "opera":
+            WebDriverManager.operadriver().setup();
+            driver = new OperaDriver();
             break;
         default:
             throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
@@ -141,14 +141,15 @@ public class WebDriverFactory {
      */
     private static WebDriver createChromeDriver() {
     	var chromeOptions = new ChromeOptions();
-        if (Configuration.toBoolean("headless")) {
-            chromeOptions.addArguments("--headless=new");
-        }
     	setChromeDownloadDirectory(chromeOptions);
         String commandlineOptions = Configuration.toString("chromeOptions");
         if (commandlineOptions != null)
             chromeOptions.addArguments(commandlineOptions);
-
+    	if (Configuration.toBoolean("headless")) {
+    		chromeOptions.addArguments("--no-sandbox");
+    		chromeOptions.addArguments("--disable-dev-shm-usage");
+    		chromeOptions.addArguments("--headless");        		
+    	}
     	var binary = Configuration.toString("chromeBrowserBinary");
     	if (binary != null)
     		chromeOptions.setBinary(binary);
