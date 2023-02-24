@@ -127,11 +127,11 @@ public class WebDriverFactory {
      * Sets the download directory for chromedriver. Cannot be used with Saucelabs.
      * @param options ChromeOptions object to set
      */
-    private static void setChromeDownloadDirectory(ChromeOptions options) {
+    private static ChromeOptions setChromeDownloadDirectory(ChromeOptions options) {
         HashMap<String, Object> chromePrefs = new HashMap<>();
         chromePrefs.put("download.prompt_for_download", false);
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
-        options.setExperimentalOption("prefs", chromePrefs);
+        return options.setExperimentalOption("prefs", chromePrefs);
     }
     
     /**
@@ -140,15 +140,14 @@ public class WebDriverFactory {
      * @return WebDriver ChromeDrvier
      */
     private static WebDriver createChromeDriver() {
-    	var chromeOptions = new ChromeOptions();
-    	setChromeDownloadDirectory(chromeOptions);
+    	var chromeOptions = setChromeDownloadDirectory(new ChromeOptions());
         String commandlineOptions = Configuration.toString("chromeOptions");
         if (commandlineOptions != null)
             chromeOptions.addArguments(commandlineOptions);
     	if (Configuration.toBoolean("headless")) {
     		chromeOptions.addArguments("--no-sandbox");
     		chromeOptions.addArguments("--disable-dev-shm-usage");
-    		chromeOptions.addArguments("--headless");        		
+    		chromeOptions.addArguments("--headless=new");
     	}
     	var binary = Configuration.toString("chromeBrowserBinary");
     	if (binary != null)
