@@ -27,7 +27,7 @@ public class Driver {
     	PageObjectType pageObjectType = PageManager.getPage().getPageObjectType();
     	SentinelDriver currentDriver = null;
     	if (pageObjectType == PageObjectType.EXECUTABLE) {
-    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WinAppDriverFactory.createWinAppDriver()));
+    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WindowsDriverFactory.createWindowsDriver()));
     	}
     		else {
     		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WebDriverFactory.getWebDriver()));
