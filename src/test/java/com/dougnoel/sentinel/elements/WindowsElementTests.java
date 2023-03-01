@@ -16,16 +16,16 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 public class WindowsElementTests {
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass() {
 		Time.reset();
 		Configuration.update("timeout", 1);
 		BaseSteps.navigateToPage("WindowsElements");
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass() {
 		Time.reset();
-		Configuration.update("timeout", 10);
+		Configuration.clear("timeout");
 		Driver.quitAllDrivers();
 	}
 	

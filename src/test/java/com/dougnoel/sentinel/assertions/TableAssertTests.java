@@ -26,7 +26,7 @@ public class TableAssertTests {
     @AfterClass
     public static void tearDownAfterClass() {
         Time.reset();
-        Configuration.update("timeout", 10);
+        Configuration.clear("timeout");
         Driver.quitAllDrivers();
     }
 
