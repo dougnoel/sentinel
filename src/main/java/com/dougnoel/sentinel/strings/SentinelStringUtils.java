@@ -172,4 +172,14 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 			}
 		return text;
 	}
+	public static String replaceURLVariable(String text) {
+		Matcher matcher = Pattern.compile("\\{[^\\}]*+\\}").matcher(text);
+		while (matcher.find()) {
+			var variable = matcher.group();
+			var variableName = StringUtils.substring(variable, 1, -1);
+			var value = Configuration.toString(variableName);
+			text = StringUtils.replaceOnce(text, variable, value).replaceAll("\"",""); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+		}
+		return text;
+	}
 }

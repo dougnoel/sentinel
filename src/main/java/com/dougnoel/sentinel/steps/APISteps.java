@@ -80,7 +80,7 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) parameter with the value (.*?)$")
 	public void addParameter(String parameter, String value) {
-		APIManager.addParameter(parameter, Configuration.toString(value, value));
+		APIManager.addParameter(parameter, Configuration.toString(value, value).replaceAll("\"",""));
 	}
 	
 	/**
@@ -99,7 +99,8 @@ public class APISteps {
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public void sendRequest(String apiCallType, String endpoint) {
-		APIManager.sendRequest(RequestType.valueOf(apiCallType), endpoint);
+		var endpointFormatted = SentinelStringUtils.replaceURLVariable(endpoint);
+		APIManager.sendRequest(RequestType.valueOf(apiCallType), endpointFormatted);
 	}
 	
 	/**
