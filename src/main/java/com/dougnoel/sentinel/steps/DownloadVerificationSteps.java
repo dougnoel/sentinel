@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.dougnoel.sentinel.files.ZipFile;
@@ -59,6 +61,34 @@ public class DownloadVerificationSteps {
 				expectedFilename);
 
 		assertTrue(expectedResult, StringUtils.equals(downloadedFilename, expectedFilename));
+	}
+
+	/**
+	 * Uses the DownloadManager to fetch the most recently downloaded file path.
+	 * Then verifies the filename contains the current date time in <b>YYYY_MMM_dd</b> format by default or a supplied format.
+	 * <p>
+	 * <br><b>Gherkin Example:</b><br>
+	 * <ul>
+	 * <li>I verify the filename contains today's date</li>
+	 * <li>I verify the filename contains today's date <i>formatted as <b>YYYY_MMM_dd_hh:ss:mm</b></i></li>
+	 * </ul>
+	 * <p>
+	 * @param dateTimePattern String an optional datetime pattern
+	 */
+	@Then("^I verify the filename contains today's date(?: formatted as (.*))?$")
+	public static void verifyFileWithDateTimeFilename(String dateTimePattern) {
+		if(dateTimePattern.isBlank())
+			dateTimePattern = "YYYY_MMM_dd";
+
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
+		String formattedDateTime = dateFormatter.format(LocalDate.now());
+
+		String mostRecentDownloadPath = DownloadManager.getMostRecentDownloadPath().toString();
+		String expectedResult = SentinelStringUtils.format("Expected a new file containing the current date time \"{}\" to be downloaded. "
+						+ "Perhaps the download did not complete in time. Check your timeout.",
+				formattedDateTime);
+
+		assertTrue(expectedResult, StringUtils.contains(mostRecentDownloadPath, formattedDateTime));
 	}
 
 	/**
