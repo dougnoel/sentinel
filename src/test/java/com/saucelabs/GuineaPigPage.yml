@@ -9,6 +9,8 @@ elements:
     id: "i_am_an_id"
   fake_div:
     id: "fake div"
+  second_fake_div:
+    id: "second fake div"
   hidden_div:
     id: "invisible div"
   your_comments_span:

@@ -4,12 +4,14 @@ Create cucumber tests for all VerificationSteps. Update and rename "Element Exis
 
   @251A @145
   Scenario: Test Link Existence
-  Validate the Fucntionality of Elements Existing and Not Existing
+  Validate the Functionality of Elements Existing and Not Existing
     Given I am on the Guinea Pig Page
     Then I verify the Example Div exists
-    	And I verify the Example Link exists
-    	And I verify the Invisible Div does not exist
-    	And I verify the Fake Div does not exist
+      And I verify the Example Link exists
+      And I verify the Invisible Div does not exist
+      And I verify the Fake Div does not exist
+      And I verify either the Example Link or the Fake Div exist
+      And I verify either the Fake Div or the Invisible Div exist
     	
   @251B
   Scenario: Attribute Tests

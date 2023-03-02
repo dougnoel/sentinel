@@ -4,6 +4,7 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static org.junit.Assert.*;
 
 import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.elements.ElementFunctions;
 import com.dougnoel.sentinel.math.Decimal;
 import org.apache.commons.lang3.StringUtils;
 
@@ -391,7 +392,23 @@ public class VerificationSteps {
         else{
             assertTrue(expectedResult, element1point.x < element2point.x);
         }
+    }
 
+    /**
+     * Verifies one of two given elements is present on the page. Does not check for visibility of elements.
+     * Useful for when a certain action may produce two different results on a page and either is acceptable for test to continue.
+     * <p>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     * <li>I verify either the client table or the no rows found warning exist</li>
+     * </ul>
+     * @param elementName
+     * @param otherElementName
+     */
+    @Then("^I verify either (?:the|a|an) (.*?) or (?:the|a|an) (.*?) exist$")
+    public static void verifyOneOfTwoElementsIsFound(String elementName, String otherElementName){
+        String expectedResult = SentinelStringUtils.format("Expected either the {} or the {} to exist. Neither was found.", elementName, otherElementName);
+        assertTrue(expectedResult, ElementFunctions.waitForEitherElementToExist(elementName, otherElementName));
     }
 
 }
