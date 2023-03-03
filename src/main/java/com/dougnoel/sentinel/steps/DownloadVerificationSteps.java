@@ -83,12 +83,12 @@ public class DownloadVerificationSteps {
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
 		String formattedDateTime = dateFormatter.format(LocalDateTime.now());
 
-		String mostRecentDownloadPath = DownloadManager.getMostRecentDownloadPath().toString();
+		String mostRecentDownloadFilename = DownloadManager.getMostRecentDownloadPath().getFileName().toString();
 		String expectedResult = SentinelStringUtils.format("Expected a new file containing the current date time \"{}\" to be downloaded. "
 						+ "Perhaps the download did not complete in time. Check your timeout.",
 				formattedDateTime);
 
-		assertTrue(expectedResult, StringUtils.contains(mostRecentDownloadPath, formattedDateTime));
+		assertTrue(expectedResult, StringUtils.contains(mostRecentDownloadFilename, formattedDateTime));
 	}
 
 	/**
