@@ -2,7 +2,11 @@ package com.dougnoel.sentinel.elements;
 
 import static org.junit.Assert.*;
 
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.steps.BaseSteps;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.InvalidSelectorException;
@@ -19,13 +23,21 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 public class ElementFunctionsTests {
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass() {
 		System.setProperty("env", "dev");
+		Time.reset();
+		Configuration.update("timeout", 1);
+	}
+
+	@Before
+	public void setUp(){
 		PageManager.setPage("Elements");
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass() {
+		Time.reset();
+		Configuration.clear("timeout");
 		Driver.quitAllDrivers();
 	}
 
@@ -117,5 +129,10 @@ public class ElementFunctionsTests {
 	public void creationFailure() {
 		ElementFunctions.getElement("bad_element").click();
 	}
-	
+
+	@Test()
+	public void neitherElementExists(){
+		BaseSteps.navigateToPage("Guinea Pig Page");
+		assertFalse("Expected to find neither element after timeout.", ElementFunctions.waitForEitherElementToExist("fake div", "another fake div"));
+	}
 }

@@ -30,15 +30,15 @@ import com.dougnoel.sentinel.webdrivers.Driver;
 public class ElementTests {
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() {
         Time.reset();
         Configuration.update("timeout", 1);
     }
 
     @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+    public static void tearDownAfterClass() {
         Time.reset();
-        Configuration.update("timeout", 10);
+        Configuration.clear("timeout");
         Driver.quitAllDrivers();
     }
 
@@ -363,5 +363,11 @@ public class ElementTests {
         var table = ElementFunctions.getElementAsTable("table 1");
         Assert.assertFalse("Timed out waiting for cell in the 1st row and Last Name column to not have the text Smith",
                 table.waitForSpecificCellToContain(1, "Last Name", 1, "Smith", true, true));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void compareTableColumnValuesWithInvalidComparisonType() {
+        BaseSteps.navigateToPage("TablePage");
+        ElementFunctions.getElementAsTable("example table").verifyNumericValuesInWholeColumn("ID", "fake comparison", 3.0);
     }
 }
