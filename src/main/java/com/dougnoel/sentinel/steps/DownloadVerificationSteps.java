@@ -20,6 +20,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import io.cucumber.java.en.Then;
 
 public class DownloadVerificationSteps {
+	private static final String TRAILING_DOWNLOAD_FAILURE_MESSAGE = "Perhaps the download did not complete in time. Check your timeout.";
 
 	/**
 	 * Uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given extension to appear.
@@ -36,7 +37,7 @@ public class DownloadVerificationSteps {
 		DownloadManager.setFileExtension(fileExtension);
 		var fileName = DownloadManager.monitorDownload();
 		String expectedResult = SentinelStringUtils.format("Expected a new file with the {} extension to be downloaded. "
-				+ "Perhaps the download did not complete in time. Check your timeout.",
+				+ TRAILING_DOWNLOAD_FAILURE_MESSAGE,
                 fileExtension);
 		
 		assertTrue(expectedResult, !StringUtils.isEmpty(fileName));
@@ -57,7 +58,7 @@ public class DownloadVerificationSteps {
 		DownloadManager.setFileExtension(FilenameUtils.getExtension(expectedFilename));
 		var downloadedFilename = DownloadManager.monitorDownload();
 		String expectedResult = SentinelStringUtils.format("Expected a new file with the filename \"{}\"  to be downloaded. "
-						+ "Perhaps the download did not complete in time. Check your timeout.",
+						+ TRAILING_DOWNLOAD_FAILURE_MESSAGE,
 				expectedFilename);
 
 		assertTrue(expectedResult, StringUtils.equals(downloadedFilename, expectedFilename));
@@ -85,7 +86,7 @@ public class DownloadVerificationSteps {
 
 		String mostRecentDownloadFilename = DownloadManager.getMostRecentDownloadPath().getFileName().toString();
 		String expectedResult = SentinelStringUtils.format("Expected a new file containing the current date time \"{}\" to be downloaded. "
-						+ "Perhaps the download did not complete in time. Check your timeout.",
+						+ TRAILING_DOWNLOAD_FAILURE_MESSAGE,
 				formattedDateTime);
 
 		assertTrue(expectedResult, StringUtils.contains(mostRecentDownloadFilename, formattedDateTime));
