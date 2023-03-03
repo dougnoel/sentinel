@@ -7,6 +7,7 @@ com.dougnoel.sentinel.elements.tables
 com.dougnoel.sentinel.enums
 com.dougnoel.sentinel.exceptions
 com.dougnoel.sentinel.files
+com.dougnoel.sentinel.math
 com.dougnoel.sentinel.pages
 com.dougnoel.sentinel.steps
 com.dougnoel.sentinel.strings
