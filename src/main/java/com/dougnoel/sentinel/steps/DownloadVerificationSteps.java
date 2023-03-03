@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -75,13 +75,13 @@ public class DownloadVerificationSteps {
 	 * <p>
 	 * @param dateTimePattern String an optional datetime pattern
 	 */
-	@Then("^I verify the filename contains today's date(?: formatted as (.*))?$")
+	@Then("^I verify the filename contains today's date(?: formatted as )?(.*?)$")
 	public static void verifyFileWithDateTimeFilename(String dateTimePattern) {
 		if(dateTimePattern.isBlank())
 			dateTimePattern = "YYYY_MMM_dd";
 
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
-		String formattedDateTime = dateFormatter.format(LocalDate.now());
+		String formattedDateTime = dateFormatter.format(LocalDateTime.now());
 
 		String mostRecentDownloadPath = DownloadManager.getMostRecentDownloadPath().toString();
 		String expectedResult = SentinelStringUtils.format("Expected a new file containing the current date time \"{}\" to be downloaded. "
