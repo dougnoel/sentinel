@@ -115,7 +115,7 @@ public class Element {
 		try {
 			return driver().findElement(locator);
 		}
-		catch (TimeoutException | StaleElementReferenceException | NoSuchElementException | InvalidArgumentException e) {
+		catch (TimeoutException | StaleElementReferenceException | NoSuchElementException | InvalidArgumentException | NoSuchWindowException e) {
 			return null;
 		}
 	}
@@ -198,7 +198,8 @@ public class Element {
 					.pollingEvery(Time.interval())
 					.ignoring(org.openqa.selenium.NoSuchElementException.class)
 					.ignoring(StaleElementReferenceException.class)
-					.ignoring(InvalidArgumentException.class);
+					.ignoring(InvalidArgumentException.class)
+					.ignoring(NoSuchWindowException.class);
 
 			return wait.until(d -> element().findElement(locator));
 		} catch (org.openqa.selenium.TimeoutException e) {
@@ -231,7 +232,7 @@ public class Element {
         			driver().switchTo().parentFrame();
         		}
     		}
-    		catch(StaleElementReferenceException | NoSuchFrameException | InvalidArgumentException e) {
+    		catch(StaleElementReferenceException | NoSuchFrameException | InvalidArgumentException | NoSuchWindowException e) {
     			var errorMessage = SentinelStringUtils.format("Error when searching for {} element named \"{}\" while attempting to search through iFrames. Looping again. Error: {}",
     					elementType, getName(), e);
     			log.trace(errorMessage);
@@ -461,7 +462,8 @@ public class Element {
 				.pollingEvery(Time.interval())
 				.ignoring(NoSuchElementException.class)
 				.ignoring(StaleElementReferenceException.class)
-				.ignoring(InvalidArgumentException.class);
+				.ignoring(InvalidArgumentException.class)
+				.ignoring(NoSuchWindowException.class);
 	}
 	
 	/**
@@ -635,6 +637,9 @@ public class Element {
 			} catch (StaleElementReferenceException e) {
 				log.trace("doesNotExist() StaleElementException return result: true");
 				return true;
+			} catch(InvalidArgumentException | NoSuchWindowException e){
+				log.trace("Unable to determine existence of element. Retrying.");
+				return doesNotExist();
 			}
 		}
 		log.trace("doesNotExist() return result: false");
@@ -898,7 +903,7 @@ public class Element {
 	 * Get the value of the given attribute of the element. Will return the current value, 
 	 * even if this has been modified after the page has been loaded. <br>
 	 * More exactly, this method will return the value of the property with the given name,
-	 * if it exists. If it does not, then the value of the attribute with the given name is returned. 
+	 * if it exists. If it does not, then the value of the attribute with the given name is returned.
 	 * If neither exists, null is returned. <br>
 	 * The "style" attribute is converted as best can be to a text representation with a trailingsemi-colon. <br>
 	 * The following are deemed to be "boolean" attributes, and will return either "true" or null: 
@@ -944,6 +949,16 @@ public class Element {
 		var selectorType = optional.get();
 		var selector = selectors.get(selectorType);
 		return createByLocator(selectorType, selector);
+	}
+
+	/**
+	 * Performs exactly 1 sweep across the DOM for the element (includes all selectors).
+	 * Does not loop for the full timeout.
+	 * @return boolean true if the element is found. false otherwise.
+	 */
+	public boolean existsAtThisInstant(){
+		driver().switchTo().defaultContent();
+		return findElementInCurrentFrame() != null || findElementInIFrame() != null;
 	}
 
 }

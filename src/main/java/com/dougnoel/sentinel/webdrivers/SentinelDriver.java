@@ -2,15 +2,14 @@ package com.dougnoel.sentinel.webdrivers;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.openqa.selenium.WebDriver;
-
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageManager;
-
 import io.appium.java_client.windows.WindowsDriver;
-import io.appium.java_client.windows.WindowsElement;
 
+/**
+ * Tracks all the windows attached to a particular driver.
+ */
 public class SentinelDriver {
 	//The webdriver
 	private WebDriver driver;
@@ -112,7 +111,11 @@ public class SentinelDriver {
 	@SuppressWarnings("unchecked")
 	protected void quit() {
 		if (driver.getClass().getSimpleName().contentEquals("WindowsDriver"))
-			WinAppDriverFactory.quit((WindowsDriver<WindowsElement>) driver);
+			try {
+				WindowsDriverFactory.quit((WindowsDriver) driver);
+			} catch(org.openqa.selenium.NoSuchSessionException e) {
+				//There was an error quitting a windows driver from Appium but the session exception does not handle it due to threading
+			}
 		else {
 			WebDriverFactory.quit();
 		}
