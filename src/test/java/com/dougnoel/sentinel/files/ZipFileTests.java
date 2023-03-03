@@ -42,7 +42,7 @@ public class ZipFileTests {
 
     @Test
     public void createZipFileFromDownload() throws IOException, InterruptedException {
-        BaseSteps.navigateToPage("RadioButtonPage");
+        BaseSteps.navigateToPage("DownloadsTestPage");
         BaseSteps.click("zip_download_link");
         DownloadManager.setFileExtension("zip");
         String filename = DownloadManager.monitorDownload();
@@ -52,7 +52,7 @@ public class ZipFileTests {
 
     @Test(expected = IOException.class)
     public void verifyBadZipFileDownloadFromWebCannotOpen() throws InterruptedException, IOException {
-        BaseSteps.navigateToPage("RadioButtonPage");
+        BaseSteps.navigateToPage("DownloadsTestPage");
         DownloadManager.setFileExtension("pdf");
         BaseSteps.click("sample_download_link");
         DownloadManager.monitorDownload();

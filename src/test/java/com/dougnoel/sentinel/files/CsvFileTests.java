@@ -52,7 +52,7 @@ public class CsvFileTests {
 
     @Test
     public void createCsvFileFromDownload() throws IOException, InterruptedException {
-        BaseSteps.navigateToPage("RadioButtonPage");
+        BaseSteps.navigateToPage("DownloadsTestPage");
         BaseSteps.click("sample_download_link");
         String filename = DownloadManager.monitorDownload();
         CsvFile file = new CsvFile();
