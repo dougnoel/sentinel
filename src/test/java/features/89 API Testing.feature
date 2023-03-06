@@ -66,7 +66,7 @@ Feature: 89 API Testing
     Then I verify the response code equals 404
 
   @89F
-  Scenario: 89E DELETE Header Swagger Test
+  Scenario: 89F DELETE Header Swagger Test
     Given I use the API named Pet Store API
     When I add an api_key header with the value 123
     When I DELETE record 10 from the pet endpoint
@@ -75,7 +75,7 @@ Feature: 89 API Testing
     Then I verify the response code equals 404
 
   @89G
-  Scenario: 89E Body With Parameters Test
+  Scenario: 89G Body With Parameters Test
     Given I use the API named Pet Store API
     When I initialize the data
     When I set the request body with variables to
@@ -99,6 +99,13 @@ Feature: 89 API Testing
 	  "status": "available"
 	}
     """
-    And I send a PUT request to the pet endpoint
+    And I send a POST request to the pet endpoint
     Then I verify the response code equals 200
     And I validate the response contains the text "puppy"
+
+  @89H
+  Scenario: 89H URL With Parameter Test
+    Given I use the API named Pet Store API
+    When I initialize the data
+      And I send a GET request to the pet/{id} endpoint
+    Then I verify the response code equals 200

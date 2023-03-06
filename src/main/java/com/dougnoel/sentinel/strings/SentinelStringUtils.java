@@ -172,6 +172,14 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 			}
 		return text;
 	}
+	/**
+	 * Returns a string with any strings enclosed in curly braces "{}" replaced with values
+	 * stored Configuration. For example, given the string pet/{petId} and Configuration for petId = 10
+	 * This method would return: " pet/10".
+	 * If there are no values to replace, this method returns the string intact.
+	 * @param text String the text to search for variable replacement
+	 * @return String the string with variables replaced as applicable
+	 */
 	public static String replaceURLVariable(String text) {
 		Matcher matcher = Pattern.compile("\\{[^\\}]*+\\}").matcher(text);
 		while (matcher.find()) {
