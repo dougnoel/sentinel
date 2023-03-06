@@ -5,6 +5,8 @@ import org.openqa.selenium.NotFoundException;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.system.TestManager;
 
+import io.cucumber.java.Scenario;
+
 /**
  * Tracks which API is currently being used and requests the APIFactory create it if it does not exist.
  * @author dougnoel@gmail.com
@@ -14,6 +16,7 @@ public class APIManager {
 	//Only one API should be in use at a time. We are consciously not multi-threading.
 	private static API api = null;
 	private static Response response = null;
+	private static Scenario scenario = null;
 	
 	private APIManager() {
 		// Exists only to defeat instantiation.
@@ -75,23 +78,42 @@ public class APIManager {
 	 * @param endpoint the endpoint to send the request
 	 */
 	public static void sendRequest(RequestType type, String endpoint) {
-		getAPI().getRequest().createAndSendRequest(type, endpoint);
+		response = getAPI().getRequest().createAndSendRequest(type, endpoint);
+		getAPI().setResponse(endpoint, response);
 	}
 	
 	/**
 	 * Returns the most recent response.
-	 * @return Response the response
+	 * @return com.dougnoel.sentinel.apis.Response the Response object requested
 	 */
 	public static Response getResponse() {
 		return response;
 	}
+	
+	/**
+	 * Returns the response stored for the given endpoint under the currently active API.
+	 * 
+	 * @param endpoint String the name of the endpoint the request was sent to
+	 * @return com.dougnoel.sentinel.apis.Response the Response object requested
+	 */
+	public static Response getResponse(String endpoint) {
+		return getAPI().getResponse(endpoint);
+	}
 
 	/**
-	 * Sets the most recent response.
-	 * @param response Response the response
+	 * @return Scenario the scenario
 	 */
-	public static void setResponse(Response response) {
-		APIManager.response = response;
+	public static Scenario getScenario() {
+		return scenario;
 	}
+
+	/**
+	 * @param scenario Scenario the scenario to set
+	 */
+	public static void setScenario(Scenario scenario) {
+		APIManager.scenario = scenario;
+	}
+	
+	
 	
 }

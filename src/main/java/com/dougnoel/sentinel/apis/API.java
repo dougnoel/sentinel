@@ -1,7 +1,9 @@
 package com.dougnoel.sentinel.apis;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.client.utils.URIBuilder;
 import com.dougnoel.sentinel.configurations.Configuration;
@@ -9,6 +11,7 @@ import com.dougnoel.sentinel.enums.YAMLObjectType;
 import com.dougnoel.sentinel.exceptions.IOException;
 import com.dougnoel.sentinel.system.YAMLObject;
 
+import io.cucumber.java.Scenario;
 import io.swagger.parser.OpenAPIParser;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
@@ -16,6 +19,7 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 public class API extends YAMLObject {
 	private Request request = new Request();
+	protected Map<Scenario,ResponseSet> responses = new HashMap<>();
 	
     /**
      * Constructor
@@ -44,8 +48,33 @@ public class API extends YAMLObject {
 		}
 	}
 	
+	/**
+	 * Returns the currently constructed request for this API.
+	 * 
+	 * @return com.dougnoel.sentinel.apis.Request the currently constructed request.
+	 */
 	public Request getRequest() {
 		return request; 
+	}
+	
+	/**
+	 * Stores a Response based on the key passed.
+	 * 
+	 * @param key String the key to store the Response under
+	 * @param com.dougnoel.sentinel.apis.Response the Response object to store
+	 */
+	public void setResponse(String key, Response response) {
+		responses.put(key, response);
+	}
+	
+	/**
+	 * Returns the stored response for the given key.
+	 * 
+	 * @param key String the key the Response is stored under
+	 * @return com.dougnoel.sentinel.apis.Response the Response object requested
+	 */
+	public Response getResponse(String key) {
+		return responses.get(key);
 	}
 
 }

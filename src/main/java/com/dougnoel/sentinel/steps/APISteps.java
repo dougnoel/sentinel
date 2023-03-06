@@ -14,12 +14,20 @@ import com.dougnoel.sentinel.apis.Response;
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class APISteps {
 	private static final Logger log = LogManager.getLogger(APISteps.class.getName()); // Create a logger.
+	
+    @Before
+    public void before(Scenario scenario) {
+        APIManager.setScenario(scenario);
+    }
 	
 	/**
 	 * Loads an API based on the environment you are currently testing.
@@ -41,7 +49,30 @@ public class APISteps {
 
 	/**
 	 * Sets the body of the active API call to the string passed.
-	 * 
+     * <p>
+     * <b>Gherkin Examples:</b>
+  	 *     I set the request body to
+	 *      """
+	 *      {
+	 *     	  "id": 10,
+	 *     	  "name": "puppy",
+	 *     	  "category": {
+	 *     	    "id": 1,
+	 *     	    "name": "Dogs"
+	 *     	  },
+	 *     	  "photoUrls": [
+	 *     	    "string"
+	 *     	  ],
+	 *     	  "tags": [
+	 *     	    {
+	 *     	      "id": 0,
+	 *     	      "name": "string"
+	 *     	    }
+	 *     	  ],
+	 *     	  "status": "available"
+	 *     	}
+	 *      """
+	 *      
 	 * @param body String the json to be passed as the body of the request.
 	 */
 	@Given("I set the request body to")
@@ -53,6 +84,13 @@ public class APISteps {
 	/**
 	 * Loads the indicated testdata located in the API object yaml file to use
 	 * as the json for the body of the request.
+	 * 
+	 * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I load puppydata to use as the request body</li>
+     * </ul>
+     * <p>
 	 * 
 	 * @param testdataName String the name of the testdata entry to use
 	 */
@@ -90,12 +128,12 @@ public class APISteps {
      * <ul>
      * <li>I send a GET request to the pet/findByStatus endpoint</li>
      * <li>I send a POST request to the users endpoint</li>
-     * <li>I send a PUT request to the amdins endpoint</li>
+     * <li>I send a PUT request to the admin endpoint</li>
      * </ul>
      * <p>
      *  
-	 * @param apiCallType
-	 * @param endpoint
+	 * @param apiCallType String the type of call to make
+	 * @param endpoint String the endpoint name as referenced in the swagger file
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public void sendRequest(String apiCallType, String endpoint) {
@@ -132,11 +170,18 @@ public class APISteps {
 	public void verifyResponseCodeEquals(int statusCode) {
 		Response response = APIManager.getResponse();
 		int responseCode = response.getResponseCode();
-		var expectedResult = SentinelStringUtils.format("Expected the response code to be {}, and it was {}.\nFull response:\n{}",
-				statusCode, responseCode, response.getResponse());
+		var expectedResult = SentinelStringUtils.format("Expected the response code to be {}, and it was {}.",
+				statusCode, responseCode);
 		assertTrue(expectedResult, statusCode == responseCode);
 	}
 	
+	/**
+	 * Validate whether the last response took less time to return than the time given.
+	 * The time is passed as a decimal value (double) expressed as a number of seconds and/or
+	 * fractions of a second.
+	 * 
+	 * @param time double the time for comparison in seconds and/or fractions of a second
+	 */
 	@When("^I verify the response was received in less than (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?$")
 	public void verifyResponseTime(double time) {
 		Duration timeLimit = Duration.ofMillis((long) (time * 1000));
@@ -146,37 +191,46 @@ public class APISteps {
 				time, responseTime);
 		assertTrue(expectedResult, responseTime.compareTo(timeLimit) < 0);
 	}
-
+	
 	/**
-	 * Validates text in an API response.
-	 * 
+	 * Validates text in an API response against given text, a previous response , or a value entered in a previous step.
+	 * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I validate the response contains the text puppydog</li>
+     * <li>I validate the response matches the response from the pets endpoint</li>
+     * <li>I validate the response contains the same text used in Name Field</li>
+     * </ul>
+     * <p>
 	 * @param assertion String null to see if the text exists, "does not" to see if it is absent
 	 * @param matchType String use "contains" for a partial match otherwise it will be an exact match
 	 * @param text String the text to match
 	 */
-	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public void verifyResponseContains(String assertion, String matchType, String text) {
+	@Then("^I validate the response( does not)? (matches?|contains?) (?:the text (.*?)|the response from the (.*?) endpoint|the same text (?:entered|selected|used) for the (.*?))$")
+    public void verifyResponseContains(String assertion, String matchType, String text, String endpoint, String key) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
 
-        int responseCode = APIManager.getResponse().getResponseCode();
-        String responseText = APIManager.getResponse().getResponse();
+        Response response = APIManager.getResponse();
+        int responseCode = response.getResponseCode();
         String expectedResult = SentinelStringUtils.format(
-                "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
-                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
-                        .replace("\n", " "));
-        log.trace(expectedResult);
+                "Expected the response to {}{} the text {}. The response had a response code of {}. "
+                + "To get the full text of the json response turn on trace logging and look in the logs.",
+                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode);
+        log.trace("Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
+                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, response);
         if (partialMatch) {
             if (negate) {
-                assertFalse(expectedResult, responseText.contains(text));
+                assertFalse(expectedResult, response.contains(text));
             } else {
-                assertTrue(expectedResult, responseText.contains(text));
+                assertTrue(expectedResult, response.contains(text));
             }
         } else {
+        	Response storedResponse = APIManager.getResponse(endpoint);
             if (negate) {
-                assertFalse(expectedResult, StringUtils.equals(responseText, text));
+                assertFalse(expectedResult, response.equals(storedResponse));
             } else {
-                assertTrue(expectedResult, StringUtils.equals(responseText, text));
+                assertTrue(expectedResult, response.equals(storedResponse));
             }
         }
     }

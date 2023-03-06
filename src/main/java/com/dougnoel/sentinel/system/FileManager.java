@@ -204,10 +204,23 @@ public class FileManager {
 		return convertPathSeparators(Configuration.toString("imageDirectory", IMAGE_DIRECTORY) + File.separator + outputSubDir + File.separator + fileName);
 	}
 
+	/**
+	 * Takes a string constructed path, and replaces forward separators with the operating system agnostic File.separator.
+	 *
+	 * @param path String a constructed string path utilizing forward slashes
+	 * @return String a string using OS agnostic File.separator separators
+	 */
 	public static String convertPathSeparators(String path) {
 		return path.replace("/", File.separator);
 	}
 
+	/**
+	 * Performs sanitization on a string to remove all but alphanumeric characters, dashes, and periods.
+	 * Replaces said characters with underscores, resulting in a string which will not violate any system's special character restraints.
+	 *
+	 * @param toSanitize String the string to sanitize
+	 * @return String a string with all non alphanumeric, period, and dashes replaced with underscores
+	 */
 	public static String sanitizeString(String toSanitize) {
 		return toSanitize.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
 	}
