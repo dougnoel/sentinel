@@ -41,8 +41,7 @@ public class API extends YAMLObject {
 			var firstServer = servers.get(0).getUrl();
 			var uriBuilder = new URIBuilder(firstServer + passedText);
 			if(!uriBuilder.isAbsolute()) {
-				uriBuilder = new URIBuilder(swaggerUrl);
-				uriBuilder.setPath(passedText);
+				uriBuilder = (new URIBuilder(swaggerUrl)).setPath(passedText);
 			}
 			return uriBuilder;
 		} catch (URISyntaxException e) {
