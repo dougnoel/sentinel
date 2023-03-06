@@ -418,4 +418,30 @@ public class TableVerificationSteps {
         log.trace(expectedResult);
         Assert.assertTrue(expectedResult, table.waitForSpecificCellToContain((int)Time.longProcessTimeout().toSeconds(), columnName, rowIndex, textToMatch, partialMatch, negate));
     }
+
+    /**
+     * Verifies all values in the given column are in the given state relative to the given referenceNumber, using the given comparisonType.
+     * Assumes all values in the given column are numeric, and able to be converted to double.
+     *
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I verify all values in the Comment column in the Example Table are less than 6.1</li>
+     * <li>I verify all values in the Weight column in the Specimen Table are greater than 100</li>
+     * <li>I verify all values in the Count column in the Sales Table are equal to 22</li>
+     * </ul>
+     * @param columnName String name of the column in the table
+     * @param tableName String name of the table element
+     * @param comparisonType String type of comparison to perform. Options: "less than", "greater than", "equal to".
+     * @param referenceNumber String the number to compare the column values to. Needs to be a numeric value, able to be converted to a double.
+     * @throws Exception if the assertion fails or the table method throws an exception.
+     */
+    @Then("^I verify all values in the (.*) column in the (.*) are (less than|greater than|equal to) (.*?)$")
+    public static void verifyAllNumericValuesInColumn(String columnName, String tableName, String comparisonType, String referenceNumber) throws Exception {
+        Table table = getElementAsTable(tableName);
+        var expectedResult = SentinelStringUtils.format(
+                "Expected all values in the {} column of the {} to be {} {}.",
+                columnName, tableName, comparisonType, referenceNumber);
+        log.trace(expectedResult);
+        assertTrue(expectedResult, table, () -> table.verifyNumericValuesInWholeColumn(columnName, comparisonType, Double.parseDouble(referenceNumber)));
+    }
 }

@@ -1,5 +1,7 @@
 package com.dougnoel.sentinel.elements;
 
+import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,6 +10,8 @@ import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.FluentWait;
 
 /**
  * Retrieves as an element as an Element or as a child type.
@@ -100,4 +104,27 @@ public class ElementFunctions {
     	log.error(errorMessage);
     	return errorMessage;
     }
+
+	/**
+	 * Waits the configured timeout for either of the two elements to be found. Does not take into consideration visibility of elements.
+	 * Does not take into consideration which element is found first.
+	 * @param elementName String an element to search for.
+	 * @param otherElementName String another element to search for.
+	 * @return boolean true if either of the elements are found within the configured timeout. false otherwise.
+	 */
+	public static boolean waitForEitherElementToExist(String elementName, String otherElementName){
+		var wait = new FluentWait<>(WebDriverFactory.getWebDriver())
+				.withTimeout(Time.out())
+				.pollingEvery(Time.interval())
+				.ignoring(WebDriverException.class);
+
+		try{
+			wait.until(x -> getElement(elementName).existsAtThisInstant() || getElement(otherElementName).existsAtThisInstant());
+			return true;
+		}
+		catch(TimeoutException e){
+			log.trace(SentinelStringUtils.format("Timed out waiting for either {} or {} to exist.", elementName, otherElementName), e);
+			return false;
+		}
+	}
 }
