@@ -46,7 +46,7 @@ public class WindowsDriverFactory {
 	 *
 	 * @return WebDriver returns a WindowsDriver&lt;WebElement&gt;
 	 */
-	protected static WebDriver createWindowsDriver() {
+	public static WebDriver createWindowsDriver() {
 		if (numberOfDriversRunning == 0)
 			startAppiumService();
 
@@ -71,6 +71,11 @@ public class WindowsDriverFactory {
 		log.info("Driver created: {}\nLog Location:       {}\nError Log Location: {}", driver, STDOUT, STDERR);
 		numberOfDriversRunning += 1;
 		return driver;
+	}
+
+	protected static void closeApp(WindowsDriver<WebElement> driver) {
+		driver.closeApp();
+		driver.quit();
 	}
 
 	/**

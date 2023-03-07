@@ -2,6 +2,8 @@ package com.dougnoel.sentinel.pages;
 
 import java.util.concurrent.TimeUnit;
 
+import com.dougnoel.sentinel.webdrivers.WindowsDriverFactory;
+import io.appium.java_client.windows.WindowsDriver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
@@ -79,7 +81,7 @@ public class PageManager {
 	    	driver().get(url);
     	}
     	else
-    		driver();
+			driver();
 	}
 
 	/**
@@ -133,6 +135,19 @@ public class PageManager {
 	 */
 	public static PageObjectType getCurrentPageObjectType() {
 		return pageObjectType;
+	}
+
+	public static String getCurrentExecutable() {
+		String executable = Configuration.executable();
+		if (executable == null) {
+			//for each page I have opened
+			    //search my containing folder only
+			        //if it does not exist return null for this file
+			        //if I find the file and it has a type, use that type, and set it as my type
+			        //otherwise return null
+
+		}
+		return executable;
 	}
 	
 }

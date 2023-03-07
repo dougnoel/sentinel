@@ -6,6 +6,7 @@ import org.openqa.selenium.WebDriver;
 import com.dougnoel.sentinel.pages.Page;
 import com.dougnoel.sentinel.pages.PageManager;
 import io.appium.java_client.windows.WindowsDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * Tracks all the windows attached to a particular driver.
@@ -101,8 +102,12 @@ public class SentinelDriver {
 	/**
 	 * Close the current window.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void close() {
-		windows.closeCurrentWindow();
+		if (driver.getClass().getSimpleName().contentEquals("WindowsDriver"))
+			WindowsDriverFactory.closeApp((WindowsDriver) driver);
+		else
+			windows.closeCurrentWindow();
 	}
 	
 	/**
@@ -121,5 +126,9 @@ public class SentinelDriver {
 		}
 		pages.clear();
 		windows.clear();
+	}
+
+	public String getOriginalPageName(){
+		return pages.get(0).getName();
 	}
 }

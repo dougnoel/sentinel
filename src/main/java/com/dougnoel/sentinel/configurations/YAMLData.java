@@ -20,6 +20,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 public class YAMLData {
 	public String name;
+	public File filename;
 	public Map<String,String> urls;
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public String include;
@@ -52,6 +53,8 @@ public class YAMLData {
 		try {
 			pageData = mapper.readValue(fileName, APIData.class);
 			pageData.name = StringUtils.substring(fileName.toString(), 0, -4);
+			pageData.filename = fileName;
+			pageData.filePath = filename.getPath()
 		} catch (Exception e) {
 			throw new FileException(e, fileName);
 		}

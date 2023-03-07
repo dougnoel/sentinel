@@ -1,6 +1,9 @@
 package com.dougnoel.sentinel.webdrivers;
 
 import java.util.EnumMap;
+import java.util.HashMap;
+
+import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.pages.PageManager;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +13,7 @@ import org.openqa.selenium.WebDriver;
  * Currently we store one driver for browsers and one for Windows. We can add an appium driver here as well.
  */
 public class Driver {
-	private static EnumMap<PageObjectType, SentinelDriver> drivers = new EnumMap<> (PageObjectType.class);
+	private static HashMap<String, SentinelDriver> drivers = new HashMap<>();
 	
 	/**
 	 * Exists only to defeat instantiation.
@@ -27,17 +30,18 @@ public class Driver {
     	PageObjectType pageObjectType = PageManager.getPage().getPageObjectType();
     	SentinelDriver currentDriver = null;
     	if (pageObjectType == PageObjectType.EXECUTABLE) {
-    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WindowsDriverFactory.createWindowsDriver()));
+			String keyName = Configuration.executable();
+			currentDriver = drivers.computeIfAbsent(keyName, driver -> new SentinelDriver(WindowsDriverFactory.createWindowsDriver()));
+    		//currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WindowsDriverFactory.createWindowsDriver()));
     	}
     		else {
-    		currentDriver = drivers.computeIfAbsent(pageObjectType, driver -> new SentinelDriver(WebDriverFactory.getWebDriver()));
+    		currentDriver = drivers.computeIfAbsent(pageObjectType.toString(), driver -> new SentinelDriver(WebDriverFactory.getWebDriver()));
         }
     	return currentDriver;
     }
 	
     /**
      * Returns the WebDriver instance. This will silently instantiate the WebDriver if that has not been done yet.
-     * 
      * @return WebDriver the created Selenium WebDriver object
      */
     public static WebDriver getWebDriver() {
@@ -56,7 +60,9 @@ public class Driver {
      * Closes the current window and moves the driver to the previous window.
      */
     public static void closeWindow() {
-    	getSentinelDriver().close();
+		String originalPageName = getSentinelDriver().getOriginalPageName();
+		getSentinelDriver().close();
+		drivers.remove(originalPageName);
     }
     
     /**
