@@ -488,7 +488,7 @@ public class Element {
 	    
 	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
 	    executor.executeScript(script, this.element(), target.element());
-	    return this;	      
+	    return this;
 	}	  
 
 	/**

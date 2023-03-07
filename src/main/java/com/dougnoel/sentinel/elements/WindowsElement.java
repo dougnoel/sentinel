@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import com.dougnoel.sentinel.configurations.Time;
@@ -13,6 +14,7 @@ import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.system.FileManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
 
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.*;
@@ -25,6 +27,8 @@ import io.appium.java_client.MobileBy;
  * WinAppDriver implementation of a Element.
  */
 public class WindowsElement extends Element {
+
+	private WebDriver driver() { return Driver.getWebDriver(); }
 
 	/**
 	 * Default Windows Element constructor. An override of the Element constructor.
@@ -200,6 +204,24 @@ public class WindowsElement extends Element {
 	 */
 	public Color getColorAtOffset() {
 		return getColorAtOffset(1, 1);
+	}
+
+	/**
+	 * Drags the current element on top of the target element.
+	 * @param target Element the element the target is being dragged and dropped onto
+	 * @return Element (for chaining)
+	 * @throws IOException if the drag and drop javascript file cannot be loaded
+	 */
+	@Override
+	public Element dragAndDrop(Element target) throws IOException {
+		//String script = FileManager.loadJavascript("src/main/resources/scripts/DragDrop.js");
+
+		//JavascriptExecutor executor = (JavascriptExecutor) WebDriverFactory.getWebDriver();
+		//executor.executeScript(script, this.element(), target.element());
+		//new Actions(driver()).moveToElement(element, point.getX(), point.getY()).click().build().perform();
+		new Actions(driver()).dragAndDrop(this.element(), target.element()).build().perform();
+
+		return this;
 	}
 
 	/**
