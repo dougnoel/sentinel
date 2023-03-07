@@ -33,5 +33,6 @@ public class SwagLabsSteps {
 	public void iInitializeTheData() {
 		Configuration.update("id", 10);
 		Configuration.update("category_name","Dogs");
+		Configuration.update("dog_status","sold");
 	}
 }

@@ -81,11 +81,11 @@ Feature: 89 API Testing
     When I set the request body with variables to
     """
     {
-	  "id": $int {id},
+	  "id": {id},
 	  "name": "puppy",
 	  "category": {
 	    "id": 1,
-	    "name":  $str {category_name}
+	    "name": "{category_name}"
 	  },
 	  "photoUrls": [
 	    "string"
@@ -109,3 +109,12 @@ Feature: 89 API Testing
     When I initialize the data
       And I send a GET request to the pet/{id} endpoint
     Then I verify the response code equals 200
+
+  @89I
+  Scenario: 89I Query String Stored Parameter Test
+    Given I use the API named Pet Store API
+    When I initialize the data
+      And I add a status parameter with the value {dog_status}
+    When I send a GET request to the pet/findByStatus endpoint
+    Then I verify the response code equals 200
+      And I validate the response contains the text "sold"
