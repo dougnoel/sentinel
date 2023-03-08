@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -71,8 +73,11 @@ public class Request {
 				httpRequest.setHeader(h.getName(), h.getValue());
 			}
 		}
-		httpRequest.setHeader("Accept", "application/json");
-		httpRequest.setHeader("Content-type", "application/json");
+		else{
+			httpRequest.setHeader("Accept", "application/json");
+			httpRequest.setHeader("Content-type", "application/json");
+		}
+
 	}
 	/**
 	 * Set a header and its value for a request.
@@ -102,20 +107,21 @@ public class Request {
 	 * @param endpoint the endpoint to send the request
 	 */
 	public void createAndSendRequest(RequestType type, String endpoint) {
+		endpoint = StringUtils.prependIfMissing(endpoint, "/");
 		try {
 			switch(type) {
 			case DELETE:
-				httpRequest = new HttpDelete(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				httpRequest = new HttpDelete(APIManager.getAPI().getURIBuilder( endpoint).build());
 				break;
 			case GET:
-				httpRequest = new HttpGet(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				httpRequest = new HttpGet(APIManager.getAPI().getURIBuilder(endpoint).build());
 				break;
 			case POST:
-				httpRequest = new HttpPost(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				httpRequest = new HttpPost(APIManager.getAPI().getURIBuilder(endpoint).build());
 				((HttpEntityEnclosingRequestBase) httpRequest).setEntity(body);
 				break;
 			case PUT:
-				httpRequest = new HttpPut(APIManager.getAPI().getURIBuilder("/" + endpoint).build());
+				httpRequest = new HttpPut(APIManager.getAPI().getURIBuilder(endpoint).build());
 				((HttpEntityEnclosingRequestBase) httpRequest).setEntity(body);
 				break;
 			}

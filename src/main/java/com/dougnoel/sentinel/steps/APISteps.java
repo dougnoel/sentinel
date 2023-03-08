@@ -35,7 +35,7 @@ public class APISteps {
 	 * @param apiName name of the API object we want to use
 	 */
 	@Given("^I use the API named (.*?)$")
-	public void setAPI(String apiName) {
+	public static void setAPI(String apiName) {
         APIManager.setAPI(apiName);
 	}
 
@@ -45,7 +45,7 @@ public class APISteps {
 	 * @param body String the json to be passed as the body of the request.
 	 */
 	@Given("I set the request body to")
-	public void setRequestBody(String body) {
+	public static void setRequestBody(String body) {
 		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
         log.trace("Body passed: {}", body);
 	}
@@ -57,7 +57,7 @@ public class APISteps {
 	 * @param testdataName String the name of the testdata entry to use
 	 */
 	@Given("^I load (.*?) to use as the request body$")
-	public void loadRequestBody(String testdataName) {
+	public static void loadRequestBody(String testdataName) {
 		String body = Configuration.getTestData(testdataName, "json");
         APIManager.setBody(body);
         log.trace("Body passed: {}", body);
@@ -79,8 +79,9 @@ public class APISteps {
 	 * @param value String the value to set it
 	 */
 	@When("^I add an? (.*?) parameter with the value (.*?)$")
-	public void addParameter(String parameter, String value) {
+	public static void addParameter(String parameter, String value) {
 		APIManager.addParameter(parameter, SentinelStringUtils.replaceStoredVariables(value));
+
 	}
 	
 	/**
@@ -98,7 +99,7 @@ public class APISteps {
 	 * @param endpoint
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
-	public void sendRequest(String apiCallType, String endpoint) {
+	public static void sendRequest(String apiCallType, String endpoint) {
 		APIManager.sendRequest(RequestType.valueOf(apiCallType), SentinelStringUtils.replaceStoredVariables(endpoint));
 	}
 	
@@ -118,7 +119,7 @@ public class APISteps {
 	 * @param endpoint String the endpoint name as referenced in the swagger file
 	 */
 	@When("^I (DELETE|GET) record (.*) from the (.*?) endpoint$")
-	public void sendRequest(String apiCallType, String parameter, String endpoint) {
+	public static void sendRequest(String apiCallType, String parameter, String endpoint) {
 		sendRequest(apiCallType, endpoint + "/" + SentinelStringUtils.replaceVariable(parameter));
 	}
 	
@@ -129,7 +130,7 @@ public class APISteps {
 	 * @param statusCode int the status code expected
 	 */
 	@When("^I verify the response code equals (\\d{3})$")
-	public void verifyResponseCodeEquals(int statusCode) {
+	public static void verifyResponseCodeEquals(int statusCode) {
 		Response response = APIManager.getResponse();
 		int responseCode = response.getResponseCode();
 		var expectedResult = SentinelStringUtils.format("Expected the response code to be {}, and it was {}.\nFull response:\n{}",
@@ -138,7 +139,7 @@ public class APISteps {
 	}
 	
 	@When("^I verify the response was received in less than (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?$")
-	public void verifyResponseTime(double time) {
+	public static void verifyResponseTime(double time) {
 		Duration timeLimit = Duration.ofMillis((long) (time * 1000));
 		Duration responseTime = APIManager.getResponse().getReponseTime();
 		
@@ -155,7 +156,7 @@ public class APISteps {
 	 * @param text String the text to match
 	 */
 	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public void verifyResponseContains(String assertion, String matchType, String text) {
+    public static void verifyResponseContains(String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
 
@@ -188,7 +189,7 @@ public class APISteps {
 	 * @param value String value of the header
 	 */
 	@When("^I add an? (.*?) header with the value (.*?)$")
-	public void addHeader(String name, String value) {
+	public static void addHeader(String name, String value) {
 		APIManager.addHeader(name, SentinelStringUtils.replaceStoredVariables(value));
 	}
 }
