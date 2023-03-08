@@ -94,9 +94,9 @@ public class APISteps {
      * <li>I send a PUT request to the amdins endpoint</li>
      * </ul>
      * <p>
-     *  
-	 * @param apiCallType
-	 * @param endpoint
+     *
+	 * @param apiCallType String the type of call to make
+	 * @param endpoint String the endpoint name as referenced in the swagger file
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public static void sendRequest(String apiCallType, String endpoint) {
@@ -150,12 +150,19 @@ public class APISteps {
 
 	/**
 	 * Validates text in an API response.
-	 * 
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>I validate the response <b>contains</b> the text <b>"key":"value"</b></li>
+	 * <li>I validate the response <b>does not contain</b> the text <b>"value":"key"</b></li>
+	 * <li>I validate the response <b>has</b> the text <b>123456789ABCDEFG</b></li>
+	 * </ul>
+	 * <p>
 	 * @param assertion String null to see if the text exists, "does not" to see if it is absent
 	 * @param matchType String use "contains" for a partial match otherwise it will be an exact match
 	 * @param text String the text to match
 	 */
-	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
+	@Then("^I validate the response( does not)? (has|have|contains?) the text (.*?)$")
     public static void verifyResponseContains(String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
