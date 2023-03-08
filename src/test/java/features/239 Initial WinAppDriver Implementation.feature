@@ -69,9 +69,3 @@ Feature: 239 Implement WinAppDriver to automate windows
       And I clear the Text Editor field
       And I enter test the element screenshot no longer matches in the Text Editor field
     Then I verify the Text Editor field does not match the previous image
-
-  @239F
-  Scenario: 239F Verify drag and drop works for windows
-    This is a bad test and lacks a verification because notepad does not have a drag and drop element
-    Given I switch to the Notepad App
-    Then I drag the file menu dropdown to the edit menu dropdown
