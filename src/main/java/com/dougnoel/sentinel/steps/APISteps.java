@@ -46,7 +46,7 @@ public class APISteps {
 	 */
 	@Given("I set the request body to")
 	public static void setRequestBody(String body) {
-        APIManager.setBody(body);
+		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
         log.trace("Body passed: {}", body);
 	}
 
@@ -80,7 +80,8 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) parameter with the value (.*?)$")
 	public static void addParameter(String parameter, String value) {
-		APIManager.addParameter(parameter, value);
+		APIManager.addParameter(parameter, SentinelStringUtils.replaceStoredVariables(value));
+
 	}
 	
 	/**
@@ -99,7 +100,7 @@ public class APISteps {
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public static void sendRequest(String apiCallType, String endpoint) {
-		APIManager.sendRequest(RequestType.valueOf(apiCallType), endpoint);
+		APIManager.sendRequest(RequestType.valueOf(apiCallType), SentinelStringUtils.replaceStoredVariables(endpoint));
 	}
 	
 	/**
@@ -189,7 +190,27 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) header with the value (.*?)$")
 	public static void addHeader(String name, String value) {
-		APIManager.addHeader(name, value);
+		APIManager.addHeader(name, SentinelStringUtils.replaceStoredVariables(value));
 	}
 
+	/**
+	 * Adds the parsed string keys and values in Configuration for later use
+	 *
+	 * @param values String the string with keys and values
+	 * Example:
+	 *  When I initialize the configuration values as follows
+	 *     """
+	 *     id: 10
+	 *     category_name: puppies
+	 *     """
+	 *
+	 */
+	@When("I initialize the configuration values as follows")
+	public void iInitializeTheData(String values) {
+		var items = values.replace(" ","").split("\n");
+		for (var item:items
+		) {
+			Configuration.update(item.split(":")[0],  item.split(":")[1]);
+		}
+	}
 }
