@@ -27,8 +27,6 @@ import io.appium.java_client.MobileBy;
  */
 public class WindowsElement extends Element {
 
-	private WebDriver driver() { return Driver.getWebDriver(); }
-
 	/**
 	 * Default Windows Element constructor. An override of the Element constructor.
 	 * 
