@@ -134,16 +134,17 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 
 	/**
 	 * Returns a string with any strings with pattern "\\{\S*?\\}" replaced with values
-	 * stored configuration. For example, given the string
-	 {
-	 "id": {id},
-	 "name": "puppy",
-	 "category": {
-	 "id": 1,
-	 "name": "{category_name}"
-	 			}
-	 }
-	 * This method would return: {
+	 * stored in configuration. For example, given the string
+	 *	{
+	 *	"id": {id},
+	 *	"name": "puppy",
+	 *	"category": {
+	 *	"id": 1,
+	 *	"name": "{category_name}"
+	 *	  }}
+	 *
+	 * This method would return:
+	 *  {
 	 * 	 "id": 10,
 	 * 	 "name": "puppy",
 	 * 	 "category": {
@@ -155,7 +156,7 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return String the string with variables replaced as applicable
 	 */
 	public static String replaceStoredVariables(String text) {
-		Matcher matcher = Pattern.compile("\\{\\S*?\\}").matcher(text);
+		Matcher matcher = Pattern.compile("\\{\\S[^\\}]*+\\}").matcher(text);
 		while (matcher.find()) {
 			var variable = matcher.group();
 			var value = Configuration.toString(variable.substring(1, variable.length() - 1));

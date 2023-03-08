@@ -1,14 +1,12 @@
 package steps;
 
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
-import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.steps.AccountSteps;
 import com.dougnoel.sentinel.steps.BaseSteps;
 import com.dougnoel.sentinel.steps.WindowAndTabSteps;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 
 public class SwagLabsSteps {
 	@Given("I login to the Sauce Demo Login Page as {}")
@@ -27,12 +25,5 @@ public class SwagLabsSteps {
 	  	// And I am redirected to the Sauce Demo Main Page
 		ExtentCucumberAdapter.addTestStepLog("And I am redirected to the Sauce Demo Main Page");
 		WindowAndTabSteps.switchTo("Sauce Demo Main Page");
-	}
-
-	@When("I initialize the data")
-	public void iInitializeTheData() {
-		Configuration.update("id", 10);
-		Configuration.update("category_name","Dogs");
-		Configuration.update("dog_status","sold");
 	}
 }

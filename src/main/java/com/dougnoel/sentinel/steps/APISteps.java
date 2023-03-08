@@ -46,7 +46,7 @@ public class APISteps {
 	 */
 	@Given("I set the request body to")
 	public void setRequestBody(String body) {
-        APIManager.setBody(body);
+		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
         log.trace("Body passed: {}", body);
 	}
 
@@ -99,8 +99,7 @@ public class APISteps {
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public void sendRequest(String apiCallType, String endpoint) {
-		var endpointFormatted = SentinelStringUtils.replaceStoredVariables(endpoint);
-		APIManager.sendRequest(RequestType.valueOf(apiCallType), endpointFormatted);
+		APIManager.sendRequest(RequestType.valueOf(apiCallType), SentinelStringUtils.replaceStoredVariables(endpoint));
 	}
 	
 	/**
@@ -191,16 +190,5 @@ public class APISteps {
 	@When("^I add an? (.*?) header with the value (.*?)$")
 	public void addHeader(String name, String value) {
 		APIManager.addHeader(name, SentinelStringUtils.replaceStoredVariables(value));
-	}
-
-	/**
-	 * Sets the body of the active API call to the string passed.
-	 *
-	 * @param body String the json to be passed as the body of the request.
-	 */
-	@Given("I set the request body with variables to")
-	public void setVariableRequestBody(String body) {
-		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
-		log.trace("Body with stored variables passed: {}", body);
 	}
 }
