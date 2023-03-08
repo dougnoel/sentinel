@@ -31,14 +31,19 @@ public class API extends YAMLObject {
 	 * 
 	 * @return java.net.URI the constructed URI
 	 */
-	protected URIBuilder getURIBuilder(String passedText) {		
+	protected URIBuilder getURIBuilder(String passedText) throws URISyntaxException {
 		String swaggerUrl = Configuration.getURL(APIManager.getAPI());
 		SwaggerParseResult result = new OpenAPIParser().readLocation(swaggerUrl, null, null);
 		OpenAPI openAPI = result.getOpenAPI();
 		List<Server> servers = openAPI.getServers();
-		
+
 		try {
-			return new URIBuilder(servers.get(0).getUrl() + passedText);
+			var firstServer = servers.get(0).getUrl();
+			var uriBuilder = new URIBuilder(firstServer + passedText);
+			if(!uriBuilder.isAbsolute()) {
+				uriBuilder = (new URIBuilder(swaggerUrl)).setPath(passedText);
+			}
+			return uriBuilder;
 		} catch (URISyntaxException e) {
 			throw new IOException(e);
 		}
