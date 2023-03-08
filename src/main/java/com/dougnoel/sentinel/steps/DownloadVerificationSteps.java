@@ -23,6 +23,28 @@ public class DownloadVerificationSteps {
 	private static final String TRAILING_DOWNLOAD_FAILURE_MESSAGE = "Perhaps the download did not complete in time. Check your timeout.";
 
 	/**
+	 * Performs a click on the given element and uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given extension to appear.
+	 * <p>
+	 * <b>Gherkin Example:</b><br>
+	 * - I verify a new docx file is downloaded by clicking the download link
+	 * <p>
+	 * @param elementName name of the element to click to start the download
+	 * @param fileExtension String the file extension to wait for. Do not use a leading period.
+	 * @throws InterruptedException When the thread is interrupted
+	 * @throws IOException When a file or folder cannot be opened or any generic IO error occurs
+	 */
+	@Then("^I verify that by clicking (?:a|an|the) (.*?) a new file is downloaded with the extension (.*?)$")
+	public static void verifyFileWithExtensionDownloadedWithClick(String elementName, String fileExtension) throws InterruptedException, IOException {
+		DownloadManager.setFileExtension(fileExtension);
+		var fileName = DownloadManager.monitorDownload(() -> BaseSteps.click(elementName));
+		String expectedResult = SentinelStringUtils.format("Expected a new file with the {} extension to be downloaded. "
+						+ TRAILING_DOWNLOAD_FAILURE_MESSAGE,
+				fileExtension);
+
+		assertTrue(expectedResult, !StringUtils.isEmpty(fileName));
+	}
+
+	/**
 	 * Uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given extension to appear.
 	 * <p>
      * <b>Gherkin Example:</b><br>
@@ -44,10 +66,32 @@ public class DownloadVerificationSteps {
 	}
 
 	/**
+	 * Performs a click on the given element and uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given filename to appear.
+	 * <p>
+	 * <b>Gherkin Example:</b><br>
+	 * - I verify a new file is downloaded with the name example.docx by clicking the download link
+	 * <p>
+	 * @param elementName name of the element to click to start the download
+	 * @param expectedFilename String the file extension to wait for. Do not use a leading period.
+	 * @throws InterruptedException When the thread is interrupted
+	 * @throws IOException When a file or folder cannot be opened or any generic IO error occurs
+	 */
+	@Then("^I verify that by clicking (?:a|an|the) (.*?) a new file is downloaded with the name (.*?)$")
+	public static void verifyFileWithFilenameDownloadedWithClick(String elementName, String expectedFilename) throws InterruptedException, IOException {
+		DownloadManager.setFileExtension(FilenameUtils.getExtension(expectedFilename));
+		var downloadedFilename = DownloadManager.monitorDownload(() -> BaseSteps.click(elementName));
+		String expectedResult = SentinelStringUtils.format("Expected a new file with the filename \"{}\"  to be downloaded. "
+						+ TRAILING_DOWNLOAD_FAILURE_MESSAGE,
+				expectedFilename);
+
+		assertTrue(expectedResult, StringUtils.equals(downloadedFilename, expectedFilename));
+	}
+
+	/**
 	 * Uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given filename to appear.
 	 * <p>
 	 * <b>Gherkin Example:</b><br>
-	 * - I verify a new file with the name "example.docx" is downloaded
+	 * - I verify a new file is downloaded with the name example.docx
 	 * <p>
 	 * @param expectedFilename String the filename to wait for. Do not need to fully qualify the path.
 	 * @throws InterruptedException When the thread is interrupted

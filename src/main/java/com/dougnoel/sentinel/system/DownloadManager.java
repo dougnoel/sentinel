@@ -77,7 +77,11 @@ public class DownloadManager {
      * @throws IOException if the file cannot be created.
      */
     public static String monitorDownload() throws InterruptedException, IOException {
-        return monitorDownload(downloadDirectory, fileExtension);
+        return monitorDownload(downloadDirectory, fileExtension, null);
+    }
+
+    public static String monitorDownload(Runnable pageAction) throws InterruptedException, IOException {
+        return monitorDownload(downloadDirectory, fileExtension, pageAction);
     }
 
     /**
@@ -93,7 +97,7 @@ public class DownloadManager {
      * @throws InterruptedException if the thread is interrupted during download
      * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload(String downloadDir, String fileExtension) throws InterruptedException, IOException {
+    public static String monitorDownload(String downloadDir, String fileExtension, Runnable pageAction) throws InterruptedException, IOException {
         String downloadedFileName = null;
         var valid = true;
         
@@ -103,7 +107,8 @@ public class DownloadManager {
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
         long startTime = System.currentTimeMillis();
-        
+        if(pageAction != null)
+            pageAction.run();
         do {
             WatchKey watchKey;
             watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);

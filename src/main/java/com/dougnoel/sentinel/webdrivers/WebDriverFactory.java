@@ -147,7 +147,9 @@ public class WebDriverFactory {
     	if (Configuration.toBoolean("headless")) {
     		chromeOptions.addArguments("--no-sandbox");
     		chromeOptions.addArguments("--disable-dev-shm-usage");
-    		chromeOptions.addArguments("--headless=new");
+            chromeOptions.addArguments("--headless=new");
+//            var chromeMajorVersion = Integer.parseInt(WebDriverManager.chromedriver().getDownloadedDriverVersion().split("\\.")[0]);
+//    		chromeOptions.addArguments(chromeMajorVersion >= 110 ? "--headless=new" : "headless");
     	}
     	var binary = Configuration.toString("chromeBrowserBinary");
     	if (binary != null)
