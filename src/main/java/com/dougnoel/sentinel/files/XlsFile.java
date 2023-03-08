@@ -39,56 +39,58 @@ public class XlsFile extends TestFile{
         FileOutputStream out = new FileOutputStream(pathToFile);
     }
 
-    /**
-     * Create default XLS file from specified path.
-     * @param pathToFile Path to the XLS file.
-     * @throws IOException in the case that a file does not exist at that path.
-     */
-
-    public XlsFile(Path pathToFile) throws FileNotFoundException {
-        super(pathToFile);
-        workbookFactory = WorkbookFactory.create(new File(pathToFile));
-        numHeaderRows = 1;
-        loadXlsFile();
-    }
-
-    /**
-     * Create a XLS Sheet with the given file format from the XLS file at the specified path.
-     *
-     * @param pathToFile     Path to the XLS file.
-     * @param hssfdataFormat XLSFormat the format of the XLS file. See XLSFormat documentation for more info.
-     * @throws FileNotFoundException in the case that a file does not exist at that path.
-     */
-    public XlsFile(Path pathToFile, List<String> hssfdataFormat) throws FileNotFoundException {
-        super(pathToFile);
-        hssfdataFormat = HSSFDataFormat.getBuiltinFormats();
-        numHeaderRows = 1;
-        loadXlsFile();
-    }
+//    /**
+//     * Create default XLS file from specified path.
+//     * @param pathToFile Path to the XLS file.
+//     * @throws IOException in the case that a file does not exist at that path.
+//     */
+//
+//    public XlsFile(Path pathToFile) throws FileNotFoundException {
+//        super(pathToFile);
+//        workbookFactory = WorkbookFactory.create(new File(pathToFile));
+//        numHeaderRows = 1;
+//        loadXlsFile();
+//    }
+//
+//    /**
+//     * Create a XLS Sheet with the given file format from the XLS file at the specified path.
+//     *
+//     * @param pathToFile     Path to the XLS file.
+//     * @param hssfdataFormat XLSFormat the format of the XLS file. See XLSFormat documentation for more info.
+//     * @throws FileNotFoundException in the case that a file does not exist at that path.
+//     */
+//    public XlsFile(Path pathToFile, List<String> hssfdataFormat) throws FileNotFoundException {
+//        super(pathToFile);
+//        hssfdataFormat = HSSFDataFormat.getBuiltinFormats();
+//        numHeaderRows = 1;
+//        loadXlsFile();
+//    }
 
 //    /**
-//     * Create a CSV file configured with the given number of header rows from the CSV file at the most recently downloaded path.
-//     * @param numberOfHeaderRows int number of header rows in the CSV file.
+//     * Create a XLS file configured with the given number of header rows from the XLS file at the most recently downloaded path.
+//     * @param numberOfHeaderRows int number of header rows in the XLS file.
 //     * @throws FileNotFoundException in the case that a file does not exist at that path.
 //     */
 //    public XlsFile(int numberOfHeaderRows) throws FileNotFoundException {
 //        super();
-//        xlsFormat = XLSFormat.DEFAULT;
+//        Workbook wb = WorkbookFactory.create();
+//        Sheet sheet = wb.getSheetAt(0);
+//        Row row = sheet.getRow(2);
 //        numHeaderRows = numberOfHeaderRows;
 //        loadXlsFile();
 //    }
 
-    /**
-     * Create a XLS file configured with the given number of header rows from the XLS file at the given path.
-     * @param pathToFile Path path to the XLS file.
-     * @param numberOfHeaderRows int number of header rows in the XLS file.
-     * @throws FileNotFoundException in the case that a file does not exist at that path.
-     */
-    public XlsFile(Path pathToFile, int numberOfHeaderRows) throws FileNotFoundException {
-        super(pathToFile);
-        numHeaderRows = numberOfHeaderRows;
-        loadXlsFile();
-    }
+//    /**
+//     * Create a XLS file configured with the given number of header rows from the XLS file at the given path.
+//     * @param pathToFile Path path to the XLS file.
+//     * @param numberOfHeaderRows int number of header rows in the XLS file.
+//     * @throws FileNotFoundException in the case that a file does not exist at that path.
+//     */
+//    public XlsFile(Path pathToFile, int numberOfHeaderRows) throws FileNotFoundException {
+//        super(pathToFile);
+//        numHeaderRows = numberOfHeaderRows;
+//        loadXlsFile();
+//    }
 
     /**
      * Create a XLS file configured with the given number of header rows from the XLS file at the given path.
@@ -125,8 +127,8 @@ public class XlsFile extends TestFile{
 //        return Objects.hash(super.hashCode(), csvFormat, numHeaderRows);
 //    }
 //
-//    private CSVParser getParser() throws IOException {
-//        return CSVParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
+//    private XLSParser getParser() throws IOException {
+//        return XLSParser.parse(toPath(), Charset.defaultCharset(), csvFormat);
 //    }
 //
 //    private void loadXlsFile(){
@@ -428,6 +430,6 @@ public class XlsFile extends TestFile{
 //        else{
 //            return allColumnData.stream().anyMatch(cell -> StringUtils.equals(cell, textToMatch));
 //        }
-//    }
+    }
 
 }
