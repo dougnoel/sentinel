@@ -26,7 +26,7 @@ public class DownloadVerificationSteps {
 	 * Performs a click on the given element and uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given extension to appear.
 	 * <p>
 	 * <b>Gherkin Example:</b><br>
-	 * - I verify a new docx file is downloaded by clicking the download link
+	 * - I verify that by clicking the download link a new file is downloaded with the extension docx
 	 * <p>
 	 * @param elementName name of the element to click to start the download
 	 * @param fileExtension String the file extension to wait for. Do not use a leading period.
@@ -48,7 +48,7 @@ public class DownloadVerificationSteps {
 	 * Uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given extension to appear.
 	 * <p>
      * <b>Gherkin Example:</b><br>
-     * - I verify a new docx file is downloaded
+     * - I verify a new file is downloaded with the extension docx
      * <p>
 	 * @param fileExtension String the file extension to wait for. Do not use a leading period.
 	 * @throws InterruptedException When the thread is interrupted
@@ -69,7 +69,7 @@ public class DownloadVerificationSteps {
 	 * Performs a click on the given element and uses the DownloadManager to monitor the default (or previously set) download directory and waits for a new file with the given filename to appear.
 	 * <p>
 	 * <b>Gherkin Example:</b><br>
-	 * - I verify a new file is downloaded with the name example.docx by clicking the download link
+	 * - I verify that by clicking the download link a new file is downloaded with the name example.docx
 	 * <p>
 	 * @param elementName name of the element to click to start the download
 	 * @param expectedFilename String the file extension to wait for. Do not use a leading period.

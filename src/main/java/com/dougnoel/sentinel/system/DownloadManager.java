@@ -114,9 +114,9 @@ public class DownloadManager {
         var downloadFolderPath = Paths.get(downloadDir);
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
-        long startTime = System.currentTimeMillis();
         if(pageAction != null)
-            pageAction.run(); // perform page action after monitoring starts
+            pageAction.run(); // perform page action after monitoring starts but before starting the waiting
+        long startTime = System.currentTimeMillis();
         do {
             WatchKey watchKey;
             watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
