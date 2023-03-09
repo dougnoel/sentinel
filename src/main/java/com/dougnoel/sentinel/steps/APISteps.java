@@ -174,19 +174,31 @@ public class APISteps {
                 (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
                         .replace("\n", " "));
         log.trace(expectedResult);
+
+		boolean result;
+		boolean textStartEndQuotes = false;
+		String startEndQuoteStripText = text;
+		if(text.matches("^\".*?\"$")) {
+			textStartEndQuotes = true;
+			startEndQuoteStripText = text.substring(1, text.length() - 1);
+		}
+
         if (partialMatch) {
-            if (negate) {
-                assertFalse(expectedResult, responseText.contains(text));
-            } else {
-                assertTrue(expectedResult, responseText.contains(text));
-            }
+			if(textStartEndQuotes)
+				result = responseText.contains(startEndQuoteStripText) || responseText.contains(text);
+			else
+				result = responseText.contains(text);
         } else {
-            if (negate) {
-                assertFalse(expectedResult, StringUtils.equals(responseText, text));
-            } else {
-                assertTrue(expectedResult, StringUtils.equals(responseText, text));
-            }
+			if(textStartEndQuotes)
+				result = StringUtils.equals(responseText, text) || StringUtils.equals(responseText, startEndQuoteStripText);
+			else
+				result = responseText.contains(text);
         }
+
+		if (negate)
+			assertFalse(expectedResult, result);
+		else
+			assertTrue(expectedResult, result);
     }
 
 	/**
