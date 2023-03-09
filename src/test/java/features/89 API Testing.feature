@@ -43,7 +43,7 @@ Feature: 89 API Testing
 	    }
 	  ],
 	  "status": "available"
-	}
+	  }
     """
     And I send a PUT request to the pet endpoint
     Then I verify the response code equals 200
@@ -101,7 +101,7 @@ Feature: 89 API Testing
 	    }
 	  ],
 	  "status": "available"
-	}
+	  }
     """
     And I send a POST request to the pet endpoint
     Then I verify the response code equals 200
@@ -128,3 +128,18 @@ Feature: 89 API Testing
     When I send a GET request to the pet/findByStatus endpoint
     Then I verify the response code equals 200
       And I validate the response contains the text sold
+
+  @89J
+  Scenario: 89J Verify validate the response comparison
+    Given I use the API named Pet Store API
+    When I DELETE record 10 from the pet endpoint
+    Then I verify the response code equals 200
+      And I validate the response does not have the text ""Pet deleted""
+      And I validate the response does not have the text "Pet deleted
+      And I validate the response does not have the text Pet deleted"
+      And I validate the response does not contain the text "Pet deleted
+      And I validate the response does not contain the text Pet deleted"
+      And I validate the response has the text Pet deleted
+      And I validate the response has the text "Pet deleted"
+      And I validate the response contains the text Pet deleted
+      And I validate the response contains the text "Pet deleted"
