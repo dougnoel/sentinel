@@ -80,6 +80,14 @@ public class DownloadManager {
         return monitorDownload(downloadDirectory, fileExtension, null);
     }
 
+    /**
+     * Monitors the current set download directory, performs some action, and returns a filename once the
+     * file is downloaded.
+     * @param pageAction Runnable the action to perform after starting the monitoring of the download directory. This could be a click, or other step.
+     * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the file download is interrupted
+     * @throws IOException if the file cannot be created.
+     */
     public static String monitorDownload(Runnable pageAction) throws InterruptedException, IOException {
         return monitorDownload(downloadDirectory, fileExtension, pageAction);
     }
@@ -108,7 +116,7 @@ public class DownloadManager {
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
         long startTime = System.currentTimeMillis();
         if(pageAction != null)
-            pageAction.run();
+            pageAction.run(); // perform page action after monitoring starts
         do {
             WatchKey watchKey;
             watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);
