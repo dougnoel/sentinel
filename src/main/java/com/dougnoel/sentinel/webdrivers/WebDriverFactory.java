@@ -26,105 +26,106 @@ import io.github.bonigarcia.wdm.WebDriverManager;
  * For a list of supported browsers and operating systems, see the readme.
  */
 public class WebDriverFactory {
-	private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
+    private static final Logger log = LogManager.getLogger(WebDriverFactory.class);
     private static WebDriver driver = null;
 
     private WebDriverFactory() {
         // Exists only to defeat instantiation.
     }
-    
+
     /**
      * Creates and returns a useable WebDriver.
      * We use this factory method to handle keeping up with driver versions for all
      * browsers. The browser can be set in the config file or a system
      * variable. See the README for more information.
+     *
      * @return WebDriver An initialized <a href="https://www.seleniumhq.org/">Selenium
-     *         WebDriver</a> object for the specified browser and operating system
-     *         combination.
+     * WebDriver</a> object for the specified browser and operating system
+     * combination.
      */
     protected static WebDriver instantiateWebDriver() {
         //Saucelabs Driver setup
         var saucelabsUserName = Configuration.toString("saucelabsUserName");
         if (saucelabsUserName != null) {
-        	driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
-        	return driver;
+            driver = SauceLabsDriverFactory.createSaucelabsDriver(); //NOTE: Returning the driver here so that we do not need an extra else statement but it must be set before being returned.
+            return driver;
         }
-        
+
         var browser = Configuration.browser();
-        
+
         //Grid Driver setup
         var gridUrl = Configuration.toString("gridUrl");
         if (gridUrl != null) {
-        	driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
-        	return driver;
+            driver = GridWebDriverFactory.createGridDriver(browser, gridUrl);
+            return driver;
         }
 
         // Initialize the driver object based on the browser and operating system (OS).
         // Throw an error if the value isn't found.   	
-    	switch (browser) {
-        case "chrome":
-        	driver = createChromeDriver();
-            break;
-        case "edge":
-        	WebDriverManager.edgedriver().setup();
-        	driver = new EdgeDriver();
-        	break;
-        case "firefox":
-    		WebDriverManager.firefoxdriver().setup();
-    		driver = new FirefoxDriver();
-            break;
-        case "internetexplorer":
-            var ieOptions = new InternetExplorerOptions();
-        	ieOptions.ignoreZoomSettings();
-        	WebDriverManager.iedriver().setup();
-        	driver = new InternetExplorerDriver(ieOptions);
-            break;
-        case "safari":
-            driver = new SafariDriver();
-            break;
-        case "opera":
-            WebDriverManager.operadriver().setup();
-            driver = new OperaDriver();
-            break;
-        default:
-            throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
+        switch (browser) {
+            case "chrome":
+                driver = createChromeDriver();
+                break;
+            case "edge":
+                WebDriverManager.edgedriver().setup();
+                driver = new EdgeDriver();
+                break;
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                driver = new FirefoxDriver();
+                break;
+            case "internetexplorer":
+                var ieOptions = new InternetExplorerOptions();
+                ieOptions.ignoreZoomSettings();
+                WebDriverManager.iedriver().setup();
+                driver = new InternetExplorerDriver(ieOptions);
+                break;
+            case "safari":
+                driver = new SafariDriver();
+                break;
+            case "opera":
+                WebDriverManager.operadriver().setup();
+                driver = new OperaDriver();
+                break;
+            default:
+                throw new WebDriverException(SentinelStringUtils.format("Invalid browser type '{}' passed to WebDriverFactory. Could not resolve the reference. Check your spelling. Refer to the Javadoc for valid options.", browser));
         }
-    	
+
         return driver;
     }
 
     /**
      * Returns the WebDriver instance. This will silently instantiate the WebDriver if that has not been done yet.
-     * 
+     *
      * @return WebDriver the created Selenium WebDriver
      */
     public static WebDriver getWebDriver() {
         if (driver == null) {
-        	instantiateWebDriver();
-        	log.info("Driver created: {}", driver);
+            instantiateWebDriver();
+            log.info("Driver created: {}", driver);
         }
         return driver;
     }
-    
+
     /**
      * Quits the driver and sets the driver instance back to null.
      */
     protected static void quit() {
-    	if (exists()) {
-    		getWebDriver().quit();
-    		driver = null;
-    	}
-    	else {
-    		log.info("Attempted to call quit on a driver that did not exist.");
-    	}
+        if (exists()) {
+            getWebDriver().quit();
+            driver = null;
+        } else {
+            log.info("Attempted to call quit on a driver that did not exist.");
+        }
     }
-    
+
     public static boolean exists() {
-    	return driver != null;
+        return driver != null;
     }
-    
+
     /**
      * Sets the download directory for chromedriver. Cannot be used with Saucelabs.
+     *
      * @param options ChromeOptions object to set
      */
     private static ChromeOptions setChromeDownloadDirectory(ChromeOptions options) {
@@ -133,27 +134,28 @@ public class WebDriverFactory {
         chromePrefs.put("download.default_directory", DownloadManager.getDownloadDirectory());
         return options.setExperimentalOption("prefs", chromePrefs);
     }
-    
+
     /**
      * Creates a ChromeDriver. Makes it headless if the -Dheadless flag is set.
      * Can pass additional arguments with the -DchromeOptions flag, such as -DchromeOptions="start-maximized" to open all browser windows maximized.
+     *
      * @return WebDriver ChromeDrvier
      */
     private static WebDriver createChromeDriver() {
-    	var chromeOptions = setChromeDownloadDirectory(new ChromeOptions());
+        var chromeOptions = setChromeDownloadDirectory(new ChromeOptions());
         String commandlineOptions = Configuration.toString("chromeOptions");
         if (commandlineOptions != null)
             chromeOptions.addArguments(commandlineOptions);
-    	if (Configuration.toBoolean("headless")) {
-    		chromeOptions.addArguments("--no-sandbox");
-    		chromeOptions.addArguments("--disable-dev-shm-usage");
+        if (Configuration.toBoolean("headless")) {
+            chromeOptions.addArguments("--no-sandbox");
+            chromeOptions.addArguments("--disable-dev-shm-usage");
             chromeOptions.addArguments("--headless=new");
         }
-    	var binary = Configuration.toString("chromeBrowserBinary");
-    	if (binary != null)
-    		chromeOptions.setBinary(binary);
-    	WebDriverManager.chromedriver().setup();
-    	return new ChromeDriver(chromeOptions);
+        var binary = Configuration.toString("chromeBrowserBinary");
+        if (binary != null)
+            chromeOptions.setBinary(binary);
+        WebDriverManager.chromedriver().setup();
+        return new ChromeDriver(chromeOptions);
     }
 
 }
