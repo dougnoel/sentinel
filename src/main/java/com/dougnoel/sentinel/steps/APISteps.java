@@ -175,6 +175,7 @@ public class APISteps {
                         .replace("\n", " "));
         log.trace(expectedResult);
 
+		boolean negateResult;
 		boolean result;
 		boolean textStartEndQuotes = false;
 		String startEndQuoteStripText = text;
@@ -184,19 +185,27 @@ public class APISteps {
 		}
 
         if (partialMatch) {
-			if(textStartEndQuotes)
+			if(textStartEndQuotes) {
 				result = responseText.contains(startEndQuoteStripText) || responseText.contains(text);
-			else
+				negateResult = responseText.contains(startEndQuoteStripText) && responseText.contains(text);
+			}
+			else {
 				result = responseText.contains(text);
+				negateResult = result;
+			}
         } else {
-			if(textStartEndQuotes)
+			if(textStartEndQuotes) {
 				result = StringUtils.equals(responseText, text) || StringUtils.equals(responseText, startEndQuoteStripText);
-			else
+				negateResult = StringUtils.equals(responseText, text) && StringUtils.equals(responseText, startEndQuoteStripText);
+			}
+			else {
 				result = responseText.contains(text);
+				negateResult = result;
+			}
         }
 
 		if (negate)
-			assertFalse(expectedResult, result);
+			assertFalse(expectedResult, negateResult);
 		else
 			assertTrue(expectedResult, result);
     }
