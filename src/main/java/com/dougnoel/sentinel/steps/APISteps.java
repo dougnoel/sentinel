@@ -164,16 +164,16 @@ public class APISteps {
 	 */
 	@Then("^I validate the response( does not)? (has|have|contains?) the text (.*?)$")
     public static void verifyResponseContains(String assertion, String matchType, String text) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        boolean partialMatch = matchType.contains("contain");
+		boolean negate = !StringUtils.isEmpty(assertion);
+		boolean partialMatch = matchType.contains("contain");
 
-        int responseCode = APIManager.getResponse().getResponseCode();
-        String responseText = APIManager.getResponse().getResponse();
-        String expectedResult = SentinelStringUtils.format(
-                "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
-                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
-                        .replace("\n", " "));
-        log.trace(expectedResult);
+		int responseCode = APIManager.getResponse().getResponseCode();
+		String responseText = APIManager.getResponse().getResponse();
+		String expectedResult = SentinelStringUtils.format(
+			"Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
+			(negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
+				.replace("\n", " "));
+		log.trace(expectedResult);
 
 		boolean negateResult;
 		boolean result;
@@ -208,7 +208,7 @@ public class APISteps {
 			assertFalse(expectedResult, negateResult);
 		else
 			assertTrue(expectedResult, result);
-    }
+	}
 
 	/**
 	 * Adds header into API request
