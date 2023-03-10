@@ -40,7 +40,7 @@ public class CsvFile extends TestFile{
 
     /**
      * Create default CSV file from specified path.
-     * @param pathToFile Path path to the CSV file.
+     * @param pathToFile Path to the CSV file.
      * @throws FileNotFoundException in the case that a file does not exist at that path.
      */
     public CsvFile(Path pathToFile) throws FileNotFoundException {
@@ -52,7 +52,7 @@ public class CsvFile extends TestFile{
 
     /**
      * Create a CSV file with the given file format from the CSV file at the specified path.
-     * @param pathToFile Path path to the CSV file.
+     * @param pathToFile Path to the CSV file.
      * @param format CSVFormat the format of the CSV file. See CSVFormat documentation for more info.
      * @throws FileNotFoundException in the case that a file does not exist at that path.
      */
@@ -77,7 +77,7 @@ public class CsvFile extends TestFile{
 
     /**
      * Create a CSV file configured with the given number of header rows from the CSV file at the given path.
-     * @param pathToFile Path path to the CSV file.
+     * @param pathToFile Path to the CSV file.
      * @param numberOfHeaderRows int number of header rows in the CSV file.
      * @throws FileNotFoundException in the case that a file does not exist at that path.
      */

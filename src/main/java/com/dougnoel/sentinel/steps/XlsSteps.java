@@ -2,21 +2,15 @@ package com.dougnoel.sentinel.steps;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.files.CsvFile;
 import com.dougnoel.sentinel.files.XlsFile;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.dougnoel.sentinel.system.FileManager;
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
-
-import static org.junit.Assert.*;
 
 
 public class XlsSteps {
@@ -33,12 +27,12 @@ public class XlsSteps {
      *     <li>I open the last downloaded csv file with 1 header row</li>
      * </ul>
      *
-     * @param numberOfHeaderRows int the number of header rows in the CSV file to test. Number of header rows must be declared in order to properly process the file.
+     * @param numHeaderRows int the number of header rows in the CSV file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
      */
     @When("^I find and open the last downloaded (?:XLS|xls) file with (\\d+) header rows?$")
-    public static void openMostRecentlyDownloadedFileAsXls(int numberOfHeaderRows) throws FileNotFoundException {
-        FileManager.setCurrentTestFile(new XlsFile(numberOfHeaderRows));
+    public static void openMostRecentlyDownloadedFileAsXls(int numHeaderRows) throws IOException {
+        FileManager.setCurrentTestFile(new XlsFile(numHeaderRows));
     }
 
     /**
@@ -51,11 +45,11 @@ public class XlsSteps {
      * </ul>
      *
      * @param fileLocation String either the location of the file, given by a path, or the name of a testdata object in the current page object.
-     * @param numberOfHeaderRows int the number of header rows in the XLS file to test. Number of header rows must be declared in order to properly process the file.
+     * @param numHeaderRows int the number of header rows in the XLS file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location specified.
      */
     @When("^I open (.*) as a (?:Xls|xls) file with (\\d+) header rows?$")
-    public static void openSpecificFileAsXls(String fileLocation, int numberOfHeaderRows) throws FileNotFoundException {
+    public static void openSpecificFileAsXls(String fileLocation, int numHeaderRows) throws IOException {
         String filePath;
         try{
             filePath = Configuration.getTestData(fileLocation.trim(), "fileLocation");
@@ -64,7 +58,7 @@ public class XlsSteps {
             filePath = fileLocation;
         }
 
-        FileManager.setCurrentTestFile(new XlsFile(Path.of(filePath), numberOfHeaderRows));
+        FileManager.setCurrentTestFile(new XlsFile(Path.of(filePath), numHeaderRows));
     }
 
 //    /**

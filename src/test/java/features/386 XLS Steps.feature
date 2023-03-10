@@ -1,14 +1,14 @@
-#author: sampacos
+#author: peterkrzywicki
 
-@386 @csv
+@386 @xls
 Feature: Verify and Edit XLSs
 
-  @386A @csv
+  @386B @xls
   Scenario: Edit all values in XLS file column
     Given I navigate to the Textbox Page
       And I enter Truman in the last name field
       And I navigate to the Upload Page
-    When I open src/test/resources/xls/test_1header.xls as a Xls file with 1 header rows
+    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 1 header rows
 #      And I set all values in the surname column to Truman in the CSV file
 #    Then I verify the CSV file has the value Truman in the surname column and the 1st row
 #      And I verify the CSV file contains the value Truman in the surname column and the 4th row

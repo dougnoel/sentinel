@@ -1,23 +1,17 @@
 package com.dougnoel.sentinel.files;
 
-import com.dougnoel.sentinel.exceptions.FileException;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -30,27 +24,30 @@ public class XlsFile extends TestFile{
     private WorkbookFactory workbookFactory;
     private List<List<String>> xlsContents;
     private int numHeaderRows;
-
-    /**
-     * Create default XLS file from most recently-downloaded path.
-     * @throws FileNotFoundException in the case that a file does not exist at that path.
-     */
-    public XlsFile() throws FileNotFoundException {
-        FileOutputStream out = new FileOutputStream(pathToFile);
-    }
+//    private final int numHeaderRows;
 
 //    /**
-//     * Create default XLS file from specified path.
-//     * @param pathToFile Path to the XLS file.
-//     * @throws IOException in the case that a file does not exist at that path.
+//     * Create default XLS file from most recently-downloaded path.
+//     * @throws FileNotFoundException in the case that a file does not exist at that path.
 //     */
-//
-//    public XlsFile(Path pathToFile) throws FileNotFoundException {
-//        super(pathToFile);
-//        workbookFactory = WorkbookFactory.create(new File(pathToFile));
-//        numHeaderRows = 1;
-//        loadXlsFile();
+//    public XlsFile() throws FileNotFoundException {
+//        FileOutputStream out = new FileOutputStream(pathToFile);
+//        numHeaderRows = 0;
 //    }
+
+    /**
+     * Create default XLS file from specified path.
+     * @param pathToFile Path to the XLS file.
+     * @throws IOException in the case that a file does not exist at that path.
+     */
+
+    public XlsFile(Path pathToFile) throws IOException {
+        super(pathToFile);
+        InputStream inp = new FileInputStream(pathToFile.toFile());
+        Workbook wb = WorkbookFactory.create(inp);
+        numHeaderRows = 1;
+
+    }
 //
 //    /**
 //     * Create a XLS Sheet with the given file format from the XLS file at the specified path.
@@ -66,19 +63,15 @@ public class XlsFile extends TestFile{
 //        loadXlsFile();
 //    }
 
-//    /**
-//     * Create a XLS file configured with the given number of header rows from the XLS file at the most recently downloaded path.
-//     * @param numberOfHeaderRows int number of header rows in the XLS file.
-//     * @throws FileNotFoundException in the case that a file does not exist at that path.
-//     */
-//    public XlsFile(int numberOfHeaderRows) throws FileNotFoundException {
-//        super();
-//        Workbook wb = WorkbookFactory.create();
-//        Sheet sheet = wb.getSheetAt(0);
-//        Row row = sheet.getRow(2);
-//        numHeaderRows = numberOfHeaderRows;
-//        loadXlsFile();
-//    }
+    /**
+     * Create a XLS file configured with the given number of header rows from the XLS file at the most recently downloaded path.
+     * @param numberOfHeaderRows int number of header rows in the XLS file.
+     * @throws FileNotFoundException in the case that a file does not exist at that path.
+     */
+    public XlsFile(int numberOfHeaderRows) throws FileNotFoundException {
+        super();
+        numHeaderRows = numberOfHeaderRows;
+    }
 
 //    /**
 //     * Create a XLS file configured with the given number of header rows from the XLS file at the given path.
@@ -94,19 +87,21 @@ public class XlsFile extends TestFile{
 
     /**
      * Create a XLS file configured with the given number of header rows from the XLS file at the given path.
-     * @param pathToFile Path path to the XLS file.
-     * @param numberOfHeaderRows int number of header rows in the XLS file.
+     *
+     * @param pathToFile         Path to the XLS file.
+     * @param numHeaderRows int number of header rows in the XLS file.
      * @throws FileNotFoundException in the case that a file does not exist at that path.
      */
-    public XlsFile(Path pathToFile, int numberOfHeaderRows) throws FileNotFoundException {
+    public XlsFile(Path pathToFile, int numHeaderRows) throws IOException {
         super(pathToFile);
+        this.numHeaderRows = numHeaderRows;
         try (InputStream inp = new FileInputStream(pathToFile.toFile())) {
             Workbook wb = WorkbookFactory.create(inp);
             Sheet sheet = wb.getSheetAt(0);
-            Row row = sheet.getRow(2);
-            Cell cell = row.getCell(3);
+            Row row = sheet.getRow(1);
+            Cell cell = row.getCell(1);
             if (cell == null)
-                cell = row.createCell(3);
+                cell = row.createCell(1);
             cell.setCellValue(String.valueOf(CellType.STRING));
             cell.setCellValue("a test");
     } catch (IOException e) {
@@ -132,7 +127,21 @@ public class XlsFile extends TestFile{
 //    }
 //
 //    private void loadXlsFile(){
-//        xlsContents = readAllFileContents();
+//            InputStream inp = new FileInputStream(pathToFile.toFile());
+//            HSSFWorkbook wb = new HSSFWorkbook(inp);
+//            HSSFSheet sheet=wb.getSheetAt(0);
+//            int rowCount=sheet.getLastRowNum()-sheet.getFirstRowNum();
+//            for(int i=0;i<=rowCount;i++){
+//
+//                //get cell count in a row
+//                int cellcount=sheet.getRow(i).getLastCellNum();
+//
+//                //iterate over each cell to print its value
+//                System.out.println("Row"+ i+" data is :");
+//
+//                for(int j=0;j<cellcount;j++){
+//                    System.out.print(sheet.getRow(i).getCell(j).getStringCellValue() +",");
+//                }
 //    }
 //
 //    /**
