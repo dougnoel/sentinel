@@ -184,7 +184,7 @@ public class APISteps {
 			startEndQuoteStripText = text.substring(1, text.length() - 1);
 		}
 
-        if (partialMatch) {
+		if (partialMatch) {
 			if(textStartEndQuotes) {
 				result = responseText.contains(startEndQuoteStripText) || responseText.contains(text);
 				negateResult = responseText.contains(startEndQuoteStripText) && responseText.contains(text);
@@ -193,7 +193,7 @@ public class APISteps {
 				result = responseText.contains(text);
 				negateResult = result;
 			}
-        } else {
+		} else {
 			if(textStartEndQuotes) {
 				result = StringUtils.equals(responseText, text) || StringUtils.equals(responseText, startEndQuoteStripText);
 				negateResult = StringUtils.equals(responseText, text) && StringUtils.equals(responseText, startEndQuoteStripText);
@@ -202,7 +202,7 @@ public class APISteps {
 				result = responseText.contains(text);
 				negateResult = result;
 			}
-        }
+		}
 
 		if (negate)
 			assertFalse(expectedResult, negateResult);
