@@ -163,7 +163,7 @@ public class APISteps {
 	 * @param text String the text to match
 	 */
 	@Then("^I validate the response( does not)? (has|have|contains?) the text (.*?)$")
-    public static void verifyResponseContains(String assertion, String matchType, String text) {
+	public static void verifyResponseContains(String assertion, String matchType, String text) {
 		boolean negate = !StringUtils.isEmpty(assertion);
 		boolean partialMatch = matchType.contains("contain");
 
