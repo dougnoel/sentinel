@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -250,6 +251,41 @@ public class CsvFile extends TestFile{
         int adjustedColumnIndex = columnIndex - 1;
         csvContents.stream().skip(numHeaderRows).forEach(row -> row.set(adjustedColumnIndex, newValue));
         writeFileContents(csvContents);
+    }
+
+    /**
+     * Sets the cell in a given column and row to the given value.
+     * @param columnHeader String name of the column.
+     * @param rowIndex int index of the row, starting at 1.
+     * @param newValue String value to set each cell to.
+     */
+    public void writeCellInColumnRow(String columnHeader, int rowIndex, String newValue) {
+        int columnIndex = getColumnIndex(columnHeader);
+        writeCellInColumnRow(columnIndex, rowIndex, newValue);
+    }
+
+    /**
+     * Sets the cell in a given column and row to the given value.
+     * @param columnIndex int index of the column, starting at 1.
+     * @param rowIndex int index of the row, starting at 1.
+     * @param newValue String value to set each cell to.
+     */
+    public void writeCellInColumnRow(int columnIndex, int rowIndex, String newValue){
+        int adjustedColumnIndex = columnIndex - 1;
+        int adjustedRowIndex = rowIndex - 1;
+        csvContents.stream().skip(numHeaderRows).collect(Collectors.toList()).get(adjustedRowIndex).set(adjustedColumnIndex, newValue);
+        writeFileContents(csvContents);
+    }
+
+    /**
+     * Deletes a row from the CSV file
+     * @param rowIndex int index of the row, starting at 1.
+     */
+    public void deleteCellsInRow(int rowIndex){
+        int adjustedRowIndex = rowIndex - 1;
+        List<List<String>> newContents = new ArrayList<>(csvContents);
+        newContents.remove(adjustedRowIndex + numHeaderRows);
+        writeFileContents(newContents);
     }
 
     /**
