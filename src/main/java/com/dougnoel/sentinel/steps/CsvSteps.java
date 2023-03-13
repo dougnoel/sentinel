@@ -118,7 +118,7 @@ public class CsvSteps {
     }
 
     /**
-     * Edits the current CSV file and deletes all contents, including delimiters, of the given row.
+     * Edits the current CSV file and completely removes the given row.
      * <br>
      * <b>Gherkin Example:</b>
      * <ul>
@@ -133,7 +133,7 @@ public class CsvSteps {
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
 
         int rowIndex = row.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(row);
-        file.deleteCellsInRow(rowIndex);
+        file.deleteRow(rowIndex);
     }
 
     /**

@@ -281,7 +281,7 @@ public class CsvFile extends TestFile{
      * Deletes a row from the CSV file
      * @param rowIndex int index of the row, starting at 1.
      */
-    public void deleteCellsInRow(int rowIndex){
+    public void deleteRow(int rowIndex){
         int adjustedRowIndex = rowIndex - 1;
         List<List<String>> newContents = new ArrayList<>(csvContents);
         newContents.remove(adjustedRowIndex + numHeaderRows);

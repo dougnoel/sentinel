@@ -107,7 +107,7 @@ public class CsvFileTests {
         DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
         Path filePath = DownloadManager.getMostRecentDownloadPath();
         CsvFile file = new CsvFile(filePath, 1);
-        file.deleteCellsInRow(1);
+        file.deleteRow(1);
 
         assertEquals("Expected CSV file to have 3 data rows total.", 3, file.getNumberOfDataRows());
     }
