@@ -129,7 +129,7 @@ public class CsvSteps {
      * @param row String the ordinal of the row to delete (last, 1st, 2nd, 25th, etc.).
      */
     @When("^I delete the (la|\\d+)(?:st|nd|rd|th) row entry in the (?:CSV|csv) file$")
-    public static void deleteRowData(String row){
+    public static void deleteCsvRow(String row){
         CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
 
         int rowIndex = row.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(row);
