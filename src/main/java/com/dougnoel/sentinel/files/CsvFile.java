@@ -294,7 +294,7 @@ public class CsvFile extends TestFile{
      * @param columnHeader String name of the column.
      * @param textToMatch String text to check in the cell.
      * @param partialMatch boolean if true, text match is 'contains'. if false, text match is 'equals'.
-     * @return String the exact text of the cell if the cell contains/has the given text.
+     * @return String the exact text of the cell if the cell does not contain/have the given text. Null otherwise.
      */
     public String verifyCellDataContains(int rowIndex, String columnHeader, String textToMatch, boolean partialMatch){
         return verifyCellDataContains(rowIndex, getColumnIndex(columnHeader), textToMatch, partialMatch);
@@ -306,16 +306,16 @@ public class CsvFile extends TestFile{
      * @param columnIndex int index of the column, starting at 1.
      * @param textToMatch String text to check in the cell.
      * @param partialMatch boolean if true, text match is 'contains'. if false, text match is 'equals'.
-     * @return String the exact text of the cell if the cell contains/has the given text.
+     * @return String the exact text of the cell if the cell does not contain/have the given text. Null otherwise.
      */
     public String verifyCellDataContains(int rowIndex, int columnIndex, String textToMatch, boolean partialMatch){
         var cell = readCellData(columnIndex, rowIndex);
 
         if(partialMatch){
-            return cell.contains(textToMatch) ? cell : null;
+            return cell.contains(textToMatch) ? null : cell;
         }
         else{
-            return StringUtils.equals(cell, textToMatch) ? cell : null;
+            return StringUtils.equals(cell, textToMatch) ? null : cell;
         }
     }
 

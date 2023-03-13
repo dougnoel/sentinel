@@ -167,16 +167,16 @@ public class CsvSteps {
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
-            } else {
                 assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+            } else {
+                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
             if (negate) {
-                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, column, textToMatch, partialMatch));
-            } else {
                 assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, column, textToMatch, partialMatch));
+            } else {
+                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, column, textToMatch, partialMatch));
             }
         }
     }
