@@ -11,5 +11,3 @@ elements:
     id: "csv"
   broken_download_link:
     id: "broke"
-  csv_download_link:
-    id: "csv"
