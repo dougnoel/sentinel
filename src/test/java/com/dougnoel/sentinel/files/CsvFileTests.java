@@ -122,7 +122,8 @@ public class CsvFileTests {
 
         file.writeAllCellsInColumn("comment", "test");
         file.writeCellInColumnRow("comment", 2, "me");
-        file.verifyCellDataContains(2, "comment", "me", false);
+
+        assertNotNull("Expected the CSV file to have edited one cell to 'me'.", file.verifyCellDataContains(2, "comment", "me", false));
     }
 
     @Test
@@ -135,6 +136,7 @@ public class CsvFileTests {
 
         file.writeAllCellsInColumn(5, "test");
         file.writeCellInColumnRow(5, 2, "me");
-        file.verifyCellDataContains(2, 5, "me", false);
+
+        assertNotNull("Expected the CSV file to have edited one cell to 'me'.", file.verifyCellDataContains(2, "comment", "me", false));
     }
 }
