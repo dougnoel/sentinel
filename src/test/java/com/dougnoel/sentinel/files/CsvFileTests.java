@@ -99,4 +99,13 @@ public class CsvFileTests {
         CsvFile file = new CsvFile(filePath, 1);
         assertEquals("Expected CSV cell in column Age, row 2, to be 3", "3", file.readCellData("age", 2));
     }
+
+    @Test
+    public void deleteCellsInRow() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("DownloadsTestPage");
+        BaseSteps.click("sample_download_link");
+        String filename = DownloadManager.monitorDownload();
+        CsvFile file = new CsvFile();
+        assertEquals("Expected filename of created CSV object to match downloaded filename.", filename, file.getName());
+    }
 }
