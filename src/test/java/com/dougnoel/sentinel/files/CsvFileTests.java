@@ -104,10 +104,37 @@ public class CsvFileTests {
     public void deleteCellsInRow() throws IOException, InterruptedException {
         BaseSteps.navigateToPage("DownloadsTestPage");
         BaseSteps.click("csv_download_link");
-        String filename = DownloadManager.monitorDownload();
-        CsvFile file = new CsvFile();
-        assertEquals("Expected CSV file to have 4 rows total.", 4, file.getNumberOfTotalRows());
+        DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
+        Path filePath = DownloadManager.getMostRecentDownloadPath();
+        CsvFile file = new CsvFile(filePath, 1);
         file.deleteCellsInRow(1);
-        assertEquals("Expected CSV file to have 3 rows total.", 3, file.getNumberOfTotalRows());
+
+        assertEquals("Expected CSV file to have 3 data rows total.", 3, file.getNumberOfDataRows());
+    }
+
+    @Test
+    public void writeCellInColumnNameRow() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("DownloadsTestPage");
+        BaseSteps.click("csv_download_link");
+        DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
+        Path filePath = DownloadManager.getMostRecentDownloadPath();
+        CsvFile file = new CsvFile(filePath, 1);
+
+        file.writeAllCellsInColumn("comment", "test");
+        file.writeCellInColumnRow("comment", 2, "me");
+        file.verifyCellDataContains(2, "comment", "me", false);
+    }
+
+    @Test
+    public void writeCellInColumnRow() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("DownloadsTestPage");
+        BaseSteps.click("csv_download_link");
+        DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
+        Path filePath = DownloadManager.getMostRecentDownloadPath();
+        CsvFile file = new CsvFile(filePath, 1);
+
+        file.writeAllCellsInColumn(5, "test");
+        file.writeCellInColumnRow(5, 2, "me");
+        file.verifyCellDataContains(2, 5, "me", false);
     }
 }
