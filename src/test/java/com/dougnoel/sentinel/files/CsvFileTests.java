@@ -103,9 +103,11 @@ public class CsvFileTests {
     @Test
     public void deleteCellsInRow() throws IOException, InterruptedException {
         BaseSteps.navigateToPage("DownloadsTestPage");
-        BaseSteps.click("sample_download_link");
+        BaseSteps.click("csv_download_link");
         String filename = DownloadManager.monitorDownload();
         CsvFile file = new CsvFile();
-        assertEquals("Expected filename of created CSV object to match downloaded filename.", filename, file.getName());
+        assertEquals("Expected CSV file to have 4 rows total.", 4, file.getNumberOfTotalRows());
+        file.deleteCellsInRow(1);
+        assertEquals("Expected CSV file to have 3 rows total.", 3, file.getNumberOfTotalRows());
     }
 }
