@@ -7,7 +7,7 @@ elements:
     id: "zip"
   text_file_download_link:
     id: "txt"
-  broken_download_link:
-    id: "broke"
   csv_download_link:
     id: "csv"
+  broken_download_link:
+    id: "broke"

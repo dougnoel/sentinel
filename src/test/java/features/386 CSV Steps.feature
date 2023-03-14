@@ -1,6 +1,6 @@
 #author: sampacos
 
-@386 @csv
+@386 @csv @525
 Feature: Verify and Edit CSVs
 
   @386A @csv
@@ -50,3 +50,35 @@ Feature: Verify and Edit CSVs
       And I verify the CSV file has the value 12345 in the 4th column and the 4th row
       And I verify all cells in the the 4th column of the csv file have the value 12345
       And I verify not all cells in the the 4th column of the csv file have the value 6
+
+  @525A @csv
+  Scenario: Edit specific row column values in a CSV file
+    Given I navigate to the Downloads Test Page
+    When I click the csv download link
+      And I verify a new file is downloaded with the extension csv
+      And I find and open the last downloaded csv file with 1 header row
+      And I set all values in the comment column to test in the CSV file
+      And I set the value in the 2nd row of the comment column to me in the CSV file
+      And I set the value in the last row of the 5th column to now in the CSV file
+    Then I verify the CSV file has the value me in the comment column and the 2nd row
+      And I verify the CSV file has the value now in the comment column and the last row
+      And I verify the CSV file has the value test in the comment column and the 1st row
+
+  @525B @csv
+  Scenario: Delete a row from a CSV file
+    Given I navigate to the Downloads Test Page
+    When I click the csv download link
+      And I verify a new file is downloaded with the extension csv
+      And I find and open the last downloaded csv file with 1 header row
+      And I set all values in the comment column to test in the CSV file
+      And I set the value in the 2nd row of the comment column to me in the CSV file
+      And I set the value in the last row of the 5th column to now in the CSV file
+    Then I verify the CSV file has the value me in the comment column and the 2nd row
+      And I verify the CSV file has the value now in the comment column and the last row
+      And I verify the CSV file has the value test in the comment column and the 1st row
+      And I verify the CSV has 4 data rows
+    When I delete the last row entry in the CSV file
+      And I delete the 2nd row entry in the CSV file
+    Then I verify the CSV has 2 data rows
+      And I verify the comment column of the csv does not have the text me
+      And I verify the 5th column of the csv does not have the text now

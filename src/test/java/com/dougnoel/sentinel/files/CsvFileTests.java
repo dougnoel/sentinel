@@ -99,4 +99,44 @@ public class CsvFileTests {
         CsvFile file = new CsvFile(filePath, 1);
         assertEquals("Expected CSV cell in column Age, row 2, to be 3", "3", file.readCellData("age", 2));
     }
+
+    @Test
+    public void deleteCellsInRow() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("DownloadsTestPage");
+        BaseSteps.click("csv_download_link");
+        DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
+        Path filePath = DownloadManager.getMostRecentDownloadPath();
+        CsvFile file = new CsvFile(filePath, 1);
+        file.deleteRow(1);
+
+        assertEquals("Expected CSV file to have 3 data rows total.", 3, file.getNumberOfDataRows());
+    }
+
+    @Test
+    public void writeCellInColumnNameRow() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("DownloadsTestPage");
+        BaseSteps.click("csv_download_link");
+        DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
+        Path filePath = DownloadManager.getMostRecentDownloadPath();
+        CsvFile file = new CsvFile(filePath, 1);
+
+        file.writeAllCellsInColumn("comment", "test");
+        file.writeCellInColumnRow("comment", 2, "me");
+
+        assertNull("Expected the CSV file to have edited one cell to 'me'.", file.verifyCellDataContains(2, "comment", "me", false));
+    }
+
+    @Test
+    public void writeCellInColumnRow() throws IOException, InterruptedException {
+        BaseSteps.navigateToPage("DownloadsTestPage");
+        BaseSteps.click("csv_download_link");
+        DownloadManager.monitorDownload(DownloadManager.getDownloadDirectory(), "csv", null);
+        Path filePath = DownloadManager.getMostRecentDownloadPath();
+        CsvFile file = new CsvFile(filePath, 1);
+
+        file.writeAllCellsInColumn(5, "test");
+        file.writeCellInColumnRow(5, 2, "me");
+
+        assertNull("Expected the CSV file to have edited one cell to 'me'.", file.verifyCellDataContains(2, "comment", "me", false));
+    }
 }

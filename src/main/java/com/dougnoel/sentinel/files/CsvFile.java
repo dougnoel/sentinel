@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
@@ -253,12 +254,47 @@ public class CsvFile extends TestFile{
     }
 
     /**
+     * Sets the cell in a given column and row to the given value.
+     * @param columnHeader String name of the column.
+     * @param rowIndex int index of the row, starting at 1.
+     * @param newValue String value to set each cell to.
+     */
+    public void writeCellInColumnRow(String columnHeader, int rowIndex, String newValue) {
+        int columnIndex = getColumnIndex(columnHeader);
+        writeCellInColumnRow(columnIndex, rowIndex, newValue);
+    }
+
+    /**
+     * Sets the cell in a given column and row to the given value.
+     * @param columnIndex int index of the column, starting at 1.
+     * @param rowIndex int index of the row, starting at 1.
+     * @param newValue String value to set each cell to.
+     */
+    public void writeCellInColumnRow(int columnIndex, int rowIndex, String newValue){
+        int adjustedColumnIndex = columnIndex - 1;
+        int adjustedRowIndex = rowIndex - 1;
+        csvContents.stream().skip(numHeaderRows).collect(Collectors.toList()).get(adjustedRowIndex).set(adjustedColumnIndex, newValue);
+        writeFileContents(csvContents);
+    }
+
+    /**
+     * Deletes a row from the CSV file
+     * @param rowIndex int index of the row, starting at 1.
+     */
+    public void deleteRow(int rowIndex){
+        int adjustedRowIndex = rowIndex - 1;
+        List<List<String>> newContents = new ArrayList<>(csvContents);
+        newContents.remove(adjustedRowIndex + numHeaderRows);
+        writeFileContents(newContents);
+    }
+
+    /**
      * Verifies the cell in the given row and column contains or equals the given text.
      * @param rowIndex int index of the row, starting at 1.
      * @param columnHeader String name of the column.
      * @param textToMatch String text to check in the cell.
      * @param partialMatch boolean if true, text match is 'contains'. if false, text match is 'equals'.
-     * @return boolean true if the cell contains/has the given text.
+     * @return String the exact text of the cell if the cell does not contain/have the given text. Null otherwise.
      */
     public String verifyCellDataContains(int rowIndex, String columnHeader, String textToMatch, boolean partialMatch){
         return verifyCellDataContains(rowIndex, getColumnIndex(columnHeader), textToMatch, partialMatch);
@@ -270,7 +306,7 @@ public class CsvFile extends TestFile{
      * @param columnIndex int index of the column, starting at 1.
      * @param textToMatch String text to check in the cell.
      * @param partialMatch boolean if true, text match is 'contains'. if false, text match is 'equals'.
-     * @return boolean true if the cell contains/has the given text.
+     * @return String the exact text of the cell if the cell does not contain/have the given text. Null otherwise.
      */
     public String verifyCellDataContains(int rowIndex, int columnIndex, String textToMatch, boolean partialMatch){
         var cell = readCellData(columnIndex, rowIndex);
