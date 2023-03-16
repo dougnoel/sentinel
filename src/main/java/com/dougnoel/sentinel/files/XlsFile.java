@@ -6,10 +6,17 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 import java.io.*;
 import java.nio.file.Path;
@@ -96,15 +103,32 @@ public class XlsFile extends TestFile{
         super(pathToFile);
         this.numHeaderRows = numHeaderRows;
         try (InputStream inp = new FileInputStream(pathToFile.toFile())) {
-            Workbook wb = WorkbookFactory.create(inp);
-            Sheet sheet = wb.getSheetAt(0);
-            Row row = sheet.getRow(1);
-            Cell cell = row.getCell(1);
-            if (cell == null)
-                cell = row.createCell(1);
-            cell.setCellValue(String.valueOf(CellType.STRING));
-            cell.setCellValue("a test");
+            if (pathToFile.toString().endsWith(".xls")) {
+                POIFSFileSystem fs = new POIFSFileSystem(inp);
+                HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
+                HSSFSheet sheet = wb.getSheetAt(0);
+                HSSFRow row = sheet.getRow(1);
+                HSSFCell cell = row.getCell(1);
+                if (cell == null)
+                    cell = row.createCell(1);
+                cell.setCellValue(String.valueOf(CellType.STRING));
+                cell.setCellValue("a test");
+            } else {
+                OPCPackage pkg = OPCPackage.open(inp);
+                XSSFWorkbook wb = new XSSFWorkbook(pkg); {
+                Sheet sheet = wb.getSheetAt(0);
+                Row row = sheet.getRow(1);
+                Cell cell = row.getCell(1);
+                if (cell == null)
+                    cell = row.createCell(1);
+                cell.setCellValue(String.valueOf(CellType.STRING));
+                cell.setCellValue("a test");
+                };
+            }
+
     } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidFormatException e) {
             throw new RuntimeException(e);
         }
 
