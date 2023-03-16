@@ -107,22 +107,24 @@ public class XlsFile extends TestFile{
                 POIFSFileSystem fs = new POIFSFileSystem(inp);
                 HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
                 HSSFSheet sheet = wb.getSheetAt(0);
-                HSSFRow row = sheet.getRow(1);
-                HSSFCell cell = row.getCell(1);
+                HSSFRow row = sheet.getRow(0);
+                HSSFCell cell = row.getCell(0);
                 if (cell == null)
-                    cell = row.createCell(1);
+                    cell = row.createCell(0);
                 cell.setCellValue(String.valueOf(CellType.STRING));
-                cell.setCellValue("a test");
+                cell.setCellValue("ColumnName");
+                fs.close();
             } else {
                 OPCPackage pkg = OPCPackage.open(inp);
                 XSSFWorkbook wb = new XSSFWorkbook(pkg); {
                 Sheet sheet = wb.getSheetAt(0);
-                Row row = sheet.getRow(1);
-                Cell cell = row.getCell(1);
+                Row row = sheet.getRow(0);
+                Cell cell = row.getCell(0);
                 if (cell == null)
-                    cell = row.createCell(1);
+                    cell = row.createCell(0);
                 cell.setCellValue(String.valueOf(CellType.STRING));
-                cell.setCellValue("a test");
+                cell.setCellValue("ColumnName");
+                pkg.close();
                 };
             }
 
