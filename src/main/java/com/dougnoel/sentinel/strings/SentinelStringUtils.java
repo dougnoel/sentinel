@@ -132,4 +132,36 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 		return text;
 	}
 
+	/**
+	 * Returns a string with any strings with pattern "\\{\S*?\\}" replaced with values
+	 * stored in configuration. For example, given the string
+	 *	{
+	 *	"id": {id},
+	 *	"name": "puppy",
+	 *	"category": {
+	 *	"id": 1,
+	 *	"name": "{category_name}"
+	 *	  }}
+	 *
+	 * This method would return:
+	 *  {
+	 * 	 "id": 10,
+	 * 	 "name": "puppy",
+	 * 	 "category": {
+	 * 	 "id": 1,
+	 * 	 "name": "Dog"
+	 *    }}.
+	 * If there are no values to replace, this method returns the string intact.
+	 * @param text String the text to search for variable replacement
+	 * @return String the string with variables replaced as applicable
+	 */
+	public static String replaceStoredVariables(String text) {
+		Matcher matcher = Pattern.compile("\\{\\S[^\\}]*+\\}").matcher(text);
+		while (matcher.find()) {
+			var variable = matcher.group();
+			var value = Configuration.toString(variable.substring(1, variable.length() - 1));
+			text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+			}
+		return text;
+	}
 }
