@@ -107,7 +107,7 @@ public class XlsFile extends TestFile{
                 POIFSFileSystem fs = new POIFSFileSystem(inp);
                 HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
                 HSSFSheet sheet = wb.getSheetAt(0);
-                HSSFRow row = sheet.getRow(0);
+                HSSFRow row = sheet.getRow(numHeaderRows);
                 HSSFCell cell = row.getCell(0);
                 if (cell == null)
                     cell = row.createCell(0);
@@ -118,7 +118,7 @@ public class XlsFile extends TestFile{
                 OPCPackage pkg = OPCPackage.open(inp);
                 XSSFWorkbook wb = new XSSFWorkbook(pkg); {
                 Sheet sheet = wb.getSheetAt(0);
-                Row row = sheet.getRow(0);
+                Row row = sheet.getRow(numHeaderRows);
                 Cell cell = row.getCell(0);
                 if (cell == null)
                     cell = row.createCell(0);

@@ -23,11 +23,11 @@ public class XlsSteps {
      * <br>
      * <b>Gherkin Examples:</b>
      * <ul>
-     *     <li>I open the last downloaded CSV file with 3 header rows</li>
-     *     <li>I open the last downloaded csv file with 1 header row</li>
+     *     <li>I open the last downloaded XLS file with 3 header rows</li>
+     *     <li>I open the last downloaded XLS file with 1 header row</li>
      * </ul>
      *
-     * @param numHeaderRows int the number of header rows in the CSV file to test. Number of header rows must be declared in order to properly process the file.
+     * @param numHeaderRows int the number of header rows in the XLS file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
      */
     @When("^I find and open the last downloaded (?:XLS|xls) file with (\\d+) header rows?$")
