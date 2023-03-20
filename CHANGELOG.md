@@ -2,7 +2,190 @@
 
 ## [Unreleased](https://github.com/dougnoel/sentinel/tree/HEAD)
 
-[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.5...HEAD)
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.12-SNAPSHOT...HEAD)
+
+**Implemented enhancements:**
+
+- Unable to check that a select element has an empty selection [\#453](https://github.com/dougnoel/sentinel/issues/453)
+- Add ability to use stored text in table's clickAssociatedLinkInTable step [\#379](https://github.com/dougnoel/sentinel/issues/379)
+- Add steps for verifying element relative location [\#371](https://github.com/dougnoel/sentinel/issues/371)
+- Improvement: add methods to table to check that all cells in a column are \(or are not\) empty [\#346](https://github.com/dougnoel/sentinel/issues/346)
+- Modify Screenshot Comparison To Account For Windows Elements [\#336](https://github.com/dougnoel/sentinel/issues/336)
+- click point on element [\#333](https://github.com/dougnoel/sentinel/issues/333)
+- getElementAsCustom [\#331](https://github.com/dougnoel/sentinel/issues/331)
+- Implement the image-comparison library [\#298](https://github.com/dougnoel/sentinel/issues/298)
+- Implement WinAppDriver to automate windows [\#239](https://github.com/dougnoel/sentinel/issues/239)
+- Implement Screen Recording [\#207](https://github.com/dougnoel/sentinel/issues/207)
+- Add an OnHover Test Step [\#197](https://github.com/dougnoel/sentinel/issues/197)
+
+**Fixed bugs:**
+
+- Fix Unit Test Timeouts [\#506](https://github.com/dougnoel/sentinel/issues/506)
+- Table does not check to see if it needs to be updated if a comparison fails. [\#396](https://github.com/dougnoel/sentinel/issues/396)
+- Table cell text verification does not take into account tables with no true header elements [\#375](https://github.com/dougnoel/sentinel/issues/375)
+- Custom element types in projects extending sentinel cause exception [\#367](https://github.com/dougnoel/sentinel/issues/367)
+- PrimeNG Dropdown test fails [\#351](https://github.com/dougnoel/sentinel/issues/351)
+- Multiple SLF4J Bindings [\#309](https://github.com/dougnoel/sentinel/issues/309)
+- Sentinel should recover from a driver.quit\(\) [\#261](https://github.com/dougnoel/sentinel/issues/261)
+- Base step to go to a new tab throws error [\#223](https://github.com/dougnoel/sentinel/issues/223)
+
+**Closed issues:**
+
+- Implement download test page + Same-Origin test file [\#509](https://github.com/dougnoel/sentinel/issues/509)
+- Table verification: need ability to numerically compare values in a column to a reference value [\#491](https://github.com/dougnoel/sentinel/issues/491)
+- Finding elements in iFrames is slow [\#479](https://github.com/dougnoel/sentinel/issues/479)
+- Updates to table page for PR 449 [\#451](https://github.com/dougnoel/sentinel/issues/451)
+- Processed number comparison [\#448](https://github.com/dougnoel/sentinel/issues/448)
+- Calculator needed for value modification testing [\#446](https://github.com/dougnoel/sentinel/issues/446)
+- Add "column does not contain" support [\#433](https://github.com/dougnoel/sentinel/issues/433)
+- Fix table test instability [\#426](https://github.com/dougnoel/sentinel/issues/426)
+- Textbox page needs to be updated for new tests [\#421](https://github.com/dougnoel/sentinel/issues/421)
+- IsDisabled and IsEnabled need to be updated to handle the case of Readonly [\#419](https://github.com/dougnoel/sentinel/issues/419)
+- hasAttribute and doesNotHaveAttribute are throwing when unexpected [\#417](https://github.com/dougnoel/sentinel/issues/417)
+- Changing windows by title [\#415](https://github.com/dougnoel/sentinel/issues/415)
+- Need to implement checking a table's specified row/column entry against a stored value [\#410](https://github.com/dougnoel/sentinel/issues/410)
+- Update contributions.md to specify merging from forked repos is unsupported [\#408](https://github.com/dougnoel/sentinel/issues/408)
+- Sendkeys for file uploads [\#393](https://github.com/dougnoel/sentinel/issues/393)
+- Backspace send key support [\#384](https://github.com/dougnoel/sentinel/issues/384)
+- Enter Random Text gherkin is incorrect [\#369](https://github.com/dougnoel/sentinel/issues/369)
+- Relative path shortcut support - Windows automation [\#366](https://github.com/dougnoel/sentinel/issues/366)
+- Make PDF Downloadable for test [\#357](https://github.com/dougnoel/sentinel/issues/357)
+- Host PDF on github site [\#353](https://github.com/dougnoel/sentinel/issues/353)
+- Update setup to mandate the winapp driver setup \(for unit tests\) [\#349](https://github.com/dougnoel/sentinel/issues/349)
+- Duplicate hover step [\#344](https://github.com/dougnoel/sentinel/issues/344)
+- Window switcher does not wait for new windows [\#340](https://github.com/dougnoel/sentinel/issues/340)
+- Wait until attribute has value [\#338](https://github.com/dougnoel/sentinel/issues/338)
+- attribute contains gherkin glue [\#325](https://github.com/dougnoel/sentinel/issues/325)
+- fullscreen flag [\#319](https://github.com/dougnoel/sentinel/issues/319)
+- Ambiguous step definitions in TableVerificationSteps [\#316](https://github.com/dougnoel/sentinel/issues/316)
+- Table Header Click Gherkin [\#315](https://github.com/dougnoel/sentinel/issues/315)
+- Tooltip glue too similar to other functions [\#313](https://github.com/dougnoel/sentinel/issues/313)
+- Modify image comparison code to work with windows elements [\#303](https://github.com/dougnoel/sentinel/issues/303)
+
+**Merged pull requests:**
+
+- Added download test page that creates a same-origin text file on pageload [\#510](https://github.com/dougnoel/sentinel/pull/510) ([tyBouch](https://github.com/tyBouch))
+- Updated downloads to use the long prcoess timeout of 60 seconds. \(Or … [\#507](https://github.com/dougnoel/sentinel/pull/507) ([dougnoel](https://github.com/dougnoel))
+- Add ability to clear config [\#499](https://github.com/dougnoel/sentinel/pull/499) ([sampacos](https://github.com/sampacos))
+- Bump webdrivermanager from 5.3.1 to 5.3.2 [\#496](https://github.com/dougnoel/sentinel/pull/496) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Add table verification step. Add screenshots for failing tests [\#492](https://github.com/dougnoel/sentinel/pull/492) ([sampacos](https://github.com/sampacos))
+- Bump maven-failsafe-plugin from 3.0.0-M3 to 3.0.0-M8 [\#490](https://github.com/dougnoel/sentinel/pull/490) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump gson from 2.8.9 to 2.10.1 [\#489](https://github.com/dougnoel/sentinel/pull/489) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Windows Application Testing refactor to Appium 1.2 [\#484](https://github.com/dougnoel/sentinel/pull/484) ([pturchinetz](https://github.com/pturchinetz))
+- Speedup element finds, especially in iframes [\#480](https://github.com/dougnoel/sentinel/pull/480) ([sampacos](https://github.com/sampacos))
+- 468 more csv 2 [\#478](https://github.com/dougnoel/sentinel/pull/478) ([sampacos](https://github.com/sampacos))
+- add header feature [\#477](https://github.com/dougnoel/sentinel/pull/477) ([david-ondrus](https://github.com/david-ondrus))
+- Bump junit-bom from 5.5.1 to 5.9.2 [\#476](https://github.com/dougnoel/sentinel/pull/476) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Api [\#475](https://github.com/dougnoel/sentinel/pull/475) ([dougnoel](https://github.com/dougnoel))
+- 468 more csv [\#474](https://github.com/dougnoel/sentinel/pull/474) ([sampacos](https://github.com/sampacos))
+- add a comment column on the html table page with an input inside [\#473](https://github.com/dougnoel/sentinel/pull/473) ([sampacos](https://github.com/sampacos))
+- Bump httpcore from 4.4.12 to 4.4.16 [\#472](https://github.com/dougnoel/sentinel/pull/472) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump commons-lang3 from 3.9 to 3.12.0 [\#471](https://github.com/dougnoel/sentinel/pull/471) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump httpclient from 4.5.13 to 4.5.14 [\#470](https://github.com/dougnoel/sentinel/pull/470) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump maven-dependency-plugin from 3.1.1 to 3.4.0 [\#466](https://github.com/dougnoel/sentinel/pull/466) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pdfbox from 2.0.24 to 2.0.27 [\#465](https://github.com/dougnoel/sentinel/pull/465) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Api [\#462](https://github.com/dougnoel/sentinel/pull/462) ([dougnoel](https://github.com/dougnoel))
+- 458 reporting mvp [\#461](https://github.com/dougnoel/sentinel/pull/461) ([dougnoel](https://github.com/dougnoel))
+- 2.0 readme [\#457](https://github.com/dougnoel/sentinel/pull/457) ([dougnoel](https://github.com/dougnoel))
+- 453 empty select and new download verification step [\#455](https://github.com/dougnoel/sentinel/pull/455) ([sampacos](https://github.com/sampacos))
+- html changes needed for 453 feature branch [\#454](https://github.com/dougnoel/sentinel/pull/454) ([sampacos](https://github.com/sampacos))
+- Updated the table page for new tests [\#452](https://github.com/dougnoel/sentinel/pull/452) ([tyBouch](https://github.com/tyBouch))
+- Bump webdrivermanager from 4.4.1 to 5.3.1 [\#450](https://github.com/dougnoel/sentinel/pull/450) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Tyler/enhancements 10 31 2022 [\#449](https://github.com/dougnoel/sentinel/pull/449) ([tyBouch](https://github.com/tyBouch))
+- Tyler/math verification test page [\#447](https://github.com/dougnoel/sentinel/pull/447) ([tyBouch](https://github.com/tyBouch))
+- Adding replaceAll\("\[\t\n\r\]+"," "\) so that it can handle a column hea… [\#444](https://github.com/dougnoel/sentinel/pull/444) ([plmlkrz](https://github.com/plmlkrz))
+- Adding xPathToBy and xPathToBy\(int ordinal\) [\#443](https://github.com/dougnoel/sentinel/pull/443) ([plmlkrz](https://github.com/plmlkrz))
+- Bump io.cucumber.version from 5.6.0 to 7.8.1 [\#435](https://github.com/dougnoel/sentinel/pull/435) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [v1.0.12-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.12-SNAPSHOT) (2022-03-28)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.10-SNAPSHOT...v1.0.12-SNAPSHOT)
+
+**Implemented enhancements:**
+
+- Add verification of specific rows in tables [\#305](https://github.com/dougnoel/sentinel/issues/305)
+- Add ability to send special keys to element [\#292](https://github.com/dougnoel/sentinel/issues/292)
+- Add the ability to pass through Saucelabs configuration options [\#271](https://github.com/dougnoel/sentinel/issues/271)
+- Need to create a findElement\(\) method for Element objects [\#56](https://github.com/dougnoel/sentinel/issues/56)
+
+**Fixed bugs:**
+
+- Hover Cucumber Step Was Removed [\#304](https://github.com/dougnoel/sentinel/issues/304)
+- MaterialUITest Fails on Firefox [\#214](https://github.com/dougnoel/sentinel/issues/214)
+
+**Closed issues:**
+
+- Fix download directory creation and fetching during chrome setup [\#301](https://github.com/dougnoel/sentinel/issues/301)
+- Implement visual PDF comparison [\#300](https://github.com/dougnoel/sentinel/issues/300)
+- Cannot switch back to parent window if child window closes by itself [\#295](https://github.com/dougnoel/sentinel/issues/295)
+- Table getElementInRowThatContains\(int, By\) searches table structure incorrectly for element [\#291](https://github.com/dougnoel/sentinel/issues/291)
+- Log internally created custom steps in results [\#255](https://github.com/dougnoel/sentinel/issues/255)
+
+**Merged pull requests:**
+
+- Revving to 1.0.12 [\#308](https://github.com/dougnoel/sentinel/pull/308) ([dougnoel](https://github.com/dougnoel))
+- Adding a mouse hover gherkin command, editing a test to exercise it [\#307](https://github.com/dougnoel/sentinel/pull/307) ([pturchinetz](https://github.com/pturchinetz))
+- add table verification step for getting specific cell data [\#306](https://github.com/dougnoel/sentinel/pull/306) ([sampacos](https://github.com/sampacos))
+- Implement pdf compare and fix download manager [\#302](https://github.com/dougnoel/sentinel/pull/302) ([sampacos](https://github.com/sampacos))
+- Pre-release 1.0.11-SNAPSHOT on maven central. Updated Changelog and J… [\#297](https://github.com/dougnoel/sentinel/pull/297) ([dougnoel](https://github.com/dougnoel))
+- add method for switching to parent window [\#296](https://github.com/dougnoel/sentinel/pull/296) ([sampacos](https://github.com/sampacos))
+
+## [v1.0.10-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.10-SNAPSHOT) (2022-02-23)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v2.0.0-SNAPSHOT...v1.0.10-SNAPSHOT)
+
+**Merged pull requests:**
+
+- Pre-release 1.0.10-SNAPSHOT on maven central. Updated Changelog and J… [\#294](https://github.com/dougnoel/sentinel/pull/294) ([dougnoel](https://github.com/dougnoel))
+- 291 table fixes and 292 add element method for sending special keys [\#293](https://github.com/dougnoel/sentinel/pull/293) ([sampacos](https://github.com/sampacos))
+
+## [v2.0.0-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v2.0.0-SNAPSHOT) (2022-02-21)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/v1.0.9-SNAPSHOT...v2.0.0-SNAPSHOT)
+
+## [v1.0.9-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/v1.0.9-SNAPSHOT) (2022-02-16)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.7-SNAPSHOT...v1.0.9-SNAPSHOT)
+
+**Implemented enhancements:**
+
+- Move message creation to exception code [\#273](https://github.com/dougnoel/sentinel/issues/273)
+- Cleanup Page Object Locations [\#243](https://github.com/dougnoel/sentinel/issues/243)
+- Refactor PageElement to be Element [\#202](https://github.com/dougnoel/sentinel/issues/202)
+- PrimeNG has been updated again [\#175](https://github.com/dougnoel/sentinel/issues/175)
+- Add find\(By locator\) method to Element objects [\#125](https://github.com/dougnoel/sentinel/issues/125)
+
+**Closed issues:**
+
+- Multiple methods can throw undesirable StaleElementReference exceptions  [\#287](https://github.com/dougnoel/sentinel/issues/287)
+- StaleElementReferenceException getting thrown in Element.java sendKeysLoop\(\) [\#282](https://github.com/dougnoel/sentinel/issues/282)
+- Create iFrame Test Page [\#263](https://github.com/dougnoel/sentinel/issues/263)
+- Dynamic iFrame Handling [\#262](https://github.com/dougnoel/sentinel/issues/262)
+- Modify the Page.createElement\(\) method to autodetect the class type so that new Element types can be created without modifying this method [\#258](https://github.com/dougnoel/sentinel/issues/258)
+- Create MetabolonDropdown [\#256](https://github.com/dougnoel/sentinel/issues/256)
+- Refactor Exceptions [\#203](https://github.com/dougnoel/sentinel/issues/203)
+
+**Merged pull requests:**
+
+- Revving to version 1.0.9-SNAPSHOT [\#290](https://github.com/dougnoel/sentinel/pull/290) ([dougnoel](https://github.com/dougnoel))
+- 287 Fix uncaught StaleElementReferenceException and add multiple enhancements [\#289](https://github.com/dougnoel/sentinel/pull/289) ([sampacos](https://github.com/sampacos))
+- 282 Fix sendKeysLoop [\#283](https://github.com/dougnoel/sentinel/pull/283) ([sampacos](https://github.com/sampacos))
+- Updates logging to show less unnecessary spam. [\#276](https://github.com/dougnoel/sentinel/pull/276) ([dougnoel](https://github.com/dougnoel))
+- 273 exception messages [\#274](https://github.com/dougnoel/sentinel/pull/274) ([dougnoel](https://github.com/dougnoel))
+- Added ability to pass any saucelabs option. [\#272](https://github.com/dougnoel/sentinel/pull/272) ([dougnoel](https://github.com/dougnoel))
+- Fix log4j vulnerability. Updated to 2.16.0 [\#270](https://github.com/dougnoel/sentinel/pull/270) ([dougnoel](https://github.com/dougnoel))
+- Adding checkboxes [\#268](https://github.com/dougnoel/sentinel/pull/268) ([dougnoel](https://github.com/dougnoel))
+- 263 create iframe test page [\#267](https://github.com/dougnoel/sentinel/pull/267) ([dougnoel](https://github.com/dougnoel))
+- Added textbox.html to docs folder to test disabled clicks and enterin… [\#266](https://github.com/dougnoel/sentinel/pull/266) ([dougnoel](https://github.com/dougnoel))
+- 262 dynamic iframes [\#265](https://github.com/dougnoel/sentinel/pull/265) ([dougnoel](https://github.com/dougnoel))
+- Adding in iframe tst pages. [\#264](https://github.com/dougnoel/sentinel/pull/264) ([dougnoel](https://github.com/dougnoel))
+- Adding 2 Metabolon portal dropdowns, with some in-progress table work… [\#260](https://github.com/dougnoel/sentinel/pull/260) ([pturchinetz](https://github.com/pturchinetz))
+- Added imbedded logging steps as an example. [\#259](https://github.com/dougnoel/sentinel/pull/259) ([dougnoel](https://github.com/dougnoel))
+- Moved all test writing FAQ questions to the sentinel.example project.… [\#254](https://github.com/dougnoel/sentinel/pull/254) ([dougnoel](https://github.com/dougnoel))
+
+## [1.0.7-SNAPSHOT](https://github.com/dougnoel/sentinel/tree/1.0.7-SNAPSHOT) (2021-07-16)
+
+[Full Changelog](https://github.com/dougnoel/sentinel/compare/1.0.5...1.0.7-SNAPSHOT)
 
 **Implemented enhancements:**
 
@@ -39,6 +222,7 @@
 
 **Merged pull requests:**
 
+- Version 1.0.7 [\#252](https://github.com/dougnoel/sentinel/pull/252) ([dougnoel](https://github.com/dougnoel))
 - Refactored PageElement to Element. Made toWebElement\(\) private so tha… [\#250](https://github.com/dougnoel/sentinel/pull/250) ([dougnoel](https://github.com/dougnoel))
 - 243 cleanup page object locations [\#244](https://github.com/dougnoel/sentinel/pull/244) ([dougnoel](https://github.com/dougnoel))
 - Bump pdfbox from 2.0.16 to 2.0.24 [\#242](https://github.com/dougnoel/sentinel/pull/242) ([dependabot[bot]](https://github.com/apps/dependabot))

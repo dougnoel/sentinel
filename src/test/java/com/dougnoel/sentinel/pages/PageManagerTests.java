@@ -1,34 +1,25 @@
 package com.dougnoel.sentinel.pages;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.openqa.selenium.NoSuchSessionException;
-import org.openqa.selenium.NoSuchWindowException;
+import static org.junit.Assert.assertEquals;
 
-import com.dougnoel.sentinel.steps.BaseSteps;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import org.junit.Test;
+import org.openqa.selenium.NotFoundException;
+
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class PageManagerTests {
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		WebDriverFactory.instantiateWebDriver();
-	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+	@Test(expected = NotFoundException.class)
+	public void PageNotSet() {
+		PageManager.setPage(null);
+		PageManager.getPage();
 	}
 	
-	@Test(expected = NoSuchWindowException.class)
-	public void getWindowHandleInSameWindow() throws InterruptedException {
-		try {
-		BaseSteps.navigateToPage("Encode DNA Home Page");
-		PageManager.switchToNewWindow("Encode DNA New Tab Page");
-		} catch(NoSuchSessionException e) {
-			throw new NoSuchWindowException("This works when it's the only test run, but fails when run with other unit tests and after 2 days of trying to fix it I give up.");
-			//suppress
-		}
-	}
+	@Test
+	public void OpenPageWithArguments() {
+		PageManager.open("TextboxPage", "?stuff");
+		assertEquals("https://dougnoel.github.io/sentinel/test/textbox.html?stuff", Driver.getWebDriver().getCurrentUrl());
+		Driver.quitAllDrivers();
+	} 
+
 }

@@ -1,0 +1,11 @@
+executables:
+  default: C:/Windows/System32/notepad.exe
+elements:
+  generic_access:
+    accessibilityid: "lastName"
+  generic_id:
+    id: "lastName"
+  generic_xpath:
+    xpath: "lastName"
+  bad_selector:
+    bad: "blah"

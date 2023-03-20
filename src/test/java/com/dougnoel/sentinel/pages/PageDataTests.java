@@ -4,24 +4,19 @@ import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.NoSuchElementException;
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
+import com.dougnoel.sentinel.exceptions.FileException;
 
 public class PageDataTests {
 
 	private final static String ELEMENT_NAME = "male_radio_button";
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		WebDriverFactory.instantiateWebDriver();
-	}
-
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+		Driver.quitAllDrivers();
 	}
 	
 	@Test
@@ -52,6 +47,24 @@ public class PageDataTests {
 	public void validateIncludeIsBlank() {
 		PageManager.setPage("PageWithBlankInclude");
 		Assert.assertNotNull("Expected text to be male when the include list is empty.", Configuration.getElement(ELEMENT_NAME, "PageWithBlankInclude"));
+	}
+	
+	@Test
+	public void validateTestdataExistsInYaml() {
+		PageManager.setPage("PageWithTestdata");
+		Assert.assertNotNull("Expected testdata to contain data.", Configuration.getTestData("report", "id"));
+	}
+	
+	@Test(expected = FileException.class)
+	public void validateTestdataMissingInYaml() {
+		PageManager.setPage("CorrectPageObject");
+		Configuration.getTestData("report", "id");
+	}
+
+	@Test(expected = FileException.class)
+	public void cannotContainBothURLsAndEXEs() {
+		PageManager.setPage("WebAndExe");
+		getElement("generic");
 	}
 	
 }

@@ -19,7 +19,7 @@ public class PageFactory {
 	 * @param pageName String the name of the page object
 	 * @return Page the page object
 	 */
-	public static Page buildOrRetrievePage(String pageName) {
+	protected static Page buildOrRetrievePage(String pageName) {
 		pageName = pageName.replaceAll("\\s", "");
 		Page page = pages.get(pageName);
 		if (page != null) {

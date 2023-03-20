@@ -3,34 +3,27 @@ package com.dougnoel.sentinel.pages;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebElement;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.elements.Checkbox;
 import com.dougnoel.sentinel.elements.Element;
-import com.dougnoel.sentinel.elements.Textbox;
-import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
-import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
-import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
-import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
-import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
-import com.dougnoel.sentinel.elements.tables.NGXDataTable;
+import com.dougnoel.sentinel.elements.ElementFactory;
+import com.dougnoel.sentinel.enums.PageObjectType;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.enums.SelectorType;
-import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.enums.YAMLObjectType;
+import com.dougnoel.sentinel.system.YAMLObject;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
- * Page class to contain a URL and the elements on the page.
- * <p>
- * TO DO: Abstract out the driver creation to allow multiple drivers to be created
- * at once.
+ * Page class to contain the details of an page.
  */
-public class Page {
+public class Page extends YAMLObject {
 	
 	protected static final SelectorType CLASS = SelectorType.CLASS;
 	protected static final SelectorType CSS = SelectorType.CSS;
@@ -39,86 +32,51 @@ public class Page {
 	protected static final SelectorType PARTIALTEXT = SelectorType.PARTIALTEXT;
 	protected static final SelectorType TEXT = SelectorType.TEXT;
 	protected static final SelectorType XPATH = SelectorType.XPATH;
+	protected static final PageObjectType EXECUTABLE = PageObjectType.EXECUTABLE;
 
     protected Map<String,Element> elements;
+
+    private PageObjectType pageType = null;
     
-    private String pageName;
-    
+    /**
+     * Constructor
+     * @param pageName String the exact name of the page as stored on disk without extension.
+     */
     public Page(String pageName) {
-    	this.pageName = pageName;
+    	super(pageName);
+    	this.yamlObjectType = YAMLObjectType.PAGE;
         elements = new HashMap<>();
     }
 
-    public String getName() {
-        return pageName;
-    }
-
+    /**
+     * Returns an Element if it exists in the page object yaml file. If the element
+     * name contains spaces they are replaced by underscores, and all characters
+     * are made lowercase. The element is created if it has not been loaded yet, 
+     * but otherwise is pulled from memory. In this way we only dynamically load 
+     * the elements used and do not try to process an entire page object file at once.
+     * <p>
+     * Note that Element object itself handles finding the element on the page and
+     * that is always handled dynamically.
+     *  
+     * @param elementName String the name of the element to find
+     * @return com.dougnoel.sentinel.Element the Element object found 
+     */
 	public Element getElement(String elementName) {
         String normalizedName = elementName.replaceAll("\\s+", "_").toLowerCase();
-        return elements.computeIfAbsent(normalizedName, name -> createElement(name));
-	}
+        return elements.computeIfAbsent(normalizedName, name -> ((Element)(ElementFactory.createElement(name, this))));
+    }
 	
-	private Map<String, String> findElement(String elementName, String pageName) {
-		Map<String, String> elementData = Configuration.getElement(elementName, pageName);
-		if (elementData == null) {
-			for (String page : Configuration.getPageParts(pageName)) {
-				elementData = findElement(elementName, page);
-				if (elementData != null) {
-					break;
-				}
-			}
-		}
-		return elementData;
-	}
-	
-	private Element createElement(String elementName) {
-		Map<String, String> elementData = findElement(elementName, getName());
-		
-		if (elementData == null) {
-			var errorMessage = SentinelStringUtils.format("Data for the element {} could not be found in the {}.yml file.", elementName, this.getName());
-			throw new NoSuchElementException(errorMessage);
-		}
-		
-		String elementType = null;
-		if (elementData.containsKey("elementType")) {
-			elementType = elementData.get("elementType");
-		}
-		else {
-			elementType = "Element";
-		}
-
-		if ("Checkbox".equalsIgnoreCase(elementType)) {
-			return new Checkbox(elementName, elementData);
-		}
-		if ("Textbox".equalsIgnoreCase(elementType)) {
-			return new Textbox(elementName, elementData);
-		}
-		if ("Dropdown".equalsIgnoreCase(elementType)) {
-			return new Dropdown(elementName, elementData);
-		}
-		if ("MaterialUISelect".equalsIgnoreCase(elementType)) {
-			return new MaterialUISelect(elementName, elementData);
-		}
-		if ("PrimeNGDropdown".equalsIgnoreCase(elementType)) {
-			return new PrimeNGDropdown(elementName, elementData);
-		}
-		if ("SelectElement".equalsIgnoreCase(elementType)) {
-			return new SelectElement(elementName, elementData);
-		}
-		if ("PrimeNGRadioButton".equalsIgnoreCase(elementType)) {
-			return new PrimeNGRadioButton(elementName, elementData);
-		}
-		if ("Radiobutton".equalsIgnoreCase(elementType)) {
-			return new Radiobutton(elementName, elementData);
-		}
-		if ("NGXDataTable".equalsIgnoreCase(elementType)) {
-			return new NGXDataTable(elementName, elementData);
-		}
-		if ("Table".equalsIgnoreCase(elementType)) {
-			return new Table(elementName, elementData);
-		}
-		// This allows people to call their element type whatever they want without needing a child class to implement it.
-		return new Element(elementType, elementName, elementData);
+	/**
+	 * Clears the cached Table objects for this page. 
+	 * This action prevents StaleElementReferenceException when a table is referenced after previous navigation.
+	 */
+	public void clearTables() {
+		elements = elements.entrySet().stream()
+				.filter(
+						entry -> !(entry.getValue() instanceof Table))
+				.collect(
+						Collectors.toMap(Entry::getKey, 
+								Entry::getValue));
 	}
 	
 	/**
@@ -137,5 +95,51 @@ public class Page {
 	 */
 	public List <WebElement> getIFrames() {
 		return WebDriverFactory.getWebDriver().findElements(By.xpath("//iframe"));
+	}
+	
+	/**
+	 * Returns either WEBPAGE or EXECUTABLE based on the type of page object this is.
+	 * 
+	 * @return PageObjectType the type of page object (WEBPAGE, EXECUTABLE, UNKNOWN)
+	 */
+	public PageObjectType getPageObjectType() {
+		
+		if (pageType == null) {
+			pageType = Configuration.getPageObjectType(yamlObjectName);
+		}
+		return pageType;
+	}
+
+	/**
+	 * Returns true if a Javascript alert is present. False if an alert is not found. Driver returns back to the previous window's context if the alert is found.
+	 * @return boolean true if an alert is present, false otherwise.
+	 */
+	public boolean isJsAlertPresent() {
+		var driver = WebDriverFactory.getWebDriver();
+        try
+        {
+            String currentWindow = driver.getWindowHandle();
+            driver.switchTo().alert();
+            driver.switchTo().window(currentWindow);
+            return true;
+        }
+        catch (NoAlertPresentException e)
+        {
+            return false;
+        }
+	}
+	
+	/**
+	 * Gets the text on the JS alert.
+	 * 
+	 * @return String the text in the JS alert
+	 */
+	public String getJsAlertText() {
+		var driver = WebDriverFactory.getWebDriver();
+		String text = "";
+		String currentWindow = driver.getWindowHandle();
+		text = driver.switchTo().alert().getText();
+		driver.switchTo().window(currentWindow);
+		return text;
 	}
 }

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -56,7 +55,7 @@ public class DatabaseData {
 		try {
 			pageData = mapper.readValue(fileName, DatabaseData.class);
 		} catch (Exception e) {
-			throw new YAMLFileException(e, fileName);
+			//throw new YAMLFileException(e, fileName);
 		}
 			
 		return pageData;

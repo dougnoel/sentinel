@@ -1,20 +1,22 @@
 package com.dougnoel.sentinel.elements;
 
+import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.FluentWait;
 
 /**
- * Retrieves as an element as a  Element or as one of the following types:
- * Checkbox, Dropdown, Radiobutton, Select, Table, or Textbox.
+ * Retrieves as an element as an Element or as a child type.
  * 
- * To return as the desired type, we call getElement which returns a Element, and the element is 
+ * To return as the desired type, we call getElement which returns an Element, and the element is 
  * cast as the desired element.
  *
  */
@@ -36,20 +38,6 @@ public class ElementFunctions {
     }
 
     /**
-     * Returns the Checkbox associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Checkbox the checkbox associated with the element name on the currently active page
-     */
-    public static Checkbox getElementAsCheckbox(String elementName) {
-		try {
-			return (Checkbox) getElement(elementName);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Checkbox.class.getSimpleName()));
-		}
-    }
-
-    /**
      * Returns the Dropdown associated with the element name on the currently active page.
      * 
      * @param elementName String the name of the element to be returned
@@ -60,20 +48,6 @@ public class ElementFunctions {
 			return (Dropdown) getElement(elementName);
 		} catch (ClassCastException e) {
 			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Dropdown.class.getSimpleName()));
-		}
-    }
-
-    /**
-     * Returns the Radio button associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Radio the radio button associated with the element name on the currently active page
-     */
-    public static Radiobutton getElementAsRadiobutton(String elementName) {
-		try {
-			return (Radiobutton) getElement(elementName);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Radiobutton.class.getSimpleName()));
 		}
     }
     
@@ -105,19 +79,16 @@ public class ElementFunctions {
 		}
     }
 
-    /**
-     * Returns the Textbox associated with the element name on the currently active page.
-     * 
-     * @param elementName String the name of the element to be returned
-     * @return Textbox the text box associated with the element name on the currently active page
-     */
-    public static Textbox getElementAsTextbox(String elementName) {
-		try {
-			return (Textbox) getElement(elementName);
-		} catch (ClassCastException e) {
-			throw new ClassCastException(buildClassCastExceptionMessage(elementName, Textbox.class.getSimpleName()));
-		}
-    }
+	/**
+	 * Returns an element from the active page in any type you cast it as.
+	 * @param elementName String the name of the element to return
+	 * @param <T> Class the type of element to return
+	 * @return Class an instance of the class you typed the element as
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T getElementAsCustom(String elementName) {
+		return (T) getElement(elementName);
+	}
     
     /**
      * Returns an error message that is a clearer casting error and logs it.
@@ -133,4 +104,27 @@ public class ElementFunctions {
     	log.error(errorMessage);
     	return errorMessage;
     }
+
+	/**
+	 * Waits the configured timeout for either of the two elements to be found. Does not take into consideration visibility of elements.
+	 * Does not take into consideration which element is found first.
+	 * @param elementName String an element to search for.
+	 * @param otherElementName String another element to search for.
+	 * @return boolean true if either of the elements are found within the configured timeout. false otherwise.
+	 */
+	public static boolean waitForEitherElementToExist(String elementName, String otherElementName){
+		var wait = new FluentWait<>(WebDriverFactory.getWebDriver())
+				.withTimeout(Time.out())
+				.pollingEvery(Time.interval())
+				.ignoring(WebDriverException.class);
+
+		try{
+			wait.until(x -> getElement(elementName).existsAtThisInstant() || getElement(otherElementName).existsAtThisInstant());
+			return true;
+		}
+		catch(TimeoutException e){
+			log.trace(SentinelStringUtils.format("Timed out waiting for either {} or {} to exist.", elementName, otherElementName), e);
+			return false;
+		}
+	}
 }

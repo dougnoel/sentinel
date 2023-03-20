@@ -19,14 +19,29 @@ package com.dougnoel.sentinel.enums;
  * <li>TEXT - WebDriver Select By Text</li>
  * <li>VALUE - WebDriver Select By Value</li>
  * </ul>
+ * <b>Valid WindowsElement Options:</b>
+ * <ul>
+ * <li>ACCESSIBILITYID, AUTOMATIONID</li>
+ * <li>CLASS, CLASSNAME</li>
+ * <li>ID, RUNTIMEID</li>
+ * <li>NAME</li>
+ * <li>TAGNAME**, LOCALIZEDCONTROLTYPE**</li>
+ * <li>XPATH</li>
+ * </ul>
  */
 public enum SelectorType {
+	ACCESSIBILITYID, //Used for Windows Element Only
+	AUTOMATIONID, //Used for Windows Element Only
 	CLASS,
+	CLASSNAME, //Used for Windows Element Only
 	CSS,
 	ID,
 	INDEX, 	// Used for PageSelectElement Only
+	LOCALIZEDCONTROLTYPE, //Used for Windows Element Only
 	NAME,
 	PARTIALTEXT,
+	RUNTIMEID, //Used for Windows Element Only
+	TAGNAME, //Used for Windows Element Only
 	TEXT, 	// Used for both Element and Select Element
 	VALUE, 	//Used for Select Element Only
 	XYZ,

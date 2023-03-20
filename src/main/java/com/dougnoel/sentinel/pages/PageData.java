@@ -3,11 +3,10 @@ package com.dougnoel.sentinel.pages;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.NoSuchElementException;
 
-import com.dougnoel.sentinel.exceptions.YAMLFileException;
+import com.dougnoel.sentinel.configurations.YAMLData;
+import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,13 +17,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * java class. It contains getter methods for page urls, and account data based on the given environment or account data 
  * based on the given environment and the account map within that environment.
  */
-public class PageData {
-	// page urls to load in the web driver TODO: Annotate corretly.
-	public Map<String,String> urls;
-	// user account data TODO: Annotate corretly.
-	public Map<String,Map<String,Map<String,String>>> accounts;
+public class PageData extends YAMLData {
+	public Map<String,String> executables;
 	public Map<String,Map<String,String>> elements;
-	public String include;
 
 	/**
 	 * Returns PageData for the given fileName as a string.
@@ -53,29 +48,19 @@ public class PageData {
 		try {
 			pageData = mapper.readValue(fileName, PageData.class);
 		} catch (Exception e) {
-			throw new YAMLFileException(e, fileName);
+			throw new FileException(e, fileName);
+		}
+		
+		if (pageData.urls != null && pageData.executables != null) {
+			throw new FileException("A page object cannot contain both urls and executables.", fileName);
 		}
 			
 		return pageData;
 	}
-	
-	/**
-	 * Returns account data for the given environment and the given account, e.g. If an environment has more than one account,
-	 * Sentinel can run tests for any number of those accounts.
-	 * 
-	 * @param env String the desired environment (qa, sit, etc.)
-	 * @param account String the requested account 
-	 * @return Map&lt;String, String&gt; the user account data, or null if the requested environment doesn't exist
-	 */
-    public Map<String,String> getAccount(String env, String account) {
-    	if (accounts.containsKey(env)) {
-    		return accounts.get(env).get(account);
-    	}
-    	return null;
-    }
     
     /**
      * Returns an element if it exists in a page object.
+     * 
      * @param elementName the name of the element in the page object under the 'elements' section
      * @return Map&lt;String, String&gt; the locators for an element
      */
@@ -92,22 +77,44 @@ public class PageData {
     }
     
     /**
-     * Returns any page parts to search for elements
-     * @return String[] list of page parts
+     * Returns whether or not the page object contains a urls section.
+     * 
+     * @return true if there is a urls section in the page object, false otherwise
      */
-    public String[] getPageParts() {
-    	if (StringUtils.isNotBlank(include)) {
-    		return include.toString().trim().split(",");
-    	}
-    	return new String[0];
+    public boolean hasUrls() {
+    	return urls != null;
     }
     
-    public boolean containsUrl(String env) {
-    	return urls.containsKey(env);
+    /**
+     * Returns whether or not an executable path exists for the given environment
+     * in the page object.
+     * 
+     * @param env String the environment to check
+     * @return boolean true if found, otherwise false
+     */
+    public boolean containsExecutable(String env) {
+    	if (executables == null)
+    		return false;
+    	return executables.containsKey(env);
     }
     
-    public String getUrl(String env) {
-    	return urls.get(env);
+    /**
+     * Returns an executable path based on the environment passed.
+     * 
+     * @param env String the environment to check
+     * @return String the path to the executable
+     */
+    public String getExecutable(String env) {
+    	return executables.get(env);
     }
 
+    /**
+     * Returns whether or not the page object contains an executables section.
+     * 
+     * @return true if there is an executables section in the page object, false otherwise
+     */
+    public boolean hasExecutables() {
+    	return executables != null;
+    }
+    
 }

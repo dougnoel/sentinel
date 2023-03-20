@@ -1,0 +1,13 @@
+urls:
+  default: https://dougnoel.github.io/sentinel/test/downloads.html
+elements:
+  sample_download_link:
+    id: "pdf"
+  zip_download_link:
+    id: "zip"
+  text_file_download_link:
+    id: "txt"
+  csv_download_link:
+    id: "csv"
+  broken_download_link:
+    id: "broke"

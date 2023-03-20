@@ -1,4 +1,7 @@
 ---
+#This file is provided as an example, and is not used as-is.
+#Please create a "sentinel.yml" file to set configurations using this method.
+#Refer to sentinel and it's example github pages (https://github.com/dougnoel/sentinel , https://github.com/dougnoel/sentinel.example) for more information.
 configurations:
   default:
     name: "Sentinel.Example"
@@ -6,7 +9,6 @@ configurations:
     user.name: "Me"
     download: "download/Directory"
     timeout: 10
-    timeunit: seconds
     build: "1.0.5"
     tags: "new_test"
     os: "Windows 10"
@@ -17,12 +19,13 @@ configurations:
     saucelabsAccessKey: "apikey"
     parent-tunnel: "tunnelname"
     tunnelIdentifier: "tunnelID"
+    recordTests: true
+    imageDirectory: "my/path/to/test/images"
   stage:
     name: "Sentinel.Example Stage Run"
     headless: false
     user.name: "Stage Jenkins"
     timeout: 1
-    timeunit: hour
     os: "Windows 10"
     browser: "IE"
     browserVersion: "latest"

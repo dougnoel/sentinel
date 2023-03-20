@@ -2,7 +2,11 @@ package com.dougnoel.sentinel.elements;
 
 import static org.junit.Assert.*;
 
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.Time;
+import com.dougnoel.sentinel.steps.BaseSteps;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.InvalidSelectorException;
@@ -11,25 +15,30 @@ import com.dougnoel.sentinel.elements.dropdowns.Dropdown;
 import com.dougnoel.sentinel.elements.dropdowns.MaterialUISelect;
 import com.dougnoel.sentinel.elements.dropdowns.PrimeNGDropdown;
 import com.dougnoel.sentinel.elements.dropdowns.SelectElement;
-import com.dougnoel.sentinel.elements.radiobuttons.PrimeNGRadioButton;
-import com.dougnoel.sentinel.elements.radiobuttons.Radiobutton;
 import com.dougnoel.sentinel.elements.tables.NGXDataTable;
 import com.dougnoel.sentinel.elements.tables.Table;
 import com.dougnoel.sentinel.pages.PageManager;
-import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 public class ElementFunctionsTests {
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass() {
 		System.setProperty("env", "dev");
-		WebDriverFactory.instantiateWebDriver();
+		Time.reset();
+		Configuration.update("timeout", 1);
+	}
+
+	@Before
+	public void setUp(){
 		PageManager.setPage("Elements");
 	}
 
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		WebDriverFactory.quit();
+	public static void tearDownAfterClass() {
+		Time.reset();
+		Configuration.clear("timeout");
+		Driver.quitAllDrivers();
 	}
 
 	@Test
@@ -40,30 +49,7 @@ public class ElementFunctionsTests {
 	}
 	
 	@Test
-	public void createCheckBox() {
-		Element element = ElementFunctions.getElementAsCheckbox("checkbox");
-		assertTrue("Expecting Checkbox class.", element instanceof Checkbox);
-		assertEquals("Expecting Checkbox Name.", "checkbox", element.getName());
-	}
-	
-	@Test(expected = ClassCastException.class)
-	public void failToCreateCheckBox() {
-		ElementFunctions.getElementAsCheckbox("generic");
-	}
 
-	@Test
-	public void createTextBox() {
-		Element element = ElementFunctions.getElementAsTextbox("textbox");
-		assertTrue("Expecting Textbox class.", element instanceof Textbox);
-		assertEquals("Expecting Textbox Name.", "textbox", element.getName());
-	}
-	
-	@Test(expected = ClassCastException.class)
-	public void failToCreateTextBox() {
-		ElementFunctions.getElementAsTextbox("generic");
-	}
-
-	@Test
 	public void createDropDown() {
 		Element element = ElementFunctions.getElementAsDropdown("dropdown");
 		assertTrue("Expecting Dropdown class.", element instanceof Dropdown);
@@ -102,25 +88,6 @@ public class ElementFunctionsTests {
 	}
 	
 	@Test
-	public void createPrimeNGRadioButton() {
-		Element element = ElementFunctions.getElement("prime_ng_radio_button");
-		assertTrue("Expecting PrimeNGRadioButton class.", element instanceof PrimeNGRadioButton);
-		assertEquals("Expecting PrimeNGRadioButton Name.", "prime_ng_radio_button", element.getName());
-	}
-	
-	@Test
-	public void createRadioButton() {
-		Element element = ElementFunctions.getElementAsRadiobutton("radiobutton");
-		assertTrue("Expecting Radiobutton class.", element instanceof Radiobutton);
-		assertEquals("Expecting Radiobutton Name.", "radiobutton", element.getName());
-	}
-	
-	@Test(expected = ClassCastException.class)
-	public void failToCreateRadioButton() {
-		ElementFunctions.getElementAsRadiobutton("generic");
-	}
-	
-	@Test
 	public void createNGXDataTable() {
 		Element element = ElementFunctions.getElement("ngx_data_table");
 		assertTrue("Expecting NGXDataTable class.", element instanceof NGXDataTable);
@@ -133,7 +100,21 @@ public class ElementFunctionsTests {
 		assertTrue("Expecting Table class.", element instanceof Table);
 		assertEquals("Expecting Table Name.", "table", element.getName());
 	}
-	
+
+	@Test
+	public void createCustom() {
+		Textbox element = ElementFunctions.getElementAsCustom("textbox");
+		assertTrue("Expecting Element class.", element instanceof Textbox);
+		assertEquals("Expecting Custom Name.", "textbox", element.getName());
+	}
+
+	@SuppressWarnings("unused")
+	@Test(expected = ClassCastException.class)
+	public void failToCreateCustom() {
+		@SuppressWarnings("unused")
+		Table element = ElementFunctions.getElementAsCustom("foobar");
+	}
+
 	@Test(expected = ClassCastException.class)
 	public void failToCreateTable() {
 		ElementFunctions.getElementAsTable("generic");
@@ -148,5 +129,10 @@ public class ElementFunctionsTests {
 	public void creationFailure() {
 		ElementFunctions.getElement("bad_element").click();
 	}
-	
+
+	@Test()
+	public void neitherElementExists(){
+		BaseSteps.navigateToPage("Guinea Pig Page");
+		assertFalse("Expected to find neither element after timeout.", ElementFunctions.waitForEitherElementToExist("fake div", "another fake div"));
+	}
 }

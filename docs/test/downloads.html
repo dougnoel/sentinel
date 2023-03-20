@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>File Download Test Page</title>
+    </head>
+    <body>
+        <h1>File Download Test Page</h1>
+        <ul>
+            <li>Broken-Link: <a href="BrokenLink.jpg" id="broke" download>BrokenLink.jpg</a></li>
+            <li>Local-File: <a href="TestPDF.pdf" id="pdf" download>sample.pdf</a></li>
+            <li>Local-File: <a href="testzip.zip" id="zip" download>testzip.zip</a></li>
+            <li>Local-File: <a href="TestCSV.csv" id="csv" download>testCSV.csv</a></li>
+            <li>Same-Origin: <a href="testtxt.txt" id="txt" download>testtxt.txt</a></li>
+        </ul>
+    </body>
+
+    <script>
+        function createTextDownload() {
+            var date = new Date();
+            var year = date.toLocaleString('default', { year: 'numeric' });
+            var month = date.toLocaleString('default', { month: 'short' });
+            var day = date.toLocaleString('default', { day: '2-digit' });
+            var hour = date.toLocaleString('default', { hour: '2-digit', hour12:false });
+            var minute = date.toLocaleString('default', { minute: '2-digit' });
+            var second = date.toLocaleString('default', { second: '2-digit' });
+            var outDate = "D_" + year + "_" + month + "_" + day + "_T_" + hour + "_" + minute + "_" + second;
+            var file = new Blob(["test_" + outDate], { type: 'text/plain' });
+            document.getElementById('txt').href = URL.createObjectURL(file);
+            document.getElementById('txt').download = 'testtxt_' + outDate + '.txt';
+        }
+
+        window.onLoad = createTextDownload();
+    </script>
+</html>

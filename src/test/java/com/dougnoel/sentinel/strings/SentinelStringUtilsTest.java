@@ -11,8 +11,43 @@ public class SentinelStringUtilsTest {
 		String stringArg = "1";
 		int intArg = 2;
 		double doubleArg = 3.0;
-		String formattedString = SentinelStringUtils.format("My numbers are {}, {}, {}.", stringArg, intArg, doubleArg);
+		var formattedString = SentinelStringUtils.format("My numbers are {}, {}, {}.", stringArg, intArg, doubleArg);
 		assertEquals("All arguments should be substituted correctly.", "My numbers are 1, 2, 3.0.", formattedString);
 	}
 	
+	@Test
+	public void stripSingleQuotes() {
+		var text = "'parent-tunnel=\"optumtest\", tunnelIdentifier='Optum-Prd''";
+		var result = SentinelStringUtils.stripSurroundingQuotes(text);
+		assertEquals("Single quotes should be removed", "parent-tunnel=\"optumtest\", tunnelIdentifier='Optum-Prd'", result);
+	}
+
+	@Test
+	public void stripDoubleQuotes() {
+		var text = "\"parent-tunnel=\"optumtest\", tunnelIdentifier='Optum-Prd'\"";
+		var result = SentinelStringUtils.stripSurroundingQuotes(text);
+		assertEquals("Single quotes should be removed", "parent-tunnel=\"optumtest\", tunnelIdentifier='Optum-Prd'", result);
+	}
+
+	@Test
+	public void stripNull() {
+		String text = null;
+		var result = SentinelStringUtils.stripSurroundingQuotes(text);
+		assertEquals("Null should be returned without error.", null, result);
+	}
+
+	@Test
+	public void parseLeadingInt(){
+		assertEquals("Integer not parsed correctly at start of string.", 1, SentinelStringUtils.parseOrdinal("1st"));
+	}
+
+	@Test
+	public void parseLeadingIntMulti(){
+		assertEquals("Integer not parsed correctly at start of string.", 123, SentinelStringUtils.parseOrdinal("123r4d5"));
+	}
+
+	@Test(expected = NumberFormatException.class)
+	public void failToParseLeadingInt(){
+		SentinelStringUtils.parseOrdinal("rd123");
+	}
 }

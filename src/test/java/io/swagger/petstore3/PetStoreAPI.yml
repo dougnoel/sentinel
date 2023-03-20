@@ -1,0 +1,26 @@
+urls:
+  default: https://petstore3.swagger.io/api/v3/openapi.json
+testdata:
+  default:
+    variables:
+      test_id: 10
+    puppydata:
+      json: |
+       {
+         "id": 10,
+         "name": "doggie",
+         "category": {
+           "id": 1,
+           "name": "Dogs"
+         },
+         "photoUrls": [
+           "string"
+         ],
+         "tags": [
+           {
+             "id": 0,
+             "name": "string"
+           }
+         ],
+         "status": "available"
+       }

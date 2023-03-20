@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
+import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsTable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,8 @@ import io.cucumber.java.en.When;
 public class TableSteps {
 	
 	private static final String XPATH = "xpath";
-	private static final String CONTAINS_TEXT = "//*[contains(text(),'";
+	private static final String TEXT = "text";
+	private static final String CONTAINS_TEXT = ".//*[contains(text(),'";
 
     /**
      * Clicks the link in a table row by matching text in another part of the row.
@@ -55,21 +57,24 @@ public class TableSteps {
      * @param matchLocatorType String the type of locator the next value will be: text or xpath
      * @param elementToMatch String the text or xpath of the value that will ensure you are in the correct row
      */
-    @When("^I find the (.*?) and click the (text|xpath) (.*?) in the row containing the (text|xpath) (.*?)$")
-    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {
-    	By clickLocator;
-    	if ( StringUtils.equals(clickLocatorType, XPATH) ) {
-    		clickLocator = By.xpath(elementToClick);
-    	} else {
-    		clickLocator = By.xpath(CONTAINS_TEXT + elementToClick + "')]");
-    	}
-    	By matchLocator;
-    	if ( StringUtils.equals(matchLocatorType, XPATH) ) {
-    		matchLocator = By.xpath(elementToMatch);
-    	} else {
-    		matchLocator = By.xpath(CONTAINS_TEXT + elementToMatch + "')]");
-    	}
-    	getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, clickLocator);
+    @When("^I find the (.*?) and click the (text|xpath|value for) (.*?) in the row containing the (text|xpath|value for) (.*?)$")
+    public static void clickAssociatedLinkInTable(String tableName, String clickLocatorType, String elementToClick, String matchLocatorType, String elementToMatch) {   	
+    	if (StringUtils.equals(clickLocatorType, XPATH) && StringUtils.equals(matchLocatorType, XPATH)) {
+			getElementAsTable(tableName).clickElementInRowThatContains(By.xpath(elementToMatch), By.xpath(elementToClick));
+		} else if(StringUtils.equals(clickLocatorType, XPATH)) {
+			String elementTextToMatch = StringUtils.equals(matchLocatorType, TEXT) ? elementToMatch : Configuration.toString(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(elementTextToMatch, By.xpath(elementToClick));
+		}
+    	else if (StringUtils.equals(matchLocatorType, XPATH)) {
+			String elementTextToClick = StringUtils.equals(clickLocatorType, TEXT) ? elementToClick : Configuration.toString(elementToClick);
+			By matchLocator = By.xpath(elementToMatch);
+			getElementAsTable(tableName).clickElementInRowThatContains(matchLocator, elementTextToClick);
+		}
+		else {
+			String elementTextToMatch = StringUtils.equals(matchLocatorType, TEXT) ? elementToMatch : Configuration.toString(elementToMatch);
+			String elementTextToClick = StringUtils.equals(clickLocatorType, TEXT) ? elementToClick : Configuration.toString(elementToClick);
+			getElementAsTable(tableName).clickElementInRowThatContains(elementTextToMatch, elementTextToClick);
+		}
     }
     
     /**
@@ -127,4 +132,92 @@ public class TableSteps {
         getElementAsTable(tableName).storeTable(pageNumber);
     }
     
+    /**
+     * Clicks the header element to sort the table on the given column. Does not verify sort direction.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I find and click the header for the Name column in the Users table</li>
+     * </ul>
+     * @param columnName String the name of the column to click the header of
+     * @param tableName String the name of the table element
+     */
+    @When("^I find and click the header for the (.*) column in the (.*)$")
+    public static void clickColumnHeaderToSort(String columnName, String tableName) {
+    	getElementAsTable(tableName).clickColumnHeader(columnName);
+	}
+
+	/**
+	 * Clicks a cell in a table by a given column and row
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>I find the <b>3rd</b> column in the <b>example table</b> and click the cell in the <b>2nd</b> row</li>
+	 * </ul>
+	 * <p>
+	 * <b>Scenario Outline Example:</b>
+	 * <p>
+	 * I find the &lt;integer&gt;&lt;st,nd,rd,th&gt; column in the &lt;String&gt; and click the cell in the &lt;integer&gt;&lt;st,nd,rd,th&gt; row
+	 * <p>
+	 * @param columnNum Integer the column of the cell to click
+	 * @param tableName String the name of the table of the cell to click
+	 * @param rowNum Integer the row of the cell to click
+	 */
+	@When("^I find the (fir|la|[1-9]+[0-9]{0,})(?:st|nd|rd|th) column in the (.*?) and click the cell in the (fir|la|[1-9]+[0-9]{0,})(?:st|nd|rd|th) row$")
+	public static void clickCoordsInTable(String columnNum, String tableName, String rowNum) {
+		int column;
+		switch(columnNum){
+			case "la":
+				column = 0;
+				break;
+			case "fir":
+				column = 1;
+				break;
+			default:
+				column = Integer.parseInt(columnNum);
+				break;
+		}
+
+		int row;
+		switch(rowNum){
+			case "la":
+				row = 0;
+				break;
+			case "fir":
+				row = 1;
+				break;
+			default:
+				row = Integer.parseInt(rowNum);
+				break;
+		}
+
+		getElementAsTable(tableName).clickElementInCell(column, row);
+	}
+
+	/**
+	 * Enters a text value in a table in a row. The row is determined by
+	 * ordinal value (last, 1st, 2nd, 3rd, etc.).
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>I find the 3rd row in the Stats Editor Table and enter the text "3" in the Sequence Number</li>
+	 * <li>I find the Last in the Stats Editor Table and enter the text "3" in the Sequence Number</li>
+	 * </ul>
+	 * @param ordinal String the row number. Can be "la" to specify the last row, or an integer.
+	 * @param tableName String the name of the table to search
+	 * @param text String the text to enter into the element
+	 * @param elementName String the name of the element into which to enter text
+	 */
+	@When("^I find the (\\d+|la)(?:st|nd|rd|th) row in the (.*?) and enter the text (.*?) in the (.*?)$")
+	public static void enterAssociatedTextInTable(String ordinal, String tableName, String text, String elementName) {
+
+		int ordinalRow;
+		if (StringUtils.equals(ordinal, "la") ) {
+			ordinalRow = -1;
+		} else {
+			ordinalRow = Integer.parseInt(ordinal);
+		}
+		getElementAsTable(tableName).getElementInRowThatContains(ordinalRow, getElement(elementName)).sendKeys(text);
+	}
+
 }

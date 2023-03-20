@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.7-SNAPSHOT</version>
+  <version>1.0.13-SNAPSHOT</version>
   <name>sentinel</name>
   <url>https://github.com/dougnoel/sentinel</url>
 
@@ -42,7 +42,7 @@
     <sentinel-release-browser>chrome</sentinel-release-browser>
     <sentinel-release-pageobjectpackages>pages</sentinel-release-pageobjectpackages>
     
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven-compiler-plugin.release>11</maven-compiler-plugin.release>
     <maven-compiler-plugin.verbose>true</maven-compiler-plugin.verbose>
     <maven-compiler-plugin.debug>true</maven-compiler-plugin.debug>
@@ -50,24 +50,24 @@
     <maven-compiler-plugin.showWarnings>true</maven-compiler-plugin.showWarnings>
     <maven-compiler-plugin.showDeprecation>true</maven-compiler-plugin.showDeprecation>
 
-    <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+    <maven-dependency-plugin.version>3.4.0</maven-dependency-plugin.version>
     <maven-dependency-plugin.verbose>true</maven-dependency-plugin.verbose>
     <maven-dependency-plugin.outputXML>true</maven-dependency-plugin.outputXML>
     
     <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 
-    <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+    <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
     <extra-enforcer-rules.version>1.2</extra-enforcer-rules.version>
     <maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>true</maven-enforcer-plugin.banDuplicateClasses.findAllDuplicates>
     <maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>true</maven-enforcer-plugin.banDuplicateClasses.ignoreWhenIdentical>
 
-    <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
+    <maven-failsafe-plugin.version>3.0.0-M8</maven-failsafe-plugin.version>
 
     <maven-help-plugin.version>3.2.0</maven-help-plugin.version>
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <!-- <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version> see https://stackoverflow.com/questions/56212981/eclipse-showing-maven-configuration-problem-unknown -->
 
-    <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
     <maven-javadoc-plugin.show>private</maven-javadoc-plugin.show>
     <maven-javadoc-plugin.nohelp>false</maven-javadoc-plugin.nohelp>
 
@@ -79,25 +79,33 @@
 
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
 
-    <commons-lang3.version>3.9</commons-lang3.version>
-    <extentreports.version>4.1.5</extentreports.version>
-    <extent.cucumber.reports.version>1.1.0</extent.cucumber.reports.version>
-    <gson.version>2.8.5</gson.version>
-    <httpcore.version>4.4.12</httpcore.version>
-    <httpclient.version>4.5.13</httpclient.version>
-    <io.cucumber.version>5.6.0</io.cucumber.version>
+    <appium.version>7.6.0</appium.version>
+    <guava.version>31.1-jre</guava.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <extentreports.version>5.0.9</extentreports.version>
+    <extent.cucumber.adapter.artifactID>extentreports-cucumber7-adapter</extent.cucumber.adapter.artifactID> <!-- The name of this changes for every major Cucumber rev unfortunately. -->
+    <extent.cucumber.reports.version>1.9.1</extent.cucumber.reports.version>
+    <gson.version>2.10.1</gson.version>
+    <httpcore.version>4.4.16</httpcore.version>
+    <httpclient.version>4.5.14</httpclient.version>
+    <io.cucumber.version>7.8.1</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
-    <jackson2.version>2.9.9</jackson2.version>
-    <junit.version>5.5.1</junit.version>
+    <jackson2.version>2.12.7</jackson2.version>
+    <junit.version>5.9.2</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
-    <lombok.version>1.18.8</lombok.version>
+    <lombok.version>1.18.24</lombok.version>
     <mashape.unirest.version>1.4.9</mashape.unirest.version>
     <mysql.version>8.0.20</mysql.version>
-    <pdfbox.version>2.0.24</pdfbox.version>
+    <pdfbox.version>2.0.27</pdfbox.version>
     <sauce_junit.version>2.1.21</sauce_junit.version>
     <selenium-java.version>3.141.59</selenium-java.version>
-    <swagger-parser.version>2.0.14</swagger-parser.version>
-    <webdrivermanager.version>4.4.1</webdrivermanager.version>
+    <swagger-parser.version>2.1.2</swagger-parser.version>
+    <webdrivermanager.version>5.3.2</webdrivermanager.version>
+    <image-comparison.version>4.4.0</image-comparison.version>
+    <pdfcompare.version>1.1.61</pdfcompare.version>
+    <commons-csv.version>1.9.0</commons-csv.version>
+
+    <screen-recorder.version>0.7.7.0</screen-recorder.version>
     
     <sonar.projectKey>dougnoel_sentinel</sonar.projectKey>
     <sonar.organization>dougnoel</sonar.organization>
@@ -252,7 +260,7 @@
 		<plugin>
 			<groupId>org.sonatype.plugins</groupId>
 			<artifactId>nexus-staging-maven-plugin</artifactId>
-			<version>1.6.7</version>
+			<version>1.6.13</version>
 			<extensions>true</extensions>
 			<configuration>
 				<serverId>ossrh</serverId>
@@ -348,7 +356,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -381,6 +389,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-csv</artifactId>
+        <version>${commons-csv.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
         <version>${httpcore.version}</version>
@@ -391,6 +405,12 @@
         <artifactId>httpclient</artifactId>
         <version>${httpclient.version}</version>
       </dependency>
+
+	  <dependency>
+		<groupId>io.appium</groupId>
+		<artifactId>java-client</artifactId>
+		<version>${appium.version}</version>
+	  </dependency>
 
       <dependency>
         <groupId>org.junit</groupId>
@@ -412,6 +432,12 @@
         <version>${jackson2.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
       </dependency>
 
       <dependency>
@@ -449,7 +475,7 @@
 
 	<dependency>
 		<groupId>tech.grasshopper</groupId>
-		<artifactId>extentreports-cucumber5-adapter</artifactId>
+		<artifactId>${extent.cucumber.adapter.artifactID}</artifactId>
 		<version>${extent.cucumber.reports.version}</version>
 	</dependency>
 
@@ -507,13 +533,6 @@
         <version>${selenium-java.version}</version>
       </dependency>
 
-	    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>${mysql.version}</version>
-		</dependency>
-
       <dependency>
         <groupId>com.saucelabs</groupId>
         <artifactId>sauce_junit</artifactId>
@@ -532,11 +551,36 @@
         <version>${swagger-parser.version}</version>
       </dependency>
 
-	  <dependency>
-		<groupId>io.github.bonigarcia</groupId>
-		<artifactId>webdrivermanager</artifactId>
-		<version>${webdrivermanager.version}</version>
-	  </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder -->
+		<dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		    <version>${screen-recorder.version}</version>
+		</dependency>
+
+	    <dependency>
+		  <groupId>io.github.bonigarcia</groupId>
+		    <artifactId>webdrivermanager</artifactId>
+		    <version>${webdrivermanager.version}</version>
+	    </dependency>
+
+	    <dependency>
+		    <groupId>com.github.romankh3</groupId>
+		    <artifactId>image-comparison</artifactId>
+		    <version>4.4.0</version>
+	    </dependency>
+
+      <dependency>
+        <groupId>de.redsix</groupId>
+        <artifactId>pdfcompare</artifactId>
+        <version>${pdfcompare.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -553,6 +597,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>
     </dependency>
@@ -565,6 +614,11 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.appium</groupId>
+      <artifactId>java-client</artifactId>
     </dependency>
 
     <dependency>
@@ -658,11 +712,6 @@
       <artifactId>log4j-slf4j-impl</artifactId>
     </dependency>
 
-	<dependency>
-	    <groupId>mysql</groupId>
-	    <artifactId>mysql-connector-java</artifactId>
-	</dependency>
-		
     <dependency>
       <groupId>io.swagger.parser.v3</groupId>
       <artifactId>swagger-parser</artifactId>
@@ -680,7 +729,7 @@
 
     <dependency>
 	  <groupId>tech.grasshopper</groupId>
-	  <artifactId>extentreports-cucumber5-adapter</artifactId>
+	  <artifactId>${extent.cucumber.adapter.artifactID}</artifactId>
 	</dependency>
 
     <dependency>
@@ -691,20 +740,34 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- junit should usually be test scope unless this is a dedicated test library -->
+      <!-- junit should usually be test scope unless this is a dedicated test library, which it is. -->
     </dependency>
 
     <dependency>
       <groupId>com.saucelabs</groupId>
       <artifactId>sauce_junit</artifactId>
     </dependency>
-    
-    <!-- Typically WebDriverManager is in a test scope, but it needs to be bundled with the jar -->
+
     <dependency>
 	  <groupId>io.github.bonigarcia</groupId>
 	  <artifactId>webdrivermanager</artifactId>
 	</dependency>
-    
+
+	    <dependency>
+		    <groupId>com.github.stephenc.monte</groupId>
+		    <artifactId>monte-screen-recorder</artifactId>
+		</dependency>
+
+	  <dependency>
+	    <groupId>com.github.romankh3</groupId>
+	    <artifactId>image-comparison</artifactId>
+	  </dependency>
+
+    <dependency>
+      <groupId>de.redsix</groupId>
+      <artifactId>pdfcompare</artifactId>
+    </dependency>
+
   </dependencies>
-  <description>A Selenium framework that implements the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed.</description>
+  <description>A Selenium framework that implements a generic Cucumber interface and the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed. Also works for Windows automation and API automation.</description>
 </project>

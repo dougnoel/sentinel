@@ -30,20 +30,17 @@ public class SaucelabsDriverFactoryTests {
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void failToLoadSaucelabs() {
+	public void failToLoadSaucelabsTest() {
 		System.setProperty("saucelabsUserName", "FakeName");
 		System.setProperty("saucelabsAccessKey", "FakeKey");
 		System.setProperty("browserVersion", "1");
-		System.setProperty("parent-tunnel", "FakeTunnel");
-		System.setProperty("tunnelIdentifier", "FakeTunnelID");
+		System.setProperty("saucelabsConfigs", "saucelabsConfigs=\"parent-tunnel=\"mytest\", tunnelIdentifier=My-Prd\"");
 		System.setProperty("name", "Test Name");
-		System.setProperty("tags", "Tag1");
-		System.setProperty("build", "1.0");
 		WebDriverFactory.instantiateWebDriver();
 	}
 	
 	@Test(expected = org.openqa.selenium.WebDriverException.class)
-	public void sauceDefaultValues() {
+	public void sauceDefaultValuesTest() {
 		System.clearProperty("user.name");
 		System.setProperty("saucelabsUserName", "FakeName");
 		System.setProperty("saucelabsAccessKey", "FakeKey");

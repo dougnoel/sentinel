@@ -1,0 +1,61 @@
+urls:
+  default: https://dougnoel.github.io/sentinel/test/calculator.html
+elements:
+  #Operators
+  all_clear_button:
+    id: "all-clear"
+  clear_button:
+    id: "clear"
+  sign_button:
+    id: "sign"
+  divide_button:
+    id: "divideBtn"
+  multiply_button:
+    id: "multiplayBtn"
+  minus_button:
+    id: "minusBtn"
+  plus_button:
+    id: "plusBtn"
+  dot_button:
+    id: "dot"
+  equals_button:
+    id: "result"
+  #Numbers
+  1_button:
+    id: "1Btn"
+  2_button:
+    id: "2Btn"
+  3_button:
+    id: "3Btn"
+  4_button:
+    id: "4Btn"
+  5_button:
+    id: "5Btn"
+  6_button:
+    id: "6Btn"
+  7_button:
+    id: "7Btn"
+  8_button:
+    id: "8Btn"
+  9_button:
+    id: "9Btn"
+  0_button:
+    id: "0Btn"
+  #Modify Decimal Places
+  decimal_length_input:
+    id: "fixedOutputModifier"
+  #Result Displays
+  rounded_value_input:
+    id: "valueOutputRounded"
+  rounded_text_div:
+    id: "textOutputRounded"
+  truncated_value_input:
+    id: "valueOutputTruncated"
+  truncated_text_div:
+    id: "textOutputTruncated"
+  raw_value_input:
+    id: "valueOutputRaw"
+  raw_text_div:
+    id: "textOutputRaw"
+  calculator_results:
+    id: "input"

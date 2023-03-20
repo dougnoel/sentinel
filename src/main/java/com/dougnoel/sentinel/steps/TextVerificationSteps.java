@@ -1,26 +1,28 @@
 package com.dougnoel.sentinel.steps;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
-import static com.dougnoel.sentinel.elements.ElementFunctions.getElementAsSelectElement;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import com.dougnoel.sentinel.system.DownloadManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.dougnoel.sentinel.configurations.Configuration;
-import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.webdrivers.Driver;
 
 import io.cucumber.java.en.Then;
+
+import java.io.IOException;
 
 public class TextVerificationSteps {
 	
 	private static final Logger log = LogManager.getLogger(TextVerificationSteps.class.getName()); // Create a logger.
 	
     /**
-     * Verifies the element has text by asserting item contains text
+     * Verifies the element has (or does not have) any text.
+     * Can be used for Select (dropdown) elements to verify their currently-selected option.
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
@@ -49,6 +51,7 @@ public class TextVerificationSteps {
      * will look for the text to not exist. Then it will look for the words has|have
      * to do an exact match or contain(s) to do a partial match. It uses the text
      * contained in double quotes for matching.
+     * Can be used for Select (dropdown) elements to verify their currently-selected option.
      * <p>
      * NOTE: If "URL" (without the quotes) is passed in all caps in place of the
      * element name, This step will check for the text to exist in the current page
@@ -69,35 +72,109 @@ public class TextVerificationSteps {
      * @param text String The text to verify exists in the element.
      */
     @Then("^I verify the (.*?)( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) {
+    public static void verifyElementTextContains(String elementName, String assertion, String matchType, String text) throws IOException {
         boolean negate = !StringUtils.isEmpty(assertion);
         String negateText = negate ? "not " : "";
         boolean partialMatch = matchType.contains("contain");
         String partialMatchText = partialMatch ? "contain" : "exactly match";
-        
-        if (elementName.contains("URL")) {
-            verifyURLTextContains(text);
-        } else {
-            String elementText = getElement(elementName).getText();
-            var expectedResult = SentinelStringUtils.format(
-                    "Expected the {} element to {}{} the text {}. The element contained the text: {}",
-                    elementName, negateText, partialMatchText, text, elementText
-                            .replace("\n", " "));
-            log.trace(expectedResult);
-            if (partialMatch) {
-                if (negate) {
-                    assertFalse(expectedResult, elementText.contains(text));
+
+        String expectedResult;
+
+        switch(elementName){
+            case("URL"):
+                verifyURLTextContains(text);
+                break;
+            case("most recently downloaded file"):
+                expectedResult = SentinelStringUtils.format(
+                        "Expected the most recently downloaded file to contain the text {}. File location:",
+                        text, DownloadManager.getMostRecentDownloadPath());
+                log.trace(expectedResult);
+                assertEquals(expectedResult, !negate, DownloadManager.verifyTextInFile(text));
+                break;
+            default:
+                String elementText = getElement(elementName).getText();
+                expectedResult = SentinelStringUtils.format(
+                        "Expected the {} element to {}{} the text {}. The element contained the text: {}",
+                        elementName, negateText, partialMatchText, text, elementText
+                                .replace("\n", " "));
+                log.trace(expectedResult);
+                if (partialMatch) {
+                    if (negate) {
+                        assertFalse(expectedResult, elementText.contains(text));
+                    } else {
+                        assertTrue(expectedResult, elementText.contains(text));
+                    }
                 } else {
-                    assertTrue(expectedResult, elementText.contains(text));
+                    if (negate) {
+                        assertFalse(expectedResult, StringUtils.equals(elementText, text));
+                    } else {
+                        assertTrue(expectedResult, StringUtils.equals(elementText, text));
+                    }
                 }
-            } else {
-                if (negate) {
-                    assertFalse(expectedResult, StringUtils.equals(elementText, text));
-                } else {
-                    assertTrue(expectedResult, StringUtils.equals(elementText, text));
-                }
-            }
         }
+    }
+
+    /**
+     * <p>
+     * Waits until we can verify that an element contains text stored previously.
+     * Such as by steps that randomly append/prepend to text.
+     * </p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait until the <u>Last Name Field</u> contains the text entered for the <u>Last Name Field</u></li>
+     * <li>I wait until the <u>Username Display</u> contains the text used in the <u>User Name Input Field</u></li>
+     * <li>I wait until the <u>Last Name Field</u> <u>does not</u> contain the text entered for the <u>First Name Field</u></li>
+     * </ul>
+     *
+     * @param elementName String The name of the element to be evaluated as defined in the page object.
+     * @param assertion String whether or not we expect a match or mismatch
+     * @param key String the storage key for the previously stored text to check for
+     */
+    @Then("^I wait until the (.*?)( does not)? contains? the text (?:entered|used) (?:for|in) the (.*?)$")
+    public static void waitUntilElementTextContainsStored(String elementName, String assertion, String key) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        var textToMatch = Configuration.toString(key);
+
+        boolean found = getElement(elementName).waitForText(textToMatch, (!negate));
+        String elementText = getElement(elementName).getText();
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected the {} element to {}contain the text \"{}\" stored in the configuration key {}. The element contained the text: \"{}\"",
+                elementName, negateText, textToMatch, key, elementText);
+
+        assertTrue(expectedResult, found);
+    }
+
+
+    /**
+     * Waits until we can verify that an element contains certain text. It uses the text
+     * contained in double quotes for matching. If the condition is not true, it will wait 
+     * until the timeout for it to become true, such as if the text on an element changes.
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait until the header div contains the text "Header"</li>
+     * <li>I wait until the project details does not contain the text "Loading"</li>
+     * <li>I wait until the titles contain the text "New"</li>
+     * </ul>
+     * 
+     * @param elementName String The name of the element to be evaluated as defined in the page object.
+     * @param text String The text to verify exists in the element.
+     */
+    @Then("^I wait until the (.*?)( does not)? contains? the text \"([^\"]*)\"$")
+    public static void waitUntilElementTextContains(String elementName, String assertion, String text) {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+    	boolean found = getElement(elementName).waitForText(text, (!negate));	
+        String elementText = getElement(elementName).getText();
+        	
+        var expectedResult = SentinelStringUtils.format(
+        		"Expected the {} element to {}contain the text {}. The element contained the text: {}",
+                 elementName, negateText, text, elementText
+                 	.replace("\n", " "));
+            
+        log.trace(expectedResult);
+        assertTrue(expectedResult, found);
     }
     
     /**
@@ -107,52 +184,17 @@ public class TextVerificationSteps {
      * @param text String text to verify in the URL
      */
     private static void verifyURLTextContains(String text) {
-        String currentUrl = PageManager.getCurrentUrl();
+        String currentUrl = Driver.getCurrentUrl();
         var expectedResult = SentinelStringUtils.format("Expected the URL {} to contain the text \"{}\".", currentUrl, text);
         log.trace(expectedResult);
         assertTrue(expectedResult, currentUrl.contains(text));
     }
-    
+
     /**
-     * Used to verify that the selected option of a select element contains certain
-     * text. It takes an element name and then an optional "does not", which if
+     * Used to verify that the element contains the text previously
+     * in an element or otherwise stored. It takes an element name and then an optional "does not", which if
      * present means that the method will look for the text to not exist. Then it
-     * will look for any of the words has|have and uses the text contained in double
-     * quotes for matching.
-     * <p>
-     * <b>Gherkin Examples:</b>
-     * <ul>
-     * <li>I verify the City Dropdown has the text "New York" selected</li>
-     * <li>I verify the Area Select Box has the text "This is my example text."
-     * selected</li>
-     * <li>I verify the cola radio button does not have the text "Root beer"
-     * selected</li>
-     * </ul>
-     * 
-     * @param elementName String Name of the Element to verify
-     * @param assertion String if empty we expect this to be false
-     * @param textToMatch String Text to match
-     */
-    @Then("^I verify the (.*?)( does not)? (?:has|have) the text \"([^\"]*)\" selected$")
-    public static void verifySelectionTextContains(String elementName, String assertion, String textToMatch) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
-        var expectedResult = SentinelStringUtils.format(
-                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
-                elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, selectedText.contains(textToMatch));
-        } else {
-            assertTrue(expectedResult, selectedText.contains(textToMatch));
-        }
-    }
-    
-    /**
-     * Used to verify that the selected option of a select element contains the text used
-     * in an element. It takes an element name and then an optional "does not", which if
-     * present means that the method will look for the text to not exist. Then it
-     * will look up the value set for the second element. This second element may be the 
+     * will look up the value set for the second element / other stored text. This second element may be the
      * same element or a different one. For example, you might select the first item in a
      * drop down and not know what you selected. Using this method, you can check to make
      * sure that the value appears correctly. Alternately, you might enter a value in a
@@ -160,45 +202,35 @@ public class TextVerificationSteps {
      * <p>
      * <b>Gherkin Examples:</b>
      * <ul>
-     * <li>I verify the City Dropdown has the value selected for the City Dropdown</li>
+     * <li>I verify the Name input has the value selected for the City Dropdown</li>
      * <li>I verify the City Dropdown has the value entered for the City Field</li>
-     * <li>I verify the Shipping City Dropdown does not have the value used for the Billing City Dropdown</li>
+     * <li>I verify the Shipping City Label does not have the value used for the Billing City Dropdown</li>
      * </ul>
-     * 
+     *
      * @param elementName String Name of the Element to verify
      * @param assertion String if empty we expect this to be false
+     * @param matchType String whether we are doing an exact match or a partial match
      * @param key String the key to retrieve the text to match from the configuration manager
      */
-    @Then("^I verify the (.*?)( does not)? (?:has|have) the value (?:entered|selected|used) for the (.*?)$")
-    public static void verifySelectionTextContainsStoredValue(String elementName, String assertion, String key) {
+    @Then("^I verify the (.*?)( does not)? (has|have|contains?) the value (?:entered|selected|used) for the (.*?)$")
+    public static void verifyTextContainsStoredValue(String elementName, String assertion, String matchType, String key) throws IOException {
     	var textToMatch = Configuration.toString(key);
-        boolean negate = !StringUtils.isEmpty(assertion);
-        String selectedText = getElementAsSelectElement(elementName).getSelectedText();
-        var expectedResult = SentinelStringUtils.format(
-                "Expected the the selection for the {} element to {}contain the text \"{}\". The element contained the text: \"{}\".",
-                elementName, (negate ? "not " : ""), textToMatch, selectedText.replace("\n", " "));
-        log.trace(expectedResult);
-        if (negate) {
-            assertFalse(expectedResult, selectedText.contains(textToMatch));
-        } else {
-            assertTrue(expectedResult, selectedText.contains(textToMatch));
-        }
-    } 
+        verifyElementTextContains(elementName, assertion, matchType, textToMatch);
+    }
     
    /**
     * Used to verify that on mouse over an element contains certain text. 
     * <b>Gherkin Examples:</b>
     * <ul>
-    * <li>I verify the mouse over has the value "Username"</li>
-    * <li>I verify the mouse over does not have the value "VA"</li>
-    * <li>I verify the mouse over have the value "name: user1"</li> 
+    * <li>I verify the mouse over tooltip has the value "Username"</li>
+    * <li>I verify the save tooltip has the value "Click to Save"</li>
+    * <li>I verify the compare button tooltip does not have the value "Please Wait..."</li> 
     * </ul> 
     * @param elementName String The name of the element to be evaluated as defined in the page object.
     * @param assertion String Evaluated as a boolean, where null = false and any text = true. 
     * @param textToMatch String The text to verify exists in the element.
     */
-    
-    @Then("^I verify the (.*?)( does not)? (?:has|have) the value \"([^\"]*)\"$")
+    @Then("^I verify the (.*?) tooltip( does not)? (?:has|have) the value \"([^\"]*)\"$")
 	public static void toolTipText(String elementName, String assertion, String textToMatch) {		
 		String value = getElement(elementName).getTooltipText();
 		boolean negate = !StringUtils.isEmpty(assertion);	
