@@ -39,12 +39,32 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
     public static String stripSurroundingQuotes(String text) {
     	if (text == null)
     		return null;
-    	Pattern pattern = Pattern.compile(SURROUNDING_QUOTES);
     	
-    	if (pattern.matcher(text).find())
+    	if (checkForSurroundingQuotes(text))
     		return text.substring(1, text.length()-1);
     	return text;
     }
+
+	/**
+	 * <p>Checks if a string is encompassed by quotes.
+	 * Returns true only if the string has matching quotes encompassing it; false otherwise.</p>
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 *     <li><i>"This is a statement"</i> - <b>True</b></li>
+	 *     <li><i>This is a statement"</i> - <b>False</b></li>
+	 *     <li><i>"This is a statement</i> - <b>False</b></li>
+	 *     <li><i>This is a statement</i> - <b>False</b></li>
+	 * </ul>
+	 * </p>
+	 * @param text String the text to check for encompassing quotes
+	 * @return boolean true if the passed text was encompassed by matching quotes. Otherwise, returns false.
+	 */
+	private static boolean checkForSurroundingQuotes(String text) {
+		Pattern pattern = Pattern.compile(SURROUNDING_QUOTES);
+
+		return pattern.matcher(text).find();
+	}
 
 	/**
 	 * Constructs the ordinal string of the given int. For example "1st", "2nd", "111th"
@@ -163,5 +183,27 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 			text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
 			}
 		return text;
+	}
+
+	public static boolean textContains(String textToCheck, String textToCheckFor) {
+		if(textToCheck.contains(textToCheckFor))
+			return true;
+		else
+			return textToCheck.contains(stripSurroundingQuotes(textToCheckFor));
+	}
+
+	public static boolean textEquals(String textToCheck, String textToCheckFor) {
+		if(textToCheck.equals(textToCheckFor))
+			return true;
+		else
+			return textToCheck.equals(stripSurroundingQuotes(textToCheckFor));
+	}
+
+	public static boolean textDoesNotContain(String textToCheck, String textToCheckFor) {
+		return !textToCheck.contains(textToCheckFor) && !textToCheck.contains(stripSurroundingQuotes(textToCheckFor));
+	}
+
+	public static boolean textDoesNotEqual(String textToCheck, String textToCheckFor) {
+		return !textToCheck.equals(textToCheckFor) && !textToCheck.equals(stripSurroundingQuotes(textToCheckFor));
 	}
 }

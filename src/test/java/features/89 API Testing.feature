@@ -11,7 +11,7 @@ Feature: 89 API Testing
       And I send a POST request to the pet endpoint
     Then I verify the response code equals 200
       And I verify the response was received in less than 2 seconds
-      And I validate the response contains the text "doggie"
+      And I validate the response contains the text doggie
       
   @89B
   Scenario: 89B GET Swagger Test
@@ -19,7 +19,7 @@ Feature: 89 API Testing
     When I GET record {test_id} from the pet endpoint
     Then I verify the response code equals 200
       And I verify the response was received in less than 0.8 seconds
-      And I validate the response contains the text "photoUrls"
+      And I validate the response contains the text photoUrls
       
   @89C
   Scenario: 89C PUT Swagger Test
@@ -43,11 +43,11 @@ Feature: 89 API Testing
 	    }
 	  ],
 	  "status": "available"
-	}
+	  }
     """
     And I send a PUT request to the pet endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "puppy"
+      And I validate the response contains the text puppy
       
   @89D
   Scenario: 89D Parameter Swagger Test
@@ -55,7 +55,7 @@ Feature: 89 API Testing
       And I add a status parameter with the value available
     When I send a GET request to the pet/findByStatus endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "photoUrls"
+      And I validate the response contains the text photoUrls
       
   @89E
   Scenario: 89E DELETE Swagger Test
@@ -101,11 +101,11 @@ Feature: 89 API Testing
 	    }
 	  ],
 	  "status": "available"
-	}
+	  }
     """
     And I send a POST request to the pet endpoint
     Then I verify the response code equals 200
-    And I validate the response contains the text "puppy"
+    And I validate the response contains the text puppy
 
   @89H
   Scenario: 89H URL With Parameter Test
@@ -127,4 +127,19 @@ Feature: 89 API Testing
       And I add a status parameter with the value {dog_status}
     When I send a GET request to the pet/findByStatus endpoint
     Then I verify the response code equals 200
-      And I validate the response contains the text "sold"
+      And I validate the response contains the text sold
+
+  @89J
+  Scenario: 89J Verify validate the response comparison
+    Given I use the API named Pet Store API
+    When I DELETE record 10 from the pet endpoint
+    Then I verify the response code equals 200
+      And I validate the response does not have the text ""Pet deleted""
+      And I validate the response does not have the text "Pet deleted
+      And I validate the response does not have the text Pet deleted"
+      And I validate the response does not contain the text "Pet deleted
+      And I validate the response does not contain the text Pet deleted"
+      And I validate the response has the text Pet deleted
+      And I validate the response has the text "Pet deleted"
+      And I validate the response contains the text Pet deleted
+      And I validate the response contains the text "Pet deleted"

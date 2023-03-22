@@ -94,9 +94,9 @@ public class APISteps {
      * <li>I send a PUT request to the amdins endpoint</li>
      * </ul>
      * <p>
-     *  
-	 * @param apiCallType
-	 * @param endpoint
+     *
+	 * @param apiCallType String the type of call to make
+	 * @param endpoint String the endpoint name as referenced in the swagger file
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public static void sendRequest(String apiCallType, String endpoint) {
@@ -150,37 +150,65 @@ public class APISteps {
 
 	/**
 	 * Validates text in an API response.
-	 * 
+	 * <p>
+	 * <b>Gherkin Examples:</b>
+	 * <ul>
+	 * <li>I validate the response <b>contains</b> the text <b>"key":"value"</b></li>
+	 * <li>I validate the response <b>does not contain</b> the text <b>"value":"key"</b></li>
+	 * <li>I validate the response <b>has</b> the text <b>123456789ABCDEFG</b></li>
+	 * </ul>
+	 * <p>
 	 * @param assertion String null to see if the text exists, "does not" to see if it is absent
 	 * @param matchType String use "contains" for a partial match otherwise it will be an exact match
 	 * @param text String the text to match
 	 */
-	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public static void verifyResponseContains(String assertion, String matchType, String text) {
-        boolean negate = !StringUtils.isEmpty(assertion);
-        boolean partialMatch = matchType.contains("contain");
+	@Then("^I validate the response( does not)? (has|have|contains?) the text (.*?)$")
+	public static void verifyResponseContains(String assertion, String matchType, String text) {
+		boolean negate = !StringUtils.isEmpty(assertion);
+		boolean partialMatch = matchType.contains("contain");
 
-        int responseCode = APIManager.getResponse().getResponseCode();
-        String responseText = APIManager.getResponse().getResponse();
-        String expectedResult = SentinelStringUtils.format(
-                "Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
-                (negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
-                        .replace("\n", " "));
-        log.trace(expectedResult);
-        if (partialMatch) {
-            if (negate) {
-                assertFalse(expectedResult, responseText.contains(text));
-            } else {
-                assertTrue(expectedResult, responseText.contains(text));
-            }
-        } else {
-            if (negate) {
-                assertFalse(expectedResult, StringUtils.equals(responseText, text));
-            } else {
-                assertTrue(expectedResult, StringUtils.equals(responseText, text));
-            }
-        }
-    }
+		int responseCode = APIManager.getResponse().getResponseCode();
+		String responseText = APIManager.getResponse().getResponse();
+		String expectedResult = SentinelStringUtils.format(
+			"Expected the response to {}{} the text {}. The response had a response code of {} and contained the text: {}",
+			(negate ? "not " : ""), (partialMatch ? "contain" : "exactly match"), text, responseCode, responseText
+				.replace("\n", " "));
+		log.trace(expectedResult);
+
+		boolean negateResult;
+		boolean result;
+		boolean textStartEndQuotes = false;
+		String startEndQuoteStripText = text;
+		if(text.matches("^\".*?\"$")) {
+			textStartEndQuotes = true;
+			startEndQuoteStripText = text.substring(1, text.length() - 1);
+		}
+
+		if (partialMatch) {
+			if(textStartEndQuotes) {
+				result = responseText.contains(startEndQuoteStripText) || responseText.contains(text);
+				negateResult = responseText.contains(startEndQuoteStripText) && responseText.contains(text);
+			}
+			else {
+				result = responseText.contains(text);
+				negateResult = result;
+			}
+		} else {
+			if(textStartEndQuotes) {
+				result = StringUtils.equals(responseText, text) || StringUtils.equals(responseText, startEndQuoteStripText);
+				negateResult = StringUtils.equals(responseText, text) && StringUtils.equals(responseText, startEndQuoteStripText);
+			}
+			else {
+				result = responseText.contains(text);
+				negateResult = result;
+			}
+		}
+
+		if (negate)
+			assertFalse(expectedResult, negateResult);
+		else
+			assertTrue(expectedResult, result);
+	}
 
 	/**
 	 * Adds header into API request
