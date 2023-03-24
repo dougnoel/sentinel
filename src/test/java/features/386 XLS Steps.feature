@@ -8,10 +8,8 @@ Feature: Verify and Edit XLSs
     Given I navigate to the Textbox Page
       And I enter Truman in the last name field
       And I navigate to the Upload Page
-    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 2 header rows
-    Then I open src/test/resources/xls/test_1header_excel97.xls as a Xls file with 1 header rows
-#      And I set all values in the surname column to Truman in the CSV file
-#    Then I verify the CSV file has the value Truman in the surname column and the 1st row
+    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 1 header rows
+    Then I verify the XLS file has the value Paul in the FirstName column and the 2nd row
 #      And I verify the CSV file contains the value Truman in the surname column and the 4th row
 #      And I verify the CSV file does not have the value Truman in the surname column and the 0th row
 #      And I verify the CSV file does not contain the value Truman in the surname column and the 0th row
