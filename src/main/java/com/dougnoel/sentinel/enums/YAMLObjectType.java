@@ -9,5 +9,6 @@ package com.dougnoel.sentinel.enums;
 public enum YAMLObjectType {
 	API,
 	PAGE,
+	DATABASE,
 	UNKNOWN;
 }

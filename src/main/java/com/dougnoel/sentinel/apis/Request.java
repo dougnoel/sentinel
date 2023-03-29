@@ -111,7 +111,7 @@ public class Request {
 		try {
 			switch(type) {
 			case DELETE:
-				httpRequest = new HttpDelete(APIManager.getAPI().getURIBuilder( endpoint).build());
+				httpRequest = new HttpDelete(APIManager.getAPI().getURIBuilder(endpoint).build());
 				break;
 			case GET:
 				httpRequest = new HttpGet(APIManager.getAPI().getURIBuilder(endpoint).build());

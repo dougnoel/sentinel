@@ -21,7 +21,7 @@ import com.dougnoel.sentinel.system.YAMLObject;
 import com.dougnoel.sentinel.webdrivers.WebDriverFactory;
 
 /**
- * Page class to contain the details of an page.
+ * Page class to contain the details of a page.
  */
 public class Page extends YAMLObject {
 	

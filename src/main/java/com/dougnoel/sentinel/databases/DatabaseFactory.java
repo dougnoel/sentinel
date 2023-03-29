@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.databases;
 
+import java.io.IOException;
 import java.util.HashMap;
 /**
  * The DB Factory is a factory method that simply takes a string containing the name of a 
@@ -13,13 +14,15 @@ public class DatabaseFactory {
 	}
 	
 	/**
-	 * Returns the Database Object for the database name. This allows us to operate on datbases
+	 * Returns the Database Object for the database name. This allows us to operate on databases
 	 * without knowing they exist when we write step definitions.
 	 * 
 	 * @param databaseConnectionName String the name of the database object
 	 * @return Database the database object
 	 */
 	public static Database buildOrRetrieveDatabaseConnection(String databaseConnectionName) {
+		databaseConnectionName = databaseConnectionName.replaceAll("\\s", "");
+
 		Database database = databases.get(databaseConnectionName);
 		if (database != null) {
 			return database;

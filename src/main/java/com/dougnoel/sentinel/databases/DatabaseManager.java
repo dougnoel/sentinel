@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.databases;
 
+import com.dougnoel.sentinel.system.TestManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,13 +11,19 @@ import org.apache.logging.log4j.Logger;
 public class DatabaseManager {
 	private static final Logger log = LogManager.getLogger(DatabaseManager.class);
 	private static Database databaseConnection = null;
+	public static String userName = null;
 
 	private DatabaseManager() {
 		// Exists only to defeat instantiation.
 	}
 
 	public static void setDatabaseConnection(String databaseName) {
-		DatabaseManager.databaseConnection = DatabaseFactory.buildOrRetrieveDatabaseConnection(databaseName);
+		try {
+			databaseConnection = DatabaseFactory.buildOrRetrieveDatabaseConnection(databaseName);
+			TestManager.setActiveTestObject(databaseConnection);
+		} catch (NullPointerException npe) {
+			databaseConnection = null;
+		}
 	}
 	
 	public static void useDatabase(String currentDatabaseName) {

@@ -1,22 +1,36 @@
 package com.dougnoel.sentinel.databases;
 
+import com.dougnoel.sentinel.apis.APIManager;
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.enums.YAMLObjectType;
+import com.dougnoel.sentinel.system.YAMLObject;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 
 /**
  * Database class to contain connection details.
  */
-public class Database {
+public class Database extends YAMLObject {
 
     protected String databaseConnectionName;
     protected String currentDatabaseName;
     protected Connection conn = null;
+
+	protected String lastResult = null;
     
     public Database(String databaseConnectionName) {
+		super(databaseConnectionName);
     	this.databaseConnectionName = databaseConnectionName;
+		this.yamlObjectType = YAMLObjectType.DATABASE;
+		//String swaggerUrl = Configuration.getURL(APIManager.getAPI());
+		//DatabaseData.loadYaml(databaseConnectionName);
+		//load yaml?
     	loadDriver();
     }
 
@@ -31,6 +45,10 @@ public class Database {
     public String getCurrentDatabaseName() {
     	return currentDatabaseName;
     }
+
+	public String getLastResult() {
+		return lastResult;
+	}
     
     @SuppressWarnings("deprecation")
 	public void loadDriver() {
@@ -45,14 +63,17 @@ public class Database {
     }
     
     public void getConnection() {
-	    try {
+		String URL = Configuration.getURL(DatabaseManager.getCurrentDatabaseConnection());
+		String password = Configuration.accountInformation(DatabaseManager.userName, "password");
+
+		try {
 	        conn =
-	           DriverManager.getConnection("jdbc:mysql://" + 
-	        		   						databaseConnectionName + "/" + 
-	        		   						currentDatabaseName + "?" +
-	        		   						"user=testuser&password=PoorPassword" +
-	                                       	"&serverTimezone=UTC&useLegacyDatetimeCode=false");
-	
+	           DriverManager.getConnection("jdbc:mysql://" +
+					   URL + "/" +
+					   currentDatabaseName + "?" +
+					   "user=" + DatabaseManager.userName +
+					   "&password=" + password +
+					   "&serverTimezone=UTC&useLegacyDatetimeCode=false");
 	        // Do something with the Connection
 	
 	    } catch (SQLException ex) {
@@ -92,6 +113,7 @@ public class Database {
 	        
 	        resultSet.next();
 	        result = resultSet.getString(1);
+			lastResult = result;
 	    }
 	    catch (SQLException ex){
 	        // handle any errors

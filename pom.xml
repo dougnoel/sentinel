@@ -768,6 +768,14 @@
       <artifactId>pdfcompare</artifactId>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>8.0.32</version>
+    </dependency>
+
+
   </dependencies>
   <description>A Selenium framework that implements a generic Cucumber interface and the Page Object Model (POM) using Object Oriented Programming (OOP) concepts. It abstracts out most of the complexity of Selenium to allow users to focus on automating tests and not spend time dealing with the technical details of implementing an automation framework, so that automated tests can be written in a non-technical way in the same amount of time as manual tests can be executed. Also works for Windows automation and API automation.</description>
 </project>

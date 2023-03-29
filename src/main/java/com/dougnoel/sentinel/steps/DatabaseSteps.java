@@ -1,5 +1,11 @@
 package com.dougnoel.sentinel.steps;
 
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.databases.DatabaseData;
+import com.dougnoel.sentinel.pages.PageManager;
+import com.dougnoel.sentinel.strings.SentinelStringUtils;
+import com.dougnoel.sentinel.system.DownloadManager;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,6 +16,11 @@ import com.dougnoel.sentinel.databases.DatabaseManager;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
+import java.io.IOException;
+
+import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+import static org.junit.Assert.*;
 
 /**
  * Methods used to define basic operations. Other step files can extend or
@@ -23,52 +34,58 @@ import io.cucumber.java.en.When;
 public class DatabaseSteps {
     private static final Logger log = LogManager.getLogger(DatabaseSteps.class.getName()); // Create a logger.
     
-    @Given("^I connect to the (.*?) Database$")
-    public void setDatabase(String databaseName) {
-    	String normalizedDatabaseName = databaseName.replaceAll("\\s", "") + "Database";
-    	DatabaseManager.setDatabaseConnection("localhost");
-//    	DatabaseManager.setDatabaseConnection(normalizedDatabaseName);
-        log.debug("Current Database Connection: {}", normalizedDatabaseName);
+    @Given("^I connect to the (.*?)$")
+    public static void setDatabase(String databaseName) throws IOException {
+    	DatabaseManager.setDatabaseConnection(databaseName);
+        Configuration.getURL(DatabaseManager.getCurrentDatabaseConnection());
+        log.trace("Current Database Connection: {}", databaseName);
     }
 
-    @Given("I use the {string} database")
-    public void useDatabase(String databaseName) {
+    @Given("^I use the (.*?) database as (.*)$")
+    public static void useDatabase(String databaseName, String userName) {
     	DatabaseManager.useDatabase(databaseName);
-    	log.debug("Current Database In Use: {}", databaseName);
+        DatabaseManager.userName = userName;
     }
     
     @When("I submit the query")
-    public void submitQuery(String queryString) {
-//    	DatabaseManager.setDatabaseConnection("LocalHostMySQLDatabase");
-//    	DatabaseManager.setDatabaseConnection("localhost");
-    	DatabaseManager.useDatabase("test_db");
+    public static void submitQuery(String queryString) {
+    	DatabaseManager.useDatabase(DatabaseManager.getDatabaseInUse());
         Database db = DatabaseManager.getCurrentDatabaseConnection();
         db.loadDriver();
         db.getConnection();
-        String out = db.query(queryString);
-        System.out.println("Output from DB: " + out);
-        //Connect to DB
-    	//Select the database
-    	//Run the Query
-    	//Store the return result in last_result
+        db.query(queryString);
     	//Close the connection - TRIGGER THIS IN AN AFTER STEP
     }
 
-    @Then("I should get the result {string}")
-    public void i_should_get_the_result(String string) {
-        //rEtrieve the results and compare them
-    }
+    @Then("^I verify the query result( does not)? (has|have|contains?) the text (.*)$")
+    public static void verifyQueryResult(String assertion, String matchType, String text) throws IOException {
+        boolean negate = !StringUtils.isEmpty(assertion);
+        String negateText = negate ? "not " : "";
+        boolean partialMatch = matchType.contains("contain");
+        String partialMatchText = partialMatch ? "contain" : "exactly match";
 
-    @When("I run the update")
-    public void i_run_the_update(String updateString) {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
-    }
+        Database db = DatabaseManager.getCurrentDatabaseConnection();
+        String actualResponse = db.getLastResult();
 
-    @Then("I should get a success message")
-    public void i_should_get_a_success_message() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        String expectedResult;
+        expectedResult = SentinelStringUtils.format(
+                "Expected the last query response to {}{} the text {}. The response contained the text: {}",
+                negateText, partialMatchText, text, actualResponse
+                        .replace("\n", " "));
+        log.trace(expectedResult);
+
+        if (partialMatch) {
+            if (negate) {
+                assertFalse(expectedResult, actualResponse.contains(text));
+            } else {
+                assertTrue(expectedResult, actualResponse.contains(text));
+            }
+        } else {
+            if (negate) {
+                assertFalse(expectedResult, StringUtils.equals(actualResponse, text));
+            } else {
+                assertTrue(expectedResult, StringUtils.equals(actualResponse, text));
+            }
+        }
     }
-    
 }

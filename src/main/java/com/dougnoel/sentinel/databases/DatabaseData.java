@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import com.dougnoel.sentinel.apis.APIManager;
+import com.dougnoel.sentinel.configurations.Configuration;
+import com.dougnoel.sentinel.configurations.YAMLData;
+import com.dougnoel.sentinel.pages.Page;
+import com.dougnoel.sentinel.system.FileManager;
+import com.dougnoel.sentinel.system.YAMLObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,25 +26,25 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  * java class. It contains getter methods for page urls, and account data based on the given environment or account data 
  * based on the given environment and the account map within that environment.
  */
-public class DatabaseData {
+public class DatabaseData extends YAMLData {
 	private static final Logger log = LogManager.getLogger(DatabaseData.class); // Create a logger.
 	// page urls to load in the web driver TODO: Annotate corretly.
-	public Map<String,String> urls;
+	public static Map<String,String> urls;
 	// user account data TODO: Annotate corretly.
 	public Map<String,Map<String,Map<String,String>>> accounts;
 	public Map<String,Map<String,String>> tables;
 	public String include;
 
 	/**
+	 *
 	 * Returns PageData for the given fileName as a string.
-	 * 
 	 * @see DatabaseData#loadYaml(File)
 	 * @param fileName String the name of the page configuration file
 	 * @return PageData the configured PageData 
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
-	public static DatabaseData loadYaml(String fileName) throws IOException{
-		return loadYaml(new File(fileName));
+	public static DatabaseData loadYaml(String fileName) throws IOException {
+		return loadYaml(FileManager.findFilePath(fileName));
 	}
 	
 	/**
@@ -48,7 +54,7 @@ public class DatabaseData {
 	 * @return PageData the configured PageData
 	 * @throws IOException if the configuration file cannot be opened or read
 	 */
-	public static DatabaseData loadYaml(File fileName) throws IOException{
+	public static DatabaseData loadYaml(File fileName) throws IOException {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 				.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		DatabaseData pageData = null;
@@ -56,10 +62,10 @@ public class DatabaseData {
 			pageData = mapper.readValue(fileName, DatabaseData.class);
 		} catch (Exception e) {
 			//throw new YAMLFileException(e, fileName);
+			throw e;
 		}
-			
+
 		return pageData;
-		
 	}
 	
 	/**
@@ -70,6 +76,7 @@ public class DatabaseData {
 	 * @param account String the requested account 
 	 * @return Map&lt;String, String&gt; the user account data, or null if the requested environment doesn't exist
 	 */
+	@Override
     public Map<String,String> getAccount(String env, String account) {
     	if (accounts.containsKey(env)) {
     		return accounts.get(env).get(account);
@@ -100,12 +107,14 @@ public class DatabaseData {
     	return new String[0];
     }
     
-    public boolean containsUrl(String env) {
+   /* public static boolean containsUrl(String env) {
     	return urls.containsKey(env);
-    }
+    }*/
     
-    public String getUrl(String env) {
+    public static String getDatabase(String env) {
     	return urls.get(env);
+		//Configuration.getURL();
+
     }
 
 }
