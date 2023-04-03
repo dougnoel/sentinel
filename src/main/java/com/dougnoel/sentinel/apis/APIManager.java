@@ -93,5 +93,9 @@ public class APIManager {
 	public static void setResponse(Response response) {
 		APIManager.response = response;
 	}
+
+	public static void setRequestTypeToUseInputStreamBody(){
+		getAPI().setRequest(new MultipartFormDataRequest());
+	}
 	
 }

@@ -29,10 +29,10 @@ import com.dougnoel.sentinel.exceptions.IOException;
 public class Request {
 	private static final Logger log = LogManager.getLogger(Request.class.getName()); // Create a logger.
 
-	private HttpRequestBase httpRequest = null;
-	private List<NameValuePair> parameters = new ArrayList<>();
-	private List<NameValuePair> headers = new ArrayList<>();
-	private StringEntity body = null;
+	protected HttpRequestBase httpRequest = null;
+	protected List<NameValuePair> parameters = new ArrayList<>();
+	protected List<NameValuePair> headers = new ArrayList<>();
+	protected StringEntity body = null;
 	
 	/**
 	 * Set a parameter and its value for a request. They will show up as part of the query string in the API request.
@@ -47,7 +47,7 @@ public class Request {
 	 * Returns a URI that includes any parameters if it is set. Otherwise it returns the existing URI.
 	 * @return HttpRequestBase the new request object
 	 */
-	private HttpRequestBase buildURI() {
+	protected HttpRequestBase buildURI() {
 	    if (!parameters.isEmpty()) {
 			URI uri;
 			try {
@@ -67,7 +67,7 @@ public class Request {
 	/**
 	 * Sets this as a json request.
 	 */
-	private void setHeaders() {
+	protected void setHeaders() {
 		if (!headers.isEmpty()){
 			for(NameValuePair h : headers){
 				httpRequest.setHeader(h.getName(), h.getValue());
@@ -137,7 +137,7 @@ public class Request {
 	 * Send the request, store the response for later retrieval, and reset the request so it can be used again
 	 * by the API for another request.
 	 */
-	private void sendRequest() {
+	protected void sendRequest() {
 		HttpClient httpClient = HttpClientBuilder.create().build();
 		Response response;
 		try {
@@ -155,7 +155,7 @@ public class Request {
 	/**
 	 * Reset all values so we can make a new request.
 	 */
-	private void reset() {
+	protected void reset() {
 		parameters.clear();
 		body = null;
 		httpRequest = null;
