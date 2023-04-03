@@ -109,7 +109,7 @@ public class XlsSteps {
      * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
      */
     @Then("^I verify the (?:XLS|xls) file( do(?:es)? not)? (has|have|contains?) the value (.*) in the (.*) column and the (la|\\d+)(?:st|nd|rd|th) row$")
-    public static void verifyXlsCellHasValue(String assertion, String matchType, String textToMatch, String column, String rowNum) throws IOException, InvalidFormatException {
+    public static void verifyXlsCellHasValue(String assertion, String matchType, String textToMatch, String column, String rowNum) {
         XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
         int rowIndex = rowNum.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(rowNum);
@@ -123,9 +123,9 @@ public class XlsSteps {
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, String.valueOf(SentinelStringUtils.parseOrdinal(column)), textToMatch, partialMatch));
+                assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             } else {
-                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, String.valueOf(SentinelStringUtils.parseOrdinal(column)), textToMatch, partialMatch));
+                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
