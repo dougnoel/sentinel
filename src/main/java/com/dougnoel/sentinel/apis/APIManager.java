@@ -5,6 +5,8 @@ import org.openqa.selenium.NotFoundException;
 import com.dougnoel.sentinel.enums.RequestType;
 import com.dougnoel.sentinel.system.TestManager;
 
+import java.io.InputStream;
+
 /**
  * Tracks which API is currently being used and requests the APIFactory create it if it does not exist.
  * @author dougnoel@gmail.com
@@ -51,6 +53,18 @@ public class APIManager {
 	}
 
 	/**
+	 * Sets the body to a multipart/form-data body, using the given name, boundary, input stream, and filename.
+	 * Also sets a header with the Content-Type set to 'multipart/form-data' and specifies the boundary string passed to this method.
+	 * @param nameOfInput String name of the multipart segment. Sometimes applications require this parameter to be a specific value in order to accept file uploads.
+	 * @param boundary String the multipart boundary. This method also adds a header specifying this value.
+	 * @param inputStream InputStream input stream of the file to upload.
+	 * @param filename String name of the file being uploaded.
+	 */
+	public static void setMultipartFormDataBody(String nameOfInput, String boundary, InputStream inputStream, String filename) {
+		getAPI().getRequest().setMultipartFormDataBody(nameOfInput, boundary, inputStream, filename);
+	}
+
+	/**
 	 * Set a parameter and its value for a request. They will show up as part of the query string in the API request.
 	 * @param parameter String the parameter being passed
 	 * @param value String the value to be passed
@@ -93,9 +107,4 @@ public class APIManager {
 	public static void setResponse(Response response) {
 		APIManager.response = response;
 	}
-
-	public static void setRequestTypeToUseInputStreamBody(){
-		getAPI().setRequest(new MultipartFormDataRequest());
-	}
-	
 }
