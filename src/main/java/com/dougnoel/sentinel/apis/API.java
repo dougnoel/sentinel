@@ -53,8 +53,4 @@ public class API extends YAMLObject {
 		return request; 
 	}
 
-	public void setRequest(Request req){
-		request = req;
-	}
-
 }
