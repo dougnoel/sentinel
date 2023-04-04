@@ -25,6 +25,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
@@ -173,9 +174,8 @@ public class Request {
 	 * by the API for another request.
 	 */
 	protected void sendRequest() {
-		HttpClient httpClient = HttpClientBuilder.create().build();
 		Response response;
-		try {
+		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()){
 			long startTime = System.nanoTime();
 			response = new Response(httpClient.execute(httpRequest));
 			response.setResponseTime(Duration.ofNanos(System.nanoTime() - startTime));

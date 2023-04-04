@@ -64,7 +64,8 @@ public class APISteps {
 		SecureRandom secureRandom = new SecureRandom();
 		byte[] boundaryBytes = new byte[32];
 		secureRandom.nextBytes(boundaryBytes);
-		APIManager.setMultipartFormDataBody(multipartSegmentName, new String(boundaryBytes, StandardCharsets.UTF_8), inputStream, filename);
+		String boundary = new String(boundaryBytes, StandardCharsets.UTF_8);
+		APIManager.setMultipartFormDataBody(multipartSegmentName, boundary, inputStream, filename);
 	}
 
 	/**
