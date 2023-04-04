@@ -139,4 +139,4 @@ Feature: 89 API Testing
     id: 10
     """
       And I send a POST request to the pet/{id}/uploadImage endpoint
-    Then I verify the response code equals 400
+    Then I verify the response code equals 415
