@@ -6,7 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.time.Duration;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -60,8 +62,10 @@ public class APISteps {
 		Path filePath = Path.of(fileToUploadPath);
 		String filename = filePath.getFileName().toString();
 		BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fileToUploadPath));
-		String multipartBoundary = RandomStringUtils.randomAlphanumeric(12);
-		APIManager.setMultipartFormDataBody(multipartSegmentName, multipartBoundary, inputStream, filename);
+		SecureRandom secureRandom = new SecureRandom();
+		byte[] boundaryBytes = new byte[32];
+		secureRandom.nextBytes(boundaryBytes);
+		APIManager.setMultipartFormDataBody(multipartSegmentName, new String(boundaryBytes, StandardCharsets.UTF_8), inputStream, filename);
 	}
 
 	/**
