@@ -9,7 +9,7 @@ Feature: Verify and Edit XLSs
       And I enter Truman in the last name field
       And I navigate to the Upload Page
     When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 1 header rows
-    Then I verify the XLS file has the value Paul in the FirstName column and the 2nd row
+    Then I verify the XLS file has the value Peter in the FirstName column and the 2nd row
 #      And I verify the CSV file contains the value Truman in the surname column and the 4th row
 #      And I verify the CSV file does not have the value Truman in the surname column and the 0th row
 #      And I verify the CSV file does not contain the value Truman in the surname column and the 0th row

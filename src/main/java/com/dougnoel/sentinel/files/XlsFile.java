@@ -36,7 +36,16 @@ public class XlsFile extends TestFile {
     public XSSFCell cell = null;
     String xlFilePath;
     private int numHeaderRows;
-    private List<List<String>> xlsContents;
+    private ArrayList<ArrayList<String>> xlsContents;
+
+    public XlsFile() throws IOException, InvalidFormatException {
+        this(1);
+        loadXlsFile();
+    }
+
+    private void loadXlsFile() throws IOException, InvalidFormatException {
+        xlsContents = readAllFileContents();
+    }
 
     public XlsFile(int numberOfHeaderRows) throws IOException {
         super();
@@ -72,6 +81,7 @@ public class XlsFile extends TestFile {
                     pkg.close();
                 }
             }
+            loadXlsFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InvalidFormatException e) {
@@ -84,24 +94,26 @@ public class XlsFile extends TestFile {
         spreadsheet = file;
         columns = new HashMap();
     }
-
-    public int getNumberOfDataRows() {
-        sheet = workbook.getSheet(xlFilePath);
-        int rowCount = sheet.getLastRowNum() + 1;
-        return rowCount;
+    public int getNumberOfTotalRows(){
+        return xlsContents.size();
     }
 
-    public int getColumnCount() {
-        sheet = workbook.getSheet(xlFilePath);
-        row = sheet.getRow(0);
+    public int getNumberOfDataRows(){
+        return xlsContents.size() - numHeaderRows;
+    }
+
+    public int getColumnCount() throws IOException, InvalidFormatException {
+        XSSFWorkbook workbook = new XSSFWorkbook(this);
+        XSSFSheet sheet = workbook.getSheet(String.valueOf(this));
+        XSSFRow row = sheet.getRow(0);
         int colCount = row.getLastCellNum();
         return colCount;
     }
-    public String verifyCellDataContains(int rowIndex, String columnHeader, String textToMatch, boolean partialMatch){
+    public String verifyCellDataContains(int rowIndex, String columnHeader, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
         return verifyCellDataContains(rowIndex, getColumnIndex(columnHeader), textToMatch, partialMatch);
     }
 
-    public String verifyCellDataContains(int rowIndex, int columnIndex, String textToMatch, boolean partialMatch) {
+    public String verifyCellDataContains(int rowIndex, int columnIndex, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
         var cell = readCellData(columnIndex, rowIndex);
 
         if (partialMatch) {
@@ -111,52 +123,63 @@ public class XlsFile extends TestFile {
         }
     }
 
-    public XSSFCell readCellData(int columnIndex, int rowIndex) {
-        int adjustedColumnIndex = columnIndex - 1;
-        return readRowData(rowIndex).getCell(adjustedColumnIndex);
-    }
-
-    public XSSFRow readRowData(int rowIndex) {
+    public List<String> readRowData(int rowIndex){
         int actualRowIndex = rowIndex - 1 + numHeaderRows;
-        return sheet.getRow(actualRowIndex);
+        return xlsContents.get(actualRowIndex);
     }
 
-    public int getColumnIndex(String columnHeader){
+    public String readCellData(int columnIndex, int rowIndex) {
+        int adjustedColumnIndex = columnIndex - 1;
+        return readRowData(rowIndex).get(adjustedColumnIndex);
+    }
+
+    public String readCellData(String columnHeader, int rowIndex) throws IOException, InvalidFormatException {
+        return readCellData(getColumnIndex(columnHeader), rowIndex);
+    }
+
+    private int getColumnIndex(String columnHeader) throws IOException, InvalidFormatException {
         return readHeaders().indexOf(columnHeader) + 1;
     }
-    public List<String> readHeaders(){
-        sheet = workbook.getSheet(xlFilePath);
-        if(numHeaderRows < 1){
+
+    private List<String> readHeaders() throws InvalidFormatException, IOException {
+        if (numHeaderRows < 1) {
             throw new IndexOutOfBoundsException("This method is undefined for XLS files without header rows.");
         }
-        return (List<String>) sheet.getHeader(); //last header row is treated as the one that the data rows conform to.
-    }
-    public void switchToSheet(String name) {
-        try (var workbooks = WorkbookFactory.create(spreadsheet)) {
-            currentSheet = workbooks.getSheet(name);
-            currentSheet.getRow(0).forEach(cell -> {
-                columns.put(cell.getStringCellValue(), cell.getColumnIndex());
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
+        OPCPackage pkg = OPCPackage.open(this);
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        Sheet sheet = wb.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Iterator<Cell> cellIterator = row.cellIterator();
+        while (cellIterator.hasNext()) {
+            XSSFCell cell = (XSSFCell) cellIterator.next();
+            System.out.print(cell.getStringCellValue() + " ");
         }
+        return xlsContents.get(numHeaderRows - 1); //last header row is treated as the one that the data rows conform to.
     }
 
-    public String getCellData(String column, int row) {
-        var dataRow = currentSheet.getRow(row);
-        return getCellDataAsString(dataRow.getCell(columns.get(column)));
-    }
-
-    private String getCellDataAsString(Cell cell) {
-        switch (cell.getCellType()) {
-            case STRING:
-                cell.getStringCellValue();
-            case NUMERIC:
-                String.valueOf((int) cell.getNumericCellValue());
-            default: {
-            }
+    public ArrayList<ArrayList<String>> readAllFileContents() throws IOException, InvalidFormatException {
+        OPCPackage pkg = OPCPackage.open(this);
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        Sheet sheet = wb.getSheetAt(0);
+        ArrayList<ArrayList<String>> allFileContents = new ArrayList<>();
+        for (Row row : sheet) {
+            ArrayList<String> rowData = new ArrayList<>();
+            for (Cell cell : row) {
+                switch (cell.getCellType()) {
+                    case STRING:
+                        rowData.add(cell.getStringCellValue());
+                        break;
+                    case NUMERIC:
+                        rowData.add(String.valueOf(cell.getNumericCellValue()));
+                        break;
+                    case BOOLEAN:
+                        rowData.add(String.valueOf(cell.getBooleanCellValue()));
+                        break;
+                    default:
+                        rowData.add("");
+                }
         }
-        ;
-        return null;
+            allFileContents.add(rowData);
     }
-}
+        return allFileContents;
+    } }

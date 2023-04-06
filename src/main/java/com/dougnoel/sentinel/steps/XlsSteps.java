@@ -109,7 +109,7 @@ public class XlsSteps {
      * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
      */
     @Then("^I verify the (?:XLS|xls) file( do(?:es)? not)? (has|have|contains?) the value (.*) in the (.*) column and the (la|\\d+)(?:st|nd|rd|th) row$")
-    public static void verifyXlsCellHasValue(String assertion, String matchType, String textToMatch, String column, String rowNum) {
+    public static void verifyXlsCellHasValue(String assertion, String matchType, String textToMatch, String column, String rowNum) throws IOException, InvalidFormatException {
         XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
         int rowIndex = rowNum.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(rowNum);
