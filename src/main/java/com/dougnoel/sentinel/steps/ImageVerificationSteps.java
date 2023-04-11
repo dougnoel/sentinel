@@ -136,6 +136,7 @@ public class ImageVerificationSteps {
 		boolean didTheyMatch = comparisonResult.getImageComparisonState() == ImageComparisonState.MATCH;
 		if(didTheyMatch == negate) {
 			FileManager.saveImage(outputFolder, failureImageName, comparisonResult.getResult());
+			FileManager.saveImage(outputFolder, imageId + "_" + "EXPECTED" + appendToResult + ".png", comparisonImage);
 		}
 		else {
 			FileManager.saveImage(outputFolder, passedImageName, comparisonResult.getResult());
