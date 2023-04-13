@@ -3,8 +3,14 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.time.Duration;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,6 +54,15 @@ public class APISteps {
 	public static void setRequestBody(String body) {
 		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
         log.trace("Body passed: {}", body);
+	}
+
+	@Given("^I set the request body to upload a file from the location (.*?) as a multipart/form-data with the name (.*?)")
+	public static void setRequestBodyToMultipartFormDataForFileUpload(String fileToUploadPath, String multipartSegmentName) throws FileNotFoundException {
+		Path filePath = Path.of(fileToUploadPath);
+		String filename = filePath.getFileName().toString();
+		BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fileToUploadPath));
+		String boundary = RandomStringUtils.random(32, 0, 0, true, true, null, new SecureRandom());
+		APIManager.setMultipartFormDataBody(multipartSegmentName, boundary, inputStream, filename);
 	}
 
 	/**

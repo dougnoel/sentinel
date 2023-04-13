@@ -54,8 +54,7 @@ Feature: Verify and Edit CSVs
   @525A @csv
   Scenario: Edit specific row column values in a CSV file
     Given I navigate to the Downloads Test Page
-    When I click the csv download link
-      And I verify a new file is downloaded with the extension csv
+    When I verify that by clicking the csv download link a new file is downloaded with the extension csv
       And I find and open the last downloaded csv file with 1 header row
       And I set all values in the comment column to test in the CSV file
       And I set the value in the 2nd row of the comment column to me in the CSV file
@@ -67,8 +66,7 @@ Feature: Verify and Edit CSVs
   @525B @csv
   Scenario: Delete a row from a CSV file
     Given I navigate to the Downloads Test Page
-    When I click the csv download link
-      And I verify a new file is downloaded with the extension csv
+    When I verify that by clicking the csv download link a new file is downloaded with the extension csv
       And I find and open the last downloaded csv file with 1 header row
       And I set all values in the comment column to test in the CSV file
       And I set the value in the 2nd row of the comment column to me in the CSV file
