@@ -128,3 +128,15 @@ Feature: 89 API Testing
     When I send a GET request to the pet/findByStatus endpoint
     Then I verify the response code equals 200
       And I validate the response contains the text "sold"
+
+  @89J @513
+  Scenario: 89J / 513 Attempt to send multipart/form-data request and observe bad request response
+    Given I use the API named Pet Store API
+    When I set the request body to upload a file from the location src/test/java/images/eclipse_tool_bar_icon_run.png as a multipart/form-data with the name file
+      And I add an additionalMetadata parameter with the value {"source": "sentinel"}
+      And I initialize the configuration values as follows
+    """
+    id: 10
+    """
+      And I send a POST request to the pet/{id}/uploadImage endpoint
+    Then I verify the response code equals 415
