@@ -39,6 +39,10 @@ Feature: Table Tests
       And I verify the cell in the last row and the City column of the Example table does not contain the text boston
       And I verify all cells in the City column in the Example table are not empty
       And I verify the First Name column in the Example table is displayed to the left of the Last Name column
+      And I wait for all cells in the Last Name column of the Example table to have the text Smith
+      And I wait for all cells in the Last Name column of the Example table to not have the text Smit
+      And I wait for all cells in the Zip Code column of the Example table to contain the text 1
+      And I wait for all cells in the City column of the Example table to not contain the text Z
     	
   @#44 @link-tests
   Scenario: Testing links inside tables using chaining locators
@@ -103,6 +107,7 @@ Feature: Table Tests
       And I verify the row in the updatable table with the value entered for the update last name input contains the xpath .//td[.='2']
       And I verify the row in the updatable table with the value entered for the update last name input does not contains the xpath .//td[.='1']
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to contains the text test
+      And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
       And I wait for the cell in the 2nd row and the Last Name column of the updatable table to not have the text sentinel
 
   @table-element-clickable
