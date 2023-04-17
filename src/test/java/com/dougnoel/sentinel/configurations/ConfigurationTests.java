@@ -3,10 +3,7 @@ package com.dougnoel.sentinel.configurations;
 import static org.junit.Assert.*;
 
 import com.dougnoel.sentinel.strings.SentinelStringUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import com.dougnoel.sentinel.exceptions.FileException;
 import com.dougnoel.sentinel.pages.PageManager;
@@ -39,6 +36,7 @@ public class ConfigurationTests {
     private static final String MAC = "mac";
     private static final String WINDOWS = "windows";
     private static final String TEST_VALUE = "test_value";
+	private static final String TEST_PREFIX = "counting_test";
 	
 	@BeforeClass
 	public static void setUpBeforeAnyTestsAreRun() {
@@ -261,5 +259,35 @@ public class ConfigurationTests {
 		Configuration.clearAllSessionAppProps();
 		assertEquals(SentinelStringUtils.format("Expecting {} to still be set after all config values cleared.", TEST_VALUE),
 				"1234", Configuration.toString(TEST_VALUE));
+	}
+
+	@Test
+	public void countNumberOfStoredVariablesInConfigAppPropsAfterReset(){
+		Configuration.clearAllSessionAppProps();
+		Assert.assertEquals(
+				SentinelStringUtils.format("Expected to find 0 existing properties in the Configuration with the prefix {}", TEST_PREFIX),
+				0L, Configuration.getNumberOfPropertiesWithPrefix(TEST_PREFIX));
+	}
+
+	@Test
+	public void countNumberOfStoredVariablesInConfigAppPropsAfterAdditions(){
+		Configuration.clearAllSessionAppProps();
+		Configuration.update(TEST_PREFIX, "0");
+		Configuration.update(TEST_PREFIX + "1", "1");
+		Configuration.update(TEST_PREFIX + "2", "2");
+		Assert.assertEquals(
+				SentinelStringUtils.format("Expected to find 3 existing properties in the Configuration with the prefix {}", TEST_PREFIX),
+				3L, Configuration.getNumberOfPropertiesWithPrefix(TEST_PREFIX));
+	}
+
+	@Test
+	public void countNumberOfStoredVariablesInConfigAppPropsAfterUpdate(){
+		Configuration.clearAllSessionAppProps();
+		Configuration.update(TEST_PREFIX, "0");
+		Configuration.update(TEST_PREFIX + "1", "1");
+		Configuration.update(TEST_PREFIX + "1", "2");
+		Assert.assertEquals(
+				SentinelStringUtils.format("Expected to find 2 existing properties in the Configuration with the prefix {}", TEST_PREFIX),
+				2L, Configuration.getNumberOfPropertiesWithPrefix(TEST_PREFIX));
 	}
 }
