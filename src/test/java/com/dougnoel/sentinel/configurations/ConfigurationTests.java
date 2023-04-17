@@ -265,8 +265,8 @@ public class ConfigurationTests {
 	public void countNumberOfStoredVariablesInConfigAppPropsAfterReset(){
 		Configuration.clearAllSessionAppProps();
 		Assert.assertEquals(
-				SentinelStringUtils.format("Expected to find 0 existing properties in the Configuration with the prefix {}", TEST_PREFIX),
-				0L, Configuration.getNumberOfPropertiesWithPrefix(TEST_PREFIX));
+				SentinelStringUtils.format("Expected to find 0 existing properties in the Configuration with the prefix {}", ENV),
+				0L, Configuration.getNumberOfPropertiesWithPrefix(ENV));
 	}
 
 	@Test
