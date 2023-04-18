@@ -365,6 +365,22 @@ public class ElementTests {
                 table.waitForSpecificCellToContain(1, "Last Name", 1, "Smith", true, true));
     }
 
+    @Test
+    public void waitForAllTableCellsToHaveFailure(){
+        BaseSteps.navigateToPage("TablePage");
+        var table = ElementFunctions.getElementAsTable("example table");
+        Assert.assertFalse("Timed out waiting for all cells in the Last Name column to have the text Jones",
+                table.waitForAllRowsInColumnToContain(1, "Last Name", "Jones", false, false));
+    }
+
+    @Test
+    public void waitForAllTableCellsToHaveExpectFalseFailure(){
+        BaseSteps.navigateToPage("TablePage");
+        var table = ElementFunctions.getElementAsTable("example table");
+        Assert.assertFalse("Timed out waiting for all cells in the Last Name column to not contain the text Smith",
+                table.waitForAllRowsInColumnToContain(1, "Last Name", "Smith", true, true));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void compareTableColumnValuesWithInvalidComparisonType() {
         BaseSteps.navigateToPage("TablePage");

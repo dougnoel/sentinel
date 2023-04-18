@@ -420,6 +420,34 @@ public class TableVerificationSteps {
     }
 
     /**
+     * Refreshes the page, waiting the configured time (given by the longProcessTimeout "-DlongProcessTimeout") for the table to contain the given value in all rows in the given column.
+     * By default, the longProcessTimeout is 60 seconds.
+     * <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I wait for all cells in the Status column of the User table to have the text Disabled</li>
+     * <li>I wait for all cells in the Status column of the ID table to not contain the text 123</li>
+     * </ul>
+     * @param columnName String column of the cell to check.
+     * @param tableName String name of the table.
+     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
+     * @param matchType String whether we are doing an exact match or a partial match.
+     * @param textToMatch String the text to look for in the column.
+     */
+    @Then("^I wait for all cells in the (.*) column of the (.*?) to( not)? (has|have|contains?) the text (.*?)$")
+    public static void waitForSpecificCellToHaveText(String columnName, String tableName, String assertion, String matchType, String textToMatch){
+        boolean negate = !StringUtils.isEmpty(assertion);
+        Table table = getElementAsTable(tableName);
+        boolean partialMatch = matchType.contains(CONTAIN);
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected all cells in the {} column of the {} to {}contain the text {}.",
+                columnName, tableName, (negate ? "not " : ""), textToMatch);
+        log.trace(expectedResult);
+        Assert.assertTrue(expectedResult, table.waitForAllRowsInColumnToContain((int)Time.longProcessTimeout().toSeconds(), columnName, textToMatch, partialMatch, negate));
+    }
+
+    /**
      * Verifies all values in the given column are in the given state relative to the given referenceNumber, using the given comparisonType.
      * Assumes all values in the given column are numeric, and able to be converted to double.
      *
