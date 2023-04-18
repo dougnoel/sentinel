@@ -18,6 +18,8 @@ import java.nio.file.Path;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 
 public class XlsSteps {
@@ -30,7 +32,7 @@ public class XlsSteps {
      * <br>
      * <b>Gherkin Examples:</b>
      * <ul>
-     *     <li>I open the last downloaded XLS file with 3 header rows</li>
+     *     <li>I find and open the last downloaded XLS file with 3 header rows</li>
      *     <li>I open the last downloaded XLS file with 1 header row</li>
      * </ul>
      *
@@ -68,30 +70,6 @@ public class XlsSteps {
         FileManager.setCurrentTestFile(new XlsFile(Path.of(filePath), numHeaderRows));
     }
 
-//    /**
-//     * Edits the current XLS file, setting every cell in the given column to the given value.
-//     * <br>
-//     * <b>Gherkin Example:</b>
-//     * <ul>
-//     *     <li>I set all values in the Title column to Sunny in the XLS file</li>
-//     * </ul>
-//     *
-//     * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
-//     * @param desiredValue String the value to set each cell to.
-//     */
-//    @When("^I set all values in the (.*) column to (.*) in the (?:XLS|xls) file$")
-//    public static void setAllColumnValuesInXlsFile(String column, String desiredValue){
-//        XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
-//
-//        String firstColumnCharacter = column.substring(0, 1);
-//        if(StringUtils.isNumeric(firstColumnCharacter)){
-//            file.writeAllCellsInXlsColumn(SentinelStringUtils.parseOrdinal(column), desiredValue);
-//        }
-//        else{
-//            file.writeAllCellsInXlsColumn(column, desiredValue);
-//        }
-//    }
-//
     /**
      * Verifies the current XLS file has or does not have the given text in the given column and given row.
      *
@@ -136,48 +114,48 @@ public class XlsSteps {
             }
         }
     }
-//
-//    /**
-//     * Verifies all / not all cells in the given column of the current CSV file have / contain the given text value.
-//     * <br>
-//     * <b>Gherkin Examples:</b>
-//     * <ul>
-//     *     <li>I verify all cells in the Name column in the csv file have the value Sonny</li>
-//     *     <li>I verify not all cells in the Surname column in the csv file contain the value List</li>
-//     * </ul>
-//     *
-//     * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
-//     * @param assertion String if null is passed, looks for all cells to have/contain the value. If " not", looks for at least one cell to NOT have/contain the value.
-//     * @param matchType String whether we are doing an exact match or a partial match.
-//     * @param textToMatch String the text to look for in the cell.
-//     */
-//    @Then("^I verify( not)? all cells in the the (.*) column (?:of|in) the (?:XLS|xls) file (has|have|contains?) the value (.*)$")
-//    public static void verifyXlsAllColumnCellsHaveValue(String assertion, String column, String matchType, String textToMatch){
-//        XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
-//        boolean negate = !StringUtils.isEmpty(assertion);
-//        boolean partialMatch = matchType.contains(CONTAIN);
-//
-//        var expectedResult = SentinelStringUtils.format(
-//                "Expected all cells in the {} column of the CSV file to {}contain the text {}.",
-//                            column, (negate ? "not " : ""), textToMatch);
-//        log.trace(expectedResult);
-//
-//        String firstColumnCharacter = column.substring(0, 1);
-//        if(StringUtils.isNumeric(firstColumnCharacter)){
-//            if (negate) {
-//                assertFalse(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
-//            } else {
-//                assertTrue(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
-//            }
-//        }
-//        else{
-//            if (negate) {
-//                assertFalse(expectedResult, file.verifyAllColumnCellsContain(column, textToMatch, partialMatch));
-//            } else {
-//                assertTrue(expectedResult, file.verifyAllColumnCellsContain(column, textToMatch, partialMatch));
-//            }
-//        }
-//    }
+
+    /**
+     * Verifies all / not all cells in the given column of the current CSV file have / contain the given text value.
+     * <br>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     *     <li>I verify all cells in the Name column in the csv file have the value Sonny</li>
+     *     <li>I verify not all cells in the Surname column in the csv file contain the value List</li>
+     * </ul>
+     *
+     * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
+     * @param assertion String if null is passed, looks for all cells to have/contain the value. If " not", looks for at least one cell to NOT have/contain the value.
+     * @param matchType String whether we are doing an exact match or a partial match.
+     * @param textToMatch String the text to look for in the cell.
+     */
+    @Then("^I verify( not)? all cells in the the (.*) column (?:of|in) the (?:XLS|xls) file (has|have|contains?) the value (.*)$")
+    public static void verifyXlsAllColumnCellsHaveValue(String assertion, String column, String matchType, String textToMatch) throws IOException, InvalidFormatException {
+        XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
+        boolean negate = !StringUtils.isEmpty(assertion);
+        boolean partialMatch = matchType.contains(CONTAIN);
+
+        var expectedResult = SentinelStringUtils.format(
+                "Expected all cells in the {} column of the XLS file to {}contain the text {}.",
+                column, (negate ? "not " : ""), textToMatch);
+        log.trace(expectedResult);
+
+        String firstColumnCharacter = column.substring(0, 1);
+        if(StringUtils.isNumeric(firstColumnCharacter)){
+            if (negate) {
+                assertFalse(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+            } else {
+                assertTrue(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+            }
+        }
+        else{
+            if (negate) {
+                assertFalse(expectedResult, file.verifyAllColumnCellsContain(column, textToMatch, partialMatch));
+            } else {
+                assertTrue(expectedResult, file.verifyAllColumnCellsContain(column, textToMatch, partialMatch));
+            }
+        }
+    }
 
 //    /**
 //     * Verifies all cells in the csv column are or are not empty. If checking that all column cells are empty, this method will assert that every cell is empty.
@@ -224,15 +202,15 @@ public class XlsSteps {
 //     * <p>
 //     * <b>Gherkin Examples:</b>
 //     * <ul>
-//     * <li>I verify the csv contains the Phone Number column</li>
-//     * <li>I verify the CSV does not contain a Deductible column</li>
+//     * <li>I verify the xls contains the Phone Number column</li>
+//     * <li>I verify the XLS does not contain a Deductible column</li>
 //     * </ul>
 //     * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
 //     * @param matchType String whether we are doing an exact match or a partial match
 //     * @param columnName String name of the column to verify
 //     */
-//    public static void verifyCsvColumnExists(String assertion, String matchType, String columnName) {
-//        CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
+//    public static void verifyXlsColumnExists(String assertion, String matchType, String columnName) {
+//        XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
 //        boolean negate = !StringUtils.isEmpty(assertion);
 //        String negateText = negate ? "not " : "";
 //        boolean partialMatch = matchType.contains(CONTAIN);
@@ -262,7 +240,7 @@ public class XlsSteps {
 //     * @param assertion String Assertion dictating if we are checking if the column does contain or does not contain
 //     * @param key String the key to retrieve the text to match from the configuration manager
 //     */
-//    @Then("^I verify the (.*?) column of the (?:csv|CSV)( do(?:es)? not)? (has|have|contains?) the same text (?:entered|selected|used) for the (.*)$")
+//    @Then("^I verify the (.*?) column of the (?:xls|XLS)( do(?:es)? not)? (has|have|contains?) the same text (?:entered|selected|used) for the (.*)$")
 //    public static void verifyStoredTextAppearsInColumn(String column, String assertion, String matchType, String key) {
 //        var textToMatch = Configuration.toString(key);
 //        String errorMessage = SentinelStringUtils.format("No previously stored text was found for the \"{}\" key.", key);
@@ -270,7 +248,7 @@ public class XlsSteps {
 //
 //        verifyTextAppearsInColumn(column, assertion, matchType, textToMatch);
 //    }
-//
+
 //    /**
 //     * Verifies a csv column does or does not contain text. Can be partial or exact match.
 //     * <p>
