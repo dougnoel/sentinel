@@ -10,14 +10,10 @@ Feature: Verify and Edit XLSs
       And I navigate to the Upload Page
     When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 1 header rows
     Then I verify the XLS file has the value Peter in the FirstName column and the 2nd row
-#      And I verify the CSV file contains the value Truman in the surname column and the 4th row
-#      And I verify the CSV file does not have the value Truman in the surname column and the 0th row
-#      And I verify the CSV file does not contain the value Truman in the surname column and the 0th row
-#      And I verify the surname column of the csv contains the same text entered for the last name field
-#      And I verify the 3rd column of the csv contains the same text entered for the last name field
-#      And I verify the 1st column of the csv does not contain the same text entered for the last name field
-#      And I verify the 4th column of the csv does not contain the same text entered for the last name field
-#      And I verify all cells in the the surname column of the csv file contain the value Trum
+      And I verify the XLS file contains the value Paul in the FirstName column and the 1st row
+      And I verify the XLS file does not have the value Mary in the FirstName column and the 0th row
+      And I verify the XLS file does not contain the value Rudd in the FirstName column and the 1st row
+      And I verify not all cells in the the FirstName column of the xls file contain the value Pete
 #      And I verify not all cells in the the surname column of the csv file contain the value William
 #      And I verify the csv has 4 data row
 #      And I verify the csv contains the comm column
