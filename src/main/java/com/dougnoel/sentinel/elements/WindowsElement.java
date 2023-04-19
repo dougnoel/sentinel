@@ -49,7 +49,7 @@ public class WindowsElement extends Element {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			WindowsElement element = (WindowsElement)findElementInCurrentFrame();
+			WebElement element = findElementInCurrentFrame();
 			try {
 				if (element == null || !(element.isDisplayed())) {
 					log.trace("doesNotExist() return result: true");

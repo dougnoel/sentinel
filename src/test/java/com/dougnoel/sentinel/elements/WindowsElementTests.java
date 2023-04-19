@@ -1,6 +1,8 @@
 package com.dougnoel.sentinel.elements;
 
 import static com.dougnoel.sentinel.elements.ElementFunctions.getElement;
+import static org.junit.Assert.assertFalse;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,6 +49,11 @@ public class WindowsElementTests {
 	@Test(expected = InvalidSelectorException.class)
 	public void BadSelector() {
 		getElement("bad_selector");
+	}
+
+	@Test()
+	public void doesNotExistForElementThatExists(){
+		assertFalse("Expected element to exist.", getElement("file menu dropdown").doesNotExist());
 	}
 	
 }

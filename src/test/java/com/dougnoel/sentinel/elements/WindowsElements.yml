@@ -9,3 +9,5 @@ elements:
     xpath: "lastName"
   bad_selector:
     bad: "blah"
+  file_menu_dropdown:
+    name: File
