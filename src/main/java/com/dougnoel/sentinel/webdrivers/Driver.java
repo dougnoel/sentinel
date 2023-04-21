@@ -85,6 +85,10 @@ public class Driver {
 		getSentinelDriver().goToTitledWindow(title);
 	}
 
+	public static void goToTitledWindowThatContains(String titleContains) {
+		getSentinelDriver().goToTitledWindowThatContains(titleContains);
+	}
+
 	/**
 	 * Checks if a window is found within the session
 	 * @param title String the title of the window to check for

@@ -54,6 +54,10 @@ public class SentinelDriver {
 		windows.goToTitledWindow(title);
 	}
 
+	protected void goToTitledWindowThatContains(String titleContains) {
+		windows.goToTitledWindowThatContains(titleContains);
+	}
+
 	/**
 	 * Checks if a window is found within the session
 	 * @param title String the title of the window to check for

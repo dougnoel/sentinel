@@ -98,7 +98,7 @@ public class WindowList {
 	 * @param title the title of the window to get the handle of
 	 * @return the handle of the window that has the title expected
 	 */
-	private String getHandleFromTitle(String title) {
+	private String getHandleFromTitle(String title, boolean contains) {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 
@@ -109,8 +109,14 @@ public class WindowList {
 			for (String handle : windowHandles) {
 				try {
 					driver.switchTo().window(handle);
-					if (driver.getTitle().equals(title))
-						return handle;
+					if (contains) {
+						if (driver.getTitle().contains(title))
+							return handle;
+					}
+					else {
+						if (driver.getTitle().equals(title))
+							return handle;
+					}
 				} catch (Exception e) {
 					//Catch if the window changes while we're looking
 				}
@@ -196,7 +202,11 @@ public class WindowList {
 	 * @param title String the title of the window to go to
 	 */
 	protected void goToTitledWindow(String title) {
-		driver.switchTo().window(getHandleFromTitle(title));
+		driver.switchTo().window(getHandleFromTitle(title, false));
+	}
+
+	protected void goToTitledWindowThatContains(String titleContains) {
+		driver.switchTo().window(getHandleFromTitle(titleContains, true));
 	}
 
     /**
