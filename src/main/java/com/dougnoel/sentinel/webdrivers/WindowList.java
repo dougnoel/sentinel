@@ -38,6 +38,14 @@ public class WindowList {
     }
 
 	/**
+	 * Checks for added or removed windows so the list is up-to-date.
+	 */
+	private void refreshWindows(){
+		addNewWindows();
+		pruneClosedWindows();
+	}
+
+	/**
 	 * Search the driver for all windows and add any that don't exist.
 	 *
 	 * @return int Returns the number of added windows
@@ -161,6 +169,7 @@ public class WindowList {
      */
     protected void closeCurrentWindow() {
     	driver.close();
+		pruneClosedWindows();
     	try {
     		goToPreviousWindow();
     	} catch (NoSuchWindowException nswe) {
@@ -202,11 +211,21 @@ public class WindowList {
 	 * @param title String the title of the window to go to
 	 */
 	protected void goToTitledWindow(String title) {
-		driver.switchTo().window(getHandleFromTitle(title, false));
+		refreshWindows();
+		String windowHandle = getHandleFromTitle(title, false);
+		driver.switchTo().window(windowHandle);
+		currentWindow = windowHandles.indexOf(windowHandle);
 	}
 
+	/**
+	 * Switches to the window whose title contains the string passed
+	 * @param titleContains String the partial title window to search for and switch to
+	 */
 	protected void goToTitledWindowThatContains(String titleContains) {
-		driver.switchTo().window(getHandleFromTitle(titleContains, true));
+		refreshWindows();
+		String windowHandle = getHandleFromTitle(titleContains, true);
+		driver.switchTo().window(windowHandle);
+		currentWindow = windowHandles.indexOf(windowHandle);
 	}
 
     /**

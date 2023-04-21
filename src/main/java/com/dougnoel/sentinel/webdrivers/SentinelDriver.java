@@ -54,6 +54,10 @@ public class SentinelDriver {
 		windows.goToTitledWindow(title);
 	}
 
+	/**
+	 * Wait for, and go to, the window with the title that contains the given string.
+	 * @param titleContains
+	 */
 	protected void goToTitledWindowThatContains(String titleContains) {
 		windows.goToTitledWindowThatContains(titleContains);
 	}

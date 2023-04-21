@@ -90,10 +90,16 @@ public class WindowAndTabSteps {
     	PageManager.waitForPageLoad();
     }
 
-    @Then("^I look for a window title that contains the same text used in the (.*?) for the (.*?)$")
-    public static void switchToContains(String configurationName, String pageName) throws InterruptedException {
+    /**
+     * Opens the given pageName in an existing window that has a title containing the previously-used text.
+     * @param pageName String name of the page to switch to.
+     * @param key String the name of the element where the text was previously used, or the configuration variable used to lookup the stored value.
+     * @throws InterruptedException if the thread gets interrupted.
+     */
+    @Then("^I look for and switch to a window on the (.*) with a title that contains the same text used in the (.*?)$")
+    public static void switchToContains(String pageName, String key) throws InterruptedException {
         PageManager.setPage(pageName);
-        String configurationValue = Configuration.toString(configurationName);
+        String configurationValue = Configuration.toString(key);
         if (!StringUtils.isEmpty(configurationValue))
             Driver.goToTitledWindowThatContains(configurationValue);
 

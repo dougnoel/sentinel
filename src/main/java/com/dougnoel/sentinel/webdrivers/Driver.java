@@ -79,12 +79,17 @@ public class Driver {
 	}
 
 	/**
-	 * Sets the window that the driver will be using by handle/title
+	 * Sets the window that the driver will be using by title.
+	 * @param title String the title of the window to switch to.
 	 */
 	public static void goToTitledWindow(String title) {
 		getSentinelDriver().goToTitledWindow(title);
 	}
 
+	/**
+	 * Sets the window that the driver will be using by title. The window this method switches to will be the first it finds whose title contains the given string.
+	 * @param titleContains String the partial title of the window to switch to.
+	 */
 	public static void goToTitledWindowThatContains(String titleContains) {
 		getSentinelDriver().goToTitledWindowThatContains(titleContains);
 	}
