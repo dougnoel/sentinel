@@ -8,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Keeps track of all windows a driver has open and which one the user is currently on.
