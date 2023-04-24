@@ -265,8 +265,7 @@ public class WindowList {
 	 * @return true if a window is found that has the title passed as the string
 	 */
 	protected boolean doesWindowExist(String title) {
-		pruneClosedWindows();
-		addNewWindows();
+		refreshWindows();
 		for (String handle : windowHandles) {
 			driver.switchTo().window(handle);
 			if (driver.getTitle().equals(title))

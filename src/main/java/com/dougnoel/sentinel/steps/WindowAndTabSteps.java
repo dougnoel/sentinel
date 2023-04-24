@@ -93,7 +93,8 @@ public class WindowAndTabSteps {
     /**
      * Opens the given pageName in an existing window that has a title containing the previously-used text.
      * <p></p>
-     * <ul><b>Gherkin Examples:</b>
+     * <b>Gherkin Examples:</b>
+     * <ul>
      * <li>I look for and switch to a window on the Presidents Page with a title that contains the same text used for the preferences input</li>
      * <li>I look for and switch to a window on the Presidents Page with a title that contains the same text entered in the preferences input</li>
      * </ul>
