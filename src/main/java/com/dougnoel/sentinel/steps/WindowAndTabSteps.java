@@ -92,11 +92,16 @@ public class WindowAndTabSteps {
 
     /**
      * Opens the given pageName in an existing window that has a title containing the previously-used text.
+     * <p></p>
+     * <ul><b>Gherkin Examples:</b>
+     * <li>I look for and switch to a window on the Presidents Page with a title that contains the same text used for the preferences input</li>
+     * <li>I look for and switch to a window on the Presidents Page with a title that contains the same text entered in the preferences input</li>
+     * </ul>
      * @param pageName String name of the page to switch to.
      * @param key String the name of the element where the text was previously used, or the configuration variable used to lookup the stored value.
      * @throws InterruptedException if the thread gets interrupted.
      */
-    @Then("^I look for and switch to a window on the (.*) with a title that contains the same text used in the (.*?)$")
+    @Then("^I look for and switch to a window on the (.*) with a title that contains the same text (?:entered|used) (?:for|in) the (.*?)$")
     public static void switchToContains(String pageName, String key) throws InterruptedException {
         PageManager.setPage(pageName);
         String configurationValue = Configuration.toString(key);
