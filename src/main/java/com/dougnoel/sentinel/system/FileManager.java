@@ -4,14 +4,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import com.dougnoel.sentinel.files.TestFile;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import org.apache.commons.io.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -50,22 +53,34 @@ public class FileManager {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 	    return new String(encoded, StandardCharsets.UTF_8);
 	}
-	
+
 	/**
 	 * Returns the absolute path to the file searching the root directory of the project
 	 * and any sub directories.
-	 * 
+	 * If file is not found there, this method searches the java classpath for a file matching the given filename. This check encompasses all resources on the classpath.
+	 * See <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">official Oracle documentation</a>
+	 * and <a href="https://github.com/classgraph/classgraph">the github repo we use for classpath searching.</a>
 	 * @param fileName String the full (exact) name of file to be found
-	 * @return File the path of the file found
+	 * @return File the file found
 	 */
-	public static File findFilePath(String fileName)  {
+	public static File findFilePath(String fileName) {
 		File result = searchDirectory(new File("src" + File.separator), fileName);
 
-		if (result == null) {
-			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory or its subdirectories.", fileName);
-			throw new FileException(errorMessage, new FileNotFoundException(), new File(fileName));
+		if(result == null){
+			List<URL> resourceNames;
+			try (ScanResult scanResult = new ClassGraph().scan()) {
+				resourceNames = scanResult.getAllResources().getURLs();
+			}
+			Optional<URL> filePath = resourceNames.stream().filter(url -> (new File(url.getFile()).getName().equals(fileName))).findFirst();
+			if(filePath.isPresent()) {
+				result = new File(filePath.get().getPath());
+			}
 		}
 
+		if (result == null) {
+			var errorMessage = SentinelStringUtils.format("Failed to locate the {} file. Please ensure the file exists in the src directory or its subdirectories, or on the class path.", fileName);
+			throw new FileException(errorMessage, new FileNotFoundException(), new File(fileName));
+		}
 		return result;
 	}
 	
