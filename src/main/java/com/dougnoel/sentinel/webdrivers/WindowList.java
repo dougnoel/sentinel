@@ -7,12 +7,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Keeps track of all windows a driver has open and which one the user is currently on.
@@ -36,6 +31,14 @@ public class WindowList {
         addNewWindows();
         markCurrentWindow();
     }
+
+	/**
+	 * Checks for added or removed windows so the list is up-to-date.
+	 */
+	private void refreshWindows(){
+		addNewWindows();
+		pruneClosedWindows();
+	}
 
 	/**
 	 * Search the driver for all windows and add any that don't exist.
@@ -98,27 +101,61 @@ public class WindowList {
 	 * @param title the title of the window to get the handle of
 	 * @return the handle of the window that has the title expected
 	 */
-	private String getHandleFromTitle(String title) {
+	private String getHandleFromTitle(String title, boolean contains) {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			addNewWindows();
-			pruneClosedWindows();
-
-			for (String handle : windowHandles) {
-				try {
-					driver.switchTo().window(handle);
-					if (driver.getTitle().equals(title))
-						return handle;
-				} catch (Exception e) {
-					//Catch if the window changes while we're looking
-				}
+			refreshWindows();
+			String handleWithMatchingTitle = null;
+			if(contains){
+				handleWithMatchingTitle = searchForWindowByTitleContains(title);
 			}
+			else{
+				handleWithMatchingTitle = searchForWindowByTitleEquals(title);
+			}
+			if(handleWithMatchingTitle != null)
+				return handleWithMatchingTitle;
 		}
 
 		String errorMessage = SentinelStringUtils.format("A window with the title {} was not found within the timeout of {} seconds.", title, Time.out().getSeconds());
 		throw new NoSuchElementException(errorMessage);
+	}
+
+	/**
+	 * Searches through all open windows to find one with a title that contains the given string.
+	 * @param title String the title to search for in the windows.
+	 * @return String the handle of the window with the given string in the title. Null if no window found with a matching title.
+	 */
+	private String searchForWindowByTitleContains(String title){
+		for (String handle : windowHandles) {
+			try {
+				driver.switchTo().window(handle);
+				if (driver.getTitle().contains(title))
+					return handle;
+			} catch (Exception e) {
+				//Catch if the window changes while we're looking
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Searches through all open windows to find one with a title that equals the given string.
+	 * @param title String the title to search for in the windows.
+	 * @return String the handle of the window with the given string in the title. Null if no window found with a matching title.
+	 */
+	private String searchForWindowByTitleEquals(String title){
+		for (String handle : windowHandles) {
+			try {
+				driver.switchTo().window(handle);
+				if (driver.getTitle().equals(title))
+					return handle;
+			} catch (Exception e) {
+				//Catch if the window changes while we're looking
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -155,6 +192,7 @@ public class WindowList {
      */
     protected void closeCurrentWindow() {
     	driver.close();
+		pruneClosedWindows();
     	try {
     		goToPreviousWindow();
     	} catch (NoSuchWindowException nswe) {
@@ -196,7 +234,21 @@ public class WindowList {
 	 * @param title String the title of the window to go to
 	 */
 	protected void goToTitledWindow(String title) {
-		driver.switchTo().window(getHandleFromTitle(title));
+		refreshWindows();
+		String windowHandle = getHandleFromTitle(title, false);
+		driver.switchTo().window(windowHandle);
+		currentWindow = windowHandles.indexOf(windowHandle);
+	}
+
+	/**
+	 * Switches to the window whose title contains the string passed
+	 * @param titleContains String the partial title window to search for and switch to
+	 */
+	protected void goToTitledWindowThatContains(String titleContains) {
+		refreshWindows();
+		String windowHandle = getHandleFromTitle(titleContains, true);
+		driver.switchTo().window(windowHandle);
+		currentWindow = windowHandles.indexOf(windowHandle);
 	}
 
     /**
@@ -213,8 +265,7 @@ public class WindowList {
 	 * @return true if a window is found that has the title passed as the string
 	 */
 	protected boolean doesWindowExist(String title) {
-		pruneClosedWindows();
-		addNewWindows();
+		refreshWindows();
 		for (String handle : windowHandles) {
 			driver.switchTo().window(handle);
 			if (driver.getTitle().equals(title))

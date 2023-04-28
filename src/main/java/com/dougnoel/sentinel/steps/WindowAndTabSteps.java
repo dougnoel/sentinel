@@ -1,5 +1,6 @@
 package com.dougnoel.sentinel.steps;
 
+import com.dougnoel.sentinel.configurations.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import com.dougnoel.sentinel.pages.PageManager;
 import com.dougnoel.sentinel.webdrivers.Driver;
@@ -74,7 +75,7 @@ public class WindowAndTabSteps {
      * @param direction String (next|previous) window to open
      * @throws InterruptedException if the thread gets interrupted
      */
-    @Then("I (?:am redirected to|remain on|switch to) the (.*?)(?:with the title \"([^\"]*)\")?(?: o?i?n the (previous|next) (?:window|tab))?$")
+    @Then("^I (?:am redirected to|remain on|switch to) the (.*?)(?:with the title \"([^\"]*)\")?(?: o?i?n the (previous|next) (?:window|tab))?$")
     public static void switchTo(String pageName, String title, String direction) throws InterruptedException {
     	PageManager.setPage(pageName);
     	if (!StringUtils.isEmpty(direction)) {
@@ -87,5 +88,27 @@ public class WindowAndTabSteps {
             Driver.goToTitledWindow(title);
 
     	PageManager.waitForPageLoad();
+    }
+
+    /**
+     * Opens the given pageName in an existing window that has a title containing the previously-used text.
+     * <p></p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I look for and switch to a window on the Presidents Page with a title that contains the same text used for the preferences input</li>
+     * <li>I look for and switch to a window on the Presidents Page with a title that contains the same text entered in the preferences input</li>
+     * </ul>
+     * @param pageName String name of the page to switch to.
+     * @param key String the name of the element where the text was previously used, or the configuration variable used to lookup the stored value.
+     * @throws InterruptedException if the thread gets interrupted.
+     */
+    @Then("^I look for and switch to a window on the (.*) with a title that contains the same text (?:entered|used) (?:for|in) the (.*?)$")
+    public static void switchToContains(String pageName, String key) throws InterruptedException {
+        PageManager.setPage(pageName);
+        String configurationValue = Configuration.toString(key);
+        if (!StringUtils.isEmpty(configurationValue))
+            Driver.goToTitledWindowThatContains(configurationValue);
+
+        PageManager.waitForPageLoad();
     }
 }
