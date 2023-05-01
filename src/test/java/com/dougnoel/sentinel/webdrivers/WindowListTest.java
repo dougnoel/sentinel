@@ -6,6 +6,9 @@ import com.dougnoel.sentinel.steps.BaseSteps;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openqa.selenium.WebDriverException;
+
+import java.util.NoSuchElementException;
 
 import static com.dougnoel.sentinel.webdrivers.Driver.doesWindowExist;
 import static org.junit.Assert.assertFalse;
@@ -33,4 +36,15 @@ public class WindowListTest {
         assertFalse("Expecting window does not exist.", doesWindowExist("Lorem"));
     }
 
+    @Test(expected = NoSuchElementException.class)
+    public void tryToSwitchToNamedWindowThatDoesNotExist(){
+        BaseSteps.navigateToPage("InternetPage");
+        Driver.goToTitledWindow("Fake Page Title");
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void tryToSwitchToNamedWindowContainingTitleThatDoesNotExist(){
+        BaseSteps.navigateToPage("InternetPage");
+        Driver.goToTitledWindowThatContains("Fake Page Title");
+    }
 }

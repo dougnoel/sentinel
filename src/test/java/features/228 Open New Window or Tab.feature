@@ -24,3 +24,16 @@ Feature: 228 Open New Window or Tab.feature
   		And I verify the Header contains the text "Window Opened in a New Tab"
   	When I close the browser tab
   	Then I verify the Header contains the text "Demo - Open New Browser Window(s) using JavaScript"
+
+  @228C
+  Scenario: 228C Switch to new window that contains partial title
+  	Given I am on the Encode DNA Home Page
+	When I initialize the configuration values as follows
+    """
+    partial_tab_title: window.open()
+    """
+  	  And I click the Open New Window Button
+  	Then I look for and switch to a window on the EncodeDNA PopUp Window with a title that contains the same text used in the partial_tab_title
+  		And I verify the Header contains the text "A New Popup Window"
+  	When I close the browser window
+  	Then I verify the Header contains the text "Demo - Open New Browser Window(s) using JavaScript"
