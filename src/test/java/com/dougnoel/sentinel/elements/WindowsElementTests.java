@@ -54,11 +54,11 @@ public class WindowsElementTests {
 
 	@Test()
 	public void doesNotExistForElementThatExists(){
-		assertFalse("Expected element to exist.", getElement("file menu dropdown").doesNotExist());
+		assertFalse("Expected element to exist.", getElement("file menu dropdown").doesNotExist(false));
 	}
 
 	@Test
 	public void doesNotExistOnBadElement() {
-		assertTrue("Expecting element to not exist.", getElement("generic_id").doesNotExist());
+		assertTrue("Expecting element to not exist.", getElement("generic_id").doesNotExist(false));
 	}
 }

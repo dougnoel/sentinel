@@ -38,36 +38,6 @@ public class WindowsElement extends Element {
 	}
 
 	/**
-	 * Returns true if an element is neither found nor displayed otherwise false.
-	 * Will poll every selector on the page object in a loop until the timeout is reached.
-	 * This should be used when you expect an element to not be present and do not want
-	 * to slow down your tests waiting for the normal timeout time to expire.
-	 * @return boolean true if the element cannot be found, false if it is found
-	 */
-	@Override
-	public boolean doesNotExist() {
-		long searchTime = Time.out().getSeconds() * 1000;
-		long startTime = System.currentTimeMillis(); // fetch starting time
-		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			WebElement element = findElementInCurrentFrame();
-			try {
-				if (element == null || !(element.isDisplayed())) {
-					log.trace("doesNotExist() return result: true");
-					return true;
-				}
-			} catch (StaleElementReferenceException e) {
-				log.trace("doesNotExist() StaleElementException return result: true");
-				return true;
-			} catch(InvalidArgumentException | NoSuchWindowException e){
-				log.trace("Unable to determine existence of element. Retrying.");
-				return doesNotExist();
-			}
-		}
-		log.trace("doesNotExist() return result: false");
-		return false;
-	}
-
-	/**
 	 * Returns the Selenium WebElement if it can be found on the current page.
 	 * Provides late binding for elements so that the driver does not look for them
 	 * until they are called, at which point the driver should be on the correct
