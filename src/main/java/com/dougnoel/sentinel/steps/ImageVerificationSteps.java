@@ -134,13 +134,23 @@ public class ImageVerificationSteps {
 
 		//Write result to disk
 		boolean didTheyMatch = comparisonResult.getImageComparisonState() == ImageComparisonState.MATCH;
-		if(didTheyMatch == negate) {
+		if(didTheyMatch == negate)
 			FileManager.saveImage(outputFolder, failureImageName, comparisonResult.getResult());
-		}
-		else {
+		else
 			FileManager.saveImage(outputFolder, passedImageName, comparisonResult.getResult());
+
+		boolean debugBoolean = Configuration.toBoolean("debug");
+		if(debugBoolean) {
+			try {
+				FileManager.saveImage(outputFolder, imageId + "_" + "EXPECTED" + ".png", comparisonImage);
+				FileManager.saveImage(outputFolder, imageId + "_" + "ACTUAL" + ".png", currentStateImage);
+			}
+			catch(Exception e) {
+				String errorMessage = SentinelStringUtils.format("Debug mode was enabled, but an exception occurred parsing the setting. Ensure the passed value is 'true' or 'false'. Passed value {}. Exception {}", debugBoolean, e.getMessage());
+				log.error(errorMessage);
+			}
 		}
-        
+
         return didTheyMatch;
     }
 
