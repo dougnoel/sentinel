@@ -242,7 +242,7 @@ public class APISteps {
 	 *  I save the dog.0.id value from response as dogId
 	 */
 	@When("^I save the (.*?) value from response as (.*?)$")
-	public static void iSaveThe(String responseKey, String key) throws JsonProcessingException {
+	public static void iSaveTheResponseValue(String responseKey, String key) throws JsonProcessingException {
 		var response = APIManager.getResponse().getResponse();
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode json = objectMapper.readTree(response);
