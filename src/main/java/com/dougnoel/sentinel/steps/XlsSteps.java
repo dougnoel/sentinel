@@ -39,9 +39,9 @@ public class XlsSteps {
      * @param numHeaderRows int the number of header rows in the XLS file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location that the DownloadManager specifies.
      */
-    @When("^I find and open the last downloaded (?:XLS|xls) file with (\\d+) header rows?$")
-    public static void openMostRecentlyDownloadedFileAsXls(int numHeaderRows) throws IOException {
-        FileManager.setCurrentTestFile(new XlsFile(numHeaderRows));
+    @When("^I find and open the last downloaded (?:XLS|xls) file with (\\d+) sheets and on the (la|\\d+)(?:st|nd|rd|th) sheet it has (\\d+) header rows?$")
+    public static void openMostRecentlyDownloadedFileAsXls(int numSheet, int numHeaderRows, int sheetNum) throws IOException {
+        FileManager.setCurrentTestFile(new XlsFile(numSheet, numHeaderRows, sheetNum));
     }
 
     /**
@@ -50,15 +50,15 @@ public class XlsSteps {
      * <b>Gherkin Examples:</b>
      * <ul>
      *     <li>I open test file with 1 header as a XLS file with 1 header row</li>
-     *     <li>I open src/test/resources/xls/test_1header.xls as a CSV file with 0 header rows</li>
+     *     <li>I open src/test/resources/xls/test_1header.xlsx as a Xls file with 3 sheets and on the 1st sheet it has 1 header rows</li>
      * </ul>
      *
      * @param fileLocation String either the location of the file, given by a path, or the name of a testdata object in the current page object.
      * @param numHeaderRows int the number of header rows in the XLS file to test. Number of header rows must be declared in order to properly process the file.
      * @throws FileNotFoundException In the case that the file is not found in the location specified.
      */
-    @When("^I open (.*) as a (?:Xls|xls) file with (\\d+) header rows?$")
-    public static void openSpecificFileAsXls(String fileLocation, int numHeaderRows) throws IOException {
+    @When("^I open (.*) as a (?:Xls|xls) file with (\\d+) sheets and on the (la|\\d+)(?:st|nd|rd|th) sheet it has (\\d+) header rows?$")
+    public static void openSpecificFileAsXls(String fileLocation, int numSheet, int sheetNum, int numHeaderRows) throws IOException {
         String filePath;
         try{
             filePath = Configuration.getTestData(fileLocation.trim(), "fileLocation");
@@ -67,7 +67,7 @@ public class XlsSteps {
             filePath = fileLocation;
         }
 
-        FileManager.setCurrentTestFile(new XlsFile(Path.of(filePath), numHeaderRows));
+        FileManager.setCurrentTestFile(new XlsFile(Path.of(filePath), numSheet, sheetNum, numHeaderRows));
     }
 
     /**
@@ -76,41 +76,46 @@ public class XlsSteps {
      * <br>
      * <b>Gherkin Examples:</b>
      * <ul>
-     *     <li>I verify the xls file has the value Sonny in the Name column and the 3rd row</li>
-     *     <li>I verify the XLS file does not contain the value Liston in the Surname column and the last row</li>
+     *     <li>I verify the XLS file has on the 1st sheet the value Peter in the FirstName column and the 2nd row</li>
+     *     <li>I verify the XLS file contains on the 1st sheet the value Paul in the FirstName column and the 1st row</li>
+     *     <li>I verify the XLS file does not have on the 1st sheet the value Mary in the FirstName column and the 0th row</li>
+     *     <li>I verify the XLS file does not contain on the 1st sheet the value Rudd in the FirstName column and the 1st row</li>
+     *     <li>I verify the XLS file has on the last sheet the value Half-Life in the Title column and the 2nd row</li>
      * </ul>
      *
      * @param assertion String if null is passed, looks for match(es), if any strong value is passed, looks for the value to not exist.
      * @param matchType String whether we are doing an exact match or a partial match.
+     * @param sheetNum String the sheet number used. Can be "la" to specify the last row, or an integer.
      * @param textToMatch String the text to look for in the cell.
      * @param column String column the name of the column, or an ordinal (1st, 2nd, 25th, etc.).
      * @param rowNum String the row number. Can be "la" to specify the last row, or an integer.
      */
-    @Then("^I verify the (?:XLS|xls) file( do(?:es)? not)? (has|have|contains?) the value (.*) in the (.*) column and the (la|\\d+)(?:st|nd|rd|th) row$")
-    public static void verifyXlsCellHasValue(String assertion, String matchType, String textToMatch, String column, String rowNum) throws IOException, InvalidFormatException {
+    @Then("^I verify the (?:XLS|xls) file( do(?:es)? not)? (has|have|contains?) on the (la|\\d+)(?:st|nd|rd|th) sheet the value (.*) in the (.*) column and the (la|\\d+)(?:st|nd|rd|th) row$")
+    public static void verifyXlsCellHasValue(String assertion, String matchType, String sheetNum, String textToMatch, String column, String rowNum) throws IOException, InvalidFormatException {
         XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
         int rowIndex = rowNum.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(rowNum);
+        int sheetIndex = sheetNum.equals("la") ? file.getNumberOfSheets() : Integer.parseInt(sheetNum);
         boolean partialMatch = matchType.contains(CONTAIN);
 
         var expectedResult = SentinelStringUtils.format(
-                "Expected the cell in the {} row and the {} column of the XLS file to {}contain the text {}.",
-                SentinelStringUtils.ordinal(rowIndex), column, (negate ? "not " : ""), textToMatch);
+                "Expected the cell on the {} sheet on the {} row and the {} column of the XLS file to {}contain the text {}.",
+                SentinelStringUtils.ordinal(sheetIndex) ,SentinelStringUtils.ordinal(rowIndex), column, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
 
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+                assertNotNull(expectedResult, file.verifyCellDataContains(sheetIndex, rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             } else {
-                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+                assertNull(expectedResult, file.verifyCellDataContains(sheetIndex, rowIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
             if (negate) {
-                assertNotNull(expectedResult, file.verifyCellDataContains(rowIndex, column, textToMatch, partialMatch));
+                assertNotNull(expectedResult, file.verifyCellDataContains(sheetIndex, rowIndex, column, textToMatch, partialMatch));
             } else {
-                assertNull(expectedResult, file.verifyCellDataContains(rowIndex, column, textToMatch, partialMatch));
+                assertNull(expectedResult, file.verifyCellDataContains(sheetIndex, rowIndex, column, textToMatch, partialMatch));
             }
         }
     }
@@ -129,30 +134,31 @@ public class XlsSteps {
      * @param matchType String whether we are doing an exact match or a partial match.
      * @param textToMatch String the text to look for in the cell.
      */
-    @Then("^I verify( not)? all cells in the the (.*) column (?:of|in) the (?:XLS|xls) file (has|have|contains?) the value (.*)$")
-    public static void verifyXlsAllColumnCellsHaveValue(String assertion, String column, String matchType, String textToMatch) throws IOException, InvalidFormatException {
+    @Then("^I verify( not)? all cells in the (la|\\d+)(?:st|nd|rd|th) sheet on the (.*) column (?:of|in) the (?:XLS|xls) file (has|have|contains?) the value (.*)$")
+    public static void verifyXlsAllColumnCellsHaveValue(String assertion, String sheetNum, String column, String matchType, String textToMatch) throws IOException, InvalidFormatException {
         XlsFile file = (XlsFile) FileManager.getCurrentTestFile();
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains(CONTAIN);
+        int sheetIndex = sheetNum.equals("la") ? file.getNumberOfSheets() : Integer.parseInt(sheetNum);
 
         var expectedResult = SentinelStringUtils.format(
-                "Expected all cells in the {} column of the XLS file to {}contain the text {}.",
-                column, (negate ? "not " : ""), textToMatch);
+                "Expected all cells in the {} sheet on the {} column of the XLS file to {}contain the text {}.",
+                sheetIndex, column, (negate ? "not " : ""), textToMatch);
         log.trace(expectedResult);
 
         String firstColumnCharacter = column.substring(0, 1);
         if(StringUtils.isNumeric(firstColumnCharacter)){
             if (negate) {
-                assertFalse(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+                assertFalse(expectedResult, file.verifyAllColumnCellsContain(sheetIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             } else {
-                assertTrue(expectedResult, file.verifyAllColumnCellsContain(SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
+                assertTrue(expectedResult, file.verifyAllColumnCellsContain(sheetIndex, SentinelStringUtils.parseOrdinal(column), textToMatch, partialMatch));
             }
         }
         else{
             if (negate) {
-                assertFalse(expectedResult, file.verifyAllColumnCellsContain(column, textToMatch, partialMatch));
+                assertFalse(expectedResult, file.verifyAllColumnCellsContain(sheetIndex, column, textToMatch, partialMatch));
             } else {
-                assertTrue(expectedResult, file.verifyAllColumnCellsContain(column, textToMatch, partialMatch));
+                assertTrue(expectedResult, file.verifyAllColumnCellsContain(sheetIndex, column, textToMatch, partialMatch));
             }
         }
     }

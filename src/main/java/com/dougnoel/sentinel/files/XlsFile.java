@@ -30,6 +30,8 @@ public class XlsFile extends TestFile {
     private static final int MY_MINIMUM_COLUMN_COUNT = 0;
 
     private int numHeaderRows;
+    private int numSheets;
+    private int sheetNum;
     private ArrayList<ArrayList<String>> xlsContents;
 
     /**
@@ -38,7 +40,7 @@ public class XlsFile extends TestFile {
      * @throws InvalidFormatException in the case that a file does not exist at that path.
      */
     public XlsFile() throws IOException, InvalidFormatException {
-        this(1);
+        this(0,0, 1);
         loadXlsFile();
     }
 
@@ -56,25 +58,30 @@ public class XlsFile extends TestFile {
      * @param numberOfHeaderRows Number of the header rows from the XLS file.
      * @throws IOException in the case that a file does not exist at that path.
      */
-    public XlsFile(int numberOfHeaderRows) throws IOException {
+    public XlsFile(int numberOfSheets,int sheetNumber, int numberOfHeaderRows) throws IOException {
         super();
+        numSheets = numberOfSheets -1;
         numHeaderRows = numberOfHeaderRows;
+        sheetNum = sheetNumber;
     }
 
+
     /**
-     * Create a XLS file configured with the given number of header rows from the CSV file at the most recently downloaded path.
+     * Create a XLS file configured with the given number of sheets and a given number of header rows from the XLS file at the most recently downloaded path.
      * @param pathToFile Path to the XLS file.
      * @param numberOfHeaderRows Number of the header rows from the XLS file.
      * @throws IOException in the case that a file does not exist at that path.
      */
-    public XlsFile(Path pathToFile, int numberOfHeaderRows) throws IOException {
+    public XlsFile(Path pathToFile,int numberOfSheets, int sheetNumber, int numberOfHeaderRows) throws IOException {
         super(pathToFile);
+        numSheets = numberOfSheets;
+        sheetNum = sheetNumber -1;
         numHeaderRows = numberOfHeaderRows;
         try (InputStream inp = new FileInputStream(pathToFile.toFile())) {
             if (pathToFile.toString().endsWith(".xls")) {
                 POIFSFileSystem fs = new POIFSFileSystem(inp);
                 HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
-                HSSFSheet sheet = wb.getSheetAt(0);
+                HSSFSheet sheet = wb.getSheetAt(sheetNum);
                 HSSFRow row = sheet.getRow(numHeaderRows);
                 HSSFCell cell = row.getCell(0);
                 if (cell != null)
@@ -86,7 +93,7 @@ public class XlsFile extends TestFile {
                 OPCPackage pkg = OPCPackage.open(inp);
                 XSSFWorkbook wb = new XSSFWorkbook(pkg);
                 {
-                    Sheet sheet = wb.getSheetAt(0);
+                    Sheet sheet = wb.getSheetAt(sheetNum);
                     Row row = sheet.getRow(numHeaderRows);
                     Cell cell = row.getCell(0);
                     if (cell != null)
@@ -122,6 +129,14 @@ public class XlsFile extends TestFile {
 
     /**
      *
+     * @return Number of sheets in a given spreadsheet
+     */
+    public int getNumberOfSheets(){
+        return sheetNum;
+    }
+
+    /**
+     *
      * @return
      * @throws IOException in the case that a file does not exist at that path.
      * @throws InvalidFormatException in the case that a file does not exist at that path.
@@ -144,8 +159,8 @@ public class XlsFile extends TestFile {
      * @throws IOException in the case that a file does not exist at that path.
      * @throws InvalidFormatException in the case that a file does not exist at that path.
      */
-    public String verifyCellDataContains(int rowIndex, String columnHeader, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
-        return verifyCellDataContains(rowIndex, getColumnIndex(columnHeader), textToMatch, partialMatch);
+    public String verifyCellDataContains(int sheetNumber, int rowIndex, String columnHeader, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
+        return verifyCellDataContains(sheetNumber, rowIndex, getColumnIndex(columnHeader), textToMatch, partialMatch);
     }
 
     /**
@@ -158,14 +173,19 @@ public class XlsFile extends TestFile {
      * @throws IOException in the case that a file does not exist at that path.
      * @throws InvalidFormatException in the case that a file does not exist at that path.
      */
-    public String verifyCellDataContains(int rowIndex, int columnIndex, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
-        var cell = readCellData(columnIndex, rowIndex);
+    public String verifyCellDataContains(int sheetNumber, int rowIndex, int columnIndex, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
+        var cell = readCellData(columnIndex, rowIndex, sheetNumber);
 
         if (partialMatch) {
             return StringUtils.contains(String.valueOf(cell), textToMatch) ? null : String.valueOf(cell);
         } else {
             return StringUtils.equals(String.valueOf(cell), textToMatch) ? null : String.valueOf(cell);
         }
+    }
+
+    private String readCellData(int columnIndex, int rowIndex, int sheetNumber) {
+        int adjustedColumnIndex = columnIndex - 1;
+        return readRowData(rowIndex).get(adjustedColumnIndex);
     }
 
     /**
@@ -176,6 +196,15 @@ public class XlsFile extends TestFile {
     public List<String> readRowData(int rowIndex) {
         int actualRowIndex = rowIndex - 1 + numHeaderRows;
         return xlsContents.get(actualRowIndex);
+    }
+
+    /**
+     *
+     * @param sheetNumber The sheet being used
+     * @return the Sheet index value
+     */
+    public List<String> readSheet(int sheetNumber) {
+        return xlsContents.get(sheetNumber);
     }
 
     /**
@@ -202,10 +231,9 @@ public class XlsFile extends TestFile {
     }
 
     /**
-     *
      * @param columnHeader
      * @return
-     * @throws IOException in the case that a file does not exist at that path.
+     * @throws IOException            in the case that a file does not exist at that path.
      * @throws InvalidFormatException in the case that a file does not exist at that path.
      */
     private int getColumnIndex(String columnHeader) throws IOException, InvalidFormatException {
@@ -224,7 +252,7 @@ public class XlsFile extends TestFile {
         }
         OPCPackage pkg = OPCPackage.open(this);
         XSSFWorkbook wb = new XSSFWorkbook(pkg);
-        Sheet sheet = wb.getSheetAt(0);
+        Sheet sheet = wb.getSheetAt(sheetNum);
         Row row = sheet.getRow(0);
         Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
@@ -243,7 +271,7 @@ public class XlsFile extends TestFile {
     public ArrayList<ArrayList<String>> readAllFileContents() throws IOException, InvalidFormatException {
         OPCPackage pkg = OPCPackage.open(this);
         XSSFWorkbook wb = new XSSFWorkbook(pkg);
-        Sheet sheet = wb.getSheetAt(0);
+        Sheet sheet = wb.getSheetAt(sheetNum);
         ArrayList<ArrayList<String>> allFileContents = new ArrayList<>();
         for (Row row : sheet) {
             ArrayList<String> rowData = new ArrayList<>();
@@ -275,9 +303,12 @@ public class XlsFile extends TestFile {
      * @param partialMatch boolean if true, method returns true if each cell contains the textToMatch. if false, method returns true if every cell equals the textToMatch.
      * @return boolean true if the column contains the given text in every cell, false if not
      */
-    public boolean verifyAllColumnCellsContain(String columnHeader, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
-             return verifyAllColumnCellsContain(getColumnIndex(columnHeader), textToMatch, partialMatch);
+    public boolean verifyAllColumnCellsContain(int sheetNumber, String columnHeader, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
+                sheetNum = sheetNumber -1;
+             return verifyAllColumnCellsContain(sheetNum,getColumnIndex(columnHeader), textToMatch, partialMatch);
     }
+
+
 
     /**
      * Returns true if all cells in the given column match the text value given.
@@ -287,8 +318,8 @@ public class XlsFile extends TestFile {
      * @param partialMatch boolean if true, method returns true if each cell contains the textToMatch. if false, method returns true if every cell equals the textToMatch.
      * @return boolean true if the column contains the given text in every cell, false if not
      */
-    public boolean verifyAllColumnCellsContain(int columnIndex, String textToMatch, boolean partialMatch){
-        var allColumnData = readAllCellDataForColumn(columnIndex);
+    public boolean verifyAllColumnCellsContain(int sheetNumber, int columnIndex, String textToMatch, boolean partialMatch){
+        var allColumnData = readAllCellDataForColumn(sheetNumber, columnIndex);
 
         if(partialMatch){
             return allColumnData.stream().allMatch(cell -> StringUtils.contains(cell, textToMatch));
@@ -304,7 +335,7 @@ public class XlsFile extends TestFile {
      * @return boolean true if all cells are empty, false otherwise (any cell has content).
      */
     public boolean verifyAllColumnCellsEmpty(String columnHeader) throws IOException, InvalidFormatException {
-        return verifyAllColumnCellsEmpty(getColumnIndex(columnHeader));
+        return verifyAllColumnCellsEmpty(String.valueOf(getColumnIndex(columnHeader)));
     }
 
     /**
@@ -312,8 +343,8 @@ public class XlsFile extends TestFile {
      * @param columnIndex int index of the column, starting at 1.
      * @return boolean true if all cells are empty, false otherwise (any cell has content).
      */
-    public boolean verifyAllColumnCellsEmpty(int columnIndex){
-        var allColumnData = readAllCellDataForColumn(columnIndex);
+    public boolean verifyAllColumnCellsEmpty(int columnIndex, int sheetNumber){
+        var allColumnData = readAllCellDataForColumn(columnIndex, sheetNumber);
         return allColumnData.stream().allMatch(StringUtils::isEmpty);
     }
 
@@ -323,7 +354,7 @@ public class XlsFile extends TestFile {
      * @return boolean true if all cells are not empty, false otherwise (any cell does not have content).
      */
     public boolean verifyAllColumnCellsNotEmpty(String columnHeader) throws IOException, InvalidFormatException {
-        return verifyAllColumnCellsNotEmpty(getColumnIndex(columnHeader));
+        return verifyAllColumnCellsNotEmpty(String.valueOf(getColumnIndex(columnHeader)));
     }
 
     /**
@@ -331,8 +362,8 @@ public class XlsFile extends TestFile {
      * @param columnIndex int index of the column, starting at 1.
      * @return boolean true if all cells are not empty, false otherwise (any cell does not have content).
      */
-    public boolean verifyAllColumnCellsNotEmpty(int columnIndex){
-        var allColumnData = readAllCellDataForColumn(columnIndex);
+    public boolean verifyAllColumnCellsNotEmpty(int columnIndex, int sheetNumber){
+        var allColumnData = readAllCellDataForColumn(columnIndex, sheetNumber);
         return allColumnData.stream().noneMatch(StringUtils::isEmpty);
     }
 
@@ -361,7 +392,7 @@ public class XlsFile extends TestFile {
      * @return boolean true if the column contains the given text in any cell, false if not
      */
     public boolean verifyAnyColumnCellContains(String columnHeader, String textToMatch, boolean partialMatch) throws IOException, InvalidFormatException {
-        return verifyAnyColumnCellContains(getColumnIndex(columnHeader), textToMatch, partialMatch);
+        return verifyAnyColumnCellContains(String.valueOf(getColumnIndex(columnHeader)), textToMatch, partialMatch);
     }
 
     /**
@@ -369,7 +400,7 @@ public class XlsFile extends TestFile {
      * @param columnIndex int index of the column, starting at 1.
      * @return ;List&lt;String&gt; consisting of a column's data.
      */
-    public List<String> readAllCellDataForColumn(int columnIndex){
+    public List<String> readAllCellDataForColumn(int columnIndex, int sheetNum){
         int adjustedColumnIndex = columnIndex - 1;
         List<String> allCellDataForColumn = new ArrayList<>();
         //skip header row(s), then add the column data from each row
@@ -385,8 +416,8 @@ public class XlsFile extends TestFile {
      * @param partialMatch boolean if true, method returns true if any cell contains the textToMatch. if false, method returns true if any cell equals the textToMatch.
      * @return boolean true if the column contains the given text in any cell, false if not
      */
-    public boolean verifyAnyColumnCellContains(int columnIndex, String textToMatch, boolean partialMatch){
-        var allColumnData = readAllCellDataForColumn(columnIndex);
+    public boolean verifyAnyColumnCellContains(int sheetNumber, int columnIndex, String textToMatch, boolean partialMatch){
+        var allColumnData = readAllCellDataForColumn(sheetNum, columnIndex);
 
         if(partialMatch){
             return allColumnData.stream().anyMatch(cell -> StringUtils.contains(cell, textToMatch));

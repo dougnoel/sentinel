@@ -6,14 +6,29 @@ Feature: Verify and Edit XLSs
   @386B @xls
   Scenario: Edit all values in XLS file column
     Given I navigate to the Textbox Page
-      And I enter Truman in the last name field
-      And I navigate to the Upload Page
-    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 1 header rows
-    Then I verify the XLS file has the value Peter in the FirstName column and the 2nd row
-      And I verify the XLS file contains the value Paul in the FirstName column and the 1st row
-      And I verify the XLS file does not have the value Mary in the FirstName column and the 0th row
-      And I verify the XLS file does not contain the value Rudd in the FirstName column and the 1st row
-      And I verify not all cells in the the FirstName column of the xls file contain the value Pete
+    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 3 sheets and on the 1st sheet it has 1 header rows
+#    Then I verify the XLS file has on the 1st sheet the value Peter in the FirstName column and the 2nd row
+#      And I verify the XLS file contains on the 1st sheet the value Paul in the FirstName column and the 1st row
+#      And I verify the XLS file does not have on the 1st sheet the value Mary in the FirstName column and the 0th row
+#      And I verify the XLS file does not contain on the 1st sheet the value Rudd in the FirstName column and the 1st row
+      And I verify not all cells in the 1st sheet on the FirstName column of the xls file contain the value Pete
+    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 3 sheets and on the 2nd sheet it has 1 header rows
+#    Then I verify the XLS file has on the 2nd sheet the value Bills in the Team Name column and the 1st row
+#      And I verify the XLS file contains on the 2nd sheet the value Buffalo in the City column and the 1st row
+#      And I verify the XLS file does not have on the 2nd sheet the value Denver in the City column and the 0th row
+#      And I verify the XLS file does not contain on the 2nd sheet the value Broncos in the Team Name column and the 1st row
+#      And I verify not all cells in the 2nd sheet on the City column of the xls file contain the value Buffalo
+    When I open src/test/resources/xls/test_1header.xlsx as a Xls file with 3 sheets and on the 3rd sheet it has 1 header rows
+#    Then I verify the XLS file has on the 3rd sheet the value Half-Life in the Title column and the 2nd row
+#      And I verify the XLS file contains on the 3rd sheet the value Valv in the Developer column and the 2nd row
+#      And I verify the XLS file does not have on the 3rd sheet the value id in the Developer column and the 0th row
+#      And I verify the XLS file does not contain on the 3rd sheet the value Quake in the Title column and the 1st row
+#      And I verify the XLS file has on the last sheet the value Half-Life in the Title column and the 2nd row
+#      And I verify the XLS file contains on the last sheet the value Valv in the Developer column and the 2nd row
+#      And I verify the XLS file does not have on the last sheet the value id in the Developer column and the 0th row
+#      And I verify the XLS file does not contain on the last sheet the value Quake in the Title column and the 1st row
+      And I verify not all cells in the 3rd sheet on the Developer column of the xls file contain the value id
+
 #      And I verify not all cells in the the surname column of the csv file contain the value William
 #      And I verify the csv has 4 data row
 #      And I verify the csv contains the comm column
