@@ -159,3 +159,8 @@ Feature: Table Tests
       And I find the 2nd row in the Example Table and enter the text 5.0 in the comment box
       And I find the 3rd row in the Example Table and enter the text 5.000 in the comment box
     Then I verify the Comment column in the Example Table contains unique values
+    When I press the browser refresh button
+      And I find the 1st row in the Example Table and enter the text 5.000 in the comment box
+      And I find the 2nd row in the Example Table and enter the text 5.0 in the comment box
+      And I find the 3rd row in the Example Table and enter the text 5 in the comment box
+    Then I verify the Comment column in the Example Table contains unique values
