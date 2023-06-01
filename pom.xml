@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dougnoel</groupId>
   <artifactId>sentinel</artifactId>
-  <version>1.0.12-SNAPSHOT</version>
+  <version>1.0.13-SNAPSHOT</version>
   <name>sentinel</name>
   <url>https://github.com/dougnoel/sentinel</url>
 
@@ -103,6 +103,7 @@
     <image-comparison.version>4.4.0</image-comparison.version>
     <pdfcompare.version>1.1.61</pdfcompare.version>
     <commons-csv.version>1.9.0</commons-csv.version>
+    <classgraph.version>4.8.157</classgraph.version>
     
     <screen-recorder.version>0.7.7.0</screen-recorder.version>
     
@@ -581,6 +582,12 @@
         </exclusions>
       </dependency>
 
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>${classgraph.version}</version>
+        </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -765,6 +772,11 @@
     <dependency>
       <groupId>de.redsix</groupId>
       <artifactId>pdfcompare</artifactId>
+    </dependency>
+
+    <dependency>
+       <groupId>io.github.classgraph</groupId>
+       <artifactId>classgraph</artifactId>
     </dependency>
     
   </dependencies>

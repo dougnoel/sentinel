@@ -77,7 +77,19 @@ public class DownloadManager {
      * @throws IOException if the file cannot be created.
      */
     public static String monitorDownload() throws InterruptedException, IOException {
-        return monitorDownload(downloadDirectory, fileExtension);
+        return monitorDownload(downloadDirectory, fileExtension, null);
+    }
+
+    /**
+     * Monitors the current set download directory, performs some action, and returns a filename once the
+     * file is downloaded.
+     * @param pageAction Runnable the action to perform after starting the monitoring of the download directory. This could be a click, or other step.
+     * @return String The name of the file that was downloaded.
+     * @throws InterruptedException if the file download is interrupted
+     * @throws IOException if the file cannot be created.
+     */
+    public static String monitorDownload(Runnable pageAction) throws InterruptedException, IOException {
+        return monitorDownload(downloadDirectory, fileExtension, pageAction);
     }
 
     /**
@@ -93,17 +105,18 @@ public class DownloadManager {
      * @throws InterruptedException if the thread is interrupted during download
      * @throws IOException if the file cannot be created.
      */
-    public static String monitorDownload(String downloadDir, String fileExtension) throws InterruptedException, IOException {
+    public static String monitorDownload(String downloadDir, String fileExtension, Runnable pageAction) throws InterruptedException, IOException {
         String downloadedFileName = null;
         var valid = true;
         
-        long timeOut = Time.longProcessTimeout().toSeconds();
+        long timeOut = Time.out().toSeconds();
         long loopTime = Time.loopInterval().toMillis();
         var downloadFolderPath = Paths.get(downloadDir);
         var watchService = FileSystems.getDefault().newWatchService();
         downloadFolderPath.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+        if(pageAction != null)
+            pageAction.run(); // perform page action after monitoring starts but before starting the waiting
         long startTime = System.currentTimeMillis();
-        
         do {
             WatchKey watchKey;
             watchKey = watchService.poll(timeOut, TimeUnit.SECONDS);

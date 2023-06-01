@@ -66,10 +66,77 @@ Feature: 89 API Testing
     Then I verify the response code equals 404
 
   @89F
-  Scenario: 89E DELETE Header Swagger Test
+  Scenario: 89F DELETE Header Swagger Test
     Given I use the API named Pet Store API
     When I add an api_key header with the value 123
     When I DELETE record 10 from the pet endpoint
     Then I verify the response code equals 200
     When I GET record 10 from the pet endpoint
     Then I verify the response code equals 404
+
+  @89G
+  Scenario: 89G Body With Parameters Test
+    Given I use the API named Pet Store API
+    When I initialize the configuration values as follows
+    """
+    id: 10
+    category_name: puppies
+    """
+    When I set the request body to
+    """
+    {
+	  "id": {id},
+	  "name": "puppy",
+	  "category": {
+	    "id": 1,
+	    "name": "{category_name}"
+	  },
+	  "photoUrls": [
+	    "string"
+	  ],
+	  "tags": [
+	    {
+	      "id": 0,
+	      "name": "string"
+	    }
+	  ],
+	  "status": "available"
+	}
+    """
+    And I send a POST request to the pet endpoint
+    Then I verify the response code equals 200
+    And I validate the response contains the text "puppy"
+
+  @89H
+  Scenario: 89H URL With Parameter Test
+    Given I use the API named Pet Store API
+    When I initialize the configuration values as follows
+    """
+    id: 10
+    """
+      And I send a GET request to the pet/{id} endpoint
+    Then I verify the response code equals 200
+
+  @89I
+  Scenario: 89I Query String Stored Parameter Test
+    Given I use the API named Pet Store API
+    When I initialize the configuration values as follows
+    """
+    dog_status: sold
+    """
+      And I add a status parameter with the value {dog_status}
+    When I send a GET request to the pet/findByStatus endpoint
+    Then I verify the response code equals 200
+      And I validate the response contains the text "sold"
+
+  @89J @513
+  Scenario: 89J / 513 Attempt to send multipart/form-data request and observe bad request response
+    Given I use the API named Pet Store API
+    When I set the request body to upload a file from the location src/test/java/images/eclipse_tool_bar_icon_run.png as a multipart/form-data with the name file
+      And I add an additionalMetadata parameter with the value {"source": "sentinel"}
+      And I initialize the configuration values as follows
+    """
+    id: 10
+    """
+      And I send a POST request to the pet/{id}/uploadImage endpoint
+    Then I verify the response code equals 415

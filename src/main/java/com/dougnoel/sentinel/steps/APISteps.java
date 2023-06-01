@@ -3,8 +3,14 @@ package com.dougnoel.sentinel.steps;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.time.Duration;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +41,7 @@ public class APISteps {
 	 * @param apiName name of the API object we want to use
 	 */
 	@Given("^I use the API named (.*?)$")
-	public void setAPI(String apiName) {
+	public static void setAPI(String apiName) {
         APIManager.setAPI(apiName);
 	}
 
@@ -45,9 +51,18 @@ public class APISteps {
 	 * @param body String the json to be passed as the body of the request.
 	 */
 	@Given("I set the request body to")
-	public void setRequestBody(String body) {
-        APIManager.setBody(body);
+	public static void setRequestBody(String body) {
+		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
         log.trace("Body passed: {}", body);
+	}
+
+	@Given("^I set the request body to upload a file from the location (.*?) as a multipart/form-data with the name (.*?)")
+	public static void setRequestBodyToMultipartFormDataForFileUpload(String fileToUploadPath, String multipartSegmentName) throws FileNotFoundException {
+		Path filePath = Path.of(fileToUploadPath);
+		String filename = filePath.getFileName().toString();
+		BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fileToUploadPath));
+		String boundary = RandomStringUtils.random(32, 0, 0, true, true, null, new SecureRandom());
+		APIManager.setMultipartFormDataBody(multipartSegmentName, boundary, inputStream, filename);
 	}
 
 	/**
@@ -57,7 +72,7 @@ public class APISteps {
 	 * @param testdataName String the name of the testdata entry to use
 	 */
 	@Given("^I load (.*?) to use as the request body$")
-	public void loadRequestBody(String testdataName) {
+	public static void loadRequestBody(String testdataName) {
 		String body = Configuration.getTestData(testdataName, "json");
         APIManager.setBody(body);
         log.trace("Body passed: {}", body);
@@ -79,8 +94,9 @@ public class APISteps {
 	 * @param value String the value to set it
 	 */
 	@When("^I add an? (.*?) parameter with the value (.*?)$")
-	public void addParameter(String parameter, String value) {
-		APIManager.addParameter(parameter, value);
+	public static void addParameter(String parameter, String value) {
+		APIManager.addParameter(parameter, SentinelStringUtils.replaceStoredVariables(value));
+
 	}
 	
 	/**
@@ -98,8 +114,8 @@ public class APISteps {
 	 * @param endpoint
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
-	public void sendRequest(String apiCallType, String endpoint) {
-		APIManager.sendRequest(RequestType.valueOf(apiCallType), endpoint);
+	public static void sendRequest(String apiCallType, String endpoint) {
+		APIManager.sendRequest(RequestType.valueOf(apiCallType), SentinelStringUtils.replaceStoredVariables(endpoint));
 	}
 	
 	/**
@@ -118,7 +134,7 @@ public class APISteps {
 	 * @param endpoint String the endpoint name as referenced in the swagger file
 	 */
 	@When("^I (DELETE|GET) record (.*) from the (.*?) endpoint$")
-	public void sendRequest(String apiCallType, String parameter, String endpoint) {
+	public static void sendRequest(String apiCallType, String parameter, String endpoint) {
 		sendRequest(apiCallType, endpoint + "/" + SentinelStringUtils.replaceVariable(parameter));
 	}
 	
@@ -129,7 +145,7 @@ public class APISteps {
 	 * @param statusCode int the status code expected
 	 */
 	@When("^I verify the response code equals (\\d{3})$")
-	public void verifyResponseCodeEquals(int statusCode) {
+	public static void verifyResponseCodeEquals(int statusCode) {
 		Response response = APIManager.getResponse();
 		int responseCode = response.getResponseCode();
 		var expectedResult = SentinelStringUtils.format("Expected the response code to be {}, and it was {}.\nFull response:\n{}",
@@ -138,7 +154,7 @@ public class APISteps {
 	}
 	
 	@When("^I verify the response was received in less than (\\d{1,2}(?:[.,]\\d{1,4})?) seconds?$")
-	public void verifyResponseTime(double time) {
+	public static void verifyResponseTime(double time) {
 		Duration timeLimit = Duration.ofMillis((long) (time * 1000));
 		Duration responseTime = APIManager.getResponse().getReponseTime();
 		
@@ -155,7 +171,7 @@ public class APISteps {
 	 * @param text String the text to match
 	 */
 	@Then("^I validate the response( does not)? (has|have|contains?) the text \"([^\"]*)\"$")
-    public void verifyResponseContains(String assertion, String matchType, String text) {
+    public static void verifyResponseContains(String assertion, String matchType, String text) {
         boolean negate = !StringUtils.isEmpty(assertion);
         boolean partialMatch = matchType.contains("contain");
 
@@ -188,8 +204,28 @@ public class APISteps {
 	 * @param value String value of the header
 	 */
 	@When("^I add an? (.*?) header with the value (.*?)$")
-	public void addHeader(String name, String value) {
-		APIManager.addHeader(name, value);
+	public static void addHeader(String name, String value) {
+		APIManager.addHeader(name, SentinelStringUtils.replaceStoredVariables(value));
 	}
 
+	/**
+	 * Adds the parsed string keys and values in Configuration for later use
+	 *
+	 * @param values String the string with keys and values
+	 * Example:
+	 *  When I initialize the configuration values as follows
+	 *     """
+	 *     id: 10
+	 *     category_name: puppies
+	 *     """
+	 *
+	 */
+	@When("I initialize the configuration values as follows")
+	public void iInitializeTheData(String values) {
+		var items = values.replace(" ","").split("\n");
+		for (var item:items
+		) {
+			Configuration.update(item.split(":")[0],  item.split(":")[1]);
+		}
+	}
 }
