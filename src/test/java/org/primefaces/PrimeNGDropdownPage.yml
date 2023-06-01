@@ -3,7 +3,7 @@ urls:
 elements:
   city_dropdown:
     elementType: PrimeNGDropdown
-    xpath: "//p-dropdown[1]"
+    xpath: "(//p-dropdown)[1]"
   country_dropdown:
     elementType: PrimeNGDropdown
-    xpath: "//p-dropdown[4]"
+    xpath: "(//p-dropdown)[5]"

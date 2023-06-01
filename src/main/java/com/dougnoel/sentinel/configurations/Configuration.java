@@ -1,11 +1,9 @@
 package com.dougnoel.sentinel.configurations;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -160,6 +158,34 @@ public class Configuration {
 	 */
 	public static void update(String property, String value) {
 		appProps.setProperty(property, value);
+	}
+
+	/**
+	 * Returns a Set&lt;String&gt; containing all property (key) names in the Configuration's stored Properties (appProps) that start with the given prefix.
+	 * Case-sensitive.
+	 * The Properties object that this method searches (appProps) does not always include every configuration variable.
+	 * Entries are only added to the Properties if/when they are read from other sources, or when entries are added during the course of a test.
+	 * As a result, the set returned by this method actually contains all configuration entries that start with the given prefix
+	 * and have been read or updated since the start of the test, or the last reset of the session appProps (Properties).
+	 * @param prefix String the prefix to filter properties by. Any entry in the Properties that starts with the given prefix (or exactly matches it) will be returned in the Set.
+	 * @return Set&lt;String&gt; containing all property (key) names in the Configuration's stored Properties that start with the given prefix.
+	 */
+	public static Set<String> getAllPropertiesWithPrefix(String prefix) {
+		return appProps.stringPropertyNames().stream().filter(property -> property.startsWith(prefix)).collect(Collectors.toSet());
+	}
+
+	/**
+	 * Returns the number of properties in the Configuration's stored Properties (appProps) that start with the given prefix.
+	 * Case-sensitive.
+	 * The Properties object that this method searches (appProps) does not always include every configuration variable.
+	 * Entries are only added to the Properties if/when they are read from other sources, or when entries are added during the course of a test.
+	 * As a result, the number returned by this method actually counts all configuration entries that start with the given prefix
+	 * and have been read or updated since the start of the test, or the last reset of the session appProps (Properties).
+	 * @param prefix String the prefix to filter properties by. Any entry in appProps that starts with the given prefix (or exactly matches it) will be counted.
+	 * @return long the number of properties that start with the given prefix.
+	 */
+	public static long getNumberOfPropertiesWithPrefix(String prefix) {
+		return getAllPropertiesWithPrefix(prefix).size();
 	}
 	
 	/**

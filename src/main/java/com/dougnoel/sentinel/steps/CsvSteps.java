@@ -91,6 +91,52 @@ public class CsvSteps {
     }
 
     /**
+     * Edits the current CSV file, setting the cell in a given column and row to the given value.
+     * <br>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     *     <li>I set the value in the <b>last</b> row of the <b>Name</b> column to <b>Sunny</b> in the <b>CSV</b> file</li>
+     *     <li>I set the value in the <b>1st</b> row of the <b>Name</b> column to <b>Sunny</b> in the <b>CSV</b> file</li>
+     * </ul>
+     *
+     * @param row String the ordinal of the row to modify (last, 1st, 2nd, 25th, etc.).
+     * @param column String the name of the column to modify, or an ordinal (1st, 2nd, 25th, etc.).
+     * @param desiredValue String the value to set the cell to.
+     */
+    @When("^I set the value in the (la|\\d+)(?:st|nd|rd|th) row of the (.*) column to (.*) in the (?:CSV|csv) file$")
+    public static void setRowColumnValuesInCsvFile(String row, String column, String desiredValue){
+        CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
+
+        String firstColumnCharacter = column.substring(0, 1);
+        int rowIndex = row.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(row);
+        if(StringUtils.isNumeric(firstColumnCharacter)){
+            file.writeCellInColumnRow(SentinelStringUtils.parseOrdinal(column), rowIndex, desiredValue);
+        }
+        else{
+            file.writeCellInColumnRow(column, rowIndex, desiredValue);
+        }
+    }
+
+    /**
+     * Edits the current CSV file and completely removes the given row.
+     * <br>
+     * <b>Gherkin Example:</b>
+     * <ul>
+     *     <li>I delete the <b>last</b> row entry in the <b>CSV</b> file</li>
+     *     <li>I delete the <b>2nd row</b> entry in the <b>CSV</b> file</li>
+     * </ul>
+     *
+     * @param row String the ordinal of the row to delete (last, 1st, 2nd, 25th, etc.).
+     */
+    @When("^I delete the (la|\\d+)(?:st|nd|rd|th) row entry in the (?:CSV|csv) file$")
+    public static void deleteCsvRow(String row){
+        CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
+
+        int rowIndex = row.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(row);
+        file.deleteRow(rowIndex);
+    }
+
+    /**
      * Verifies the current CSV file has or does not have the given text in the given column and given row.
      *
      * <br>
