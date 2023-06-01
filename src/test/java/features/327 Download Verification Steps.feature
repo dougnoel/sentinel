@@ -1,6 +1,6 @@
 #author: sampacos, tylerbouchard
 
-@327
+@327 @551
 Feature: Download Verification Steps
   Unit tests for the DownloadVerificationSteps
 
@@ -37,26 +37,26 @@ Feature: Download Verification Steps
       And I verify the filename contains today's date
       And I verify the filename contains today's date formatted as _HH_
 
-  @327E
+  @551A
   Scenario: Download zip and verify it contains 1 pdf
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
       And I verify the most recently downloaded zip file contains 1 file with the extension pdf
 
-  @327F
+  @551B
   Scenario: Download zip and verify it contains no files with png
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
       And I verify the most recently downloaded zip file contains 0 files with the extension png
       And I verify the most recently downloaded zip file does not contains 1 file with the extension png
       And I verify the most recently downloaded zip file does not contain any files with the extension png
 
-  @327G
+  @551C
   Scenario: Download zip and verify it does not contain 5 pdfs, contains 1 pdf, and contains 1 html
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
     And I verify the most recently downloaded zip file does not contain 5 files with the extension pdf
     And I verify the most recently downloaded zip file contains 1 file with the extension pdf
     And I verify the most recently downloaded zip file contains 1 file with the extension html
 
-  @327H
+  @551D
   Scenario: Download zip and verify it contains 2 files of any extension
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
       And I verify the most recently downloaded zip file contains 2 files
@@ -66,7 +66,7 @@ Feature: Download Verification Steps
       And I verify the most recently downloaded zip file does not contain 00 files
       And I verify the most recently downloaded zip file does not contain 1 file
 
-  @327I
+  @551E
   Scenario: Download zip and verify it contains any files
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
       And I verify the most recently downloaded zip file contains any files
