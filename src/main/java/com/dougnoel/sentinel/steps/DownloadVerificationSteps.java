@@ -148,27 +148,72 @@ public class DownloadVerificationSteps {
 	/**
 	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension.
 	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
+	 * <br><br>
+	 * Behaves the same as the step "I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>[EXTENSION]</b></i>"
+	 * <br>
 	 * @param assertion String " does not" for a negative check, otherwise positive check
 	 * @param expectedFileType String the file extension to check for.
 	 */
 	@Then("^I verify the most recently downloaded zip file( does not)? contains? a file with the extension (.*?)$")
 	public static void verifyFileContentsOfZip(String assertion, String expectedFileType) throws IOException {
+		verifyZipFileCount(assertion, "any", expectedFileType);
+	}
+
+	/**
+	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a give number of files
+	 * with an optionally specified extension.
+	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
+	 *
+	 * <p>
+	 * <br><b>Gherkin Example:</b><br>
+	 * <ul>
+	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>pdf</b></i></li>
+	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>csv</b></i></li>
+	 * <li>I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>txt</b></i></li>
+	 * <li>I verify the most recently downloaded zip file contains <i><b>1</b></i> file <i>with the extension <b>csv</b></i></li>
+	 * <li>I verify the most recently downloaded zip file contains <i><b>10</b></i> files</li>
+	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>11</b></i> files</li>
+	 * <li>I verify the most recently downloaded zip file contains <i><b>0</b></i> files <i>with the extension <b>doc</b></i></li>
+	 * </ul>
+	 * <p>
+	 *
+	 * @param assertion String " does not" for a negative check, otherwise positive check.
+	 * @param expectedFileCount String the number of files we expect. 'Any' indicates that it will check for a count above 0.
+	 * @param expectedFileType String the optional file extension to limit the check to.
+	 */
+	@Then("^I verify the most recently downloaded zip file( does not)? contains? (\\d+|any) files?(?: with the extension (.*?))?$")
+	public static void verifyZipFileCount(String assertion, String expectedFileCount, String expectedFileType) throws IOException {
 		Path mostRecentFile = DownloadManager.getMostRecentDownloadPath();
 		List<String> fileContent;
+		long expectedNumOfFiles = 0;
+		if(!expectedFileCount.contains("any"))
+			expectedNumOfFiles = Long.parseLong(expectedFileCount);
+
 		boolean result;
 		boolean negate = !StringUtils.isEmpty(assertion);
 
 		try{
 			ZipFile zip = new ZipFile(DownloadManager.getMostRecentDownloadPath());
+
 			fileContent = zip.getFileNames();
-			result = fileContent.stream().anyMatch(fileName -> StringUtils.endsWith(fileName, expectedFileType));
+			long filesFound;
+			if(expectedFileType != null) {
+				filesFound = fileContent.stream().filter(fileName -> StringUtils.endsWith(fileName, expectedFileType)).count();
+			}
+			else
+				filesFound = zip.getFileNames().size();
+
+			if(expectedFileCount.contains("any"))
+				result = filesFound > 0;
+			else
+				result = (expectedNumOfFiles == filesFound);
 		}
 		catch(IOException ioe){
 			String message = SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile);
 			throw new IOException(message, ioe);
 		}
-		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain a file with extension {}. Zip file location: {} Files in zip: {}",
-						(negate ? "not ": ""), expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
+		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain {} files with extension {}. Zip file location: {} Files in zip: {}",
+						(negate ? "not ": ""), expectedFileCount, expectedFileType, mostRecentFile, StringUtils.join(fileContent, ", ")),
 				!negate, result);
 	}
 }
