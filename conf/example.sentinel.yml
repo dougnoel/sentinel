@@ -1,4 +1,7 @@
 ---
+#This file is provided as an example, and is not used as-is.
+#Please create a "sentinel.yml" file to set configurations using this method.
+#Refer to sentinel and it's example github pages (https://github.com/dougnoel/sentinel , https://github.com/dougnoel/sentinel.example) for more information.
 configurations:
   default:
     name: "Sentinel.Example"

@@ -976,6 +976,38 @@ public class Table extends Element {
 	}
 
 	/**
+	 * Waits the given amount of seconds until all cells in the given column do or do not have the given text in it.
+	 * @param numberOfSecondsToWait int number of seconds to wait for the desired condition.
+	 * @param columnHeader String name of the column.
+	 * @param textToMatch String text to look for in the cells.
+	 * @param partialMatch boolean if the match should be "contains" or "equals". if true, contains. if false, equals.
+	 * @param negate boolean true if this method should return once the text is NOT found in the cells.
+	 * @return boolean true if the text to search for is found within the given timeout, false otherwise.
+	 */
+	public boolean waitForAllRowsInColumnToContain(int numberOfSecondsToWait, String columnHeader, String textToMatch, boolean partialMatch, boolean negate){
+		if(negate != verifyAllColumnCellsContain(columnHeader, partialMatch, textToMatch))
+			return true; //check condition initially before starting page refresh cycle
+
+		WebDriverWait webDriverWait = new WebDriverWait(WebDriverFactory.getWebDriver(), numberOfSecondsToWait);
+		webDriverWait.ignoring(NoSuchElementException.class, StaleElementReferenceException.class);
+
+		try{
+			webDriverWait.until(x -> {
+				BaseSteps.pressBrowserButton("refresh");
+				reset();
+				return negate != verifyAllColumnCellsContain(columnHeader, partialMatch, textToMatch);
+			});
+			return true;
+		}
+		catch (TimeoutException toe){
+			String errorMsg = SentinelStringUtils.format("Timed out waiting {} seconds for all cells in the column {} to {}{} the text {}",
+					numberOfSecondsToWait, columnHeader, (negate ? "not ": ""), (partialMatch ? "contain" : "have"),  textToMatch);
+			log.error(errorMsg);
+			return false;
+		}
+	}
+
+	/**
 	 * Compares all values in the given column to the given referenceNumber, using the given comparisonType.
 	 * Converts all values in the given column to double.
 	 * Valid comparisonType values = {"less than", "greater than"}. Any other value of comparisonType will make this method perform an "equals" comparison.
