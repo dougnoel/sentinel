@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import com.dougnoel.sentinel.configurations.Time;
@@ -200,6 +201,19 @@ public class WindowsElement extends Element {
 	 */
 	public Color getColorAtOffset() {
 		return getColorAtOffset(1, 1);
+	}
+
+	/**
+	 * Drags the current element on top of the target element.
+	 * @param target Element the element the target is being dragged and dropped onto
+	 * @return Element (for chaining)
+	 * @throws IOException if the drag and drop javascript file cannot be loaded
+	 */
+	@Override
+	public Element dragAndDrop(Element target) throws IOException {
+		new Actions(driver()).dragAndDrop(this.element(), target.element()).build().perform();
+
+		return this;
 	}
 
 	/**

@@ -10,3 +10,5 @@ elements:
     class: msctls_statusbar32 
   file_menu_dropdown:
     name: File
+  edit_menu_dropdown:
+    name: Edit

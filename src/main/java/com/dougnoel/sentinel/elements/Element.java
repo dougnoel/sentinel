@@ -67,7 +67,7 @@ public class Element {
 	protected Map<SelectorType,String> selectors;
 	protected String name;
 	protected final String elementType;
-	private WebDriver driver() { return Driver.getWebDriver(); }
+	protected WebDriver driver() { return Driver.getWebDriver(); }
 
 	/**
 	 * The constructor for a WebElement to initialize how an element is going to be
@@ -488,7 +488,7 @@ public class Element {
 	    
 	    JavascriptExecutor executor = (JavascriptExecutor)WebDriverFactory.getWebDriver();
 	    executor.executeScript(script, this.element(), target.element());
-	    return this;	      
+	    return this;
 	}	  
 
 	/**
