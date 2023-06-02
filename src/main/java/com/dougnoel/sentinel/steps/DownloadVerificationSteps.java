@@ -194,7 +194,7 @@ public class DownloadVerificationSteps {
 	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i><b>containing the name tabl.html</b></i></li>
 	 * <li>I verify the most recently downloaded zip file contains 0 files <i><b>containing the name e.htmL</b></i></li>
 	 * </ul>
-	 * <p>
+	 * </p>
 	 *
 	 * @param assertion String " does not" for a negative check, otherwise positive check.
 	 * @param expectedFileCount String the number of files we expect. 'Any' indicates that it will check for a count above 0.
