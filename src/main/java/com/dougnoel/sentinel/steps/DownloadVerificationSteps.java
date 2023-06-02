@@ -149,13 +149,13 @@ public class DownloadVerificationSteps {
 	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension.
 	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
 	 * <p>This method is <b>case insensitive</b> for file extension.</p>
-	 * <p>
-	 * Will behave the same as the steps:
+	 *
+	 * <p>Will behave the same as the steps:</p>
 	 * <ul>
 	 * <li>I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>zip</b></i></li>
 	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>pDf</b></i></li>
 	 * </ul>
-	 * </p>
+	 *
 	 * @param assertion String " does not" for a negative check, otherwise positive check
 	 * @param expectedFileType String the file extension to check for.
 	 */
@@ -171,7 +171,6 @@ public class DownloadVerificationSteps {
 	 * <p>This method is <b>case insensitive</b> for file extension.</p>
 	 * <p>This method is <b>case sensitive</b> and <b>partial match</b> for text.</p>
 	 *
-	 * <p>
 	 * <br><b>Gherkin Example:</b><br>
 	 * <br>Extensions:
 	 * <ul>
@@ -194,7 +193,6 @@ public class DownloadVerificationSteps {
 	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i><b>containing the name tabl.html</b></i></li>
 	 * <li>I verify the most recently downloaded zip file contains 0 files <i><b>containing the name e.htmL</b></i></li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param assertion String " does not" for a negative check, otherwise positive check.
 	 * @param expectedFileCount String the number of files we expect. 'Any' indicates that it will check for a count above 0.
