@@ -235,8 +235,8 @@ public class DownloadVerificationSteps {
 			String message = SentinelStringUtils.format("Unable to open most recently downloaded file as zip file. Most recently downloaded file path {}", mostRecentFile);
 			throw new IOException(message, ioe);
 		}
-		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain {} files with extension {}. Zip file location: {} Files in zip: {}",
-						(negate ? "not ": ""), expectedFileCount, expectedFileTypeOrPartialName, mostRecentFile, StringUtils.join(fileContent, ", ")),
+		assertEquals(SentinelStringUtils.format("Expected zip file to {}contain {} files {} {}. Zip file location: {} Files in zip: {}",
+						(negate ? "not ": ""), expectedFileCount, extensionOrName, expectedFileTypeOrPartialName, mostRecentFile, StringUtils.join(fileContent, ", ")),
 				!negate, result);
 	}
 }
