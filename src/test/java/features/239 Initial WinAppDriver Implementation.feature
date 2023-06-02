@@ -20,8 +20,8 @@ Feature: 239 Implement WinAppDriver to automate windows
     Given I switch to the Notepad App
     When I click the Text Editor field
     Then I verify the Text Editor field with the attribute color has the value #FFFFFF
-    When I hover the file menu dropdown
-      And I wait 2 seconds
+    When I click the Text Editor field
+      And I hover the file menu dropdown
     Then I verify the file menu dropdown with the attribute color has the value #E5F3FF
 
   @239D
