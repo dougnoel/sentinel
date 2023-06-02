@@ -40,21 +40,21 @@ Feature: Download Verification Steps
   @551A
   Scenario: Download zip and verify it contains 1 pdf
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
-      And I verify the most recently downloaded zip file contains 1 file with the extension pdf
+      And I verify the most recently downloaded zip file contains 1 file with extension pdf
 
   @551B
   Scenario: Download zip and verify it contains no files with png
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
-      And I verify the most recently downloaded zip file contains 0 files with the extension png
-      And I verify the most recently downloaded zip file does not contains 1 file with the extension png
-      And I verify the most recently downloaded zip file does not contain any files with the extension png
+      And I verify the most recently downloaded zip file contains 0 files with extension png
+      And I verify the most recently downloaded zip file does not contains 1 file with extension png
+      And I verify the most recently downloaded zip file does not contain any files with extension png
 
   @551C
   Scenario: Download zip and verify it does not contain 5 pdfs, contains 1 pdf, and contains 1 html
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
-    And I verify the most recently downloaded zip file does not contain 5 files with the extension pdf
-    And I verify the most recently downloaded zip file contains 1 file with the extension pdF
-    And I verify the most recently downloaded zip file contains 1 file with the extension html
+    And I verify the most recently downloaded zip file does not contain 5 files with extension pdf
+    And I verify the most recently downloaded zip file contains 1 file with extension pdF
+    And I verify the most recently downloaded zip file contains 1 file with extension html
 
   @551D
   Scenario: Download zip and verify it contains 2 files of any extension
@@ -70,3 +70,15 @@ Feature: Download Verification Steps
   Scenario: Download zip and verify it contains any files
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
       And I verify the most recently downloaded zip file contains any files
+
+  @551F
+  Scenario: Partial match support for checking files by name in a zip file
+    Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
+      And I verify the most recently downloaded zip file contains any files containing the name TestPDF.pdf
+      And I verify the most recently downloaded zip file contains 1 file containing the name TestPDF
+      And I verify the most recently downloaded zip file contains any file containing the name table.html
+      And I verify the most recently downloaded zip file contains 1 files containing the name .html
+      And I verify the most recently downloaded zip file does not contain any files containing the name TestPdF.pdf
+      And I verify the most recently downloaded zip file does not contain 1 files containing the name testpdf
+      And I verify the most recently downloaded zip file does not contain any files containing the name tabl.html
+      And I verify the most recently downloaded zip file contains 0 files containing the name e.htmL
