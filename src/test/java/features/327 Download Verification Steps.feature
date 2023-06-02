@@ -53,7 +53,7 @@ Feature: Download Verification Steps
   Scenario: Download zip and verify it does not contain 5 pdfs, contains 1 pdf, and contains 1 html
     Then I verify that by clicking the zip download link a new file is downloaded with the extension zip
     And I verify the most recently downloaded zip file does not contain 5 files with the extension pdf
-    And I verify the most recently downloaded zip file contains 1 file with the extension pdf
+    And I verify the most recently downloaded zip file contains 1 file with the extension pdF
     And I verify the most recently downloaded zip file contains 1 file with the extension html
 
   @551D
