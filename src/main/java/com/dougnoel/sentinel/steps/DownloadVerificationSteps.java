@@ -148,28 +148,34 @@ public class DownloadVerificationSteps {
 	/**
 	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a file with the given extension.
 	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
-	 * <br><br>
-	 * Behaves the same as the step "I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>[EXTENSION]</b></i>"
-	 * <br>
+	 * <p>This method is <b>case insensitive</b> for file extension.</p>
+	 * <p>
+	 * Will behave the same as the steps:
+	 * <ul>
+	 * <li>I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>zip</b></i></li>
+	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>pDf</b></i></li>
+	 * </ul>
+	 * </p>
 	 * @param assertion String " does not" for a negative check, otherwise positive check
 	 * @param expectedFileType String the file extension to check for.
 	 */
 	@Then("^I verify the most recently downloaded zip file( does not)? contains? a file with the extension (.*?)$")
 	public static void verifyFileContentsOfZip(String assertion, String expectedFileType) throws IOException {
-		verifyZipFileCount(assertion, "any", expectedFileType);
+		verifyZipContentsFileCount(assertion, "any", expectedFileType);
 	}
 
 	/**
 	 * Looks inside the most recently downloaded zip file and asserts that it does or does not contain a give number of files
 	 * with an optionally specified extension.
-	 * This method can find files in subdirectories inside the zip, but not within nested zip files.
+	 * <p>This method can find files in subdirectories inside the zip, but not within nested zip files.</p>
+	 * <p>This method is <b>case insensitive</b> for file extension.</p>
 	 *
 	 * <p>
 	 * <br><b>Gherkin Example:</b><br>
 	 * <ul>
-	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>pdf</b></i></li>
+	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>pDf</b></i></li>
 	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>any</b></i> files <i>with the extension <b>csv</b></i></li>
-	 * <li>I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>txt</b></i></li>
+	 * <li>I verify the most recently downloaded zip file contains <i><b>any</b></i> files <i>with the extension <b>txT</b></i></li>
 	 * <li>I verify the most recently downloaded zip file contains <i><b>1</b></i> file <i>with the extension <b>csv</b></i></li>
 	 * <li>I verify the most recently downloaded zip file contains <i><b>10</b></i> files</li>
 	 * <li>I verify the most recently downloaded zip file <i><b>does not</b></i> contain <i><b>11</b></i> files</li>
@@ -182,7 +188,7 @@ public class DownloadVerificationSteps {
 	 * @param expectedFileType String the optional file extension to limit the check to.
 	 */
 	@Then("^I verify the most recently downloaded zip file( does not)? contains? (\\d+|any) files?(?: with the extension (.*?))?$")
-	public static void verifyZipFileCount(String assertion, String expectedFileCount, String expectedFileType) throws IOException {
+	public static void verifyZipContentsFileCount(String assertion, String expectedFileCount, String expectedFileType) throws IOException {
 		Path mostRecentFile = DownloadManager.getMostRecentDownloadPath();
 		List<String> fileContent;
 		long expectedNumOfFiles = 0;
@@ -198,7 +204,7 @@ public class DownloadVerificationSteps {
 			fileContent = zip.getFileNames();
 			long filesFound;
 			if(expectedFileType != null) {
-				filesFound = fileContent.stream().filter(fileName -> StringUtils.endsWith(fileName, expectedFileType)).count();
+				filesFound = fileContent.stream().filter(fileName -> StringUtils.endsWith(fileName.toLowerCase(), expectedFileType.toLowerCase())).count();
 			}
 			else
 				filesFound = zip.getFileNames().size();
