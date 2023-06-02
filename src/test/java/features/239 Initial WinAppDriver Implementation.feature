@@ -21,6 +21,7 @@ Feature: 239 Implement WinAppDriver to automate windows
     When I click the Text Editor field
     Then I verify the Text Editor field with the attribute color has the value #FFFFFF
     When I hover the file menu dropdown
+      And I wait 1 second
     Then I verify the file menu dropdown with the attribute color has the value #E5F3FF
 
   @239D
