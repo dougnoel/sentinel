@@ -172,13 +172,13 @@ public class ElementTests {
     @Test
     public void doesNotExistOnVisibleElement() {
         BaseSteps.navigateToPage("TextboxPage");
-        assertFalse("Expecting element to exist.", getElement("Last Name Field").doesNotExist());
+        assertFalse("Expecting element to exist.", getElement("Last Name Field").doesNotExist(true));
     }
 
     @Test
     public void doesNotExistOnBadElement() {
         BaseSteps.navigateToPage("TextboxPage");
-        assertTrue("Expecting element to not exist.", getElement("Bad Element").doesNotExist());
+        assertTrue("Expecting element to not exist.", getElement("Bad Element").doesNotExist(true));
     }
 
     @Test(expected = ElementNotInteractableException.class)

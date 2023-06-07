@@ -620,13 +620,14 @@ public class Element {
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 * @return boolean true if the element cannot be found, false if it is found
 	 */
-	public boolean doesNotExist() {
+	public boolean doesNotExist(boolean hasIframes) {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			driver().switchTo().defaultContent();
+			if(hasIframes)
+				driver().switchTo().defaultContent();
 			WebElement element = findElementInCurrentFrame();
-			if(element == null){
+			if(hasIframes && element == null) {
 				element = findElementInIFrame();
 			}
 			try {
@@ -639,7 +640,7 @@ public class Element {
 				return true;
 			} catch(InvalidArgumentException | NoSuchWindowException e){
 				log.trace("Unable to determine existence of element. Retrying.");
-				return doesNotExist();
+				return doesNotExist(hasIframes);
 			}
 		}
 		log.trace("doesNotExist() return result: false");
