@@ -612,7 +612,19 @@ public class Element {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Returns true if an element is neither found nor displayed otherwise false.
+	 * Will poll every selector on the page object in a loop until the timeout is reached.
+	 * This should be used when you expect an element to not be present and do not want
+	 * to slow down your tests waiting for the normal timeout time to expire.
+	 *
+	 * Defaults to assuming iframes exist.
+	 */
+	public boolean doesNotExist() {
+		return doesNotExist(true);
+	}
+
 	/**
 	 * Returns true if an element is neither found nor displayed otherwise false.
 	 * Will poll every selector on the page object in a loop until the timeout is reached.
