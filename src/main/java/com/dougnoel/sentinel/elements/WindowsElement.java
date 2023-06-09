@@ -43,7 +43,8 @@ public class WindowsElement extends Element {
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
 	 *
-	 * Defaults to assuming iframes do not exist for windows.
+	 * Defaults to assuming iframes will never exist for windows elements, and may exist for web elements.
+	 * @return boolean true if the element cannot be found, false if it is found
 	 */
 	@Override
 	public boolean doesNotExist() {
