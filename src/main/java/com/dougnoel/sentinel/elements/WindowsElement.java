@@ -47,7 +47,7 @@ public class WindowsElement extends Element {
 	 */
 	@Override
 	public boolean doesNotExist() {
-		return doesNotExist(false);
+		return super.doesNotExist(false);
 	}
 
 	/**
