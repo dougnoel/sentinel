@@ -630,9 +630,10 @@ public class Element {
 	 * Will poll every selector on the page object in a loop until the timeout is reached.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
+	 * @param hasIframes True if we expect to process iframes, false if we don't expect iframes
 	 * @return boolean true if the element cannot be found, false if it is found
 	 */
-	public boolean doesNotExist(boolean hasIframes) {
+	protected boolean doesNotExist(boolean hasIframes) {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
