@@ -38,6 +38,20 @@ public class WindowsElement extends Element {
 	}
 
 	/**
+	 * Returns true if an element is neither found nor displayed otherwise false.
+	 * Will poll every selector on the page object in a loop until the timeout is reached.
+	 * This should be used when you expect an element to not be present and do not want
+	 * to slow down your tests waiting for the normal timeout time to expire.
+	 *
+	 * Defaults to assuming iframes will never exist for windows elements, and may exist for web elements.
+	 * @return boolean true if the element cannot be found, false if it is found
+	 */
+	@Override
+	public boolean doesNotExist() {
+		return super.doesNotExist(false);
+	}
+
+	/**
 	 * Returns the Selenium WebElement if it can be found on the current page.
 	 * Provides late binding for elements so that the driver does not look for them
 	 * until they are called, at which point the driver should be on the correct
@@ -233,6 +247,45 @@ public class WindowsElement extends Element {
 	@Override
 	public java.awt.Color getBackgroundColor() {
 		throw new NotImplementedException("Windows elements do not support background color");
+	}
+
+	/**
+	 * <i><b>NOTE:</b> In addition to the documentation seen below, if the "color" attribute is used on a windows element it will perform a special return
+	 * as the "color" attribute does not properly exist as an attribute in windows. Instead, it is calculated in Sentinel using a screenshot and offset.</i>
+	 * <br><br>
+	 * <p>
+	 * From selenium's javadoc: <br>
+	 * Get the value of the given attribute of the element. Will return the current value,
+	 * even if this has been modified after the page has been loaded. <br>
+	 * More exactly, this method will return the value of the property with the given name,
+	 * if it exists. If it does not, then the value of the attribute with the given name is returned.
+	 * If neither exists, null is returned. <br>
+	 * The "style" attribute is converted as best can be to a text representation with a trailingsemi-colon. <br>
+	 * The following are deemed to be "boolean" attributes, and will return either "true" or null:
+	 * async, autofocus, autoplay, checked, compact, complete, controls, declare, defaultchecked,
+	 * defaultselected, defer, disabled, draggable, ended, formnovalidate, hidden, indeterminate,
+	 * iscontenteditable, ismap, itemscope, loop, multiple, muted, nohref, noresize, noshade,
+	 * novalidate, nowrap, open, paused, pubdate, readonly, required, reversed, scoped, seamless,
+	 * seeking, selected, truespeed, willvalidate
+	 * <br>
+	 * Finally, the following commonly mis-capitalized attribute/property names are evaluated as expected: <br>
+	 * •If the given name is "class", the "className" property is returned. <br>
+	 * •If the given name is "readonly", the "readOnly" property is returned.
+	 *
+	 * Note: The reason for this behavior is that users frequently confuse attributes and properties. If you need to do something more precise, e.g., refer to an attribute even when aproperty of the same name exists, then you should evaluate Javascript to obtain the resultyou desire.
+	 * </p>
+	 *
+	 *
+	 * Gets the value of the given attribute on this element.
+	 * @param attribute String name of the attribute to get the value of
+	 * @return String the value of the given attribute, or null if it is not set.
+	 */
+	@Override
+	public String getAttribute(String attribute) {
+		if (attribute.equalsIgnoreCase("color")) {
+			return getColorAtOffset().asHex();
+		}
+		return super.getAttribute(attribute);
 	}
 
 	/**

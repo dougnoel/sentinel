@@ -612,21 +612,36 @@ public class Element {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns true if an element is neither found nor displayed otherwise false.
 	 * Will poll every selector on the page object in a loop until the timeout is reached.
 	 * This should be used when you expect an element to not be present and do not want
 	 * to slow down your tests waiting for the normal timeout time to expire.
+	 *
+	 * Defaults to assuming iframes will never exist for windows elements, and may exist for web elements.
 	 * @return boolean true if the element cannot be found, false if it is found
 	 */
 	public boolean doesNotExist() {
+		return doesNotExist(true);
+	}
+
+	/**
+	 * Returns true if an element is neither found nor displayed otherwise false.
+	 * Will poll every selector on the page object in a loop until the timeout is reached.
+	 * This should be used when you expect an element to not be present and do not want
+	 * to slow down your tests waiting for the normal timeout time to expire.
+	 * @param hasIframes True if we expect to process iframes, false if we don't expect iframes
+	 * @return boolean true if the element cannot be found, false if it is found
+	 */
+	protected boolean doesNotExist(boolean hasIframes) {
 		long searchTime = Time.out().getSeconds() * 1000;
 		long startTime = System.currentTimeMillis(); // fetch starting time
 		while ((System.currentTimeMillis() - startTime) < searchTime) {
-			driver().switchTo().defaultContent();
+			if(hasIframes)
+				driver().switchTo().defaultContent();
 			WebElement element = findElementInCurrentFrame();
-			if(element == null){
+			if(hasIframes && element == null) {
 				element = findElementInIFrame();
 			}
 			try {
@@ -639,7 +654,7 @@ public class Element {
 				return true;
 			} catch(InvalidArgumentException | NoSuchWindowException e){
 				log.trace("Unable to determine existence of element. Retrying.");
-				return doesNotExist();
+				return doesNotExist(hasIframes);
 			}
 		}
 		log.trace("doesNotExist() return result: false");
