@@ -38,6 +38,19 @@ public class WindowsElement extends Element {
 	}
 
 	/**
+	 * Returns true if an element is neither found nor displayed otherwise false.
+	 * Will poll every selector on the page object in a loop until the timeout is reached.
+	 * This should be used when you expect an element to not be present and do not want
+	 * to slow down your tests waiting for the normal timeout time to expire.
+	 *
+	 * Defaults to assuming iframes do not exist for windows.
+	 */
+	@Override
+	public boolean doesNotExist() {
+		return doesNotExist(false);
+	}
+
+	/**
 	 * Returns the Selenium WebElement if it can be found on the current page.
 	 * Provides late binding for elements so that the driver does not look for them
 	 * until they are called, at which point the driver should be on the correct
