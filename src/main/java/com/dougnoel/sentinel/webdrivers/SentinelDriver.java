@@ -55,6 +55,14 @@ public class SentinelDriver {
 	}
 
 	/**
+	 * Wait for, and go to, the window with the title that contains the given string.
+	 * @param titleContains
+	 */
+	protected void goToTitledWindowThatContains(String titleContains) {
+		windows.goToTitledWindowThatContains(titleContains);
+	}
+
+	/**
 	 * Checks if a window is found within the session
 	 * @param title String the title of the window to check for
 	 * @return true if the window is found, false if not

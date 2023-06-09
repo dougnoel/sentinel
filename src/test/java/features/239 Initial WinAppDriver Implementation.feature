@@ -14,13 +14,15 @@ Feature: 239 Implement WinAppDriver to automate windows
     Then I verify the Text Editor field contains the text "test"
     When I clear the Text Editor field
     Then I verify the Text Editor field is empty
+      And I verify the nonexistent element does not exist
 
   @239B @ColorChecking
   Scenario: 239B Check Colors in Notepad
     Given I switch to the Notepad App
     When I click the Text Editor field
     Then I verify the Text Editor field with the attribute color has the value #FFFFFF
-    When I hover the file menu dropdown
+    When I click the Text Editor field
+      And I hover the file menu dropdown
     Then I verify the file menu dropdown with the attribute color has the value #E5F3FF
 
   @239D

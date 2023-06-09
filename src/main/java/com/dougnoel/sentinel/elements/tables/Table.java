@@ -806,7 +806,7 @@ public class Table extends Element {
 			try {
 				int count = 0;
 				for (String cell2 : column) {
-					if (cell2.contains(cell)) {
+					if (cell2.equals(cell)) {
 						count++;
 					}
 					if (count > 1) {
