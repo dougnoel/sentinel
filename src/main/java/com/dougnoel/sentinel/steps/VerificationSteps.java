@@ -146,7 +146,7 @@ public class VerificationSteps {
         String expectedResult = SentinelStringUtils.format("Expected the element {} to {}exist.",
                 elementName, (negate ? "not " : ""));
         if (negate) {
-            assertTrue(expectedResult, getElement(elementName).doesNotExist(false));
+            assertTrue(expectedResult, getElement(elementName).doesNotExist());
         } else {
             assertTrue(expectedResult, getElement(elementName).isDisplayed());
         }
