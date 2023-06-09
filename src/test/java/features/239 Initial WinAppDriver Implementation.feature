@@ -14,6 +14,7 @@ Feature: 239 Implement WinAppDriver to automate windows
     Then I verify the Text Editor field contains the text "test"
     When I clear the Text Editor field
     Then I verify the Text Editor field is empty
+      And I verify the nonexistent element does not exist
 
   @239B @ColorChecking
   Scenario: 239B Check Colors in Notepad
