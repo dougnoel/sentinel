@@ -1,6 +1,6 @@
 #author: sampacos
 
-@386 @csv @525
+@386 @csv @525 @555
 Feature: Verify and Edit CSVs
 
   @386A @csv
@@ -80,3 +80,20 @@ Feature: Verify and Edit CSVs
     Then I verify the CSV has 2 data rows
       And I verify the comment column of the csv does not have the text me
       And I verify the 5th column of the csv does not have the text now
+
+  @555A @csv
+  Scenario: Store and verify the value of a CSV file
+    Given I navigate to the Downloads Test Page
+    When I verify that by clicking the csv download link a new file is downloaded with the extension csv
+      And I find and open the last downloaded csv file with 1 header row
+      And I store the cell value in the last row of the name column in the csv as originalFinalName
+      And I store the cell value in the 1st row of the name column in the csv as originalFirstName
+    Then I verify the name column of the csv contains the same text used for the originalFinalName
+      And I verify the name column of the csv does not contain the text change original final name
+      And I verify the name column of the csv does not contain the text change original first name
+    When I set the value in the last row of the name column to change original final name in the CSV file
+      And I set the value in the 1st row of the name column to change original first name in the CSV file
+    Then I verify the name column of the csv contains the text change original final name
+      And I verify the name column of the csv contains the text change original first name
+      And I verify the name column of the csv does not contain the same text used for the originalFinalName
+      And I verify the name column of the csv does not contain the same text used for the originalFirstName

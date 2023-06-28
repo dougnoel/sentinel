@@ -371,4 +371,33 @@ public class CsvSteps {
         assertEquals(errorMessage, numRows, file.getNumberOfDataRows());
     }
 
+    /**
+     * Stores the value of a specific row and column cell within a CSV file with a given name.
+     * Used for storing a CSV cell value that will not be modified for later comparison.
+     *  <p>
+     * <b>Gherkin Examples:</b>
+     * <ul>
+     * <li>I store the cell value in the <b>last</b> row of the <b>name</b> column in the csv as <b>last name entry</b></li>
+     * <li>I store the cell value in the <b>4th</b> row of the <b>1st</b> column in the csv as <b>comment entry</b></li>
+     * </ul>
+     * @param rowNum String the row of the cell. Can contain an ordinal such as 1st, 3rd, 4th, or last
+     * @param column String the column of the cell. Can contain the column name or it's ordinal form
+     * @param storageKey String the name to store the value as
+     */
+    @Then("^I store the cell value in the (la|\\d+)(?:st|nd|rd|th) row of the (.*?) column in the (?:csv|CSV) as (.*?)$")
+    public static void storeCsvValue(String rowNum, String column, String storageKey) {
+        CsvFile file = (CsvFile) FileManager.getCurrentTestFile();
+        int rowIndex = rowNum.equals("la") ? file.getNumberOfDataRows() : Integer.parseInt(rowNum);
+
+        String storageValue;
+        String firstColumnCharacter = column.substring(0, 1);
+        if(StringUtils.isNumeric(firstColumnCharacter)){
+            storageValue = file.readCellData(SentinelStringUtils.parseOrdinal(column), rowIndex);
+        }
+        else{
+            storageValue = file.readCellData(column, rowIndex);
+        }
+
+        Configuration.update(storageKey, storageValue);
+    }
 }
