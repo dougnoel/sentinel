@@ -96,3 +96,4 @@ Feature: Verify and Edit CSVs
     Then I verify the name column of the csv contains the text change original final name
       And I verify the name column of the csv contains the text change original first name
       And I verify the name column of the csv does not contain the same text used for the originalFinalName
+      And I verify the name column of the csv does not contain the same text used for the originalFirstName
