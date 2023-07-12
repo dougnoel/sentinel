@@ -167,7 +167,7 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return String the string with variables replaced as applicable
 	 */
 	public static String parseVariables(String text) {
-		Matcher matcher = Pattern.compile("\\{([^}{].*?)}").matcher(text);
+		Matcher matcher = Pattern.compile("\\{(\\S[^}]+)}").matcher(text);
 
 		while (matcher.find()) {
 			String variable = matcher.group();
