@@ -7,14 +7,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.dougnoel.sentinel.exceptions.FileException;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.openqa.selenium.InvalidArgumentException;
 
 import com.dougnoel.sentinel.configurations.Configuration;
 
 public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
+	private static final Logger log = LogManager.getLogger(SentinelStringUtils.class.getName()); // Create a logger.
 
 	private static final String SURROUNDING_QUOTES = "^[\"'].*[\"']$";
 	/**
@@ -107,61 +111,79 @@ public class SentinelStringUtils extends org.apache.commons.lang3.StringUtils {
 	}
 	
 	/**
-	 * Returns a string with any strings enclosed in curly braces "{}" replaced with values
-	 * stored in the passed YAMLData object under testdata/variables. For example, given the string
-	 * "{first_name} Smith" and the yaml entry in the passed file:
-	 * 
-	 * testdata:
-	 *   default:
-	 *     variables:
-	 *       first_name: Bob
-	 *   
-	 * This method would return: "Bob Smith".
-	 * If there are no values to replace, this method returns the string intact.
+	 * <b>Depreciated. Please use parseVariables(String text)</b>
+	 * <br>This function will return the same results as parseVariables()
 	 * @param text String the text to search for variable replacement
 	 * @return String the string with variables replaced as applicable
 	 */
 	public static String replaceVariable(String text) {
-		Matcher matcher = Pattern.compile("\\{[^\\}]*+\\}").matcher(text);
-		while (matcher.find()) {
-			var variable = matcher.group();
-			var variableName = StringUtils.substring(variable, 1, -1);
-			var value = Configuration.getTestData("variables", variableName);
-			text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
-		}
-		return text;
+		return parseVariables(text);
 	}
 
 	/**
-	 * Returns a string with any strings with pattern "\\{\S*?\\}" replaced with values
-	 * stored in configuration. For example, given the string
-	 *	{
-	 *	"id": {id},
-	 *	"name": "puppy",
-	 *	"category": {
-	 *	"id": 1,
-	 *	"name": "{category_name}"
-	 *	  }}
-	 *
-	 * This method would return:
-	 *  {
-	 * 	 "id": 10,
-	 * 	 "name": "puppy",
-	 * 	 "category": {
-	 * 	 "id": 1,
-	 * 	 "name": "Dog"
-	 *    }}.
-	 * If there are no values to replace, this method returns the string intact.
+	 * <b>Depreciated. Please use parseVariables(String text)</b>
+	 * <br>This function will return the same results as parseVariables()
 	 * @param text String the text to search for variable replacement
 	 * @return String the string with variables replaced as applicable
 	 */
 	public static String replaceStoredVariables(String text) {
-		Matcher matcher = Pattern.compile("\\{\\S[^\\}]*+\\}").matcher(text);
+		return parseVariables(text);
+	}
+
+	/**
+	 * Returns a string with any strings enclosed in curly braces "{}" replaced with values
+	 * stored in the passed YAMLData object under testdata/variables.
+	 * <br>For example, given the string
+	 * <br>"{first_name} Smith"
+	 * <br>and the yaml entry in the passed file:
+	 * <br>
+	 * testdata:<br>
+	 *   default:<br>
+	 *     variables:<br>
+	 *       first_name: Bob<br>
+	 * <br>
+	 * This method would return: "Bob Smith".
+	 * <br>
+	 *  Given the string:<br>
+	 *	{<br>
+	 *	"id": {id},<br>
+	 *	"name": "puppy",<br>
+	 *	"category": {<br>
+	 *	"id": 1,<br>
+	 *	"name": "{category_name}"<br>
+	 *	  }}<br>
+	 *<br>
+	 * This method would return:<br>
+	 *  {<br>
+	 * 	 "id": 10,<br>
+	 * 	 "name": "puppy",<br>
+	 * 	 "category": {<br>
+	 * 	 "id": 1,<br>
+	 * 	 "name": "Dog"<br>
+	 *    }}.<br>
+	 *<br>
+	 * If there are no values to replace, this method returns the string intact.
+	 * @param text String the text to search for variable replacement
+	 * @return String the string with variables replaced as applicable
+	 */
+	public static String parseVariables(String text) {
+		Matcher matcher = Pattern.compile("\\{([^}{].*?)}").matcher(text);
+
 		while (matcher.find()) {
-			var variable = matcher.group();
-			var value = Configuration.toString(variable.substring(1, variable.length() - 1));
-			text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+			String variable = matcher.group();
+			String variableName = matcher.group(1);
+			String value = Configuration.toString(variableName);
+			if (value == null) {
+				try {
+					value = Configuration.getTestData("variables", variableName);
+				}
+				catch (FileException fe) {
+					log.info("Could not find configuration or testData for {}. Returning text as is.", variableName);
+				}
 			}
+			if(value != null)
+				text = StringUtils.replaceOnce(text, variable, value); //Using replaceOnce so that if we have the same variable name twice we do not run into iteration issues.
+		}
 		return text;
 	}
 }
