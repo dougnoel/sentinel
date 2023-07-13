@@ -52,7 +52,7 @@ public class APISteps {
 	 */
 	@Given("I set the request body to")
 	public static void setRequestBody(String body) {
-		APIManager.setBody(SentinelStringUtils.replaceStoredVariables(body));
+		APIManager.setBody(SentinelStringUtils.parseVariables(body));
         log.trace("Body passed: {}", body);
 	}
 
@@ -95,7 +95,7 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) parameter with the value (.*?)$")
 	public static void addParameter(String parameter, String value) {
-		APIManager.addParameter(parameter, SentinelStringUtils.replaceStoredVariables(value));
+		APIManager.addParameter(parameter, SentinelStringUtils.parseVariables(value));
 
 	}
 	
@@ -115,7 +115,7 @@ public class APISteps {
 	 */
 	@When("^I send a (DELETE|GET|POST|PUT) request to the (.*?) endpoint$")
 	public static void sendRequest(String apiCallType, String endpoint) {
-		APIManager.sendRequest(RequestType.valueOf(apiCallType), SentinelStringUtils.replaceStoredVariables(endpoint));
+		APIManager.sendRequest(RequestType.valueOf(apiCallType), SentinelStringUtils.parseVariables(endpoint));
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class APISteps {
 	 */
 	@When("^I (DELETE|GET) record (.*) from the (.*?) endpoint$")
 	public static void sendRequest(String apiCallType, String parameter, String endpoint) {
-		sendRequest(apiCallType, endpoint + "/" + SentinelStringUtils.replaceVariable(parameter));
+		sendRequest(apiCallType, endpoint + "/" + SentinelStringUtils.parseVariables(parameter));
 	}
 	
 	/**
@@ -205,7 +205,7 @@ public class APISteps {
 	 */
 	@When("^I add an? (.*?) header with the value (.*?)$")
 	public static void addHeader(String name, String value) {
-		APIManager.addHeader(name, SentinelStringUtils.replaceStoredVariables(value));
+		APIManager.addHeader(name, SentinelStringUtils.parseVariables(value));
 	}
 
 	/**

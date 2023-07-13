@@ -120,6 +120,9 @@ Feature: 89 API Testing
   @89I
   Scenario: 89I Query String Stored Parameter Test
     Given I use the API named Pet Store API
+      And I load soldpuppydata to use as the request body
+      And I send a POST request to the pet endpoint
+      And I verify the response code equals 200
     When I initialize the configuration values as follows
     """
     dog_status: sold

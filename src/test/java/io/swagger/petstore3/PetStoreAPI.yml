@@ -24,3 +24,23 @@ testdata:
          ],
          "status": "available"
        }
+    soldpuppydata:
+      json: |
+        {
+          "id": 11,
+          "name": "puppy",
+          "category": {
+            "id": 1,
+            "name": "Dogs"
+          },
+          "photoUrls": [
+            "string"
+          ],
+          "tags": [
+            {
+              "id": 0,
+              "name": "string"
+            }
+          ],
+          "status": "sold"
+        }
