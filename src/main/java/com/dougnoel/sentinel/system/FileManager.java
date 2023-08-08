@@ -55,7 +55,7 @@ public class FileManager {
 	}
 
 	/**
-	 * Returns the absolute path to the file searching the root directory of the project
+	 * Returns the file given by searching from the root directory of the project
 	 * and any sub directories.
 	 * If file is not found there, this method searches the java classpath for a file matching the given filename. This check encompasses all resources on the classpath.
 	 * See <a href="https://docs.oracle.com/javase/tutorial/essential/environment/paths.html">official Oracle documentation</a>
@@ -64,7 +64,7 @@ public class FileManager {
 	 * @return File the file found
 	 */
 	public static File findFilePath(String fileName) {
-		File result = searchDirectory(new File("src" + File.separator), fileName);
+		File result = searchDirectory(new File(System.getProperty("user.dir") + File.separator), fileName);
 
 		if(result == null){
 			List<URL> resourceNames;

@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import com.dougnoel.sentinel.exceptions.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,8 +40,7 @@ public class Configuration {
 	private static final Properties appProps = new Properties();
 	
 	private static ConfigurationData sentinelConfigurations = null;
-	
-	private static final File CONFIGURATION_FILE = new File("conf/sentinel.yml");
+
 	private static final String DEFAULT = "default";
     private static final String LINUX = "linux";
     private static final String MAC = "mac";
@@ -65,17 +65,18 @@ public class Configuration {
 		if (data != null) {
 			return data;
 		}
-		
+
 		if(sentinelConfigurations == null) {
 			try {
+				File configurationFile = new ConfigurationData().getConfigFile();
 				ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
 						.configure(DeserializationFeature
-						.FAIL_ON_UNKNOWN_PROPERTIES, false);
-				sentinelConfigurations = mapper.readValue( new ConfigurationData(), ConfigurationData.class );
+								.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				sentinelConfigurations = mapper.readValue(configurationFile, ConfigurationData.class );
 			} catch (Exception e) {
 				String errorMessage = SentinelStringUtils.format("Could not load the {} property because of the exception: {}." + System.lineSeparator() +
 						"Please fix the file or pass the property in on the commandline using the -D{}= option.", configurationKey, e.getMessage(), configurationKey, configurationKey);
-				throw new FileException(errorMessage, e, CONFIGURATION_FILE);
+				throw new IOException(errorMessage, e);
 			}
 		}
 
