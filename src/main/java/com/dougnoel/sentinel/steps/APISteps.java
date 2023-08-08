@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.time.Duration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -227,5 +230,24 @@ public class APISteps {
 		) {
 			Configuration.update(item.split(":")[0],  item.split(":")[1]);
 		}
+	}
+
+	/**
+	 * Saves the value from response to Configuration for later use, for nested values use / or . delimiter
+	 * @param responseKey String response attribute
+	 * @param key String name under which will be the value saved
+	 * Example:
+	 *	I save the id value from response as dogId
+	 *  I save the dog/id value from response as dogId
+	 *  I save the dog.0.id value from response as dogId
+	 */
+	@When("^I save the (.*?) value from response as (.*?)$")
+	public static void iSaveTheResponseValue(String responseKey, String key) throws JsonProcessingException {
+		var response = APIManager.getResponse().getResponse();
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode json = objectMapper.readTree(response);
+		responseKey = "/" + responseKey.replace(".","/");
+		var value = json.at(responseKey).toString().replaceAll("\"","");
+		Configuration.update(key, value);
 	}
 }

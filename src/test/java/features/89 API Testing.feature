@@ -140,3 +140,23 @@ Feature: 89 API Testing
     """
       And I send a POST request to the pet/{id}/uploadImage endpoint
     Then I verify the response code equals 415
+
+  @89K
+  Scenario: 89K Save response parameter value to configuration
+    Given I use the API named Pet Store API
+    When I set the request body to
+    """
+    {
+    "id": 10,
+    "petId": 198772,
+    "quantity": 7,
+    "shipDate": "2023-04-28T07:23:34.840Z",
+    "status": "approved",
+    "complete": true
+    }
+    """
+    And I send a POST request to the store/order endpoint
+    Then I verify the response code equals 200
+      And I save the id value from response as orderId
+    When I send a GET request to the store/order/{orderId} endpoint
+    Then I verify the response code equals 200
