@@ -90,7 +90,7 @@
     <httpclient.version>4.5.14</httpclient.version>
     <io.cucumber.version>7.8.1</io.cucumber.version>
     <de.monochromata.cucumber.version>4.0.42</de.monochromata.cucumber.version>
-    <jackson2.version>2.12.7</jackson2.version>
+    <jackson2.version>2.15.0</jackson2.version>
     <junit.version>5.9.2</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
     <lombok.version>1.18.24</lombok.version>
